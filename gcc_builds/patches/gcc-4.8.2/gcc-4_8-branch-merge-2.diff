@@ -1,0 +1,424 @@
+diff --git a/gcc/ChangeLog b/gcc/ChangeLog
+index c8eafd4..4e379d0 100644
+--- a/gcc/ChangeLog
++++ b/gcc/ChangeLog
+@@ -1,3 +1,32 @@
++2014-02-10  Nagaraju Mekala <nagaraju.mekala@xilinx.com>
++
++	* config/microblaze/microblaze.md: Add movsi4_rev insn pattern.
++	* config/microblaze/predicates.md: Add reg_or_mem_operand predicate.
++
++2014-02-10  Nagaraju Mekala <nagaraju.mekala@xilinx.com>
++
++	* config/microblaze/microblaze.c: Extend mcpu version format
++
++2014-02-10  David Holsgrove <david.holsgrove@xilinx.com>
++
++	* config/microblaze/microblaze.h: Define SIZE_TYPE and PTRDIFF_TYPE.
++
++2014-02-10  Richard Biener  <rguenther@suse.de>
++
++	Backport from mainline
++	2014-01-30  Richard Biener  <rguenther@suse.de>
++
++	PR tree-optimization/59903
++	* tree-vect-loop.c (vect_transform_loop): Guard multiple-types
++	check properly.
++
++	2014-02-10  Richard Biener  <rguenther@suse.de>
++
++	PR tree-optimization/60115
++	* tree-eh.c (tree_could_trap_p): Unify TARGET_MEM_REF and
++	MEM_REF handling.  Properly verify that the accesses are not
++	out of the objects bound.
++
+ 2014-02-05  James Greenhalgh  <james.greenhalgh@arm.com>
+ 
+ 	Backport from mainline.
+diff --git a/gcc/config/microblaze/microblaze.c b/gcc/config/microblaze/microblaze.c
+index c121c2b..058ba72 100644
+--- a/gcc/config/microblaze/microblaze.c
++++ b/gcc/config/microblaze/microblaze.c
+@@ -1609,21 +1609,28 @@ enum reg_class microblaze_regno_to_class[] =
+ microblaze_version_to_int (const char *version)
+ {
+   const char *p, *v;
+-  const char *tmpl = "vX.YY.Z";
++  const char *tmpl = "vXX.YY.Z";
+   int iver = 0;
+ 
+   p = version;
+   v = tmpl;
+ 
+-  while (*v)
++  while (*p)
+     {
+       if (*v == 'X')
+ 	{			/* Looking for major  */
+-	  if (!(*p >= '0' && *p <= '9'))
+-	    return -1;
+-	  iver += (int) (*p - '0');
+-	  iver *= 10;
+-	}
++          if (*p == '.')
++            {
++              *v++;
++            }
++          else
++            {
++	      if (!(*p >= '0' && *p <= '9'))
++	        return -1;
++	      iver += (int) (*p - '0');
++              iver *= 10;
++	     }
++        }
+       else if (*v == 'Y')
+ 	{			/* Looking for minor  */
+ 	  if (!(*p >= '0' && *p <= '9'))
+diff --git a/gcc/config/microblaze/microblaze.h b/gcc/config/microblaze/microblaze.h
+index bc4d9a1..948520a 100644
+--- a/gcc/config/microblaze/microblaze.h
++++ b/gcc/config/microblaze/microblaze.h
+@@ -213,6 +213,12 @@ enum pipeline_type
+ #define STRICT_ALIGNMENT        1
+ #define PCC_BITFIELD_TYPE_MATTERS 1
+ 
++#undef SIZE_TYPE
++#define SIZE_TYPE "unsigned int"
++
++#undef PTRDIFF_TYPE
++#define PTRDIFF_TYPE "int"
++
+ #define CONSTANT_ALIGNMENT(EXP, ALIGN)					\
+   ((TREE_CODE (EXP) == STRING_CST  || TREE_CODE (EXP) == CONSTRUCTOR)	\
+    && (ALIGN) < BITS_PER_WORD						\
+diff --git a/gcc/config/microblaze/microblaze.md b/gcc/config/microblaze/microblaze.md
+index 25f0748..bad1df5 100644
+--- a/gcc/config/microblaze/microblaze.md
++++ b/gcc/config/microblaze/microblaze.md
+@@ -1119,6 +1119,18 @@
+   }
+ )
+ 
++;;Load and store reverse
++(define_insn "movsi4_rev"
++  [(set (match_operand:SI 0 "reg_or_mem_operand" "=r,Q")
++        (bswap:SI (match_operand:SF 1 "reg_or_mem_operand" "Q,r")))]
++  "TARGET_REORDER"
++  "@
++   lwr\t%0,%y1,r0
++   swr\t%1,%y0,r0"
++  [(set_attr "type"     "load,store")
++  (set_attr "mode"      "SI")
++  (set_attr "length"    "4,4")])
++
+ ;; 32-bit floating point moves
+ 
+ (define_expand "movsf"
+diff --git a/gcc/config/microblaze/predicates.md b/gcc/config/microblaze/predicates.md
+index 5fd1bd4..31d1e06 100644
+--- a/gcc/config/microblaze/predicates.md
++++ b/gcc/config/microblaze/predicates.md
+@@ -85,6 +85,10 @@
+   (ior (match_operand 0 "const_0_operand")
+        (match_operand 0 "register_operand")))
+ 
++(define_predicate "reg_or_mem_operand"
++  (ior (match_operand 0 "memory_operand")
++       (match_operand 0 "register_operand")))
++
+ ;;  Return if the operand is either the PC or a label_ref.  
+ (define_special_predicate "pc_or_label_operand"
+   (ior (match_code "pc,label_ref")
+diff --git a/gcc/fortran/ChangeLog b/gcc/fortran/ChangeLog
+index 029a23f..32a43ba 100644
+--- a/gcc/fortran/ChangeLog
++++ b/gcc/fortran/ChangeLog
+@@ -1,3 +1,18 @@
++2014-02-09  Janus Weil  <janus@gcc.gnu.org>
++
++	Backport from mainline
++	2013-10-21  Tobias Burnus  <burnus@net-b.de>
++
++	PR fortran/58803
++	PR fortran/59395
++	* decl.c (match_ppc_decl): Prevent later double free.
++
++2014-02-08  Mikael Morin  <mikael@gcc.gnu.org>
++
++	PR fortran/57033
++	* primary.c (gfc_convert_to_structure_constructor): Avoid null pointer
++	dereference.
++
+ 2014-02-07  Paul Thomas  <pault@gcc.gnu.org>
+ 
+ 	PR fortran/59906
+diff --git a/gcc/fortran/decl.c b/gcc/fortran/decl.c
+index b748cfd..c6e16c7 100644
+--- a/gcc/fortran/decl.c
++++ b/gcc/fortran/decl.c
+@@ -5069,7 +5069,14 @@
+       if (gfc_add_proc (&c->attr, name, NULL) == FAILURE)
+ 	return MATCH_ERROR;
+ 
+-      c->tb = tb;
++      if (num == 1)
++	c->tb = tb;
++      else
++	{
++	  c->tb = XCNEW (gfc_typebound_proc);
++	  c->tb->where = gfc_current_locus;
++	  *c->tb = *tb;
++	}
+ 
+       /* Set interface.  */
+       if (proc_if != NULL)
+diff --git a/gcc/fortran/primary.c b/gcc/fortran/primary.c
+index db288b5..a94ae21 100644
+--- a/gcc/fortran/primary.c
++++ b/gcc/fortran/primary.c
+@@ -2540,7 +2540,8 @@
+       if (parent && !comp)
+ 	break;
+ 
+-      actual = actual->next;
++      if (actual)
++	actual = actual->next;
+     }
+ 
+   if (build_actual_constructor (&comp_head, &ctor_head, sym) == FAILURE)
+diff --git a/gcc/testsuite/ChangeLog b/gcc/testsuite/ChangeLog
+index 11a388a..48cd5b4 100644
+--- a/gcc/testsuite/ChangeLog
++++ b/gcc/testsuite/ChangeLog
+@@ -1,3 +1,30 @@
++2014-02-10  Richard Biener  <rguenther@suse.de>
++
++	Backport from mainline
++	2014-01-30  Richard Biener  <rguenther@suse.de>
++
++	PR tree-optimization/59903
++	* gcc.dg/torture/pr59903.c: New testcase.
++
++	2014-02-10  Richard Biener  <rguenther@suse.de>
++
++	PR tree-optimization/60115
++	* gcc.dg/torture/pr60115.c: New testcase.
++
++2014-02-09  Janus Weil  <janus@gcc.gnu.org>
++
++	Backport from mainline
++	2013-10-21  Tobias Burnus  <burnus@net-b.de>
++
++	PR fortran/58803
++	PR fortran/59395
++	* gfortran.dg/proc_ptr_comp_38.f90: New.
++
++2014-02-08  Mikael Morin  <mikael@gcc.gnu.org>
++
++	PR fortran/57033
++	* gfortran.dg/default_initialization_7.f90: New test.
++
+ 2014-02-07  Paul Thomas  <pault@gcc.gnu.org>
+ 
+ 	PR fortran/59906
+diff --git a/gcc/testsuite/gcc.dg/torture/pr59903.c b/gcc/testsuite/gcc.dg/torture/pr59903.c
+new file mode 100644
+index 0000000..01772df
+--- /dev/null
++++ b/gcc/testsuite/gcc.dg/torture/pr59903.c
+@@ -0,0 +1,56 @@
++/* { dg-do compile } */
++
++int a, b, c, d, e, f, g, h, i[3], l, m, n, o, p, q, r;
++
++struct S0
++{
++  int f0;
++  int f1;
++  int f2;
++  int f3;
++} j;
++
++static int
++fn1 (int p1)
++{
++  return p1 || ((p1 > 0) > (e << 1)); 
++}
++
++static struct S0
++fn2 (struct S0 p1)
++{
++  char s;
++  struct S0 t = {0,0,0,0};
++  int u = 2;
++  for (;;)
++    {
++      if (i[0])
++	break;
++      for (m = 0; m < 4; m++)
++	for (p1.f0 = 0; p1.f0 < 3; p1.f0++)
++	  {
++	    j = t;
++	    t.f3 = i[p1.f0];
++	    o = b || 1 >> b ? 0 : a < 0;
++	    q = 1 % d;
++	    if ((g < fn1 ((1 ^ (q & 1)) | n)) ^ u)
++	      j.f3 |= p % 2;
++	    s = j.f3 > 0 ? j.f3 : j.f3 << 1;
++	    r = l = s && p1.f1 * c;
++	    h = p1.f1;
++	  }
++    }
++  return p1;
++}
++
++int
++main ()
++{
++  for (;f;)
++    {
++      struct S0 v = {0,0,0,0};
++      fn2 (v);
++      j.f3 = 0;
++    }
++  return 0;
++}
+diff --git a/gcc/testsuite/gcc.dg/torture/pr60115.c b/gcc/testsuite/gcc.dg/torture/pr60115.c
+new file mode 100644
+index 0000000..cf7f45d
+--- /dev/null
++++ b/gcc/testsuite/gcc.dg/torture/pr60115.c
+@@ -0,0 +1,14 @@
++/* { dg-do run } */
++
++int a, b[2];
++
++int
++main ()
++{
++lbl:
++  for (; a; a--)
++    if (b[10000])
++      goto lbl;
++
++  return 0;
++}
+diff --git a/gcc/testsuite/gfortran.dg/default_initialization_7.f90 b/gcc/testsuite/gfortran.dg/default_initialization_7.f90
+new file mode 100644
+index 0000000..fc8be98
+--- /dev/null
++++ b/gcc/testsuite/gfortran.dg/default_initialization_7.f90
+@@ -0,0 +1,22 @@
++! { dg-do compile }
++!
++! PR fortran/57033
++! ICE on a structure constructor of an extended derived type whose parent
++! type last component has a default initializer
++!
++! Contributed by Tilo Schwarz <tilo@tilo-schwarz.de>
++
++program ice
++
++type m
++    integer i
++    logical :: f = .false.
++end type m
++
++type, extends(m) :: me
++end type me
++
++type(me) meo
++
++meo = me(1)              ! ICE
++end program ice
+diff --git a/gcc/testsuite/gfortran.dg/proc_ptr_comp_38.f90 b/gcc/testsuite/gfortran.dg/proc_ptr_comp_38.f90
+new file mode 100644
+index 0000000..2a71ca0
+--- /dev/null
++++ b/gcc/testsuite/gfortran.dg/proc_ptr_comp_38.f90
+@@ -0,0 +1,12 @@
++! { dg-do compile }
++!
++! PR fortran/58803
++!
++! Contributed by Vittorio Zecca
++!
++! Was before ICEing due to a double free
++!
++      type t
++       procedure(real), pointer, nopass  :: f1, f2
++      end type
++      end
+diff --git a/gcc/tree-eh.c b/gcc/tree-eh.c
+index 41b55ac..4393e8a 100644
+--- a/gcc/tree-eh.c
++++ b/gcc/tree-eh.c
+@@ -2500,12 +2500,6 @@ struct gimple_opt_pass pass_lower_eh =
+  restart:
+   switch (code)
+     {
+-    case TARGET_MEM_REF:
+-      if (TREE_CODE (TMR_BASE (expr)) == ADDR_EXPR
+-	  && !TMR_INDEX (expr) && !TMR_INDEX2 (expr))
+-	return false;
+-      return !TREE_THIS_NOTRAP (expr);
+-
+     case COMPONENT_REF:
+     case REALPART_EXPR:
+     case IMAGPART_EXPR:
+@@ -2532,10 +2526,36 @@ struct gimple_opt_pass pass_lower_eh =
+ 	return false;
+       return !in_array_bounds_p (expr);
+ 
++    case TARGET_MEM_REF:
+     case MEM_REF:
+-      if (TREE_CODE (TREE_OPERAND (expr, 0)) == ADDR_EXPR)
++      if (TREE_CODE (TREE_OPERAND (expr, 0)) == ADDR_EXPR
++	  && tree_could_trap_p (TREE_OPERAND (TREE_OPERAND (expr, 0), 0)))
++	return true;
++      if (TREE_THIS_NOTRAP (expr))
+ 	return false;
+-      /* Fallthru.  */
++      /* We cannot prove that the access is in-bounds when we have
++         variable-index TARGET_MEM_REFs.  */
++      if (code == TARGET_MEM_REF
++	  && (TMR_INDEX (expr) || TMR_INDEX2 (expr)))
++	return true;
++      if (TREE_CODE (TREE_OPERAND (expr, 0)) == ADDR_EXPR)
++	{
++	  tree base = TREE_OPERAND (TREE_OPERAND (expr, 0), 0);
++	  double_int off = mem_ref_offset (expr);
++	  if (off.is_negative ())
++	    return true;
++	  if (TREE_CODE (base) == STRING_CST)
++	    return double_int::from_uhwi (TREE_STRING_LENGTH (base)).ule (off);
++	  else if (DECL_SIZE_UNIT (base) == NULL_TREE
++		   || TREE_CODE (DECL_SIZE_UNIT (base)) != INTEGER_CST
++		   || tree_to_double_int (DECL_SIZE_UNIT (base)).ule (off))
++	    return true;
++	  /* Now we are sure the first byte of the access is inside
++	     the object.  */
++	  return false;
++	}
++      return true;
++
+     case INDIRECT_REF:
+       return !TREE_THIS_NOTRAP (expr);
+ 
+diff --git a/gcc/tree-vect-loop.c b/gcc/tree-vect-loop.c
+index 5fcf5b0e..b60ef1c 100644
+--- a/gcc/tree-vect-loop.c
++++ b/gcc/tree-vect-loop.c
+@@ -5568,8 +5568,9 @@
+ 	      && !STMT_VINFO_LIVE_P (stmt_info))
+ 	    continue;
+ 
+-	  if ((TYPE_VECTOR_SUBPARTS (STMT_VINFO_VECTYPE (stmt_info))
+-	        != (unsigned HOST_WIDE_INT) vectorization_factor)
++	  if (STMT_VINFO_VECTYPE (stmt_info)
++	      && (TYPE_VECTOR_SUBPARTS (STMT_VINFO_VECTYPE (stmt_info))
++		  != (unsigned HOST_WIDE_INT) vectorization_factor)
+ 	      && dump_enabled_p ())
+ 	    dump_printf_loc (MSG_NOTE, vect_location, "multiple-types.");
+ 

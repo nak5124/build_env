@@ -1,0 +1,11 @@
+--- automake-1.14/configure.orig	2013-06-20 11:37:55.000000000 +0000
++++ automake-1.14/configure	2013-08-04 15:08:47.281926400 +0000
+@@ -7311,7 +7311,7 @@
+ fi
+ ac_cs_awk_cr=`$AWK 'BEGIN { print "a\rb" }' </dev/null 2>/dev/null`
+ if test "$ac_cs_awk_cr" = "a${ac_cr}b"; then
+-  ac_cs_awk_cr='\\r'
++  ac_cs_awk_cr='\r'
+ else
+   ac_cs_awk_cr=$ac_cr
+ fi
