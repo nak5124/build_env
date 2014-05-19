@@ -1,0 +1,34 @@
+[user]
+	email = nak5124@live.jp
+	name = Yuta NAKAI
+
+[core]
+	symlinks = false
+	autocrlf = false
+	whitespace = cr-at-eol
+
+
+[push]
+	default = simple
+
+[color]
+	diff = auto
+	status = auto
+	branch = auto
+	interactive = true
+
+[rebase]
+	autosquash = true
+
+[pack]
+	packsizelimit = 2g
+
+[help]
+	format = html
+
+[http]
+	sslcainfo = /usr/ssl/certs/ca-bundle.crt
+#	sslcainfo = /bin/curl-ca-bundle.crt
+
+[diff "astextplain"]
+	textconv = astextplain
