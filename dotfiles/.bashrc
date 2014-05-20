@@ -38,16 +38,6 @@ alias tar_gz='tar xzf'
 alias tar_lzma='tar xf'
 alias tar_xz='tar Jxf'
 
-# win exe
-alias twitter='$PORTABLEAPP/OpenTween/OpenTween.exe & '
-alias firefox='/c/firefox/firefox.exe & '
-alias np++='/c/progra~2/Notepad++/notepad++.exe & '
-alias calc='calc & '
-alias skype='/c/progra~2/Skype/Phone/Skype.exe & '
-alias taskm='taskmgr & '
-alias ctwit='$PORTABLEAPP/TweetConsole/twtcnsl.exe'
-alias ctwit_txt='$PORTABLEAPP/TweetConsole/twtcnsl.exe //txt ./tweet.txt'
-
 # omake
 alias sanchi='cat /usr/bin/sanchi.txt'
 alias nde='cat /usr/bin/nde.txt'
