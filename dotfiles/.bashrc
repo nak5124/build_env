@@ -76,4 +76,8 @@ BASE_LDFLAGS="-pipe -Wl,-O1 -Wl,--as-needed -Wl,-s -Wl,--nxcompat -Wl,--dynamicb
 export BASE_CFLAGS BASE_CPPFLAGS BASE_CXXFLAGS BASE_LDFLAGS
 
 # proxy
+#http_proxy=proxy.kuins.net:8080
+#https_proxy=$http_proxy
+#ftp_proxy=$fpt_proxy
+#export http_proxy https_proxy ftp_proxy
 
