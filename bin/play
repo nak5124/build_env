@@ -1,0 +1,3 @@
+#!/bin/sh
+
+exec /d/Program_Files_portable/mpc-hc/mpc-hc.exe "$@" &
