@@ -1,7 +1,6 @@
 #!/bin/bash
 
 
-PREFIX_DIR=/usr/x264_libs
 PATCHES_DIR=${HOME}/patches/ffmpeg
 LOGS_DIR=${HOME}/log/x264_libs
 if [ ! -d $LOGS_DIR ] ; then
@@ -41,19 +40,19 @@ build_ffmpeg() {
 
     git clean -fdx > /dev/null 2>&1
     git reset --hard > /dev/null 2>&1
-    git pull
+    git pull > /dev/null 2>&1
     git_hash > ${LOGS_DIR}/ffmpeg.hash
     git_rev >> ${LOGS_DIR}/ffmpeg.hash
 
     patch_ffmpeg
 
-    local _EXCFLAGS="-I${PREFIX_DIR}/include -fexcess-precision=fast"
-    local _EXLDFLAGS="-L${PREFIX_DIR}/lib"
+    local _EXCFLAGS="-I/usr/x264_libs/include -fexcess-precision=fast"
+    local _EXLDFLAGS="-L/usr/x264_libs/lib"
 
     source cpath x86_64
     echo "===> configure libav{codec,format,util},libswscal"
-    PKG_CONFIG_PATH=${PREFIX_DIR}/lib/pkgconfig         \
-    ./configure --prefix=$PREFIX_DIR                    \
+    PKG_CONFIG_PATH=/usr/x264_libs/lib/pkgconfig        \
+    ./configure --prefix=/usr/x264_libs                 \
                 --enable-gpl --enable-version3          \
                 --disable-programs --disable-doc        \
                 --disable-avdevice --disable-swresample \
@@ -76,6 +75,7 @@ build_ffmpeg() {
     echo "===> make libav{codec,format,util},libswscale"
     make -j9 -O > ${LOGS_DIR}/ffmpeg_make.log 2>&1 || exit 1
     echo "done"
+
     echo "===> install libav{codec,format,util},libswscale ${arch}"
     make install > ${LOGS_DIR}/ffmpeg_install.log 2>&1 || exit 1
     echo "done"
@@ -96,13 +96,13 @@ build_liblsmash() {
 
     git clean -fdx > /dev/null 2>&1
     git reset --hard > /dev/null 2>&1
-    git pull
+    git pull > /dev/null 2>&1
     git_hash > ${LOGS_DIR}/lsmash.hash
     git_rev >> ${LOGS_DIR}/lsmash.hash
 
     source cpath x86_64
     echo "===> configure liblsmash"
-    ./configure --prefix=$PREFIX_DIR \
+    ./configure --prefix=/usr/x264_libs \
         > ${LOGS_DIR}/lsmash_config.log 2>&1 || exit 1
     echo "done"
 
@@ -110,6 +110,7 @@ build_liblsmash() {
     echo "===> make liblsmash"
     make lib -j5 -O > ${LOGS_DIR}/lsmash_make.log 2>&1 || exit 1
     echo "done"
+
     echo "===> install liblsmash"
     make install-lib > ${LOGS_DIR}/lsmash_install.log 2>&1 || exit 1
     echo "done"
