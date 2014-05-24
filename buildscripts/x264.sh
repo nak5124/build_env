@@ -21,7 +21,6 @@ build_x264() {
     git_hash > ${LOGS_DIR}/x264.hash
     git_rev >> ${LOGS_DIR}/x264.hash
 
-    local PKG_DIR=/usr/x264_libs/lib/pkgconfig
     local SAMPLE_FILES="${HOME}/y4m/deadline_cif.y4m ${HOME}/y4m/foreman_cif.y4m ${HOME}/y4m/soccer_4cif.y4m"
     local patches_num=22
 
@@ -52,13 +51,13 @@ build_x264() {
             fi
 
             echo "===> configure x264 ${_target}"
-            PKG_CONFIG_PATH=$PKG_DIR             \
-            ./configure ${_clopt}                \
-                        --enable-win32thread     \
-                        --bit-depth=$bitdepth    \
-                        --chroma-format=$_format \
-                        --enable-strip           \
-                        ${_opt}                  \
+            PKG_CONFIG_PATH=/usr/x264_libs/lib/pkgconfig \
+            ./configure ${_clopt}                        \
+                        --enable-win32thread             \
+                        --bit-depth=$bitdepth            \
+                        --chroma-format=$_format         \
+                        --enable-strip                   \
+                        ${_opt}                          \
             > ${LOGS_DIR}/x264_config_${bitdepth}bit_${buildtype}.log 2>&1 || exit 1
             echo "done"
 
@@ -99,9 +98,11 @@ build_x264() {
         done
     done
 
-    git archive --format=tar --prefix=x264_r${X264_REVISION}_src/ HEAD | lzip -9 -o /usr/local/x264/x264_r${X264_REVISION}_src.tar
+    git archive --format=tar --prefix=x264_r${X264_REVISION}_src/ HEAD \
+        | lzip -9 -o /usr/local/x264/x264_r${X264_REVISION}_src.tar
     git format-patch HEAD~$patches_num -o x264_r${X264_REVISION}_patches
-    tar cf - x264_r${X264_REVISION}_patches | lzip -9 -o /usr/local/x264/x264_r${X264_REVISION}_patches.tar -
+    tar cf - x264_r${X264_REVISION}_patches \
+        | lzip -9 -o /usr/local/x264/x264_r${X264_REVISION}_patches.tar -
     cp -fa /usr/local/x264/COPYING.GPLv3 $DEST_DIR
     cp -fa /usr/local/x264/COPYING.GPLv2 ${DEST_DIR}/lite
 
