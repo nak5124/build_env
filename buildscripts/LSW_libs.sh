@@ -110,7 +110,7 @@ build_libopus() {
 patch_ffmpeg() {
     echo "===> patching... FFmpeg"
 
-    local _N=67
+    local _N=33
     for i in `seq 1 ${_N}`
     do
         local num=$(printf "%04d" $i )
@@ -168,7 +168,6 @@ build_ffmpeg() {
                     --disable-encoders                      \
                     --disable-hwaccels                      \
                     --disable-muxers                        \
-                    --disable-demuxer=matroska_haali        \
                     --disable-devices                       \
                     --disable-filters                       \
                     --disable-iconv                         \

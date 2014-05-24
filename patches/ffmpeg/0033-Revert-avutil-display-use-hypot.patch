@@ -1,0 +1,30 @@
+From 9f8c6e0e81a418c4182031226defa17fdb374b79 Mon Sep 17 00:00:00 2001
+From: Yuta NAKAI <nak5124@live.jp>
+Date: Sat, 24 May 2014 16:16:22 +0900
+Subject: [PATCH] Revert "avutil/display: use hypot()."
+
+This reverts commit fa972dcf1a36805de4aaa031331061a0a334996d.
+---
+ libavutil/display.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/libavutil/display.c b/libavutil/display.c
+index da47cee..cc11536 100644
+--- a/libavutil/display.c
++++ b/libavutil/display.c
+@@ -35,8 +35,10 @@ double av_display_rotation_get(const int32_t matrix[9])
+ {
+     double rotation, scale[2];
+ 
+-    scale[0] = hypot(CONV_FP(matrix[0]), CONV_FP(matrix[3]));
+-    scale[1] = hypot(CONV_FP(matrix[1]), CONV_FP(matrix[4]));
++    scale[0] = sqrt(CONV_FP(matrix[0]) * CONV_FP(matrix[0]) +
++                    CONV_FP(matrix[3]) * CONV_FP(matrix[3]));
++    scale[1] = sqrt(CONV_FP(matrix[1]) * CONV_FP(matrix[1]) +
++                    CONV_FP(matrix[4]) * CONV_FP(matrix[4]));
+ 
+     if (scale[0] == 0.0 || scale[1] == 0.0)
+         return NAN;
+-- 
+1.9.3
+
