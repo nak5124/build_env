@@ -1,0 +1,64 @@
+diff --git a/AviSynth/LSMASHSourceVCX.vcxproj b/AviSynth/LSMASHSourceVCX.vcxproj
+index 8ff380d..464f4d8 100644
+--- a/AviSynth/LSMASHSourceVCX.vcxproj
++++ b/AviSynth/LSMASHSourceVCX.vcxproj
+@@ -71,6 +71,14 @@
+     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkIncremental>
+     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkIncremental>
+   </PropertyGroup>
++  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
++    <IncludePath>C:\msys2\LSW_libs\i686\include;$(IncludePath)</IncludePath>
++    <LibraryPath>C:\msys2\LSW_libs\i686\lib;$(LibraryPath)</LibraryPath>
++  </PropertyGroup>
++  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
++    <IncludePath>C:\msys2\LSW_libs\x86_64\include;$(VCInstallDir)atlmfc\include;$(WindowsSDK_IncludePath);$(VCInstallDir)include</IncludePath>
++    <LibraryPath>C:\msys2\LSW_libs\x86_64\lib;$(VCInstallDir)atlmfc\lib\amd64;$(WindowsSDK_LibraryPath_x64);$(VCInstallDir)lib\amd64</LibraryPath>
++  </PropertyGroup>
+   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+     <ClCompile>
+       <Optimization>Disabled</Optimization>
+@@ -118,14 +126,22 @@
+       </PrecompiledHeader>
+       <WarningLevel>Level3</WarningLevel>
+       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
++      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
++      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
++      <OmitFramePointers>true</OmitFramePointers>
++      <FloatingPointModel>Fast</FloatingPointModel>
++      <ProgramDataBaseFileName />
++      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+     </ClCompile>
+     <Link>
+-      <GenerateDebugInformation>true</GenerateDebugInformation>
++      <GenerateDebugInformation>false</GenerateDebugInformation>
+       <SubSystem>Windows</SubSystem>
+       <OptimizeReferences>true</OptimizeReferences>
+       <EnableCOMDATFolding>true</EnableCOMDATFolding>
+       <TargetMachine>MachineX86</TargetMachine>
+       <ImageHasSafeExceptionHandlers />
++      <ProgramDatabaseFile />
++      <LargeAddressAware>true</LargeAddressAware>
+     </Link>
+   </ItemDefinitionGroup>
+   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+@@ -139,13 +155,19 @@
+       </PrecompiledHeader>
+       <WarningLevel>Level3</WarningLevel>
+       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
++      <MultiProcessorCompilation>true</MultiProcessorCompilation>
++      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
++      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
++      <FloatingPointModel>Fast</FloatingPointModel>
+     </ClCompile>
+     <Link>
+-      <GenerateDebugInformation>true</GenerateDebugInformation>
++      <GenerateDebugInformation>false</GenerateDebugInformation>
+       <SubSystem>Windows</SubSystem>
+       <OptimizeReferences>true</OptimizeReferences>
+       <EnableCOMDATFolding>true</EnableCOMDATFolding>
+       <ImageHasSafeExceptionHandlers />
++      <ProgramDatabaseFile />
++      <LargeAddressAware>true</LargeAddressAware>
+     </Link>
+   </ItemDefinitionGroup>
+   <ItemGroup>

@@ -1,0 +1,11 @@
+diff --git a/AviSynth/exlibs.cpp b/AviSynth/exlibs.cpp
+index 46213f7..fe1cfe3 100644
+--- a/AviSynth/exlibs.cpp
++++ b/AviSynth/exlibs.cpp
+@@ -34,3 +34,6 @@
+ #pragma comment( lib, "libwsock32.a" )
+ 
+ /* Add more external libraries user-self if needed. */
++#pragma comment( lib, "libopencore-amrwb.a" )
++#pragma comment( lib, "libopencore-amrnb.a" )
++#pragma comment( lib, "libopus.a" )
