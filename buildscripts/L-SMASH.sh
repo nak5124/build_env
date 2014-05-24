@@ -1,10 +1,11 @@
 #!/bin/bash
 
 
-WORK_DIR="${HOME}/L-SMASH"
-PREFIX_DIR="/usr/local/L-SMASH"
-LOGS_DIR="${HOME}/log/lsmash"
-LSMASH_VER="1.11.2"
+LOGS_DIR=${HOME}/log/lsmash
+if [ ! -d $LOGS_DIR ] ; then
+    mkdir -p $LOGS_DIR
+fi
+LSMASH_VER="1.11.7"
 
 echo_helpfile() {
     echo "muxer" > ${DEST_DIR}/lsmash_help.txt
@@ -19,17 +20,17 @@ echo_helpfile() {
     echo "boxdumper" >> ${DEST_DIR}/lsmash_help.txt
     ./boxdumper 2>> ${DEST_DIR}/lsmash_help.txt
     dos2unix ${DEST_DIR}/lsmash_help.txt > /dev/null 2>&1
-    cp -fa ${DEST_DIR}/lsmash_help.txt $PREFIX_DIR
+    cp -fa ${DEST_DIR}/lsmash_help.txt /usr/local/L-SMASH
 }
 
 build_lsmash() {
     clear; echo "Build L-SMASH git-master"
 
-    if [ ! -d $WORK_DIR ] ; then
+    if [ ! -d ${HOME}/L-SMASH ] ; then
         cd $HOME
         git clone https://github.com/l-smash/l-smash.git L-SMASH
     fi
-    cd $WORK_DIR
+    cd ${HOME}/L-SMASH
 
     git clean -fdx > /dev/null 2>&1
     git reset --hard > /dev/null 2>&1
@@ -37,7 +38,7 @@ build_lsmash() {
     git_hash > ${LOGS_DIR}/lsmash.hash
     git_rev >> ${LOGS_DIR}/lsmash.hash
 
-    DEST_DIR=${PREFIX_DIR}/L-SMASH-${LSMASH_VER}-r`git_rev`-g`git_hash`
+    DEST_DIR=/usr/local/L-SMASH/L-SMASH-${LSMASH_VER}-r`git_rev`-g`git_hash`
     if [[ ! -d ${DEST_DIR}/{win32,x64} ]] ; then
         mkdir -p ${DEST_DIR}/{win32,x64}
     fi
@@ -53,14 +54,16 @@ build_lsmash() {
         echo "===> make L-SMASH ${arch}"
         make -j3 -O > ${LOGS_DIR}/lsmash_make_${arch}.log 2>&1 || exit 1
         echo "done"
-        echo "===> copying files ${arch}"
+
+        echo "===> copy files ${arch}"
         if [ "$arch" == "i686" ] ; then
             cp -fa ./cli/*.exe ${DEST_DIR}/win32/
             cp -fa ./LICENSE $DEST_DIR
             echo_helpfile
         else
             cp -fa ./cli/*.exe ${DEST_DIR}/x64/
-            cp -fa ./cli/*.exe $PREFIX_DIR
+            cp -fa ./cli/*.exe /usr/local/L-SMASH
+            cp -fa ./cli/*.exe /d/encode/tools
         fi
         echo "done"
         make distclean > /dev/null 2>&1
