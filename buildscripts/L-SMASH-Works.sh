@@ -92,7 +92,7 @@ build_LSW_avisynth() {
     echo "done"
 
     echo "===> copy LSW AviSynth"
-    cp -fa /usr/local/L-SMASH-Works/msvcr120.dll ${DEST_DIR}/AviSynt
+    cp -fa /usr/local/L-SMASH-Works/msvcr120.dll ${DEST_DIR}/AviSynth
     cp -fa /usr/local/L-SMASH-Works/x64/msvcr120.dll ${DEST_DIR}/AviSynth/x64
     cp -fa ${HOME}/L-SMASH-Works/AviSynth/Release/LSMASHSource.dll \
            ${DEST_DIR}/Avisynth
