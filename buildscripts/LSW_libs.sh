@@ -1,7 +1,6 @@
 #!/bin/bash
 
 
-PREFIX_DIR=/usr/LSW_libs
 PATCHES_DIR=${HOME}/patches/ffmpeg
 LOGS_DIR=${HOME}/log/LSW_libs
 if [ ! -d $LOGS_DIR ] ; then
@@ -20,7 +19,7 @@ build_libopencore_amr() {
 
     git clean -fdx > /dev/null 2>&1
     git reset --hard > /dev/null 2>&1
-    git pull
+    git pull > /dev/null 2>&1
     git_hash > ${LOGS_DIR}/opencore-amr.hash
     git_rev >> ${LOGS_DIR}/opencore-amr.hash
 
@@ -30,7 +29,7 @@ build_libopencore_amr() {
     do
         source cpath $arch
         echo "===> configure libopencore-amr ${arch}"
-        ./configure --prefix=${PREFIX_DIR}/$arch \
+        ./configure --prefix=/usr/LSW_libs/$arch \
                     --build=${arch}-w64-mingw32  \
                     --host=${arch}-w64-mingw32   \
                     --disable-shared             \
@@ -46,8 +45,10 @@ build_libopencore_amr() {
         echo "===> make libopencore-amr ${arch}"
         make -j5 -O > ${LOGS_DIR}/opencore-amr_make_${arch}.log 2>&1 || exit 1
         echo "done"
+
         echo "===> install libopencore-amr ${arch}"
-        make install-strip > ${LOGS_DIR}/opencore-amr_install_${arch}.log 2>&1 || exit 1
+        make install-strip > ${LOGS_DIR}/opencore-amr_install_${arch}.log \
+            2>&1 || exit 1
         echo "done"
         make distclean > /dev/null 2>&1
     done
@@ -60,14 +61,14 @@ build_libopus() {
     clear; echo "Build libopus git-master"
 
     if [ ! -d ${HOME}/opus-tools/opus ] ; then
-        cd $HOME/opus-tools
+        cd ${HOME}/opus-tools
         git clone git://git.xiph.org/opus.git
     fi
     cd ${HOME}/opus-tools/opus
 
     git clean -fdx > /dev/null 2>&1
     git reset --hard > /dev/null 2>&1
-    git pull
+    git pull > /dev/null 2>&1
     git_hash > ${LOGS_DIR}/opus.hash
     git_rev >> ${LOGS_DIR}/opus.hash
 
@@ -77,7 +78,7 @@ build_libopus() {
     do
         source cpath $arch
         echo "===> configure libopus ${arch}"
-        ./configure --prefix=${PREFIX_DIR}/$arch \
+        ./configure --prefix=/usr/LSW_libs/$arch \
                     --build=${arch}-w64-mingw32  \
                     --host=${arch}-w64-mingw32   \
                     --disable-shared             \
@@ -95,6 +96,7 @@ build_libopus() {
         echo "===> make libopus ${arch}"
         make -j5 -O > ${LOGS_DIR}/opus_make_${arch}.log 2>&1 || exit 1
         echo "done"
+
         echo "===> install libopus ${arch}"
         make install > ${LOGS_DIR}/opus_install_${arch}.log 2>&1 || exit 1
         echo "done"
@@ -137,7 +139,7 @@ build_ffmpeg() {
 
     git clean -fdx > /dev/null 2>&1
     git reset --hard > /dev/null 2>&1
-    git pull
+    git pull > /dev/null 2>&1
     git_hash > ${LOGS_DIR}/ffmpeg.hash
     git_rev >> ${LOGS_DIR}/ffmpeg.hash
 
@@ -150,13 +152,13 @@ build_ffmpeg() {
         else
             local _archopt="--arch=x86_64"
         fi
-        local _EXCFLAGS="-I${PREFIX_DIR}/${arch}/include -fexcess-precision=fast"
-        local _EXLDFLAGS="-L${PREFIX_DIR}/${arch}/lib"
+        local _EXCFLAGS="-I/usr/LSW_libs/${arch}/include -fexcess-precision=fast"
+        local _EXLDFLAGS="-L/usr/LSW_libs/${arch}/lib"
 
         source cpath $arch
         echo "===> configure libav{codec,format,resample,util},libswscale ${arch}"
-        PKG_CONFIG_PATH=${PREFIX_DIR}/${arch}/lib/pkgconfig \
-        ./configure --prefix=${PREFIX_DIR}/$arch            \
+        PKG_CONFIG_PATH=/usr/LSW_libs/${arch}/lib/pkgconfig \
+        ./configure --prefix=/usr/LSW_libs/$arch            \
                     --enable-version3                       \
                     --disable-programs --disable-doc        \
                     --disable-avdevice --disable-swresample \
@@ -188,6 +190,7 @@ build_ffmpeg() {
         echo "===> make libav{codec,format,resample,util},libswscale ${arch}"
         make -j9 -O > ${LOGS_DIR}/ffmpeg_make_${arch}.log 2>&1 || exit 1
         echo "done"
+
         echo "===> install libav{codec,format,resample,util},libswscale ${arch}"
         make install > ${LOGS_DIR}/ffmpeg_install_${arch}.log 2>&1 || exit 1
         echo "done"
@@ -209,7 +212,7 @@ build_liblsmash() {
 
     git clean -fdx > /dev/null 2>&1
     git reset --hard > /dev/null 2>&1
-    git pull
+    git pull > /dev/null 2>&1
     git_hash > ${LOGS_DIR}/lsmash.hash
     git_rev >> ${LOGS_DIR}/lsmash.hash
 
@@ -217,7 +220,7 @@ build_liblsmash() {
     do
         source cpath $arch
         echo "===> configure liblsmash ${arch}"
-        ./configure --prefix=${PREFIX_DIR}/$arch \
+        ./configure --prefix=/usr/LSW_libs/$arch \
         > ${LOGS_DIR}/lsmash_config_${arch}.log 2>&1 || exit 1
         echo "done"
 
@@ -225,6 +228,7 @@ build_liblsmash() {
         echo "===> make liblsmash ${arch}"
         make lib -j5 -O > ${LOGS_DIR}/lsmash_make_${arch}.log 2>&1 || exit 1
         echo "done"
+
         echo "===> install liblsmash ${arch}"
         make install-lib > ${LOGS_DIR}/lsmash_install_${arch}.log 2>&1 || exit 1
         echo "done"
