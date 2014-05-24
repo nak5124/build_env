@@ -72,6 +72,7 @@ build_LSW_aviutl() {
            ${HOME}/L-SMASH-Works/AviUtl/*.auc \
            ${DEST_DIR}/AviUtl
     cp -fa ${DEST_DIR}/AviUtl/* /usr/local/L-SMASH-Works
+    cp -fa ${DEST_DIR}/AviUtl/* /d/encode/aviutl/Plugins
     cp -fa ${HOME}/L-SMASH-Works/AviUtl/README* ${DEST_DIR}/AviUtl
     cp -fa ${HOME}/L-SMASH-Works/AviUtl/LICENSE \
            ${DEST_DIR}/legal_stuff/L-SMASH-Works/AviUtl
@@ -98,10 +99,14 @@ build_LSW_avisynth() {
            ${DEST_DIR}/Avisynth
     cp -fa ${HOME}/L-SMASH-Works/AviSynth/Release/LSMASHSource.dll \
            /usr/local/L-SMASH-Works
+    cp -fa ${HOME}/L-SMASH-Works/AviSynth/Release/LSMASHSource.dll \
+           /c/AviSynth+/plugins
     cp -fa ${HOME}/L-SMASH-Works/AviSynth/x64/Release/LSMASHSource.dll \
            ${DEST_DIR}/Avisynth/x64
     cp -fa ${HOME}/L-SMASH-Works/AviSynth/x64/Release/LSMASHSource.dll \
            /usr/local/L-SMASH-Works/x64
+    cp -fa ${HOME}/L-SMASH-Works/AviSynth/x64/Release/LSMASHSource.dll \
+           /c/AviSynth+/plugins64
     cp -fa ${HOME}/L-SMASH-Works/AviSynth/README ${DEST_DIR}/AviSynth
     cp -fa ${HOME}/L-SMASH-Works/AviSynth/LICENSE \
            ${DEST_DIR}/legal_stuff/L-SMASH-Works/AviSynth
@@ -142,6 +147,8 @@ build_LSW_vapoursynth() {
                    ${DEST_DIR}/VapourSynth
             cp -fa ${HOME}/L-SMASH-Works/VapourSynth/vslsmashsource.dll \
                    /usr/local/L-SMASH-Works
+            cp -fa ${HOME}/L-SMASH-Works/VapourSynth/vslsmashsource.dll \
+                   /c/VapourSynth/plugins32
             cp -fa ${HOME}/L-SMASH-Works/VapourSynth/README \
                    ${DEST_DIR}/VapourSynth
             cp -fa ${HOME}/L-SMASH-Works/VapourSynth/LICENSE \
@@ -151,6 +158,8 @@ build_LSW_vapoursynth() {
                    ${DEST_DIR}/VapourSynth/x64
             cp -fa ${HOME}/L-SMASH-Works/VapourSynth/vslsmashsource.dll \
                    /usr/local/L-SMASH-Works/x64
+            cp -fa ${HOME}/L-SMASH-Works/VapourSynth/vslsmashsource.dll \
+                   /c/VapourSynth/plugins64
         fi
         echo "done"
 
