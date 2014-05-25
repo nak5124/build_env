@@ -14,9 +14,11 @@ init_directories() {
     if [ ! -d $SRC_DIR ] ; then
         mkdir -p $SRC_DIR
     fi
+
     if [ ! -d $PATCHES_DIR ] ; then
         mkdir -p $PATCHES_DIR
     fi
+
     for arch in i686 x86_64
     do
         if [ "$arch" == "i686" ] ; then
@@ -24,14 +26,34 @@ init_directories() {
         else
             local MINGW_DIR=${WORK_DIR}/mingw64
         fi
+
         if [[ ! -d ${MINGW_DIR}/${arch}-w64-mingw32/{include,lib} ]] ; then
             mkdir -p ${MINGW_DIR}/${arch}-w64-mingw32/{include,lib}
         fi
 
-        if [[ ! -d ${WORK_DIR}/prein_${arch}/{libiconv,mingw-w64-headers,binutils,winpthreads,mingw-w64-crt,{zlib,bzip2}/{include,lib}} ]] ; then
-            mkdir -p ${WORK_DIR}/prein_${arch}/{libiconv,mingw-w64-headers,binutils,winpthreads,mingw-w64-crt,{zlib,bzip2}/{include,lib}}
+        if [ ! -d ${WORK_DIR}/prein_${arch}/libiconv ] ; then
+            mkdir -p ${WORK_DIR}/prein_${arch}/libiconv
+        fi
+        if [ ! -d ${WORK_DIR}/prein_${arch}/mingw-w64-headers ] ; then
+            mkdir -p ${WORK_DIR}/prein_${arch}/mingw-w64-headers
+        fi
+        if [ ! -d ${WORK_DIR}/prein_${arch}/binutils ] ; then
+            mkdir -p ${WORK_DIR}/prein_${arch}/binutils
+        fi
+        if [ ! -d ${WORK_DIR}/prein_${arch}/winpthreads ] ; then
+            mkdir -p ${WORK_DIR}/prein_${arch}/winpthreads
+        fi
+        if [ ! -d ${WORK_DIR}/prein_${arch}/mingw-w64-crt ] ; then
+            mkdir -p ${WORK_DIR}/prein_${arch}/mingw-w64-crt
+        fi
+        if [[ ! -d ${WORK_DIR}/prein_${arch}/zlib/{include,lib} ]] ; then
+            mkdir -p ${WORK_DIR}/prein_${arch}/zlib/{include,lib}
+        fi
+        if [[ ! -d ${WORK_DIR}/prein_${arch}/bzip2/{include,lib} ]] ; then
+            mkdir -p ${WORK_DIR}/prein_${arch}/bzip2/{include,lib}
         fi
     done
+
     if [ ! -d $LOGS_DIR ] ; then
         mkdir -p $LOGS_DIR
     fi
@@ -46,13 +68,17 @@ download_srcs() {
 
     cd $SRC_DIR
     # libiconv
-    wget -nc http://ftp.gnu.org/gnu/libiconv/libiconv-${ICONV_VER}.tar.gz > /dev/null 2>&1
+    wget -nc http://ftp.gnu.org/gnu/libiconv/libiconv-${ICONV_VER}.tar.gz \
+        > /dev/null 2>&1
     # binutils
-    wget -nc http://ftp.gnu.org/gnu/binutils/binutils-${BINUTILS_VER}.tar.bz2 > /dev/null 2>&1
+    wget -nc http://ftp.gnu.org/gnu/binutils/binutils-${BINUTILS_VER}.tar.bz2 \
+        > /dev/null 2>&1
     # bzip2
-    wget -nc http://www.bzip.org/${BZIP2_VER}/bzip2-${BZIP2_VER}.tar.gz > /dev/null 2>&1
+    wget -nc http://www.bzip.org/${BZIP2_VER}/bzip2-${BZIP2_VER}.tar.gz \
+        > /dev/null 2>&1
     # GCC
-    wget -nc ftp://gcc.gnu.org/pub/gcc/releases/gcc-${GCC_VER}/gcc-${GCC_VER}.tar.bz2 > /dev/null 2>&1
+    wget -nc ftp://gcc.gnu.org/pub/gcc/releases/gcc-${GCC_VER}/gcc-${GCC_VER}.tar.bz2 \
+        > /dev/null 2>&1
 
     cd $BUILD_DIR
     # zlib
@@ -62,17 +88,20 @@ download_srcs() {
     # MinGW-w64-headers
     if [ ! -d ${BUILD_DIR}/mingw-w64-headers ] ; then
 #        svn co svn://svn.code.sf.net/p/mingw-w64/code/trunk/mingw-w64-headers
-        svn co http://svn.code.sf.net/p/mingw-w64/code/trunk/mingw-w64-headers > /dev/null 2>&1
+        svn co http://svn.code.sf.net/p/mingw-w64/code/trunk/mingw-w64-headers \
+            > /dev/null 2>&1
     fi
     # winpthreads
     if [ ! -d ${BUILD_DIR}/winpthreads ] ; then
 #        svn co svn://svn.code.sf.net/p/mingw-w64/code/trunk/mingw-w64-libraries/winpthreads
-        svn co http://svn.code.sf.net/p/mingw-w64/code/trunk/mingw-w64-libraries/winpthreads > /dev/null 2>&1
+        svn co http://svn.code.sf.net/p/mingw-w64/code/trunk/mingw-w64-libraries/winpthreads \
+            > /dev/null 2>&1
     fi
     # MinGW-w64-crt
     if [ ! -d ${BUILD_DIR}/mingw-w64-crt ] ; then
 #        svn co svn://svn.code.sf.net/p/mingw-w64/code/trunk/mingw-w64-crt
-        svn co http://svn.code.sf.net/p/mingw-w64/code/trunk/mingw-w64-crt > /dev/null 2>&1
+        svn co http://svn.code.sf.net/p/mingw-w64/code/trunk/mingw-w64-crt \
+            > /dev/null 2>&1
     fi
 
     cd $WORK_DIR
@@ -90,17 +119,18 @@ build_iconv() {
     cd ${BUILD_DIR}/libiconv-${ICONV_VER}
 
     if [ ! -f ${BUILD_DIR}/libiconv-${ICONV_VER}/patched_01.marker ] ; then
-        patch -p1 < ${PATCHES_DIR}/libiconv/libiconv-1.14-ja-1.patch > /dev/null 2>&1 || exit 1
+        patch -p1 < ${PATCHES_DIR}/libiconv/libiconv-1.14-ja-1.patch \
+            > ${LOGS_DIR}/iconv_patches.log 2>&1 || exit 1
         touch ${BUILD_DIR}/libiconv-${ICONV_VER}/patched_01.marker
     fi
-
     if [ ! -f ${BUILD_DIR}/libiconv-${ICONV_VER}/patched_02.marker ] ; then
-        patch -p1 < ${PATCHES_DIR}/libiconv/0001-compile-relocatable-in-gnulib.mingw.patch > /dev/null 2>&1 || exit 1
+        patch -p1 < ${PATCHES_DIR}/libiconv/0001-compile-relocatable-in-gnulib.mingw.patch \
+            >> ${LOGS_DIR}/iconv_patches.log 2>&1 || exit 1
         touch ${BUILD_DIR}/libiconv-${ICONV_VER}/patched_02.marker
     fi
-
     if [ ! -f ${BUILD_DIR}/libiconv-${ICONV_VER}/patched_03.marker ] ; then
-        patch -p1 < ${PATCHES_DIR}/libiconv/0002-fix-cr-for-awk-in-configure.all.patch > /dev/null 2>&1 || exit 1
+        patch -p1 < ${PATCHES_DIR}/libiconv/0002-fix-cr-for-awk-in-configure.all.patch \
+            >> ${LOGS_DIR}/iconv_patches.log 2>&1 || exit 1
         touch ${BUILD_DIR}/libiconv-${ICONV_VER}/patched_03.marker
     fi
 
@@ -141,8 +171,10 @@ build_iconv() {
             local MINGW_DIR=${WORK_DIR}/mingw64
         fi
         echo "===> copy libiconv ${arch} to ${MINGW_DIR}"
-        cp -fa ${WORK_DIR}/prein_${arch}/libiconv/include/*.h ${MINGW_DIR}/${arch}-w64-mingw32/include
-        cp -fa ${WORK_DIR}/prein_${arch}/libiconv/lib/*.a ${MINGW_DIR}/${arch}-w64-mingw32/lib
+        cp -fa ${WORK_DIR}/prein_${arch}/libiconv/include/*.h \
+               ${MINGW_DIR}/${arch}-w64-mingw32/include
+        cp -fa ${WORK_DIR}/prein_${arch}/libiconv/lib/*.a \
+               ${MINGW_DIR}/${arch}-w64-mingw32/lib
         echo "done"
     done
 
@@ -161,8 +193,10 @@ copy_only_iconv() {
             local MINGW_DIR=${WORK_DIR}/mingw64
         fi
         echo "===> copy libiconv ${arch} to ${MINGW_DIR}"
-        cp -fa ${WORK_DIR}/prein_${arch}/libiconv/include/*.h ${MINGW_DIR}/${arch}-w64-mingw32/include
-        cp -fa ${WORK_DIR}/prein_${arch}/libiconv/lib/*.a ${MINGW_DIR}/${arch}-w64-mingw32/lib
+        cp -fa ${WORK_DIR}/prein_${arch}/libiconv/include/*.h \
+               ${MINGW_DIR}/${arch}-w64-mingw32/include
+        cp -fa ${WORK_DIR}/prein_${arch}/libiconv/lib/*.a \
+               ${MINGW_DIR}/${arch}-w64-mingw32/lib
         echo "done"
     done
 
@@ -187,9 +221,11 @@ build_zlib() {
     do
         source cpath $arch
         if [ "$arch" == "i686" ] ; then
-            cp -fa ${BUILD_DIR}/zlib/contrib/asm686/match.S ${BUILD_DIR}/zlib/match.S
+            cp -fa ${BUILD_DIR}/zlib/contrib/asm686/match.S \
+                   ${BUILD_DIR}/zlib/match.S
         else
-            cp -fa ${BUILD_DIR}/zlib/contrib/amd64/amd64-match.S ${BUILD_DIR}/zlib/match.S
+            cp -fa ${BUILD_DIR}/zlib/contrib/amd64/amd64-match.S \
+                   ${BUILD_DIR}/zlib/match.S
         fi
 
         make clean -f ${BUILD_DIR}/zlib/win32/Makefile.gcc > /dev/null 2>&1
@@ -200,7 +236,8 @@ build_zlib() {
         echo "done"
 
         echo "===> install zlib ${arch}"
-        cp -fa ${BUILD_DIR}/zlib/zlib.h ${BUILD_DIR}/zlib/zconf.h ${WORK_DIR}/prein_${arch}/zlib/include
+        cp -fa ${BUILD_DIR}/zlib/zlib.h ${BUILD_DIR}/zlib/zconf.h \
+               ${WORK_DIR}/prein_${arch}/zlib/include
         cp -fa ${BUILD_DIR}/zlib/libz.a ${WORK_DIR}/prein_${arch}/zlib/lib
         echo "done"
 
@@ -210,7 +247,8 @@ build_zlib() {
             local MINGW_DIR=${WORK_DIR}/mingw64
         fi
         echo "===> copy zlib ${arch} to ${MINGW_DIR}"
-        cp -fra ${WORK_DIR}/prein_${arch}/zlib/* ${MINGW_DIR}/${arch}-w64-mingw32
+        cp -fra ${WORK_DIR}/prein_${arch}/zlib/* \
+                ${MINGW_DIR}/${arch}-w64-mingw32
         echo "done"
 
         git clean -fdx > /dev/null 2>&1
@@ -232,7 +270,8 @@ copy_only_zlib() {
             local MINGW_DIR=${WORK_DIR}/mingw64
         fi
         echo "===> copy zlib ${arch} to ${MINGW_DIR}"
-        cp -fra ${WORK_DIR}/prein_${arch}/zlib/* ${MINGW_DIR}/${arch}-w64-mingw32
+        cp -fra ${WORK_DIR}/prein_${arch}/zlib/* \
+                ${MINGW_DIR}/${arch}-w64-mingw32
         echo "done"
     done
 
@@ -270,12 +309,14 @@ build_headers() {
         echo "done"
 
         echo "===> make MinGW-w64 headers ${arch}"
-        make -j$jobs -O all > ${LOGS_DIR}/headers_make_${arch}.log 2>&1 || exit 1
+        make -j$jobs -O all \
+            > ${LOGS_DIR}/headers_make_${arch}.log 2>&1 || exit 1
         echo "done"
 
         echo "===> install MinGW-w64 headers ${arch}"
         rm -fr ${WORK_DIR}/prein_${arch}/mingw-w64-headers/*
-        make install-strip > ${LOGS_DIR}/headers_install_${arch}.log 2>&1 || exit 1
+        make install-strip \
+            > ${LOGS_DIR}/headers_install_${arch}.log 2>&1 || exit 1
         echo "done"
 
         if [ "$arch" == "i686" ] ; then
@@ -284,7 +325,8 @@ build_headers() {
             local MINGW_DIR=${WORK_DIR}/mingw64
         fi
         echo "===> copy MinGW-w64 headers ${arch} to ${MINGW_DIR}"
-        cp -fra ${WORK_DIR}/prein_${arch}/mingw-w64-headers/* ${MINGW_DIR}/${arch}-w64-mingw32
+        cp -fra ${WORK_DIR}/prein_${arch}/mingw-w64-headers/* \
+                ${MINGW_DIR}/${arch}-w64-mingw32
         ln -s ${MINGW_DIR}/${arch}-w64-mingw32 ${MINGW_DIR}/mingw
         echo "done"
     done
@@ -304,7 +346,8 @@ copy_only_headers() {
             local MINGW_DIR=${WORK_DIR}/mingw64
         fi
         echo "===> copy MinGW-w64 headers ${arch} to ${MINGW_DIR}"
-        cp -fra ${WORK_DIR}/prein_${arch}/mingw-w64-headers/* ${MINGW_DIR}/${arch}-w64-mingw32
+        cp -fra ${WORK_DIR}/prein_${arch}/mingw-w64-headers/* \
+                ${MINGW_DIR}/${arch}-w64-mingw32
         ln -s ${MINGW_DIR}/${arch}-w64-mingw32 ${MINGW_DIR}/mingw
         echo "done"
     done
@@ -328,36 +371,36 @@ build_binutils() {
         sed -i 's/install_to_$(INSTALL_DEST) //' libiberty/Makefile.in
         touch ${BUILD_DIR}/binutils-${BINUTILS_VER}/patched_01.marker
     fi
-
     if [ ! -f ${BUILD_DIR}/binutils-${BINUTILS_VER}/patched_02.marker ] ; then
         # hack! - libiberty configure tests for header files using "$CPP $CPPFLAGS"
         sed -i "/ac_cpp=/s/\$CPPFLAGS/\$CPPFLAGS -Os/" libiberty/configure
         touch ${BUILD_DIR}/binutils-${BINUTILS_VER}/patched_02.marker
     fi
-
     if [ ! -f ${BUILD_DIR}/binutils-${BINUTILS_VER}/patched_03.marker ] ; then
         patch -p1 < ${PATCHES_DIR}/binutils/100-dont-escape-arguments-that-dont-need-it-in-pex-win32.c.patch \
-            > /dev/null 2>&1 || exit 1
+            > ${LOGS_DIR}/binutils_patches.log 2>&1 || exit 1
         touch ${BUILD_DIR}/binutils-${BINUTILS_VER}/patched_03.marker
     fi
-
     if [ ! -f ${BUILD_DIR}/binutils-${BINUTILS_VER}/patched_04.marker ] ; then
         patch -p1 < ${PATCHES_DIR}/binutils/020-add-bigobj-format.patch \
-            > /dev/null 2>&1 || exit 1
+            >> ${LOGS_DIR}/binutils_patches.log 2>&1 || exit 1
         touch ${BUILD_DIR}/binutils-${BINUTILS_VER}/patched_04.marker
     fi
-
     if [ ! -f ${BUILD_DIR}/binutils-${BINUTILS_VER}/patched_05.marker ] ; then
         patch -p1 < ${PATCHES_DIR}/binutils/030-binutils-mingw-gnu-print.patch \
-            > /dev/null 2>&1 || exit 1
+            >> ${LOGS_DIR}/binutils_patches.log 2>&1 || exit 1
         touch ${BUILD_DIR}/binutils-${BINUTILS_VER}/patched_05.marker
     fi
-
     if [ ! -f ${BUILD_DIR}/binutils-${BINUTILS_VER}/patched_06.marker ] ; then
-        # Fixes bug https://sourceware.org/bugzilla/show_bug.cgi?id=16858#c3
-        patch -p1 < ${PATCHES_DIR}/binutils/120-Bug-16858-weak-external-reference-has-wrong-value.patch \
-            > /dev/null 2>&1 || exit 1
+        # Fixes bug https://sourceware.org/bugzilla/show_bug.cgi?id=16858
+        patch -p1 < ${PATCHES_DIR}/binutils/PR16858.patch
+            >> ${LOGS_DIR}/binutils_patches.log 2>&1 || exit 1
         touch ${BUILD_DIR}/binutils-${BINUTILS_VER}/patched_06.marker
+    fi
+    if [ ! -f ${BUILD_DIR}/binutils-${BINUTILS_VER}/patched_07.marker ] ; then
+        patch -p1 < ${PATCHES_DIR}/binutils/130-make-relocbase-unsigned.patch \
+            >> ${LOGS_DIR}/binutils_patches.log 2>&1 || exit 1
+        touch ${BUILD_DIR}/binutils-${BINUTILS_VER}/patched_07.marker
     fi
 
     if [ ! -d ${BUILD_DIR}/binutils-${BINUTILS_VER}/build ] ; then
@@ -398,17 +441,20 @@ build_binutils() {
         echo "done"
 
         echo "===> make Binutils ${arch}"
-        make -j$jobs -O all > ${LOGS_DIR}/binutils_make_${arch}.log 2>&1 || exit 1
+        make -j$jobs -O all \
+            > ${LOGS_DIR}/binutils_make_${arch}.log 2>&1 || exit 1
         echo "done"
 
         echo "===> install Binutils ${arch}"
         rm -fr ${WORK_DIR}/prein_${arch}/binutils/*
-        make install-strip > ${LOGS_DIR}/binutils_install_${arch}.log 2>&1 || exit 1
+        make install-strip \
+            > ${LOGS_DIR}/binutils_install_${arch}.log 2>&1 || exit 1
         echo "done"
 
         echo "===> copy Binutils ${arch} to ${MINGW_DIR}"
         cp -fra ${WORK_DIR}/prein_${arch}/binutils/bin $MINGW_DIR
-        cp -fra ${WORK_DIR}/prein_${arch}/binutils/${arch}-w64-mingw32/* ${MINGW_DIR}/${arch}-w64-mingw32
+        cp -fra ${WORK_DIR}/prein_${arch}/binutils/${arch}-w64-mingw32/* \
+                ${MINGW_DIR}/${arch}-w64-mingw32
         if [ -d ${MINGW_DIR}/mingw ] ; then
             rm -fr ${MINGW_DIR}/mingw
         fi
@@ -431,7 +477,8 @@ copy_only_binutils() {
         fi
         echo "===> copy Binutils ${arch} to ${MINGW_DIR}"
         cp -fra ${WORK_DIR}/prein_${arch}/binutils/bin $MINGW_DIR
-        cp -fra ${WORK_DIR}/prein_${arch}/binutils/${arch}-w64-mingw32/* ${MINGW_DIR}/${arch}-w64-mingw32
+        cp -fra ${WORK_DIR}/prein_${arch}/binutils/${arch}-w64-mingw32/* \
+                ${MINGW_DIR}/${arch}-w64-mingw32
         if [ -d ${MINGW_DIR}/mingw ] ; then
             rm -fr ${MINGW_DIR}/mingw
         fi
@@ -454,7 +501,7 @@ build_bzip2() {
 
     if [ ! -f ${BUILD_DIR}/bzip2-${BZIP2_VER}/patched_01.marker ] ; then
         patch -p1 < ${PATCHES_DIR}/bzip2/bzip2-use-cdecl-calling-convention.patch \
-            > /dev/null 2>&1 || exit 1
+            > ${LOGS_DIR}/bzip2_patches.log 2>&1 || exit 1
         touch ${BUILD_DIR}/bzip2-${BZIP2_VER}/patched_01.marker
     fi
 
@@ -468,8 +515,10 @@ build_bzip2() {
         echo "done"
 
         echo "===> install bzip2 ${arch}"
-        cp -fa ${BUILD_DIR}/bzip2-${BZIP2_VER}/bzlib.h ${WORK_DIR}/prein_${arch}/bzip2/include
-        cp -fa ${BUILD_DIR}/bzip2-${BZIP2_VER}/libbz2.a ${WORK_DIR}/prein_${arch}/bzip2/lib
+        cp -fa ${BUILD_DIR}/bzip2-${BZIP2_VER}/bzlib.h \
+               ${WORK_DIR}/prein_${arch}/bzip2/include
+        cp -fa ${BUILD_DIR}/bzip2-${BZIP2_VER}/libbz2.a \
+               ${WORK_DIR}/prein_${arch}/bzip2/lib
         echo "done"
 
         if [ "$arch" == "i686" ] ; then
@@ -478,7 +527,8 @@ build_bzip2() {
             local MINGW_DIR=${WORK_DIR}/mingw64
         fi
         echo "===> copy bzip2 ${arch} to ${MINGW_DIR}"
-        cp -fra ${WORK_DIR}/prein_${arch}/bzip2/* ${MINGW_DIR}/${arch}-w64-mingw32
+        cp -fra ${WORK_DIR}/prein_${arch}/bzip2/* \
+                ${MINGW_DIR}/${arch}-w64-mingw32
         echo "done"
     done
 
@@ -497,7 +547,8 @@ copy_only_bzip2() {
             local MINGW_DIR=${WORK_DIR}/mingw64
         fi
         echo "===> copy bzip2 ${arch} to ${MINGW_DIR}"
-        cp -fra ${WORK_DIR}/prein_${arch}/bzip2/* ${MINGW_DIR}/${arch}-w64-mingw32
+        cp -fra ${WORK_DIR}/prein_${arch}/bzip2/* \
+                ${MINGW_DIR}/${arch}-w64-mingw32
         echo "done"
     done
 
@@ -535,12 +586,14 @@ build_winpthreads() {
         echo "done"
 
         echo "===> make winpthreads ${arch}"
-        make -j$jobs -O all > ${LOGS_DIR}/winpthreads_make_${arch}.log 2>&1 || exit 1
+        make -j$jobs -O all \
+            > ${LOGS_DIR}/winpthreads_make_${arch}.log 2>&1 || exit 1
         echo "done"
 
         echo "===> install winpthreads ${arch}"
         rm -fr ${WORK_DIR}/prein_${arch}/winpthreads/*
-        make install-strip > ${LOGS_DIR}/winpthreads_install_${arch}.log 2>&1 || exit 1
+        make install-strip \
+            > ${LOGS_DIR}/winpthreads_install_${arch}.log 2>&1 || exit 1
         echo "done"
 
         if [ "$arch" == "i686" ] ; then
@@ -549,8 +602,10 @@ build_winpthreads() {
             local MINGW_DIR=${WORK_DIR}/mingw64
         fi
         echo "===> copy winpthreads ${arch} to ${MINGW_DIR}"
-        cp -fra ${WORK_DIR}/prein_${arch}/winpthreads/include/*.h ${MINGW_DIR}/${arch}-w64-mingw32/include
-        cp -fra ${WORK_DIR}/prein_${arch}/winpthreads/lib/*.a ${MINGW_DIR}/${arch}-w64-mingw32/lib
+        cp -fra ${WORK_DIR}/prein_${arch}/winpthreads/include/*.h \
+                ${MINGW_DIR}/${arch}-w64-mingw32/include
+        cp -fra ${WORK_DIR}/prein_${arch}/winpthreads/lib/*.a \
+                ${MINGW_DIR}/${arch}-w64-mingw32/lib
         if [ -d ${MINGW_DIR}/mingw ] ; then
             rm -fr ${MINGW_DIR}/mingw
         fi
@@ -573,8 +628,10 @@ copy_only_winpthreads() {
             local MINGW_DIR=${WORK_DIR}/mingw64
         fi
         echo "===> copy winpthreads ${arch} to ${MINGW_DIR}"
-        cp -fra ${WORK_DIR}/prein_${arch}/winpthreads/include/*.h ${MINGW_DIR}/${arch}-w64-mingw32/include
-        cp -fra ${WORK_DIR}/prein_${arch}/winpthreads/lib/*.a ${MINGW_DIR}/${arch}-w64-mingw32/lib
+        cp -fra ${WORK_DIR}/prein_${arch}/winpthreads/include/*.h \
+                ${MINGW_DIR}/${arch}-w64-mingw32/include
+        cp -fra ${WORK_DIR}/prein_${arch}/winpthreads/lib/*.a \
+                ${MINGW_DIR}/${arch}-w64-mingw32/lib
         if [ -d ${MINGW_DIR}/mingw ] ; then
             rm -fr ${MINGW_DIR}/mingw
         fi
@@ -601,74 +658,64 @@ build_gcc1() {
         sed -i 's/install_to_$(INSTALL_DEST) //' libiberty/Makefile.in
         touch ${BUILD_DIR}/gcc-${GCC_VER}/patched_01.marker
     fi
-
     if [ ! -f ${BUILD_DIR}/gcc-${GCC_VER}/patched_02.marker ] ; then
         # hack! - some configure tests for header files using "$CPP $CPPFLAGS"
         sed -i "/ac_cpp=/s/\$CPPFLAGS/\$CPPFLAGS -Os/" {libiberty,gcc}/configure
         touch ${BUILD_DIR}/gcc-${GCC_VER}/patched_02.marker
     fi
-
     if [ ! -f ${BUILD_DIR}/gcc-${GCC_VER}/patched_03.marker ] ; then
         patch -p1 < ${PATCHES_DIR}/gcc-${GCC_VER}/gcc-4.8-libstdc++export.patch \
-            > /dev/null 2>&1 || exit 1
+            > ${LOGS_DIR}/gcc_patches.log 2>&1 || exit 1
         touch ${BUILD_DIR}/gcc-${GCC_VER}/patched_03.marker
     fi
-
     if [ ! -f ${BUILD_DIR}/gcc-${GCC_VER}/patched_04.marker ] ; then
         patch -p1 < ${PATCHES_DIR}/gcc-${GCC_VER}/gcc-4.7-stdthreads.patch \
-            > /dev/null 2>&1 || exit 1
+            >> ${LOGS_DIR}/gcc_patches.log 2>&1 || exit 1
         touch ${BUILD_DIR}/gcc-${GCC_VER}/patched_04.marker
     fi
-
     if [ ! -f ${BUILD_DIR}/gcc-${GCC_VER}/patched_05.marker ] ; then
-        # Don't waste valuable commandline chars on double-quotes around "arguments"
-        # that don't need them.
+        # Don't waste valuable commandline chars on double-quotes around
+        # "arguments" that don't need them.
         patch -p1 < ${PATCHES_DIR}/gcc-${GCC_VER}/dont-escape-arguments-that-dont-need-it-in-pex-win32.patch \
-            > /dev/null 2>&1 || exit 1
+            >> ${LOGS_DIR}/gcc_patches.log 2>&1 || exit 1
         touch ${BUILD_DIR}/gcc-${GCC_VER}/patched_05.marker
     fi
-
     if [ ! -f ${BUILD_DIR}/gcc-${GCC_VER}/patched_06.marker ] ; then
-        # Make Windows behave the same as Posix in the consideration of whether folder
-        # "/exists/doesnt-exist/.." is a valid path.. in Posix, it isn't.
+        # Make Windows behave the same as Posix in the consideration of whether
+        # folder "/exists/doesnt-exist/.." is a valid path.. in Posix, it isn't.
         patch -p1 < ${PATCHES_DIR}/gcc-${GCC_VER}/fix-for-windows-not-minding-non-existent-parent-dirs.patch \
-            > /dev/null 2>&1 || exit 1
+            >> ${LOGS_DIR}/gcc_patches.log 2>&1 || exit 1
         touch ${BUILD_DIR}/gcc-${GCC_VER}/patched_06.marker
     fi
-
     if [ ! -f ${BUILD_DIR}/gcc-${GCC_VER}/patched_07.marker ] ; then
         # Don't make a lowercase backslashed path from argv[0]
         #   that then fail to strcmp with prefix(es) .. they're also ugly.
         patch -p1 < ${PATCHES_DIR}/gcc-${GCC_VER}/windows-lrealpath-no-force-lowercase-nor-backslash.patch \
-            > /dev/null 2>&1 || exit 1
+            >> ${LOGS_DIR}/gcc_patches.log 2>&1 || exit 1
         touch ${BUILD_DIR}/gcc-${GCC_VER}/patched_07.marker
     fi
-
     if [ ! -f ${BUILD_DIR}/gcc-${GCC_VER}/patched_08.marker ] ; then
         # Kai's libgomp fix.
         patch -p1 < ${PATCHES_DIR}/gcc-${GCC_VER}/ktietz-libgomp.patch \
-            > /dev/null 2>&1 || exit 1
+            >> ${LOGS_DIR}/gcc_patches.log 2>&1 || exit 1
         touch ${BUILD_DIR}/gcc-${GCC_VER}/patched_08.marker
     fi
-
     if [ ! -f ${BUILD_DIR}/gcc-${GCC_VER}/patched_09.marker ] ; then
         # http://gcc.gnu.org/bugzilla/show_bug.cgi?id=60902
         patch -p1 < ${PATCHES_DIR}/gcc-${GCC_VER}/PR60902.patch \
-            > /dev/null 2>&1 || exit 1
+            >> ${LOGS_DIR}/gcc_patches.log 2>&1 || exit 1
         touch ${BUILD_DIR}/gcc-${GCC_VER}/patched_09.marker
     fi
-
     if [ ! -f ${BUILD_DIR}/gcc-${GCC_VER}/patched_10.marker ] ; then
         # http://gcc.gnu.org/bugzilla/show_bug.cgi?id=57440
         patch -p1 < ${PATCHES_DIR}/gcc-${GCC_VER}/PR57440.patch \
-            > /dev/null 2>&1 || exit 1
+            >> ${LOGS_DIR}/gcc_patches.log 2>&1 || exit 1
         touch ${BUILD_DIR}/gcc-${GCC_VER}/patched_10.marker
     fi
-
     if [ ! -f ${BUILD_DIR}/gcc-${GCC_VER}/patched_11.marker ] ; then
         # http://gcc.gnu.org/bugzilla/show_bug.cgi?id=57653
         patch -p0 < ${PATCHES_DIR}/gcc-${GCC_VER}/PR57653.patch \
-            > /dev/null 2>&1 || exit 1
+            >> ${LOGS_DIR}/gcc_patches.log 2>&1 || exit 1
         touch ${BUILD_DIR}/gcc-${GCC_VER}/patched_11.marker
     fi
 
@@ -692,37 +739,40 @@ build_gcc1() {
 
         source cpath $arch
         echo "===> configure GCC 1st step ${arch}"
-        ../../configure --prefix=${MINGW_DIR}                                      \
-                        --with-sysroot=${MINGW_DIR}                                \
-                        --build=${arch}-w64-mingw32                                \
-                        --target=${arch}-w64-mingw32                               \
-                        --disable-shared --enable-static                           \
-                        --disable-multilib                                         \
-                        --enable-languages=c,c++,lto                               \
-                        --enable-threads=win32                                     \
-                        --enable-lto                                               \
-                        --enable-version-specific-runtime-libs                     \
-                        --enable-fully-dynamic-string                              \
-                        --enable-libgomp                                           \
-                        --disable-libssp --disable-libquadmath                     \
-                        --disable-bootstrap                                        \
-                        --disable-win32-registry                                   \
-                        --disable-rpath --disable-nls                              \
-                        --disable-werror --disable-symvers                         \
-                        --disable-libstdcxx-pch                                    \
-                        --disable-libstdcxx-debug                                  \
-                        --with-{gmp,mpfr,mpc,isl,cloog}=${LIBS_DIR}/$arch          \
-                        --disable-isl-version-check                                \
-                        --disable-cloog-version-check                              \
-                        --enable-cloog-backend=isl                                 \
-                        --with-libiconv-prefix=${WORK_DIR}/prein_${arch}/libiconv  \
-                        --with-system-zlib                                         \
-                        ${_optimization}                                           \
-                        CFLAGS="${_CFLAGS}" CFLAGS_FOR_TARGET="${_CFLAGS}"         \
-                        CXXFLAGS="${_CXXFLAGS}" CXXFLAGS_FOR_TARGET="${_CXXFLAGS}" \
-                        CPPFLAGS="${_CPPFLAGS}" CPPFLAGS_FOR_TARGET="${_CPPFLAGS}" \
-                        LDFLAGS="${_LDFLAGS} ${_LAA}"                              \
-                        LDFLAGS_FOR_TARGET="${_LDFLAGS} ${_LAA}"                   \
+        ../../configure --prefix=${MINGW_DIR}                                     \
+                        --with-sysroot=${MINGW_DIR}                               \
+                        --build=${arch}-w64-mingw32                               \
+                        --target=${arch}-w64-mingw32                              \
+                        --disable-shared --enable-static                          \
+                        --disable-multilib                                        \
+                        --enable-languages=c,c++,lto                              \
+                        --enable-threads=win32                                    \
+                        --enable-lto                                              \
+                        --enable-version-specific-runtime-libs                    \
+                        --enable-fully-dynamic-string                             \
+                        --enable-libgomp                                          \
+                        --disable-libssp --disable-libquadmath                    \
+                        --disable-bootstrap                                       \
+                        --disable-win32-registry                                  \
+                        --disable-rpath --disable-nls                             \
+                        --disable-werror --disable-symvers                        \
+                        --disable-libstdcxx-pch                                   \
+                        --disable-libstdcxx-debug                                 \
+                        --with-{gmp,mpfr,mpc,isl,cloog}=${LIBS_DIR}/$arch         \
+                        --disable-isl-version-check                               \
+                        --disable-cloog-version-check                             \
+                        --enable-cloog-backend=isl                                \
+                        --with-libiconv-prefix=${WORK_DIR}/prein_${arch}/libiconv \
+                        --with-system-zlib                                        \
+                        ${_optimization}                                          \
+                        CFLAGS="${_CFLAGS}"                                       \
+                        CFLAGS_FOR_TARGET="${_CFLAGS}"                            \
+                        CXXFLAGS="${_CXXFLAGS}"                                   \
+                        CXXFLAGS_FOR_TARGET="${_CXXFLAGS}"                        \
+                        CPPFLAGS="${_CPPFLAGS}"                                   \
+                        CPPFLAGS_FOR_TARGET="${_CPPFLAGS}"                        \
+                        LDFLAGS="${_LDFLAGS} ${_LAA}"                             \
+                        LDFLAGS_FOR_TARGET="${_LDFLAGS} ${_LAA}"                  \
         > ${LOGS_DIR}/gcc1_config_${arch}.log 2>&1 || exit 1
         echo "done"
 
@@ -806,7 +856,8 @@ build_crt() {
         echo "done"
 
         echo "===> copy MinGW-w64 crt ${arch} to ${MINGW_DIR}"
-        cp -fra ${WORK_DIR}/prein_${arch}/mingw-w64-crt/* ${MINGW_DIR}/${arch}-w64-mingw32
+        cp -fra ${WORK_DIR}/prein_${arch}/mingw-w64-crt/* \
+                ${MINGW_DIR}/${arch}-w64-mingw32
         echo "done"
     done
 
@@ -825,7 +876,8 @@ copy_only_crt() {
             local MINGW_DIR=${WORK_DIR}/mingw64
         fi
         echo "===> copy MinGW-w64 crt ${arch} to ${MINGW_DIR}"
-        cp -fra ${WORK_DIR}/prein_${arch}/mingw-w64-crt/* ${MINGW_DIR}/${arch}-w64-mingw32
+        cp -fra ${WORK_DIR}/prein_${arch}/mingw-w64-crt/* \
+                ${MINGW_DIR}/${arch}-w64-mingw32
         echo "done"
     done
 
@@ -871,7 +923,8 @@ build_gcc2() {
         echo "done"
 
         echo "===> install GCC 2nd ${arch}"
-        make install-strip > ${LOGS_DIR}/gcc2_install_${arch}.log 2>&1 || exit 1
+        make install-strip > ${LOGS_DIR}/gcc2_install_${arch}.log 2>&1 \
+            || exit 1
         echo "done"
 
         echo "===> clean up GCC 2nd ${arch}"

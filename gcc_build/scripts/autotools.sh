@@ -35,42 +35,44 @@ build_autoconf() {
     cd ${BUILD_DIR}/autoconf-${AUTOCONF_VER}
 
     if [ ! -f ${BUILD_DIR}/autoconf-${AUTOCONF_VER}/patched_01.marker ] ; then
-        patch -p1 < ${PATCHES_DIR}/autoconf/001-atomic.all.patch
+        patch -p1 < ${PATCHES_DIR}/autoconf/001-atomic.all.patch \
+            > /dev/null 2>&1 || exit 1
         touch ${BUILD_DIR}/autoconf-${AUTOCONF_VER}/patched_01.marker
     fi
-
     if [ ! -f ${BUILD_DIR}/autoconf-${AUTOCONF_VER}/patched_02.marker ] ; then
-        patch -p1 < ${PATCHES_DIR}/autoconf/002-stricter-versioning.all.patch
+        patch -p1 < ${PATCHES_DIR}/autoconf/002-stricter-versioning.all.patch \
+            > /dev/null 2>&1 || exit 1
         touch ${BUILD_DIR}/autoconf-${AUTOCONF_VER}/patched_02.marker
     fi
-
     if [ ! -f ${BUILD_DIR}/autoconf-${AUTOCONF_VER}/patched_03.marker ] ; then
-        patch -p1 < ${PATCHES_DIR}/autoconf/003-m4sh.m4.all.patch
+        patch -p1 < ${PATCHES_DIR}/autoconf/003-m4sh.m4.all.patch \
+            > /dev/null 2>&1 || exit 1
         touch ${BUILD_DIR}/autoconf-${AUTOCONF_VER}/patched_03.marker
     fi
-
     if [ ! -f ${BUILD_DIR}/autoconf-${AUTOCONF_VER}/patched_04.marker ] ; then
-        patch -p1 < ${PATCHES_DIR}/autoconf/004-autoconf2.5-2.69-1.src.all.patch
+        patch -p1 < ${PATCHES_DIR}/autoconf/004-autoconf2.5-2.69-1.src.all.patch \
+            > /dev/null 2>&1 || exit 1
         touch ${BUILD_DIR}/autoconf-${AUTOCONF_VER}/patched_04.marker
     fi
-
     if [ ! -f ${BUILD_DIR}/autoconf-${AUTOCONF_VER}/patched_05.marker ] ; then
-        patch -p1 < ${PATCHES_DIR}/autoconf/005-autoconf.git-a357718b081f1678748ead5d7cb67c766c930441.all.patch
+        patch -p1 < ${PATCHES_DIR}/autoconf/005-autoconf-ga357718.all.patch \
+            > /dev/null 2>&1 || exit 1
         touch ${BUILD_DIR}/autoconf-${AUTOCONF_VER}/patched_05.marker
     fi
-
     if [ ! -f ${BUILD_DIR}/autoconf-${AUTOCONF_VER}/patched_06.marker ] ; then
-        patch -p1 < ${PATCHES_DIR}/autoconf/007-allow-lns-on-msys2.all.patch
+        patch -p1 < ${PATCHES_DIR}/autoconf/007-allow-lns-on-msys2.all.patch \
+            > /dev/null 2>&1 || exit 1
         touch ${BUILD_DIR}/autoconf-${AUTOCONF_VER}/patched_06.marker
     fi
 
     if [ ! -f ${BUILD_DIR}/autoconf-${AUTOCONF_VER}/patched_07.marker ] ; then
-        patch -p1 < ${PATCHES_DIR}/autoconf/008-fix-cr-for-awk-in-configure.all.patch
+        patch -p1 < ${PATCHES_DIR}/autoconf/008-fix-cr-for-awk-in-configure.all.patch \
+            > /dev/null 2>&1 || exit 1
         touch ${BUILD_DIR}/autoconf-${AUTOCONF_VER}/patched_07.marker
     fi
-
     if [ ! -f ${BUILD_DIR}/autoconf-${AUTOCONF_VER}/patched_08.marker ] ; then
-        patch -p1 < ${PATCHES_DIR}/autoconf/009-fix-cr-for-awk-in-status.all.patch
+        patch -p1 < ${PATCHES_DIR}/autoconf/009-fix-cr-for-awk-in-status.all.patch \
+            > /dev/null 2>&1 || exit 1
         touch ${BUILD_DIR}/autoconf-${AUTOCONF_VER}/patched_08.marker
     fi
 
@@ -89,12 +91,13 @@ build_autoconf() {
 
         ./configure --prefix=$PREFIX_DIR        \
                     --build=${arch}-w64-mingw32 \
-                    --host=${arch}-w64-mingw32
+                    --host=${arch}-w64-mingw32  \
+        > /dev/null 2>&1 || exit 1
 
-        make clean
-        make -j$jobs -O || exit 1
-        make install-strip DESTDIR=$WORK_DIR || exit 1
-        make distclean
+        make clean > /dev/null 2>&1
+        make -j$jobs -O > /dev/null 2>&1 || exit 1
+        make install-strip DESTDIR=$WORK_DIR > /dev/null 2>&1 || exit 1
+        make distclean > /dev/null 2>&1
     done
 
     cd $WORK_DIR
@@ -112,7 +115,8 @@ build_automake() {
     cd ${BUILD_DIR}/automake-${AUTOMAKE_VER}
 
     if [ ! -f ${BUILD_DIR}/automake-${AUTOMAKE_VER}/patched_01.marker ] ; then
-        patch -p1 < ${PATCHES_DIR}/automake/001-fix-cr-for-awk-in-configure.all.patch
+        patch -p1 < ${PATCHES_DIR}/automake/001-fix-cr-for-awk-in-configure.all.patch \
+            > /dev/null 2>&1 || exit 1
         touch ${BUILD_DIR}/automake-${AUTOMAKE_VER}/patched_01.marker
     fi
 
@@ -131,12 +135,13 @@ build_automake() {
 
         ./configure --prefix=$PREFIX_DIR        \
                     --build=${arch}-w64-mingw32 \
-                    --host=${arch}-w64-mingw32
+                    --host=${arch}-w64-mingw32  \
+        > /dev/null 2>&1 || exit 1
 
-        make clean
-        make -j$jobs -O || exit 1
-        make install-strip DESTDIR=$WORK_DIR || exit 1
-        make distclean
+        make clean > /dev/null 2>&1
+        make -j$jobs -O > /dev/null 2>&1 || exit 1
+        make install-strip DESTDIR=$WORK_DIR > /dev/null 2>&1 || exit 1
+        make distclean > /dev/null 2>&1
     done
 
     cd $WORK_DIR
@@ -154,37 +159,38 @@ build_libtool() {
     cd ${BUILD_DIR}/libtool-${LIBTOOL_VER}
 
     if [ ! -f ${BUILD_DIR}/libtool-${LIBTOOL_VER}/patched_01.marker ] ; then
-        patch -p1 < ${PATCHES_DIR}/libtool/0002-cygwin-mingw-Create-UAC-manifest-files.mingw.patch
+        patch -p1 < ${PATCHES_DIR}/libtool/0002-cygwin-mingw-Create-UAC-manifest-files.mingw.patch \
+            > /dev/null 2>&1 || exit 1
         touch ${BUILD_DIR}/libtool-${LIBTOOL_VER}/patched_01.marker
     fi
-
     if [ ! -f ${BUILD_DIR}/libtool-${LIBTOOL_VER}/patched_02.marker ] ; then
-        patch -p1 < ${PATCHES_DIR}/libtool/0003-Pass-various-runtime-library-flags-to-GCC.mingw.patch
+        patch -p1 < ${PATCHES_DIR}/libtool/0003-Pass-various-runtime-library-flags-to-GCC.mingw.patch \
+            > /dev/null 2>&1 || exit 1
         touch ${BUILD_DIR}/libtool-${LIBTOOL_VER}/patched_02.marker
     fi
-
     if [ ! -f ${BUILD_DIR}/libtool-${LIBTOOL_VER}/patched_03.marker ] ; then
-        patch -p1 < ${PATCHES_DIR}/libtool/0004-Fix-linking-with-fstack-protector.mingw.patch
+        patch -p1 < ${PATCHES_DIR}/libtool/0004-Fix-linking-with-fstack-protector.mingw.patch \
+            > /dev/null 2>&1 || exit 1
         touch ${BUILD_DIR}/libtool-${LIBTOOL_VER}/patched_03.marker
     fi
-
     if [ ! -f ${BUILD_DIR}/libtool-${LIBTOOL_VER}/patched_04.marker ] ; then
-        patch -p1 < ${PATCHES_DIR}/libtool/0005-Fix-seems-to-be-moved.patch
+        patch -p1 < ${PATCHES_DIR}/libtool/0005-Fix-seems-to-be-moved.patch \
+            > /dev/null 2>&1 || exit 1
         touch ${BUILD_DIR}/libtool-${LIBTOOL_VER}/patched_04.marker
     fi
-
     if [ ! -f ${BUILD_DIR}/libtool-${LIBTOOL_VER}/patched_05.marker ] ; then
-        patch -p1 < ${PATCHES_DIR}/libtool/0006-Fix-strict-ansi-vs-posix.patch
+        patch -p1 < ${PATCHES_DIR}/libtool/0006-Fix-strict-ansi-vs-posix.patch \
+            > /dev/null 2>&1 || exit 1
         touch ${BUILD_DIR}/libtool-${LIBTOOL_VER}/patched_05.marker
     fi
-
     if [ ! -f ${BUILD_DIR}/libtool-${LIBTOOL_VER}/patched_06.marker ] ; then
-        patch -p1 < ${PATCHES_DIR}/libtool/0007-fix-cr-for-awk-in-configure.all.patch
+        patch -p1 < ${PATCHES_DIR}/libtool/0007-fix-cr-for-awk-in-configure.all.patch \
+            > /dev/null 2>&1 || exit 1
         touch ${BUILD_DIR}/libtool-${LIBTOOL_VER}/patched_06.marker
     fi
-
     if [ ! -f ${BUILD_DIR}/libtool-${LIBTOOL_VER}/patched_07.marker ] ; then
-        patch -p1 < ${PATCHES_DIR}/libtool/0008-find-external-libraries.patch
+        patch -p1 < ${PATCHES_DIR}/libtool/0008-find-external-libraries.patch \
+            > /dev/null 2>&1 || exit 1
         touch ${BUILD_DIR}/libtool-${LIBTOOL_VER}/patched_07.marker
     fi
 
@@ -203,12 +209,13 @@ build_libtool() {
 
         ./configure --prefix=$PREFIX_DIR        \
                     --build=${arch}-w64-mingw32 \
-                    --host=${arch}-w64-mingw32
+                    --host=${arch}-w64-mingw32  \
+        > /dev/null 2>&1 || exit 1
 
-        make clean
-        make -j$jobs -O || exit 1
-        make install-strip DESTDIR=$WORK_DIR || exit 1
-        make distclean
+        make clean > /dev/null 2>&1
+        make -j$jobs -O > /dev/null 2>&1 || exit 1
+        make install-strip DESTDIR=$WORK_DIR > /dev/null 2>&1 || exit 1
+        make distclean > /dev/null 2>&1
     done
 
     cd $WORK_DIR

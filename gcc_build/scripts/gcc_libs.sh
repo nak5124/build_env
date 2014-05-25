@@ -20,12 +20,14 @@ init_directories() {
     if [ ! -d $PATCHES_DIR ] ; then
         mkdir -p $PATCHES_DIR
     fi
+
     for arch in i686 x86_64
     do
         if [ ! -d ${LIBS_DIR}/$arch ] ; then
             mkdir -p ${LIBS_DIR}/$arch
         fi
     done
+
     if [ ! -d $LOGS_DIR ] ; then
         mkdir -p $LOGS_DIR
     fi
@@ -43,12 +45,16 @@ download_srcs() {
     fi
     cd $SRC_DIR
 
-    wget -nc ftp://ftp.gmplib.org/pub/gmp/gmp-${GMP_VER}a.tar.lz > /dev/null 2>&1
-    wget -nc http://www.mpfr.org/mpfr-current/mpfr-${MPFR_VER}.tar.bz2 > /dev/null 2>&1
+    wget -nc ftp://ftp.gmplib.org/pub/gmp/gmp-${GMP_VER}a.tar.lz \
+        > /dev/null 2>&1
+    wget -nc http://www.mpfr.org/mpfr-current/mpfr-${MPFR_VER}.tar.bz2 \
+        > /dev/null 2>&1
     wget -nc ftp://ftp.gnu.org/gnu/mpc/mpc-${MPC_VER}.tar.gz > /dev/null 2>&1
-    wget -nc http://isl.gforge.inria.fr/isl-${ISL_VER}.tar.lzma > /dev/null 2>&1
+    wget -nc http://isl.gforge.inria.fr/isl-${ISL_VER}.tar.lzma \
+        > /dev/null 2>&1
 #    wget -nc http://isl.gforge.inria.fr/isl-${ISL_VER}.tar.xz > /dev/null 2>&1
-    wget -nc http://ftp.lfs-matrix.net/pub/clfs/conglomeration/cloog/cloog-${CLOOG_VER}.tar.gz > /dev/null 2>&1
+    wget -nc http://ftp.lfs-matrix.net/pub/clfs/conglomeration/cloog/cloog-${CLOOG_VER}.tar.gz \
+        > /dev/null 2>&1
 
     cd $WORK_DIR
     return 0
@@ -105,6 +111,7 @@ build_gmp() {
         echo "===> make GMP ${arch}"
         make -j$jobs -O all > ${LOGS_DIR}/gmp_make_${arch}.log 2>&1 || exit 1
         echo "done"
+
         echo "===> install GMP ${arch}"
         make install-strip > ${LOGS_DIR}/gmp_install_${arch}.log 2>&1 || exit 1
         echo "done"
@@ -152,8 +159,10 @@ build_mpfr() {
         echo "===> make MPFR ${arch}"
         make -j$jobs -O all > ${LOGS_DIR}/mpfr_make_${arch}.log 2>&1 || exit 1
         echo "done"
+
         echo "===> install MPFR ${arch}"
-        make install-strip > ${LOGS_DIR}/mpfr_install_${arch}.log 2>&1 || exit 1
+        make install-strip \
+            > ${LOGS_DIR}/mpfr_install_${arch}.log 2>&1 || exit 1
         echo "done"
         make distclean > /dev/null 2>&1
     done
@@ -188,11 +197,13 @@ build_mpc() {
                     CPPFLAGS="${_CPPFLAGS}"       \
                     LDFLAGS="${_LDFLAGS}"         \
         > ${LOGS_DIR}/mpc_config_${arch}.log 2>&1 || exit 1
+        echo "done"
 
         make clean > /dev/null 2>&1
         echo "===> make MPC ${arch}"
         make -j$jobs -O all > ${LOGS_DIR}/mpc_make_${arch}.log 2>&1 || exit 1
         echo "done"
+
         echo "===> install MPC ${arch}"
         make install-strip > ${LOGS_DIR}/mpc_install_${arch}.log 2>&1 || exit 1
         echo "done"
@@ -232,11 +243,13 @@ build_isl() {
                     CPPFLAGS="${_CPPFLAGS}"             \
                     LDFLAGS="${_LDFLAGS}"               \
         > ${LOGS_DIR}/isl_config_${arch}.log 2>&1 || exit 1
+        echo "done"
 
         make clean > /dev/null 2>&1
         echo "===> make ISL ${arch}"
         make -j$jobs -O all > ${LOGS_DIR}/isl_make_${arch}.log 2>&1 || exit 1
         echo "done"
+
         echo "===> install ISL ${arch}"
         make install-strip > ${LOGS_DIR}/isl_install_${arch}.log 2>&1 || exit 1
         echo "done"
@@ -276,6 +289,7 @@ build_cloog() {
                     CPPFLAGS="${_CPPFLAGS}"             \
                     LDFLAGS="${_LDFLAGS}"               \
         > ${LOGS_DIR}/cloog_config_${arch}.log 2>&1 || exit 1
+        echo "done"
 
         sed -i '/cmake/d' Makefile
 
@@ -283,8 +297,10 @@ build_cloog() {
         echo "===> make CLooG ${arch}"
         make -j$jobs -O all > ${LOGS_DIR}/cloog_make_${arch}.log 2>&1 || exit 1
         echo "done"
+
         echo "===> install GLooG ${arch}"
-        make install-strip > ${LOGS_DIR}/cloog_install_${arch}.log 2>&1 || exit 1
+        make install-strip \
+            > ${LOGS_DIR}/cloog_install_${arch}.log 2>&1 || exit 1
         echo "done"
         make distclean > /dev/null 2>&1
     done
