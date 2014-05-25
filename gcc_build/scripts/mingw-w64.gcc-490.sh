@@ -85,23 +85,9 @@ download_srcs() {
     if [ ! -d ${BUILD_DIR}/zlib ] ; then
         git clone git://github.com/madler/zlib.git > /dev/null 2>&1
     fi
-    # MinGW-w64-headers
-    if [ ! -d ${BUILD_DIR}/mingw-w64-headers ] ; then
-#        svn co svn://svn.code.sf.net/p/mingw-w64/code/trunk/mingw-w64-headers
-        svn co http://svn.code.sf.net/p/mingw-w64/code/trunk/mingw-w64-headers \
-            > /dev/null 2>&1
-    fi
-    # winpthreads
-    if [ ! -d ${BUILD_DIR}/winpthreads ] ; then
-#        svn co svn://svn.code.sf.net/p/mingw-w64/code/trunk/mingw-w64-libraries/winpthreads
-        svn co http://svn.code.sf.net/p/mingw-w64/code/trunk/mingw-w64-libraries/winpthreads \
-            > /dev/null 2>&1
-    fi
-    # MinGW-w64-crt
-    if [ ! -d ${BUILD_DIR}/mingw-w64-crt ] ; then
-#        svn co svn://svn.code.sf.net/p/mingw-w64/code/trunk/mingw-w64-crt
-        svn co http://svn.code.sf.net/p/mingw-w64/code/trunk/mingw-w64-crt \
-            > /dev/null 2>&1
+    # MinGW-w64
+    if [ ! -d ${BUILD_DIR}/mingw-w64 ] ; then
+        git clone git://git.code.sf.net/p/mingw-w64/mingw-w64 > /dev/null 2>&1
     fi
 
     cd $WORK_DIR
@@ -279,32 +265,46 @@ copy_only_zlib() {
     return 0
 }
 
+# MinGW-w64 common
+prepare_mingw_w64() {
+    clear; echo "Prepare MinGW-w64 git-master"
+
+    cd ${BUILD_DIR}/mingw-w64
+    git clean -fdx > /dev/null 2>&1
+    git reset --hard > /dev/null 2>&1
+    git pull > /dev/null 2>&1
+    git_hash > ${LOGS_DIR}/mingw-w64.hash 2>&1
+    git_rev >> ${LOGS_DIR}/mingw-w64.hash 2>&1
+
+    mkdir -p ${BUILD_DIR}/mingw-w64/build_headers
+    mkdir -p ${BUILD_DIR}/mingw-w64/build_crt
+    mkdir -p ${BUILD_DIR}/mingw-w64/build_winpthreads
+
+    cd $WORK_DIR
+    return 0
+}
+
 # MinGW-w64-headers
 build_headers() {
-    clear; echo "Build MinGW-w64 headers svn-trunk"
+    clear; echo "Build MinGW-w64 headers git-master"
 
-    cd ${BUILD_DIR}/mingw-w64-headers
-    svn cleanup > /dev/null 2>&1
-    svn revert --recursive . > /dev/null 2>&1
-    svn update > /dev/null 2>&1
-    svnversion -c > ${LOGS_DIR}/headers.hash
-
-    if [ ! -d ${BUILD_DIR}/mingw-w64-headers/build ] ; then
-        mkdir -p ${BUILD_DIR}/mingw-w64-headers/build
+    if [ ! -d ${BUILD_DIR}/mingw-w64/build_headers ] ; then
+        mkdir -p ${BUILD_DIR}/mingw-w64/build_headers
     fi
-    cd ${BUILD_DIR}/mingw-w64-headers/build
+    cd ${BUILD_DIR}/mingw-w64/build_headers
 
     for arch in i686 x86_64
     do
         source cpath $arch
-        rm -fr ${BUILD_DIR}/mingw-w64-headers/build/*
+        rm -fr ${BUILD_DIR}/mingw-w64/build_headers/*
         echo "===> configure MinGW-w64 headers ${arch}"
-        ../configure --prefix=${WORK_DIR}/prein_${arch}/mingw-w64-headers \
-                     --build=${arch}-w64-mingw32                          \
-                     --host=${arch}-w64-mingw32                           \
-                     --enable-sdk=all --enable-secure-api                 \
-                     CFLAGS="${_CFLAGS}" CXXFLAGS="${_CXXFLAGS}"          \
-                     CPPFLAGS="${_CPPFLAGS}" LDFLAGS="${_LDFLAGS}"        \
+        ../mingw-w64-headers/configure                           \
+            --prefix=${WORK_DIR}/prein_${arch}/mingw-w64-headers \
+            --build=${arch}-w64-mingw32                          \
+            --host=${arch}-w64-mingw32                           \
+            --enable-sdk=all --enable-secure-api                 \
+            CFLAGS="${_CFLAGS}" CXXFLAGS="${_CXXFLAGS}"          \
+            CPPFLAGS="${_CPPFLAGS}" LDFLAGS="${_LDFLAGS}"        \
         > ${LOGS_DIR}/headers_config_${arch}.log 2>&1 || exit 1
         echo "done"
 
@@ -336,7 +336,7 @@ build_headers() {
 }
 
 copy_only_headers() {
-    clear; echo "MinGW-w64 headers svn-trunk"
+    clear; echo "MinGW-w64 headers git-master"
 
     for arch in i686 x86_64
     do
@@ -558,30 +558,25 @@ copy_only_bzip2() {
 
 # winpthreads
 build_winpthreads() {
-    clear; echo "Build winpthreads svn-trunk"
+    clear; echo "Build winpthreads git-master"
 
-    cd ${BUILD_DIR}/winpthreads
-    svn cleanup > /dev/null 2>&1
-    svn revert --recursive . > /dev/null 2>&1
-    svn update > /dev/null 2>&1
-    svnversion -c > ${LOGS_DIR}/winpthreads.hash
-
-    if [ ! -d ${BUILD_DIR}/winpthreads/build ] ; then
-        mkdir -p ${BUILD_DIR}/winpthreads/build
+    if [ ! -d ${BUILD_DIR}/mingw-w64/build_winpthreads ] ; then
+        mkdir -p ${BUILD_DIR}/mingw-w64/build_winpthreads
     fi
-    cd ${BUILD_DIR}/winpthreads/build
+    cd ${BUILD_DIR}/mingw-w64/build_winpthreads
 
     for arch in i686 x86_64
     do
         source cpath $arch
-        rm -fr ${BUILD_DIR}/winpthreads/build/*
+        rm -fr ${BUILD_DIR}/mingw-w64/build_winpthreads/*
         echo "===> configure winpthreads ${arch}"
-        ../configure --prefix=${WORK_DIR}/prein_${arch}/winpthreads \
-                     --build=${arch}-w64-mingw32                    \
-                     --host=${arch}-w64-mingw32                     \
-                     --disable-shared --enable-static               \
-                     CFLAGS="${_CFLAGS}" CXXFLAGS="${_CXXFLAGS}"    \
-                     CPPFLAGS="${_CPPFLAGS}" LDFLAGS="${_LDFLAGS}"  \
+        ../mingw-w64-libraries/winpthreads/configure       \
+            --prefix=${WORK_DIR}/prein_${arch}/winpthreads \
+            --build=${arch}-w64-mingw32                    \
+            --host=${arch}-w64-mingw32                     \
+            --disable-shared --enable-static               \
+            CFLAGS="${_CFLAGS}" CXXFLAGS="${_CXXFLAGS}"    \
+            CPPFLAGS="${_CPPFLAGS}" LDFLAGS="${_LDFLAGS}"  \
         > ${LOGS_DIR}/winpthreads_config_${arch}.log 2>&1 || exit 1
         echo "done"
 
@@ -618,7 +613,7 @@ build_winpthreads() {
 }
 
 copy_only_winpthreads() {
-    clear; echo "winpthreads svn-trunk"
+    clear; echo "winpthreads git-master"
 
     for arch in i686 x86_64
     do
@@ -803,23 +798,17 @@ build_gcc1() {
 
 # MinGW-w64-crt
 build_crt() {
-    clear; echo "Build MinGW-w64 crt svn-trunk"
+    clear; echo "Build MinGW-w64 crt git-master"
 
-    cd ${BUILD_DIR}/mingw-w64-crt
-    svn cleanup > /dev/null 2>&1
-    svn revert --recursive . > /dev/null 2>&1
-    svn update > /dev/null 2>&1
-    svnversion -c > ${LOGS_DIR}/crt.hash
-
-    if [ ! -d ${BUILD_DIR}/mingw-w64-crt/build ] ; then
-        mkdir -p ${BUILD_DIR}/mingw-w64-crt/build
+    if [ ! -d ${BUILD_DIR}/mingw-w64/build_crt ] ; then
+        mkdir -p ${BUILD_DIR}/mingw-w64/build_crt
     fi
-    cd ${BUILD_DIR}/mingw-w64-crt/build
+    cd ${BUILD_DIR}/mingw-w64/build_crt
 
     for arch in i686 x86_64
     do
         source cpath nogcc
-        rm -fr ${BUILD_DIR}/mingw-w64-crt/build/*
+        rm -fr ${BUILD_DIR}/mingw-w64/build_crt/*
 
         if [ "$arch" == "i686" ] ; then
             local MINGW_DIR=${WORK_DIR}/mingw32
@@ -832,17 +821,18 @@ build_crt() {
         export PATH
 
         echo "===> configure MinGW-w64 crt ${arch}"
-        ../configure --prefix=${WORK_DIR}/prein_${arch}/mingw-w64-crt    \
-                     --build=${arch}-w64-mingw32                         \
-                     --host=${arch}-w64-mingw32                          \
-                     ${_libs_conf}                                       \
-                     --disable-libce                                     \
-                     --with-sysroot=${MINGW_DIR}/${arch}-w64-mingw32     \
-                     --enable-wildcard                                   \
-                     CFLAGS="${_CFLAGS/-D__USE_MINGW_ANSI_STDIO=1/}"     \
-                     CXXFLAGS="${_CXXFLAGS/-D__USE_MINGW_ANSI_STDIO=1/}" \
-                     CPPFLAGS="${_CPPFLAGS/-D__USE_MINGW_ANSI_STDIO=1/}" \
-                     LDFLAGS="${_LDFLAGS}"                               \
+        ../mingw-w64-crt/configure                              \
+            --prefix=${WORK_DIR}/prein_${arch}/mingw-w64-crt    \
+            --build=${arch}-w64-mingw32                         \
+            --host=${arch}-w64-mingw32                          \
+            ${_libs_conf}                                       \
+            --disable-libce                                     \
+            --with-sysroot=${MINGW_DIR}/${arch}-w64-mingw32     \
+            --enable-wildcard                                   \
+            CFLAGS="${_CFLAGS/-D__USE_MINGW_ANSI_STDIO=1/}"     \
+            CXXFLAGS="${_CXXFLAGS/-D__USE_MINGW_ANSI_STDIO=1/}" \
+            CPPFLAGS="${_CPPFLAGS/-D__USE_MINGW_ANSI_STDIO=1/}" \
+            LDFLAGS="${_LDFLAGS}"                               \
         > ${LOGS_DIR}/crt_config_${arch}.log 2>&1 || exit 1
         echo "done"
 
@@ -866,7 +856,7 @@ build_crt() {
 }
 
 copy_only_crt() {
-    clear; echo "MinGW-w64 crt svn-trunk"
+    clear; echo "MinGW-w64 crt git-master"
 
     for arch in i686 x86_64
     do
@@ -956,6 +946,7 @@ if [ "$ZLIB_REBUILD" == "yes" ] ; then
 else
     copy_only_zlib
 fi
+prepare_mingw_w64
 if [ "$HEADERS_REBUILD" == "yes" ] ; then
     build_headers
 else
