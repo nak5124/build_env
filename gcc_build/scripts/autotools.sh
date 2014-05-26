@@ -1,10 +1,6 @@
 #!/bin/bash
 
 
-# load
-SCRIPTS_DIR=`dirname $0`
-source ${SCRIPTS_DIR}/config.sh
-
 cd $WORK_DIR
 
 # init

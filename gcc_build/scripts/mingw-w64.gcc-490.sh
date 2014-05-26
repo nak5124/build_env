@@ -2,7 +2,7 @@
 
 
 # load
-SCRIPTS_DIR=`dirname $0`
+SCRIPTS_DIR=$(cd $(dirname $0);pwd)
 source ${SCRIPTS_DIR}/config.sh
 
 cd $WORK_DIR
