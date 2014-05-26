@@ -962,7 +962,7 @@ if [ "$BZIP2_REBUILD" == "yes" ] ; then
 else
     copy_only_bzip2
 fi
-if [ "$WINPTREADS_REBUILD" == "yes" ] ; then
+if [ "$WINPTHREADS_REBUILD" == "yes" ] ; then
     build_winpthreads
 else
     copy_only_winpthreads
