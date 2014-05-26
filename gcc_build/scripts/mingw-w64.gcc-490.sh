@@ -975,4 +975,6 @@ else
 fi
 build_gcc2
 
+source ${SCRIPTS_DIR}/autotools.sh
+
 clear; echo "Everything has been successfully completed!"
