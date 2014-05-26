@@ -393,7 +393,7 @@ build_binutils() {
     fi
     if [ ! -f ${BUILD_DIR}/binutils-${BINUTILS_VER}/patched_06.marker ] ; then
         # Fixes bug https://sourceware.org/bugzilla/show_bug.cgi?id=16858
-        patch -p1 < ${PATCHES_DIR}/binutils/PR16858.patch
+        patch -p1 < ${PATCHES_DIR}/binutils/PR16858.patch \
             >> ${LOGS_DIR}/binutils_patches.log 2>&1 || exit 1
         touch ${BUILD_DIR}/binutils-${BINUTILS_VER}/patched_06.marker
     fi
