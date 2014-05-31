@@ -1,0 +1,71 @@
+From b7fcaad5ee427b994e7f3c766dffbb2d0e49ec28 Mon Sep 17 00:00:00 2001
+From: Yuta NAKAI <nak5124@live.jp>
+Date: Mon, 17 Mar 2014 12:50:41 +0900
+Subject: [PATCH] Revert "Don't apply aggressive deinterlacing to
+ soft-telecined content."
+
+This reverts commit d7b4ab81b2d016c208f5d39a67cf3c1fbeb89ddd.
+
+Conflicts:
+	CHANGELOG.txt
+---
+ decoder/LAVVideo/decoders/avcodec.cpp | 11 +----------
+ decoder/LAVVideo/decoders/avcodec.h   |  1 -
+ decoder/LAVVideo/decoders/cuvid.cpp   |  2 +-
+ 3 files changed, 2 insertions(+), 12 deletions(-)
+
+diff --git a/decoder/LAVVideo/decoders/avcodec.cpp b/decoder/LAVVideo/decoders/avcodec.cpp
+index 430b6ad..b4c591a 100644
+--- a/decoder/LAVVideo/decoders/avcodec.cpp
++++ b/decoder/LAVVideo/decoders/avcodec.cpp
+@@ -858,15 +858,7 @@ STDMETHODIMP CDecAvcodec::Decode(const BYTE *buffer, int buflen, REFERENCE_TIME
+     else if (m_pAVCtx->progressive_sequence)
+       m_iInterlaced = 0;
+ 
+-    if ((m_nCodecId == AV_CODEC_ID_H264 || m_nCodecId == AV_CODEC_ID_MPEG2VIDEO) && m_pFrame->repeat_pict)
+-      m_nSoftTelecine = 2;
+-    else if (m_nSoftTelecine > 0)
+-      m_nSoftTelecine--;
+-
+-    // Don't apply aggressive deinterlacing to content that looks soft-telecined, as it would destroy the content
+-    bool bAggressiveFlag    = (m_iInterlaced == 1 && m_pSettings->GetDeinterlacingMode() == DeintMode_Aggressive) && !m_nSoftTelecine;
+-
+-    pOutFrame->interlaced   = (m_pFrame->interlaced_frame || bAggressiveFlag || m_pSettings->GetDeinterlacingMode() == DeintMode_Force) && !(m_pSettings->GetDeinterlacingMode() == DeintMode_Disable);
++    pOutFrame->interlaced   = (m_pFrame->interlaced_frame || (m_iInterlaced == 1 && m_pSettings->GetDeinterlacingMode() == DeintMode_Aggressive) || m_pSettings->GetDeinterlacingMode() == DeintMode_Force) && !(m_pSettings->GetDeinterlacingMode() == DeintMode_Disable);
+ 
+     LAVDeintFieldOrder fo   = m_pSettings->GetDeintFieldOrder();
+     pOutFrame->tff          = (fo == DeintFieldOrder_Auto) ? m_pFrame->top_field_first : (fo == DeintFieldOrder_TopFieldFirst);
+@@ -949,7 +941,6 @@ STDMETHODIMP CDecAvcodec::Flush()
+   m_CurrentThread = 0;
+   m_rtStartCache = AV_NOPTS_VALUE;
+   m_bWaitingForKeyFrame = TRUE;
+-  m_nSoftTelecine = 0;
+ 
+   m_nBFramePos = 0;
+   m_tcBFrameDelay[0].rtStart = m_tcBFrameDelay[0].rtStop = AV_NOPTS_VALUE;
+diff --git a/decoder/LAVVideo/decoders/avcodec.h b/decoder/LAVVideo/decoders/avcodec.h
+index ab68ab3..650cc70 100644
+--- a/decoder/LAVVideo/decoders/avcodec.h
++++ b/decoder/LAVVideo/decoders/avcodec.h
+@@ -95,5 +95,4 @@ private:
+   BOOL                 m_bResumeAtKeyFrame    = FALSE;
+   BOOL                 m_bWaitingForKeyFrame  = FALSE;
+   int                  m_iInterlaced          = -1;
+-  int                  m_nSoftTelecine        = 0;
+ };
+diff --git a/decoder/LAVVideo/decoders/cuvid.cpp b/decoder/LAVVideo/decoders/cuvid.cpp
+index 2115591..46d15f0 100644
+--- a/decoder/LAVVideo/decoders/cuvid.cpp
++++ b/decoder/LAVVideo/decoders/cuvid.cpp
+@@ -917,7 +917,7 @@ STDMETHODIMP CDecCuvid::Display(CUVIDPARSERDISPINFO *cuviddisp)
+         m_bTFF = cuviddisp->top_field_first;
+     }
+ 
+-    cuviddisp->progressive_frame = (cuviddisp->progressive_frame && !(m_bInterlaced && m_pSettings->GetDeinterlacingMode() == DeintMode_Aggressive && m_VideoFormat.codec != cudaVideoCodec_VC1 && !m_nSoftTelecine) && !(m_pSettings->GetDeinterlacingMode() == DeintMode_Force));
++    cuviddisp->progressive_frame = (cuviddisp->progressive_frame && !(m_bInterlaced && m_pSettings->GetDeinterlacingMode() == DeintMode_Aggressive && m_VideoFormat.codec != cudaVideoCodec_VC1) && !(m_pSettings->GetDeinterlacingMode() == DeintMode_Force));
+   }
+ 
+   LAVDeintFieldOrder fo        = m_pSettings->GetDeintFieldOrder();
+-- 
+1.9.0
+

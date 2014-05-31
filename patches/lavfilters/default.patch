@@ -1,0 +1,141 @@
+diff --git a/decoder/LAVAudio/LAVAudio.cpp b/decoder/LAVAudio/LAVAudio.cpp
+index edb1041..7066caf 100644
+--- a/decoder/LAVAudio/LAVAudio.cpp
++++ b/decoder/LAVAudio/LAVAudio.cpp
+@@ -190,7 +190,7 @@ STDMETHODIMP CLAVAudio::JoinFilterGraph(IFilterGraph * pGraph, LPCWSTR pName)
+ 
+ HRESULT CLAVAudio::LoadDefaults()
+ {
+-  m_settings.TrayIcon   = FALSE;
++  m_settings.TrayIcon   = TRUE;
+ 
+   m_settings.DRCEnabled = FALSE;
+   m_settings.DRCLevel   = 100;
+@@ -199,24 +199,21 @@ HRESULT CLAVAudio::LoadDefaults()
+   for(int i = 0; i < Codec_AudioNB; ++i)
+     m_settings.bFormats[i] = TRUE;
+ 
+-  // Disable WMA codecs by default
+-  m_settings.bFormats[Codec_WMA2]   = FALSE;
+-  m_settings.bFormats[Codec_WMAPRO] = FALSE;
+-  m_settings.bFormats[Codec_WMALL]  = FALSE;
+-
+   // Default bitstreaming to disabled
+   memset(m_settings.bBitstream, 0, sizeof(m_settings.bBitstream));
+ 
+   m_settings.DTSHDFraming         = FALSE;
+   m_settings.AutoAVSync           = TRUE;
+-  m_settings.ExpandMono           = FALSE;
++  m_settings.ExpandMono           = TRUE;
+   m_settings.Expand61             = FALSE;
+   m_settings.OutputStandardLayout = TRUE;
+   m_settings.AllowRawSPDIF        = FALSE;
+ 
+-  // Default all Sample Formats to enabled
++  // Default 16/24 bit Integer to enabled
+   for(int i = 0; i < SampleFormat_NB; ++i)
+-    m_settings.bSampleFormats[i] = TRUE;
++    m_settings.bSampleFormats[i] = FALSE;
++  m_settings.bSampleFormats[SampleFormat_16] = TRUE;
++  m_settings.bSampleFormats[SampleFormat_24] = TRUE;
+   m_settings.SampleConvertDither = TRUE;
+ 
+   if (!IsVistaOrNewer())
+@@ -225,9 +222,9 @@ HRESULT CLAVAudio::LoadDefaults()
+   m_settings.AudioDelayEnabled = FALSE;
+   m_settings.AudioDelay = 0;
+ 
+-  m_settings.MixingEnabled = FALSE;
++  m_settings.MixingEnabled = TRUE;
+   m_settings.MixingLayout  = AV_CH_LAYOUT_STEREO;
+-  m_settings.MixingFlags   = LAV_MIXING_FLAG_CLIP_PROTECTION;
++  m_settings.MixingFlags   = LAV_MIXING_FLAG_CLIP_PROTECTION|LAV_MIXING_FLAG_UNTOUCHED_STEREO;
+   m_settings.MixingMode    = MatrixEncoding_None;
+   m_settings.MixingCenterLevel   = 7071;
+   m_settings.MixingSurroundLevel = 7071;
+diff --git a/decoder/LAVVideo/LAVVideo.cpp b/decoder/LAVVideo/LAVVideo.cpp
+index 0785994..6e536be 100644
+--- a/decoder/LAVVideo/LAVVideo.cpp
++++ b/decoder/LAVVideo/LAVVideo.cpp
+@@ -166,43 +166,31 @@ STDMETHODIMP CLAVVideo::JoinFilterGraph(IFilterGraph * pGraph, LPCWSTR pName)
+ 
+ HRESULT CLAVVideo::LoadDefaults()
+ {
+-  m_settings.TrayIcon = FALSE;
++  m_settings.TrayIcon = TRUE;
+ 
+   // Set Defaults
+   m_settings.StreamAR = 2;
+-  m_settings.NumThreads = 0;
++  m_settings.NumThreads = 16;
+   m_settings.DeintFieldOrder = DeintFieldOrder_Auto;
+-  m_settings.DeintMode = DeintMode_Auto;
++  m_settings.DeintMode = DeintMode_Aggressive;
+   m_settings.RGBRange = 2; // Full range default
+ 
+   for (int i = 0; i < Codec_VideoNB; ++i)
+     m_settings.bFormats[i] = TRUE;
+ 
+-  m_settings.bFormats[Codec_RV12]     = FALSE;
+-  m_settings.bFormats[Codec_Cinepak]  = FALSE;
+-  m_settings.bFormats[Codec_QPEG]     = FALSE;
+-  m_settings.bFormats[Codec_MSRLE]    = FALSE;
+-
+   m_settings.bDVDVideo  = TRUE;
+   m_settings.bMSWMV9DMO = TRUE;
+ 
+-  // Raw formats, off by default
+-  m_settings.bFormats[Codec_v210]     = FALSE;
+-
+   for (int i = 0; i < LAVOutPixFmt_NB; ++i)
+     m_settings.bPixFmts[i] = TRUE;
+ 
+-  m_settings.bPixFmts[LAVOutPixFmt_YV16] = FALSE;
+-  m_settings.bPixFmts[LAVOutPixFmt_AYUV] = FALSE;
+-  m_settings.bPixFmts[LAVOutPixFmt_RGB48] = FALSE;
+-
+-  m_settings.HWAccel = HWAccel_None;
++  m_settings.HWAccel = HWAccel_CUDA;
+   for (int i = 0; i < HWCodec_NB; ++i)
+-    m_settings.bHWFormats[i] = TRUE;
++    m_settings.bHWFormats[i] = FALSE;
+ 
+-  m_settings.bHWFormats[HWCodec_MPEG4] = FALSE;
++  m_settings.bHWFormats[HWCodec_MPEG2] = TRUE;
+ 
+-  m_settings.HWAccelResFlags = LAVHWResFlag_SD|LAVHWResFlag_HD;
++  m_settings.HWAccelResFlags = LAVHWResFlag_SD|LAVHWResFlag_HD|LAVHWResFlag_UHD;
+ 
+   m_settings.HWDeintMode = HWDeintMode_Weave;
+   m_settings.HWDeintOutput = DeintOutput_FramePerField;
+diff --git a/demuxer/LAVSplitter/LAVSplitter.cpp b/demuxer/LAVSplitter/LAVSplitter.cpp
+index 27f00cd..a36cfda 100644
+--- a/demuxer/LAVSplitter/LAVSplitter.cpp
++++ b/demuxer/LAVSplitter/LAVSplitter.cpp
+@@ -154,10 +154,10 @@ static BOOL get_iformat_default(std::string name)
+ 
+ STDMETHODIMP CLAVSplitter::LoadDefaults()
+ {
+-  m_settings.TrayIcon         = FALSE;
++  m_settings.TrayIcon         = TRUE;
+ 
+-  m_settings.prefAudioLangs   = L"";
+-  m_settings.prefSubLangs     = L"";
++  m_settings.prefAudioLangs   = L"jpn";
++  m_settings.prefSubLangs     = L"jpn";
+   m_settings.subtitleAdvanced = L"";
+ 
+   m_settings.subtitleMode     = LAVSubtitleMode_Default;
+@@ -169,10 +169,10 @@ STDMETHODIMP CLAVSplitter::LoadDefaults()
+ 
+   m_settings.MatroskaExternalSegments = TRUE;
+ 
+-  m_settings.StreamSwitchRemoveAudio = FALSE;
++  m_settings.StreamSwitchRemoveAudio = TRUE;
+   m_settings.ImpairedAudio    = FALSE;
+   m_settings.PreferHighQualityAudio = TRUE;
+-  m_settings.QueueMaxSize     = 256;
++  m_settings.QueueMaxSize     = 4096;
+   m_settings.NetworkAnalysisDuration = 1000;
+ 
+   for (const FormatInfo& fmt : m_InputFormats) {

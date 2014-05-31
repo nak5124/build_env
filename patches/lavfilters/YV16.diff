@@ -1,0 +1,216 @@
+diff --git a/decoder/LAVVideo/LAVPixFmtConverter.cpp b/decoder/LAVVideo/LAVPixFmtConverter.cpp
+index 54d94f9..f4cf7a5 100644
+--- a/decoder/LAVVideo/LAVPixFmtConverter.cpp
++++ b/decoder/LAVVideo/LAVPixFmtConverter.cpp
+@@ -58,7 +58,7 @@ typedef struct {
+ } LAV_INOUT_PIXFMT_MAP;
+ 
+ #define PIXOUT_420_8    LAVOutPixFmt_NV12, LAVOutPixFmt_YV12
+-#define PIXOUT_422_8    LAVOutPixFmt_YUY2, LAVOutPixFmt_UYVY, LAVOutPixFmt_YV16
++#define PIXOUT_422_8    LAVOutPixFmt_YV16, LAVOutPixFmt_YUY2, LAVOutPixFmt_UYVY
+ #define PIXOUT_444_8    LAVOutPixFmt_YV24, LAVOutPixFmt_AYUV
+ #define PIXOUT_RGB_8    LAVOutPixFmt_RGB32, LAVOutPixFmt_RGB24
+ 
+diff --git a/decoder/LAVVideo/LAVVideo.cpp b/decoder/LAVVideo/LAVVideo.cpp
+index 53cf906..8dd84ee 100644
+--- a/decoder/LAVVideo/LAVVideo.cpp
++++ b/decoder/LAVVideo/LAVVideo.cpp
+@@ -271,8 +259,6 @@ HRESULT CLAVVideo::ReadSettings(HKEY rootKey)
+       bFlag = regP.ReadBOOL(pixFmtSettingsMap[i], hr);
+       if (SUCCEEDED(hr)) m_settings.bPixFmts[i] = bFlag;
+     }
+-    // Force disable, for future use
+-    m_settings.bPixFmts[LAVOutPixFmt_YV16] = FALSE;
+   }
+ 
+   CRegistry regHW = CRegistry(rootKey, LAVC_VIDEO_REGISTRY_KEY_HWACCEL, hr, TRUE);
+diff --git a/decoder/LAVVideo/LAVVideo.rc b/decoder/LAVVideo/LAVVideo.rc
+index 3ef2ee0..f221e8f 100644
+--- a/decoder/LAVVideo/LAVVideo.rc
++++ b/decoder/LAVVideo/LAVVideo.rc
+@@ -63,11 +63,11 @@ END
+ // Dialog
+ //
+ 
+-IDD_PROPPAGE_VIDEO_SETTINGS DIALOGEX 0, 0, 405, 250
++IDD_PROPPAGE_VIDEO_SETTINGS DIALOGEX 0, 0, 425, 250
+ STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD
+ FONT 8, "MS Shell Dlg", 400, 0, 0x0
+ BEGIN
+-    GROUPBOX        "Settings",IDC_VIDEO_SETTINGS,7,7,226,93
++    GROUPBOX        "Settings",IDC_VIDEO_SETTINGS,7,7,250,93
+     CONTROL         "Use Stream Aspect Ratio",IDC_STREAMAR,"Button",BS_AUTO3STATE | WS_TABSTOP,109,24,100,10
+     COMBOBOX        IDC_THREADS,15,30,75,200,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+     LTEXT           "Threads for Multi-Threading",IDC_LBL_MULTITHREAD,14,20,91,8
+@@ -76,68 +76,69 @@ BEGIN
+     LTEXT           "Deinterlacing Mode",IDC_LBL_DEINT_MODE,109,68,79,8
+     COMBOBOX        IDC_DEINT_MODE,111,79,110,100,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+     COMBOBOX        IDC_DEINT_FIELDORDER,15,79,75,100,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+-    GROUPBOX        "Output Formats",IDC_OUTPUT_FORMATS,7,103,226,131
++    GROUPBOX        "Output Formats",IDC_OUTPUT_FORMATS,7,103,250,131
+     LTEXT           "8-bit",IDC_OUT_8BIT,38,114,32,8
+-    LTEXT           "10-bit",IDC_OUT_10BIT,115,114,32,8
+-    LTEXT           "16-bit",IDC_OUT_16BIT,191,114,24,8
++    LTEXT           "10-bit",IDC_OUT_10BIT,148,114,32,8
++    LTEXT           "16-bit",IDC_OUT_16BIT,220,114,24,8
+     LTEXT           "4:2:0",IDC_OUT_420,14,124,20,8
+     CONTROL         "NV12",IDC_OUT_NV12,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,38,124,32,10
+     CONTROL         "YV12",IDC_OUT_YV12,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,78,124,32,10
+-    CONTROL         "P010",IDC_OUT_P010,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,115,124,32,10
+-    CONTROL         "P016",IDC_OUT_P016,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,191,124,32,10
++    CONTROL         "P010",IDC_OUT_P010,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,148,124,32,10
++    CONTROL         "P016",IDC_OUT_P016,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,220,124,32,10
+     LTEXT           "4:2:2",IDC_OUT_422,14,138,20,8
+-    CONTROL         "YUY2",IDC_OUT_YUY2,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,38,138,32,10
+-    CONTROL         "UYVY",IDC_OUT_UYVY,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,78,138,32,10
+-    CONTROL         "P210",IDC_OUT_P210,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,115,138,32,10
+-    CONTROL         "v210",IDC_OUT_V210,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,151,138,32,10
+-    CONTROL         "P216",IDC_OUT_P216,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,191,138,32,10
++    CONTROL         "YV16",IDC_OUT_YV16,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,38,138,32,10
++    CONTROL         "YUY2",IDC_OUT_YUY2,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,78,138,32,10
++    CONTROL         "UYVY",IDC_OUT_UYVY,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,117,138,32,10
++    CONTROL         "P210",IDC_OUT_P210,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,148,138,32,10
++    CONTROL         "v210",IDC_OUT_V210,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,184,138,32,10
++    CONTROL         "P216",IDC_OUT_P216,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,220,138,32,10
+     LTEXT           "4:4:4",IDC_OUT_444,14,153,20,8
+     CONTROL         "YV24",IDC_OUT_YV24,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,38,153,32,10
+     CONTROL         "AYUV",IDC_OUT_AYUV,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,78,153,32,10
+-    CONTROL         "Y410",IDC_OUT_Y410,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,115,153,32,10
+-    CONTROL         "v410",IDC_OUT_V410,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,151,153,32,10
+-    CONTROL         "Y416",IDC_OUT_Y416,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,191,153,32,10
++    CONTROL         "Y410",IDC_OUT_Y410,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,148,153,32,10
++    CONTROL         "v410",IDC_OUT_V410,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,184,153,32,10
++    CONTROL         "Y416",IDC_OUT_Y416,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,220,153,32,10
+     LTEXT           "RGB",IDC_OUT_RGB,14,167,20,8
+     CONTROL         "RGB32",IDC_OUT_RGB32,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,38,167,40,10
+     CONTROL         "RGB24",IDC_OUT_RGB24,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,78,167,40,10
+-    CONTROL         "RGB48",IDC_OUT_RGB48,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,191,167,40,10
+-    LTEXT           "RGB Output levels (for YUV -> RGB conversion)",IDC_LBL_RGBOUT,14,183,188,8
+-    CONTROL         "TV (16-235)",IDC_RGBOUT_TV,"Button",BS_AUTORADIOBUTTON,19,194,50,10
+-    CONTROL         "PC (0-255)",IDC_RGBOUT_PC,"Button",BS_AUTORADIOBUTTON,71,194,46,10
+-    CONTROL         "Untouched (as input)",IDC_RGBOUT_AUTO,"Button",BS_AUTORADIOBUTTON,120,194,80,10
+-    LTEXT           "Dithering Mode",IDC_STATIC,14,207,188,8
+-    CONTROL         "Ordered Dithering",IDC_DITHER_ORDERED,"Button",BS_AUTORADIOBUTTON | WS_GROUP,19,218,92,10
+-    CONTROL         "Random Dithering",IDC_DITHER_RANDOM,"Button",BS_AUTORADIOBUTTON,120,218,90,10
+-    GROUPBOX        "Hardware Acceleration",IDC_HWACCEL_SETTINGS,238,7,156,105
+-    LTEXT           "Hardware Decoder to use:",IDC_LBL_HWACCEL,243,17,107,8
+-    COMBOBOX        IDC_HWACCEL,246,28,85,100,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+-    LTEXT           "Foo",IDC_HWACCEL_AVAIL,333,31,41,8
+-    LTEXT           "Active Decoder: ",IDC_STATIC,243,45,57,8
+-    LTEXT           "<inactive>",IDC_ACTIVE_DECODER,311,45,66,8
+-    LTEXT           "Codecs for HW Decoding",IDC_LBL_HWCODECS,243,57,80,8
+-    CONTROL         "H.264",IDC_HWACCEL_H264,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,247,70,34,10
+-    CONTROL         "VC-1",IDC_HWACCEL_VC1,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,292,70,35,10
+-    CONTROL         "MPEG-2",IDC_HWACCEL_MPEG2,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,247,84,38,10
+-    CONTROL         "DVD",IDC_HWACCEL_MPEG2_DVD,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,292,84,38,10
+-    CONTROL         "MPEG-4",IDC_HWACCEL_MPEG4,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,247,98,66,10
+-    LTEXT           "Resolutions",IDC_LBL_HWRESOLUTIONS,339,57,47,8
+-    CONTROL         "SD",IDC_HWRES_SD,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,343,70,40,10
+-    CONTROL         "HD",IDC_HWRES_HD,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,343,84,40,10
+-    CONTROL         "UHD (4K)",IDC_HWRES_UHD,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,343,98,40,10
+-    GROUPBOX        "Hardware/GPU Deinterlacing (CUVID/QS only)",IDC_GROUP_HWDEINT,238,116,156,63
++    CONTROL         "RGB48",IDC_OUT_RGB48,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,220,167,33,10
++    LTEXT           "RGB Output levels (for YUV -> RGB conversion)",IDC_LBL_RGBOUT,30,183,188,8
++    CONTROL         "TV (16-235)",IDC_RGBOUT_TV,"Button",BS_AUTORADIOBUTTON,35,194,50,10
++    CONTROL         "PC (0-255)",IDC_RGBOUT_PC,"Button",BS_AUTORADIOBUTTON,87,194,46,10
++    CONTROL         "Untouched (as input)",IDC_RGBOUT_AUTO,"Button",BS_AUTORADIOBUTTON,136,194,80,10
++    LTEXT           "Dithering Mode",IDC_STATIC,30,207,188,8
++    CONTROL         "Ordered Dithering",IDC_DITHER_ORDERED,"Button",BS_AUTORADIOBUTTON | WS_GROUP,35,218,92,10
++    CONTROL         "Random Dithering",IDC_DITHER_RANDOM,"Button",BS_AUTORADIOBUTTON,136,218,90,10
++    GROUPBOX        "Hardware Acceleration",IDC_HWACCEL_SETTINGS,263,7,156,105
++    LTEXT           "Hardware Decoder to use:",IDC_LBL_HWACCEL,268,17,107,8
++    COMBOBOX        IDC_HWACCEL,271,28,85,100,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
++    LTEXT           "Foo",IDC_HWACCEL_AVAIL,358,31,41,8
++    LTEXT           "Active Decoder: ",IDC_STATIC,268,45,57,8
++    LTEXT           "<inactive>",IDC_ACTIVE_DECODER,336,45,66,8
++    LTEXT           "Codecs for HW Decoding",IDC_LBL_HWCODECS,268,57,80,8
++    CONTROL         "H.264",IDC_HWACCEL_H264,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,272,70,34,10
++    CONTROL         "VC-1",IDC_HWACCEL_VC1,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,317,70,35,10
++    CONTROL         "MPEG-2",IDC_HWACCEL_MPEG2,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,272,84,38,10
++    CONTROL         "DVD",IDC_HWACCEL_MPEG2_DVD,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,317,84,38,10
++    CONTROL         "MPEG-4",IDC_HWACCEL_MPEG4,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,272,98,66,10
++    LTEXT           "Resolutions",IDC_LBL_HWRESOLUTIONS,364,57,47,8
++    CONTROL         "SD",IDC_HWRES_SD,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,368,70,40,10
++    CONTROL         "HD",IDC_HWRES_HD,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,368,84,40,10
++    CONTROL         "UHD (4K)",IDC_HWRES_UHD,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,368,98,40,10
++    GROUPBOX        "Hardware/GPU Deinterlacing (CUVID/QS only)",IDC_GROUP_HWDEINT,263,116,156,63
+     CONTROL         "Enable Adaptive HW Deinterlacing",IDC_HWDEINT_ENABLE,
+-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,244,128,139,10
+-    LTEXT           "Output Mode",IDC_LBL_HWDEINT_MODE,243,140,62,8
+-    CONTROL         "25p/30p (Film)",IDC_HWDEINT_OUT_FILM,"Button",BS_AUTORADIOBUTTON | WS_GROUP,247,151,58,10
+-    CONTROL         "50p/60p (Video)",IDC_HWDEINT_OUT_VIDEO,"Button",BS_AUTORADIOBUTTON,315,151,62,10
+-    CONTROL         "High-Quality Processing",IDC_HWDEINT_HQ,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,244,164,90,10
+-    GROUPBOX        "Software Deinterlacing (YADIF)",IDC_SWDEINT,238,185,156,48
+-    CONTROL         "Enable YADIF Deinterlacing",IDC_SWDEINT_ENABLE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,244,196,116,10
+-    LTEXT           "Output Mode",IDC_LBL_SWDEINT_MODE,243,209,61,8
+-    CONTROL         "25p/30p (Film)",IDC_SWDEINT_OUT_FILM,"Button",BS_AUTORADIOBUTTON | WS_GROUP,247,220,58,10
+-    CONTROL         "50p/60p (Video)",IDC_SWDEINT_OUT_VIDEO,"Button",BS_AUTORADIOBUTTON,315,220,62,10
++                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,269,128,139,10
++    LTEXT           "Output Mode",IDC_LBL_HWDEINT_MODE,268,140,62,8
++    CONTROL         "25p/30p (Film)",IDC_HWDEINT_OUT_FILM,"Button",BS_AUTORADIOBUTTON | WS_GROUP,272,151,58,10
++    CONTROL         "50p/60p (Video)",IDC_HWDEINT_OUT_VIDEO,"Button",BS_AUTORADIOBUTTON,340,151,62,10
++    CONTROL         "High-Quality Processing",IDC_HWDEINT_HQ,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,269,164,90,10
++    GROUPBOX        "Software Deinterlacing (YADIF)",IDC_SWDEINT,263,185,156,48
++    CONTROL         "Enable YADIF Deinterlacing",IDC_SWDEINT_ENABLE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,269,196,116,10
++    LTEXT           "Output Mode",IDC_LBL_SWDEINT_MODE,268,209,61,8
++    CONTROL         "25p/30p (Film)",IDC_SWDEINT_OUT_FILM,"Button",BS_AUTORADIOBUTTON | WS_GROUP,272,220,58,10
++    CONTROL         "50p/60p (Video)",IDC_SWDEINT_OUT_VIDEO,"Button",BS_AUTORADIOBUTTON,340,220,62,10
+     CONTROL         "Enable System Tray Icon",IDC_TRAYICON,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,237,192,10
+-    LTEXT           "LAV Video Decoder x.xx",IDC_LAVVIDEO_FOOTER,238,237,156,8,0,WS_EX_RIGHT
++    LTEXT           "LAV Video Decoder x.xx",IDC_LAVVIDEO_FOOTER,263,237,156,8,0,WS_EX_RIGHT
+ END
+ 
+ IDD_PROPPAGE_FORMATS DIALOGEX 0, 0, 405, 250
+diff --git a/decoder/LAVVideo/VideoSettingsProp.cpp b/decoder/LAVVideo/VideoSettingsProp.cpp
+index 21ed9d7..58513be 100644
+--- a/decoder/LAVVideo/VideoSettingsProp.cpp
++++ b/decoder/LAVVideo/VideoSettingsProp.cpp
+@@ -81,6 +81,7 @@ HRESULT CLAVVideoSettingsProp::OnApplyChanges()
+   m_bPixFmts[LAVOutPixFmt_NV12] = (BOOL)SendDlgItemMessage(m_Dlg, IDC_OUT_NV12, BM_GETCHECK,0, 0);
+   m_bPixFmts[LAVOutPixFmt_P010] = (BOOL)SendDlgItemMessage(m_Dlg, IDC_OUT_P010, BM_GETCHECK,0, 0);
+   m_bPixFmts[LAVOutPixFmt_P016] = (BOOL)SendDlgItemMessage(m_Dlg, IDC_OUT_P016, BM_GETCHECK,0, 0);
++  m_bPixFmts[LAVOutPixFmt_YV16] = (BOOL)SendDlgItemMessage(m_Dlg, IDC_OUT_YV16, BM_GETCHECK,0, 0);
+   m_bPixFmts[LAVOutPixFmt_YUY2] = (BOOL)SendDlgItemMessage(m_Dlg, IDC_OUT_YUY2, BM_GETCHECK,0, 0);
+   m_bPixFmts[LAVOutPixFmt_UYVY] = (BOOL)SendDlgItemMessage(m_Dlg, IDC_OUT_UYVY, BM_GETCHECK,0, 0);
+   m_bPixFmts[LAVOutPixFmt_P210] = (BOOL)SendDlgItemMessage(m_Dlg, IDC_OUT_P210, BM_GETCHECK,0, 0);
+@@ -253,6 +254,7 @@ HRESULT CLAVVideoSettingsProp::OnActivate()
+     SendDlgItemMessage(m_Dlg, IDC_OUT_NV12, BM_SETCHECK, m_bPixFmts[LAVOutPixFmt_NV12], 0);
+     SendDlgItemMessage(m_Dlg, IDC_OUT_P010, BM_SETCHECK, m_bPixFmts[LAVOutPixFmt_P010], 0);
+     SendDlgItemMessage(m_Dlg, IDC_OUT_P016, BM_SETCHECK, m_bPixFmts[LAVOutPixFmt_P016], 0);
++    SendDlgItemMessage(m_Dlg, IDC_OUT_YV16, BM_SETCHECK, m_bPixFmts[LAVOutPixFmt_YV16], 0);
+     SendDlgItemMessage(m_Dlg, IDC_OUT_YUY2, BM_SETCHECK, m_bPixFmts[LAVOutPixFmt_YUY2], 0);
+     SendDlgItemMessage(m_Dlg, IDC_OUT_UYVY, BM_SETCHECK, m_bPixFmts[LAVOutPixFmt_UYVY], 0);
+     SendDlgItemMessage(m_Dlg, IDC_OUT_P210, BM_SETCHECK, m_bPixFmts[LAVOutPixFmt_P210], 0);
+@@ -439,6 +441,11 @@ INT_PTR CLAVVideoSettingsProp::OnReceiveMessage(HWND hwnd, UINT uMsg, WPARAM wPa
+       if (bValue != m_bPixFmts[LAVOutPixFmt_P016]) {
+         SetDirty();
+       }
++    } else if (LOWORD(wParam) == IDC_OUT_YV16 && HIWORD(wParam) == BN_CLICKED) {
++      bValue = (BOOL)SendDlgItemMessage(m_Dlg, LOWORD(wParam), BM_GETCHECK, 0, 0);
++      if (bValue != m_bPixFmts[LAVOutPixFmt_YV16]) {
++        SetDirty();
++      }
+     } else if (LOWORD(wParam) == IDC_OUT_YUY2 && HIWORD(wParam) == BN_CLICKED) {
+       bValue = (BOOL)SendDlgItemMessage(m_Dlg, LOWORD(wParam), BM_GETCHECK, 0, 0);
+       if (bValue != m_bPixFmts[LAVOutPixFmt_YUY2]) {
+diff --git a/decoder/LAVVideo/resource.h b/decoder/LAVVideo/resource.h
+index 8e23a99..be3d8ce 100644
+--- a/decoder/LAVVideo/resource.h
++++ b/decoder/LAVVideo/resource.h
+@@ -87,6 +87,7 @@
+ #define IDC_HWRES_UHD                   1077
+ #define IDC_HWACCEL_MPEG2_DVD           1078
+ #define IDC_TRAYICON                    1079
++#define IDC_OUT_YV16                    1080
+ 
+ // Next default values for new objects
+ // 
+@@ -94,7 +95,7 @@
+ #ifndef APSTUDIO_READONLY_SYMBOLS
+ #define _APS_NEXT_RESOURCE_VALUE        111
+ #define _APS_NEXT_COMMAND_VALUE         40001
+-#define _APS_NEXT_CONTROL_VALUE         1080
++#define _APS_NEXT_CONTROL_VALUE         1081
+ #define _APS_NEXT_SYMED_VALUE           101
+ #endif
+ #endif

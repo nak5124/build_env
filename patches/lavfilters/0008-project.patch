@@ -1,0 +1,257 @@
+diff --git a/common/DSUtilLite/DSUtilLite.vcxproj b/common/DSUtilLite/DSUtilLite.vcxproj
+index 2eaca87..f808520 100644
+--- a/common/DSUtilLite/DSUtilLite.vcxproj
++++ b/common/DSUtilLite/DSUtilLite.vcxproj
+@@ -58,6 +58,9 @@
+   <PropertyGroup Condition="'$(Configuration)'=='Release'">
+     <TargetName>dsutil</TargetName>
+   </PropertyGroup>
++  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
++    <IntDir>$(SolutionDir)bin_$(PlatformName)\$(ProjectName)\</IntDir>
++  </PropertyGroup>
+   <ItemDefinitionGroup Condition="'$(Configuration)'=='Debug' Or '$(Configuration)'=='DebugRelease'">
+     <ClCompile>
+       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+@@ -66,10 +69,21 @@
+   <ItemDefinitionGroup Condition="'$(Configuration)'=='Release'">
+     <ClCompile>
+       <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
++      <InlineFunctionExpansion Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">AnySuitable</InlineFunctionExpansion>
++      <FavorSizeOrSpeed Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Speed</FavorSizeOrSpeed>
++      <EnableEnhancedInstructionSet Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">AdvancedVectorExtensions</EnableEnhancedInstructionSet>
++      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Fast</FloatingPointModel>
++      <ProgramDataBaseFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
+     </ClCompile>
+     <PreBuildEvent>
+       <Command>..\..\update_version.bat</Command>
+     </PreBuildEvent>
++    <Lib>
++      <SubSystem Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Windows</SubSystem>
++    </Lib>
++    <Lib>
++      <MinimumRequiredVersion Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">6.1</MinimumRequiredVersion>
++    </Lib>
+   </ItemDefinitionGroup>
+   <ItemGroup>
+     <ClInclude Include="BaseDSPropPage.h" />
+diff --git a/common/baseclasses/baseclasses.vcxproj b/common/baseclasses/baseclasses.vcxproj
+index 9fbe142..641e339 100644
+--- a/common/baseclasses/baseclasses.vcxproj
++++ b/common/baseclasses/baseclasses.vcxproj
+@@ -77,6 +77,9 @@
+     <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">strmbase</TargetName>
+     <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">strmbase</TargetName>
+   </PropertyGroup>
++  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
++    <IntDir>$(SolutionDir)bin_$(PlatformName)\$(ProjectName)\</IntDir>
++  </PropertyGroup>
+   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32' Or '$(Configuration)|$(Platform)'=='DebugRelease|Win32'">
+     <ClCompile>
+       <AdditionalIncludeDirectories>.;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+@@ -100,10 +103,19 @@
+       <PrecompiledHeader>
+       </PrecompiledHeader>
+       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
++      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
++      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
++      <WholeProgramOptimization>true</WholeProgramOptimization>
++      <EnableEnhancedInstructionSet>AdvancedVectorExtensions</EnableEnhancedInstructionSet>
++      <FloatingPointModel>Fast</FloatingPointModel>
++      <ProgramDataBaseFileName />
+     </ClCompile>
+     <Lib>
+       <AdditionalDependencies>strmiids.lib;%(AdditionalDependencies)</AdditionalDependencies>
+       <OutputFile>$(OutDir)strmbase.lib</OutputFile>
++      <SubSystem>Windows</SubSystem>
++      <MinimumRequiredVersion>6.1</MinimumRequiredVersion>
++      <LinkTimeCodeGeneration>true</LinkTimeCodeGeneration>
+     </Lib>
+   </ItemDefinitionGroup>
+   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64' Or '$(Configuration)|$(Platform)'=='DebugRelease|x64'">
+diff --git a/common/common.props b/common/common.props
+index fe909ae..1fdd93e 100644
+--- a/common/common.props
++++ b/common/common.props
+@@ -17,6 +17,7 @@
+     </ClCompile>
+     <Link>
+       <SubSystem>Windows</SubSystem>
++      <MinimumRequiredVersion>6.1</MinimumRequiredVersion>
+       <GenerateDebugInformation>true</GenerateDebugInformation>
+     </Link>
+   </ItemDefinitionGroup>
+diff --git a/common/platform.props b/common/platform.props
+index 76e63b6..986ada0 100644
+--- a/common/platform.props
++++ b/common/platform.props
+@@ -1,6 +1,6 @@
+ <?xml version="1.0" encoding="utf-8"?> 
+ <Project ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+   <PropertyGroup Label="Configuration" Condition="'$(VisualStudioVersion)' == '12.0'">
+-    <PlatformToolset>v120_xp</PlatformToolset>
++    <PlatformToolset>v120</PlatformToolset>
+   </PropertyGroup>
+ </Project>
+diff --git a/decoder/LAVAudio/LAVAudio.vcxproj b/decoder/LAVAudio/LAVAudio.vcxproj
+index 5b48c4c..3d5e74b 100644
+--- a/decoder/LAVAudio/LAVAudio.vcxproj
++++ b/decoder/LAVAudio/LAVAudio.vcxproj
+@@ -63,6 +63,9 @@
+     <OutDir>$(SolutionDir)bin_$(PlatformName)\$(ProjectName)\</OutDir>
+     <CustomBuildAfterTargets>Build</CustomBuildAfterTargets>
+   </PropertyGroup>
++  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
++    <IntDir>$(SolutionDir)bin_$(PlatformName)\$(ProjectName)\</IntDir>
++  </PropertyGroup>
+   <ItemDefinitionGroup Condition="'$(Configuration)'=='Debug' Or '$(Configuration)'=='DebugRelease'">
+     <ClCompile>
+       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;LAVAUDIO_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+@@ -78,10 +81,18 @@
+   <ItemDefinitionGroup Condition="'$(Configuration)'=='Release'">
+     <ClCompile>
+       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;LAVAUDIO_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
++      <InlineFunctionExpansion Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">AnySuitable</InlineFunctionExpansion>
++      <FavorSizeOrSpeed Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Speed</FavorSizeOrSpeed>
++      <EnableEnhancedInstructionSet Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">AdvancedVectorExtensions</EnableEnhancedInstructionSet>
++      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Fast</FloatingPointModel>
++      <ProgramDataBaseFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
+     </ClCompile>
+     <Link>
+       <AdditionalDependencies>advapi32.lib;ole32.lib;winmm.lib;user32.lib;oleaut32.lib;shell32.lib;Shlwapi.lib;Comctl32.lib;version.lib;strmbase.lib;dsutil.lib;avformat-lav.lib;avutil-lav.lib;avcodec-lav.lib;avresample-lav.lib</AdditionalDependencies>
+       <ModuleDefinitionFile>LAVAudio.def</ModuleDefinitionFile>
++      <GenerateDebugInformation Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</GenerateDebugInformation>
++      <ProgramDatabaseFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
++      <LargeAddressAware Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</LargeAddressAware>
+     </Link>
+     <CustomBuildStep>
+       <Command>copy "$(TargetDir)\$(TargetName)$(TargetExt)" "$(OutDir).."</Command>
+diff --git a/decoder/LAVVideo/LAVVideo.vcxproj b/decoder/LAVVideo/LAVVideo.vcxproj
+index 5546006..4dc7ea7 100644
+--- a/decoder/LAVVideo/LAVVideo.vcxproj
++++ b/decoder/LAVVideo/LAVVideo.vcxproj
+@@ -63,6 +63,9 @@
+     <OutDir>$(SolutionDir)bin_$(PlatformName)\$(ProjectName)\</OutDir>
+     <CustomBuildAfterTargets>Build</CustomBuildAfterTargets>
+   </PropertyGroup>
++  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
++    <IntDir>$(SolutionDir)bin_$(PlatformName)\$(ProjectName)\</IntDir>
++  </PropertyGroup>
+   <ItemDefinitionGroup Condition="'$(Configuration)'=='Debug' Or '$(Configuration)'=='DebugRelease'">
+     <ClCompile>
+       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;LAVVIDEO_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+@@ -80,10 +83,18 @@
+     <ClCompile>
+       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;LAVVIDEO_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(SolutionDir)qsdecoder</AdditionalIncludeDirectories>
++      <InlineFunctionExpansion Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">AnySuitable</InlineFunctionExpansion>
++      <FavorSizeOrSpeed Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Speed</FavorSizeOrSpeed>
++      <EnableEnhancedInstructionSet Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">AdvancedVectorExtensions</EnableEnhancedInstructionSet>
++      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Fast</FloatingPointModel>
++      <ProgramDataBaseFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
+     </ClCompile>
+     <Link>
+       <AdditionalDependencies>advapi32.lib;ole32.lib;gdi32.lib;winmm.lib;user32.lib;oleaut32.lib;shell32.lib;Shlwapi.lib;Comctl32.lib;d3d9.lib;mfuuid.lib;dmoguids.lib;strmbase.lib;dsutil.lib;avutil-lav.lib;avcodec-lav.lib;swscale-lav.lib;avfilter-lav.lib</AdditionalDependencies>
+       <ModuleDefinitionFile>LAVVideo.def</ModuleDefinitionFile>
++      <GenerateDebugInformation Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</GenerateDebugInformation>
++      <ProgramDatabaseFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
++      <LargeAddressAware Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</LargeAddressAware>
+     </Link>
+     <CustomBuildStep>
+       <Command>copy "$(TargetDir)\$(TargetName)$(TargetExt)" "$(OutDir).."</Command>
+diff --git a/demuxer/Demuxers/Demuxers.vcxproj b/demuxer/Demuxers/Demuxers.vcxproj
+index 65c8b3b..d1efa2a 100644
+--- a/demuxer/Demuxers/Demuxers.vcxproj
++++ b/demuxer/Demuxers/Demuxers.vcxproj
+@@ -58,6 +58,9 @@
+   <PropertyGroup Condition="'$(Configuration)'=='Release'">
+     <TargetName>demuxers</TargetName>
+   </PropertyGroup>
++  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
++    <IntDir>$(SolutionDir)bin_$(PlatformName)\$(ProjectName)\</IntDir>
++  </PropertyGroup>
+   <ItemDefinitionGroup Condition="'$(Configuration)'=='Debug' Or '$(Configuration)'=='DebugRelease'">
+     <ClCompile>
+       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+@@ -66,7 +69,18 @@
+   <ItemDefinitionGroup Condition="'$(Configuration)'=='Release'">
+     <ClCompile>
+       <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
++      <InlineFunctionExpansion Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">AnySuitable</InlineFunctionExpansion>
++      <FavorSizeOrSpeed Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Speed</FavorSizeOrSpeed>
++      <EnableEnhancedInstructionSet Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">AdvancedVectorExtensions</EnableEnhancedInstructionSet>
++      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Fast</FloatingPointModel>
++      <ProgramDataBaseFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
+     </ClCompile>
++    <Lib>
++      <SubSystem Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Windows</SubSystem>
++    </Lib>
++    <Lib>
++      <MinimumRequiredVersion Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">6.1</MinimumRequiredVersion>
++    </Lib>
+   </ItemDefinitionGroup>
+   <ItemGroup>
+     <ClInclude Include="BaseDemuxer.h" />
+diff --git a/demuxer/LAVSplitter/LAVSplitter.vcxproj b/demuxer/LAVSplitter/LAVSplitter.vcxproj
+index 5f91e58..eaaa3ce 100644
+--- a/demuxer/LAVSplitter/LAVSplitter.vcxproj
++++ b/demuxer/LAVSplitter/LAVSplitter.vcxproj
+@@ -63,6 +63,9 @@
+     <OutDir>$(SolutionDir)bin_$(PlatformName)\$(ProjectName)\</OutDir>
+     <CustomBuildAfterTargets>Build</CustomBuildAfterTargets>
+   </PropertyGroup>
++  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
++    <IntDir>$(SolutionDir)bin_$(PlatformName)\$(ProjectName)\</IntDir>
++  </PropertyGroup>
+   <ItemDefinitionGroup Condition="'$(Configuration)'=='Debug' Or '$(Configuration)'=='DebugRelease'">
+     <ClCompile>
+       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;LAVSPLITTER_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+@@ -80,10 +83,18 @@
+     <ClCompile>
+       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;LAVSPLITTER_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+       <AdditionalIncludeDirectories>..\Demuxers;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
++      <InlineFunctionExpansion Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">AnySuitable</InlineFunctionExpansion>
++      <FavorSizeOrSpeed Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Speed</FavorSizeOrSpeed>
++      <EnableEnhancedInstructionSet Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">AdvancedVectorExtensions</EnableEnhancedInstructionSet>
++      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Fast</FloatingPointModel>
++      <ProgramDataBaseFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
+     </ClCompile>
+     <Link>
+       <AdditionalDependencies>advapi32.lib;ole32.lib;winmm.lib;user32.lib;oleaut32.lib;Comctl32.lib;shell32.lib;version.lib;Shlwapi.lib;strmbase.lib;dsutil.lib;demuxers.lib;avformat-lav.lib;avutil-lav.lib;avcodec-lav.lib</AdditionalDependencies>
+       <ModuleDefinitionFile>LAVSplitter.def</ModuleDefinitionFile>
++      <GenerateDebugInformation Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</GenerateDebugInformation>
++      <ProgramDatabaseFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
++      <LargeAddressAware Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</LargeAddressAware>
+     </Link>
+     <CustomBuildStep>
+       <Command>copy "$(TargetDir)\$(TargetName)$(TargetExt)" "$(OutDir).."</Command>
+diff --git a/libbluray/libbluray.vcxproj b/libbluray/libbluray.vcxproj
+index 8db3670..ad42d58 100644
+--- a/libbluray/libbluray.vcxproj
++++ b/libbluray/libbluray.vcxproj
+@@ -184,15 +184,23 @@
+       <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)includes;$(ProjectDir)src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+       <CompileAs>CompileAsCpp</CompileAs>
+       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+-      <EnableEnhancedInstructionSet Condition="'$(Platform)'=='Win32'">StreamingSIMDExtensions</EnableEnhancedInstructionSet>
++      <EnableEnhancedInstructionSet Condition="'$(Platform)'=='Win32'">AdvancedVectorExtensions</EnableEnhancedInstructionSet>
++      <InlineFunctionExpansion Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">AnySuitable</InlineFunctionExpansion>
++      <FavorSizeOrSpeed Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Speed</FavorSizeOrSpeed>
++      <OmitFramePointers Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</OmitFramePointers>
++      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Fast</FloatingPointModel>
++      <ProgramDataBaseFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
+     </ClCompile>
+     <Link>
+       <SubSystem>Windows</SubSystem>
+-      <GenerateDebugInformation>true</GenerateDebugInformation>
++      <GenerateDebugInformation>false</GenerateDebugInformation>
+       <EnableCOMDATFolding>true</EnableCOMDATFolding>
+       <OptimizeReferences>true</OptimizeReferences>
+       <ModuleDefinitionFile>libbluray.def</ModuleDefinitionFile>
+       <SetChecksum>true</SetChecksum>
++      <ProgramDatabaseFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
++      <MinimumRequiredVersion Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">6.1</MinimumRequiredVersion>
++      <LargeAddressAware Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</LargeAddressAware>
+     </Link>
+     <PostBuildEvent>
+       <Command>xcopy /I /Y "$(TargetDir)$(TargetName)$(TargetExt)" "$(OutDir).."
+
