@@ -14,6 +14,9 @@ export LC_CTYPE
 # colors
 eval "`dircolors -b /usr/etc/DIR_COLORS`"
 
+# ps
+alias ps='procps u'
+
 # ls
 alias ls='ls -CF -a --color=auto --show-control-chars'
 alias ll='ls -AlFh --show-control-chars --color=auto'
