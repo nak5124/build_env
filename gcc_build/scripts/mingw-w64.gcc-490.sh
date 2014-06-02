@@ -826,7 +826,7 @@ build_crt() {
             --build=${arch}-w64-mingw32                         \
             --host=${arch}-w64-mingw32                          \
             ${_libs_conf}                                       \
-            --disable-libce                                     \
+            --disable-libarm32                                  \
             --with-sysroot=${MINGW_DIR}/${arch}-w64-mingw32     \
             --enable-wildcard                                   \
             CFLAGS="${_CFLAGS/-D__USE_MINGW_ANSI_STDIO=1/}"     \
