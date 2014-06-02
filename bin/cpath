@@ -1,15 +1,21 @@
-#!/usr/bin/env bash
+#!/bin/bash
 for opt in "$@"
 do
     case "$opt" in
     i686 | x86 | mingw32)
         PATH=".:/mingw32/bin:${MSYS2_PATH}:/usr/cmake/bin:${CMD_PATH}:${INNO_DIR}:/d/encode/tools"
+        MSYSTEM=MINGW32
+        export MSYSTEM
         ;;
     x86_64 | x64 | mingw64)
         PATH=".:/mingw64/bin:${MSYS2_PATH}:/usr/cmake/bin:${CMD_PATH}:${INNO_DIR}:/d/encode/tools"
+        MSYSTEM=MINGW64
+        export MSYSTEM
         ;;
     nogcc)
         PATH=".:${MSYS2_PATH}:/usr/cmake/bin:${CMD_PATH}:${INNO_DIR}:/d/encode/tools"
+        MSYSTEM=MSYS
+        export MSYSTEM
         ;;
     cmd)
         PATH=".:${CMD_PATH}:${MSYS2_PATH}:/usr/cmake/bin:${INNO_DIR}:/d/encode/tools"
@@ -26,3 +32,4 @@ do
 done
 
 export PATH
+
