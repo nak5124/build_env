@@ -50,9 +50,7 @@ download_srcs() {
     wget -nc http://www.mpfr.org/mpfr-current/mpfr-${MPFR_VER}.tar.bz2 \
         > /dev/null 2>&1
     wget -nc ftp://ftp.gnu.org/gnu/mpc/mpc-${MPC_VER}.tar.gz > /dev/null 2>&1
-    wget -nc http://isl.gforge.inria.fr/isl-${ISL_VER}.tar.lzma \
-        > /dev/null 2>&1
-#    wget -nc http://isl.gforge.inria.fr/isl-${ISL_VER}.tar.xz > /dev/null 2>&1
+    wget -nc http://isl.gforge.inria.fr/isl-${ISL_VER}.tar.xz > /dev/null 2>&1
     wget -nc http://ftp.lfs-matrix.net/pub/clfs/conglomeration/cloog/cloog-${CLOOG_VER}.tar.gz \
         > /dev/null 2>&1
 
@@ -135,7 +133,8 @@ build_mpfr() {
     fi
     cd ${BUILD_DIR}/mpfr-${MPFR_VER}
 
-    patch -p1 < ${PATCHES_DIR}/mpfr/allpatches > /dev/null 2>&1
+    patch -p1 < ${PATCHES_DIR}/mpfr/allpatches \
+        > ${LOGS_DIR}/mpfr_patches.log 2>&1 || exit 1
 
     for arch in i686 x86_64
     do
@@ -220,8 +219,7 @@ build_isl() {
 
     cd $BUILD_DIR
     if [ ! -d ${BUILD_DIR}/isl-${ISL_VER} ] ; then
-        tar xf ${SRC_DIR}/isl-${ISL_VER}.tar.lzma
-#        tar Jxf ${SRC_DIR}/isl-${ISL_VER}.tar.xz
+        tar Jxf ${SRC_DIR}/isl-${ISL_VER}.tar.xz
     fi
     cd ${BUILD_DIR}/isl-${ISL_VER}
 
@@ -269,6 +267,12 @@ build_cloog() {
         tar xzf ${SRC_DIR}/cloog-${CLOOG_VER}.tar.gz
     fi
     cd ${BUILD_DIR}/cloog-${CLOOG_VER}
+
+    if [ ! -f ${BUILD_DIR}/cloog-${CLOOG_VER}/patched_01.marker ] ; then
+        patch -p1 < ${PATCHES_DIR}/cloog/cloog-0.18.1-isl-compat.patch \
+            > ${LOGS_DIR}/cloog_patches.log 2>&1 || exit 1
+        touch ${BUILD_DIR}/cloog-${CLOOG_VER}/patched_01.marker
+    fi
 
     for arch in i686 x86_64
     do
