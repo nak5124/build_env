@@ -9,16 +9,16 @@ LSMASH_VER="1.11.7"
 
 echo_helpfile() {
     echo "muxer" > ${DEST_DIR}/lsmash_help.txt
-    ./muxer 2>> ${DEST_DIR}/lsmash_help.txt
+    ./cli/muxer 2>> ${DEST_DIR}/lsmash_help.txt
     echo -e "\n" >> ${DEST_DIR}/lsmash_help.txt
     echo "remuxer" >> ${DEST_DIR}/lsmash_help.txt
-    ./remuxer 2>> ${DEST_DIR}/lsmash_help.txt
+    ./cli/remuxer 2>> ${DEST_DIR}/lsmash_help.txt
     echo -e "\n" >> ${DEST_DIR}/lsmash_help.txt
     echo "timelineeditor" >> ${DEST_DIR}/lsmash_help.txt
-    ./timelineeditor 2>> ${DEST_DIR}/lsmash_help.txt
+    ./cli/timelineeditor 2>> ${DEST_DIR}/lsmash_help.txt
     echo -e "\n" >> ${DEST_DIR}/lsmash_help.txt
     echo "boxdumper" >> ${DEST_DIR}/lsmash_help.txt
-    ./boxdumper 2>> ${DEST_DIR}/lsmash_help.txt
+    ./cli/boxdumper 2>> ${DEST_DIR}/lsmash_help.txt
     dos2unix ${DEST_DIR}/lsmash_help.txt > /dev/null 2>&1
     cp -fa ${DEST_DIR}/lsmash_help.txt /usr/local/L-SMASH
 }
