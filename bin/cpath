@@ -1,35 +1,47 @@
-#!/bin/bash
+#!/usr/bin/env bash
 for opt in "$@"
 do
     case "$opt" in
     i686 | x86 | mingw32)
         PATH=".:/mingw32/bin:${MSYS2_PATH}:/usr/cmake/bin:${CMD_PATH}:${INNO_DIR}:/d/encode/tools"
         MSYSTEM=MINGW32
-        export MSYSTEM
+        CARCH=i686
+        CHOST=${CARCH}-w64-mingw32
         ;;
     x86_64 | x64 | mingw64)
         PATH=".:/mingw64/bin:${MSYS2_PATH}:/usr/cmake/bin:${CMD_PATH}:${INNO_DIR}:/d/encode/tools"
         MSYSTEM=MINGW64
-        export MSYSTEM
+        CARCH=x86_64
+        CHOST=${CARCH}-w64-mingw32
         ;;
     nogcc)
         PATH=".:${MSYS2_PATH}:/usr/cmake/bin:${CMD_PATH}:${INNO_DIR}:/d/encode/tools"
         MSYSTEM=MSYS
-        export MSYSTEM
+        CARCH=x86_64
+        CHOST=${CARCH}-pc-msys
         ;;
     cmd)
         PATH=".:${CMD_PATH}:${MSYS2_PATH}:/usr/cmake/bin:${INNO_DIR}:/d/encode/tools"
+        MSYTEM=MSYS
+        CARCH=x86_64
+        CHOST=${CARCH}-pc-msys
         ;;
     icl64 | vc64)
         PATH="${VC64_DIR}:.:/mingw64/bin:${MSYS2_PATH}:/usr/cmake/bin:${CMD_PATH}:${INNO_DIR}:/d/encode/tools"
+        MSYSTEM=MINGW64
+        CARCH=x86_64
+        CHOST=${CARCH}-w64-mingw32
         ;;
     rust)
         PATH=".:/mingw32_rust/bin:${MSYS2_PATH}:${CMD_PATH}"
+        MSYSTEM=MINGW32
+        CARCH=i686
+        CHOST=${CARCH}-w64-mingw32
         ;;
     *)
         echo "Unknown Option $opt"
     esac
 done
 
-export PATH
+export PATH CARCH CHOST
 
