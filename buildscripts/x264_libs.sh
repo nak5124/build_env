@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 
 PATCHES_DIR=${HOME}/patches/ffmpeg

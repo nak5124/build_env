@@ -15,7 +15,7 @@ LC_CTYPE='ja_JP.UTF-8'
 export LC_CTYPE
 
 # colors
-eval "`dircolors -b /usr/etc/DIR_COLORS`"
+eval "`dircolors -b /etc/DIR_COLORS`"
 
 # ps
 alias ps='procps u'

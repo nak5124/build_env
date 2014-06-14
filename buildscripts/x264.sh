@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 
 LOGS_DIR=${HOME}/log/x264

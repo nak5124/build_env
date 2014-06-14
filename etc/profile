@@ -1,9 +1,9 @@
-# To the extent possible under law, the author(s) have dedicated all 
-# copyright and related and neighboring rights to this software to the 
-# public domain worldwide. This software is distributed without any warranty. 
-# You should have received a copy of the CC0 Public Domain Dedication along 
-# with this software. 
-# If not, see <http://creativecommons.org/publicdomain/zero/1.0/>. 
+# To the extent possible under law, the author(s) have dedicated all
+# copyright and related and neighboring rights to this software to the
+# public domain worldwide. This software is distributed without any warranty.
+# You should have received a copy of the CC0 Public Domain Dedication along
+# with this software.
+# If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
 
 
 # System-wide profile file
@@ -21,16 +21,16 @@
 # Modifying these default path settings can be done in different ways.
 # To learn more about startup files, refer to your shell's man page.
 if [ -z "$MSYSTEM" ]; then
-  MSYSTEM=MINGW32
+  MSYSTEM=MINGW64
 fi
 
 CMD_PATH="${PATH}"
-MSYS2_PATH="/usr/local/bin:/usr/bin"
-MANPATH="/usr/local/man:/usr/share/man:/usr/man:${MANPATH}"
-INFOPATH="/usr/local/info:/usr/share/info:/usr/info:${INFOPATH}"
+MSYS2_PATH="/usr/local/bin:/usr/bin:/bin"
+MANPATH="/usr/local/man:/usr/share/man:/usr/man:/share/man:${MANPATH}"
+INFOPATH="/usr/local/info:/usr/share/info:/usr/info:/share/info:${INFOPATH}"
 VC64_DIR="/c/progra~2/Microsoft Visual Studio 12.0/VC/bin/amd64"
 INNO_DIR="/c/progra~2/Inno Setup 5"
-PATH=".:/mingw64/bin:${MSYS2_PATH}:/usr/cmake/bin:${CMD_PATH}:${INNO_DIR}:/d/encode/tools"
+PATH=".:/mingw64/bin:${MSYS2_PATH}:/opt/cmake/bin:${CMD_PATH}:${INNO_DIR}:/d/encode/tools"
 
 MAYBE_FIRST_START=false
 SYSCONFDIR="${SYSCONFDIR:=/etc}"
@@ -38,7 +38,7 @@ SYSCONFDIR="${SYSCONFDIR:=/etc}"
 # TMP and TEMP as defined in the Windows environment must be kept
 # for windows apps, even if started from cygwin. However, leaving
 # them set to the default Windows temporary directory or unset
-# can have unexpected consequences for cygwin apps, so we define 
+# can have unexpected consequences for cygwin apps, so we define
 # our own to match GNU/Linux behaviour.
 # ORIGINAL_TMP=$TMP
 # ORIGINAL_TEMP=$TEMP
@@ -53,7 +53,7 @@ TEMP="/tmp"
 # Define default printer
 p='/proc/registry/HKEY_CURRENT_USER/Software/Microsoft/Windows NT/CurrentVersion/Windows/Device'
 if [ -e "${p}" ] ; then
-  read -r PRINTER < "${p}" 
+  read -r PRINTER < "${p}"
   PRINTER=${PRINTER%%,*}
 fi
 unset p
@@ -62,7 +62,7 @@ maybe_create_fstab ()
 {
   local FSTAB="${SYSCONFDIR}/fstab"
   local FSTABDIR="${SYSCONFDIR}/fstab.d"
-  
+
   # Create fstab file if it doesn't exist.
   if [ -e "${FSTAB}" -a ! -f "${FSTAB}" ]
   then
@@ -96,11 +96,11 @@ EOF
 
   # Check for ${FSTABDIR} directory
   if [ -e "${FSTABDIR}" -a ! -d "${FSTABDIR}" ]
-  then 
+  then
     # No mercy.  Try to remove.
     rm -f "${FSTABDIR}"
     if [ -e "${FSTABDIR}" -a ! -d "${FSTABDIR}" ]
-    then 
+    then
       echo
       echo "${FSTABDIR} is existant but not a directory."
       echo "Please fix that manually."
@@ -136,11 +136,11 @@ maybe_create_devs ()
   local DEVDIR=/dev
   # Check for ${DEVDIR} directory
   if [ -e "${DEVDIR}" -a ! -d "${DEVDIR}" ]
-  then 
+  then
     # No mercy.  Try to remove.
     rm -f "${DEVDIR}"
     if [ -e "${DEVDIR}" -a ! -d "${DEVDIR}" ]
-    then 
+    then
       echo
       echo "${DEVDIR} is existant but not a directory."
       echo "Please fix that manually, otherwise you WILL get problems."
@@ -166,7 +166,7 @@ maybe_create_devs ()
     # No mercy.  Try to remove.
     rm -f "${DEVDIR}/shm"
     if [ -e "${DEVDIR}/shm" -a ! -d "${DEVDIR}/shm" ]
-    then 
+    then
       echo
       echo "${DEVDIR}/shm is existant but not a directory."
       echo "POSIX semaphores and POSIX shared memory will not work"
@@ -195,7 +195,7 @@ maybe_create_devs ()
     # No mercy.  Try to remove.
     rm -f "${DEVDIR}/mqueue"
     if [ -e "${DEVDIR}/mqueue" -a ! -d "${DEVDIR}/mqueue" ]
-    then 
+    then
       echo
       echo "${DEVDIR}/mqueue is existant but not a directory."
       echo "POSIX message queues will not work"
@@ -217,13 +217,13 @@ maybe_create_devs ()
   else
     chmod 1777 "${DEVDIR}/mqueue"
   fi
-  
+
   # Install /dev/fd, /dev/std{in,out,err}.  The bash builtin test was compiled
   # to assume these exist, so use /bin/test to really check.
-  /bin/test -h /dev/stdin  || ln -sf /proc/self/fd/0 /dev/stdin
-  /bin/test -h /dev/stdout || ln -sf /proc/self/fd/1 /dev/stdout
-  /bin/test -h /dev/stderr || ln -sf /proc/self/fd/2 /dev/stderr
-  /bin/test -h /dev/fd     || ln -sf /proc/self/fd   /dev/fd
+  /usr/bin/test -h /dev/stdin  || ln -sf /proc/self/fd/0 /dev/stdin
+  /usr/bin/test -h /dev/stdout || ln -sf /proc/self/fd/1 /dev/stdout
+  /usr/bin/test -h /dev/stderr || ln -sf /proc/self/fd/2 /dev/stderr
+  /usr/bin/test -h /dev/fd     || ln -sf /proc/self/fd   /dev/fd
 }
 
 
@@ -332,9 +332,9 @@ maybe_create_home ()
   fi
 
   # Start MSYS in selected folder
-  # c:\msys\bin\bash -c "cd '%curdir'; export 
-  # CHERE_INVOKING=1; exec /bin/bash --login -i"
-  # 
+  # c:\msys\usr\bin\bash -c "cd '%curdir'; export
+  # CHERE_INVOKING=1; exec /usr/bin/bash --login -i"
+  #
   # Make sure we start in home unless invoked by CHERE
   if [ ! -z "${CHERE_INVOKING}" ]; then
     unset CHERE_INVOKING
@@ -375,7 +375,7 @@ elif [ ! "x${ZSH_VERSION}" = "x" ]; then
 elif [ ! "x${POSH_VERSION}" = "x" ]; then
   HOSTNAME="$(/usr/bin/hostname)"
   PS1="$ "
-else 
+else
   HOSTNAME="$(/usr/bin/hostname)"
   profile_d sh
   PS1="$ "
@@ -392,16 +392,16 @@ TERM=xterm-256color
 export PATH MANPATH INFOPATH USER TMP TEMP PRINTER HOSTNAME PS1 SHELL tmp temp HISTCONTROL HISTIGNORE HISTTIMEFORMAT TERM CMD_PATH MSYS2_PATH VC64_DIR INNO_DIR
 
 if [ "$MAYBE_FIRST_START" = "true" ]; then
-  sh /sbin/regen-info.sh
-  
+  sh /usr/sbin/regen-info.sh
+
   if [ -f "/usr/bin/update-ca-trust" ]
-  then 
+  then
     sh /usr/bin/update-ca-trust
   fi
-  
+
   if [ -f "/usr/bin/xmlcatalog" ]
   then
-    /bin/mkdir -p /etc/xml
+    /usr/bin/mkdir -p /etc/xml
     /usr/bin/xmlcatalog --noout --create /etc/xml/catalog
   fi
 
