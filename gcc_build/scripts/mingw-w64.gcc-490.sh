@@ -929,8 +929,9 @@ build_gcc2() {
         rm -f ${MINGW_DIR}/lib/gcc/${arch}-w64-mingw32/${GCC_VER}/{libstdc++.a-gdb.py,*.la}
         rm -f ${MINGW_DIR}/libexec/gcc/${arch}-w64-mingw32/${GCC_VER}/*.la
 
-        ln -s ${MINGW_DIR}/bin/cpp.exe ${MINGW_DIR}/lib
-        ln -s ${MINGW_DIR}/bin/gcc.exe ${MINGW_DIR}/bin/cc.exe
+        cd ${MINGW_DIR}/bin
+        ln -sr ../bin/cpp.exe ../lib
+        ln -sr ../bin/gcc.exe ./cc.exe
         echo "done"
     done
 
