@@ -952,7 +952,7 @@ if [ "$ZLIB_REBUILD" == "yes" ] ; then
 else
     copy_only_zlib
 fi
-if [ "$HEADERS_REBUILD" == "yes" -o "$CRT_REBUILD" == "yes" ] ; then
+if [ "$HEADERS_REBUILD" == "yes" -o "$CRT_REBUILD" == "yes" -o "$WINPTHREADS_REBUILD" == "yes" ] ; then
     prepare_mingw_w64
 fi
 if [ "$HEADERS_REBUILD" == "yes" ] ; then
