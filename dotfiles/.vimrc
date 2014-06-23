@@ -17,6 +17,7 @@ let g:rehash256 = 1
 colorscheme molokai
 syntax on
 filetype plugin indent on
+set foldmethod=syntax
 " tabs
 set tabstop=4
 set shiftwidth=4
