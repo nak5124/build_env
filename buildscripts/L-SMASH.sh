@@ -5,7 +5,11 @@ LOGS_DIR=${HOME}/log/lsmash
 if [ ! -d $LOGS_DIR ] ; then
     mkdir -p $LOGS_DIR
 fi
-LSMASH_VER="1.11.7"
+
+get_ver() {
+    ver=($(echo $(\cat lsmash.h | grep "LSMASH_VERSION_M" | awk '{print $3}')))
+    LSMASH_VER="${ver[0]}.${ver[1]}.${ver[2]}"
+}
 
 echo_helpfile() {
     echo "muxer" > ${DEST_DIR}/lsmash_help.txt
@@ -38,6 +42,7 @@ build_lsmash() {
     git_hash > ${LOGS_DIR}/lsmash.hash
     git_rev >> ${LOGS_DIR}/lsmash.hash
 
+    get_ver
     DEST_DIR=/usr/local/L-SMASH/L-SMASH-${LSMASH_VER}-r`git_rev`-g`git_hash`
     if [[ ! -d ${DEST_DIR}/{win32,x64} ]] ; then
         mkdir -p ${DEST_DIR}/{win32,x64}
