@@ -94,7 +94,16 @@ set wildmode=list:full
 " mouse
 set mouse=a
 " clipboard
-set clipboard=unnamed,autoselect
+"set clipboard=unnamed,autoselect
+function! ClipboardYank()
+  call writefile( split( @@, "\n" ), '/dev/clipboard' )
+endfunction
+function! ClipboardPaste()
+  let @@ = join( readfile( '/dev/clipboard' ), "\n" )
+endfunction
+vnoremap <silent> y y:call ClipboardYank()<cr>
+vnoremap <silent> d d:call ClipboardYank()<cr>
+nnoremap <silent> p :call ClipboardPaste()<cr>p
 " Zenkaku
 set ambiwidth=double
 function! ZenkakuSpace()
