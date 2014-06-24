@@ -19,5 +19,10 @@ do
     fi
 done < $plist
 
-pacman -S ${pl_array[@]} --force --noconfirm
+if [ "$1" == "-n" ] ; then
+    local opt=" --needed"
+else
+    local opt=""
+fi
+pacman -S ${pl_array[@]} --force --noconfirm ${opt}
 
