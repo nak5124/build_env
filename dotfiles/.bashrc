@@ -29,11 +29,6 @@ alias sl=ls
 # cat
 alias cat='cat -n'
 
-# git
-alias git_diff='git diff --ignore-space-at-eol'
-alias git_log='git log --date=short --pretty="format:%h%x20%x20[%cd]%x20%x20%s"'
-alias git_log2='git log --date=short --pretty="format:%h%x20[%cd]%x20[%an:]%x20%s"'
-
 # wget
 #alias wget='wget -c'
 

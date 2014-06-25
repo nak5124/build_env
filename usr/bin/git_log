@@ -1,0 +1,2 @@
+#!/usr/bin/env bash
+git log --date=short --pretty="format:%h%x20%x20[%cd]%x20%x20%s"
