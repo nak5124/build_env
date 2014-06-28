@@ -69,6 +69,7 @@ set nobackup
 set noundofile
 set noswapfile
 autocmd BufWritePre * :%s/\s\+$//e
+set viminfo+=n/tmp/.viminfo
 " wrap
 set nowrap
 set textwidth=0
