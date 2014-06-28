@@ -5,7 +5,8 @@ shdir=$(cd $(dirname $0);pwd)
 dot_files=( .bashrc .gitconfig .hgrc .minttyrc .profile .vimrc )
 mg_patches=( autoconf automake binutils bzip2 cloog gcc-4.9.0 libiconv \
              libtool mpfr )
-ln -sf ${shdir}/bat/* /
+ln -sf ${shdir}/bat/mintty* /
+cp -f ${shdir}/bat/autorebase.bat /
 ln -sf ${shdir}/buildscripts/* $HOME
 for fname in ${dot_files[@]}
 do
