@@ -1,0 +1,6 @@
+set main-view = line-number:yes,interval=10 id:yes date:local author:full commit-title:graph=yes,refs=yes
+set vertical-split = no
+set split-view-height = 70%
+set diff-context = 3
+set line-graphics = utf-8
+set horizontal-scroll = 20%
