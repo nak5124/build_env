@@ -25,6 +25,20 @@ alias ls='ls -CF -a --color=auto --show-control-chars'
 alias ll='ls -AlFh --show-control-chars --color=auto'
 alias la='ls -CFal'
 alias sl=ls
+alias dir='ls --color=auto --format=vertical'
+alias vdir='ls --color=auto --format=long'
+alias l='ls -CF'
+
+# df/du
+alias df='df -h'
+alias du='du -h'
+
+# misc
+alias less='less -r'
+alias whence='type -a'
+alias grep='grep --color'
+alias egrep='egrep --color'
+alias fgrep='fgrep --color'
 
 # cat
 alias cat='cat -n'
