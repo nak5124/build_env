@@ -20,7 +20,7 @@ build_libogg() {
     git reset --hard > /dev/null 2>&1
     git pull > /dev/null 2>&1
     git_hash > ${LOGS_DIR}/ogg.hash
-    git_rev >> ${LOGS_DIR}/ogg.sh
+    git_rev >> ${LOGS_DIR}/ogg.hash
 
     autoreconf -fiv > /dev/null 2>&1
 
