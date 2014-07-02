@@ -2,7 +2,7 @@
 [[ "$-" != *i* ]] && return
 
 # show date
-/usr/bin/showdate
+/usr/local/bin/showdate
 
 # pacman
 pacman -Syu
@@ -54,8 +54,8 @@ alias tar_lzma='tar xf'
 alias tar_xz='tar Jxf'
 
 # omake
-alias sanchi='cat /usr/bin/sanchi.txt'
-alias nde='cat /usr/bin/nde.txt'
+alias sanchi='cat /usr/local/bin/sanchi.txt'
+alias nde='cat /usr/local/bin/nde.txt'
 
 # TVTest
 alias TV_T='/d/PT2/TVTest/TVTest.exe //d BonDriver_PT-T.dll & '

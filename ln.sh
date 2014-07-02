@@ -35,4 +35,4 @@ do
     ln -sf ${shdir}/gcc_build/patches/${dname}/* \
         ${HOME}/gcc_build/patches/$dname
 done
-ln -sf ${shdir}/usr/bin/* /usr/bin
+ln -sf ${shdir}/usr/local/bin/* /usr/local/bin
