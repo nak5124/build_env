@@ -1,6 +1,17 @@
 #!/usr/bin/env bash
 
 
+all_build=false
+
+for opt in "$@"
+do
+    case "$opt" in
+        all)
+            all_build=true
+            ;;
+    esac
+done
+
 PATCHES_DIR=${HOME}/patches/ffmpeg
 LOGS_DIR=${HOME}/logs/ffmpeg
 if [ ! -d $LOGS_DIR ] ; then
@@ -149,7 +160,9 @@ build_ffmpeg() {
     return 0
 }
 
-build_libopencore_amr
+if $all_build ; then
+    build_libopencore_amr
+fi
 build_ffmpeg
 
 clear; echo "Everything has been successfully completed!"
