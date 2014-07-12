@@ -34,11 +34,15 @@ alias df='df -h'
 alias du='du -h'
 
 # misc
-alias less='less -r'
 alias whence='type -a'
 alias grep='grep --color'
 alias egrep='egrep --color'
 alias fgrep='fgrep --color'
+
+# less
+alias less='less -r'
+LESSHISTFILE=/tmp/.lesshst
+export LESSHISTFILE
 
 # cat
 alias cat='cat -n'
