@@ -696,27 +696,21 @@ build_gcc1() {
         touch ${BUILD_DIR}/gcc-${GCC_VER}/patched_08.marker
     fi
     if [ ! -f ${BUILD_DIR}/gcc-${GCC_VER}/patched_09.marker ] ; then
-        # http://gcc.gnu.org/bugzilla/show_bug.cgi?id=60902
-        patch -p1 < ${PATCHES_DIR}/gcc-${GCC_VER}/PR60902.patch \
+        # http://gcc.gnu.org/bugzilla/show_bug.cgi?id=57440
+        patch -p1 < ${PATCHES_DIR}/gcc-${GCC_VER}/PR57440.patch \
             >> ${LOGS_DIR}/gcc_patches.log 2>&1 || exit 1
         touch ${BUILD_DIR}/gcc-${GCC_VER}/patched_09.marker
     fi
     if [ ! -f ${BUILD_DIR}/gcc-${GCC_VER}/patched_10.marker ] ; then
-        # http://gcc.gnu.org/bugzilla/show_bug.cgi?id=57440
-        patch -p1 < ${PATCHES_DIR}/gcc-${GCC_VER}/PR57440.patch \
+        # http://gcc.gnu.org/bugzilla/show_bug.cgi?id=57653
+        patch -p0 < ${PATCHES_DIR}/gcc-${GCC_VER}/PR57653.patch \
             >> ${LOGS_DIR}/gcc_patches.log 2>&1 || exit 1
         touch ${BUILD_DIR}/gcc-${GCC_VER}/patched_10.marker
     fi
     if [ ! -f ${BUILD_DIR}/gcc-${GCC_VER}/patched_11.marker ] ; then
-        # http://gcc.gnu.org/bugzilla/show_bug.cgi?id=57653
-        patch -p0 < ${PATCHES_DIR}/gcc-${GCC_VER}/PR57653.patch \
-            >> ${LOGS_DIR}/gcc_patches.log 2>&1 || exit 1
-        touch ${BUILD_DIR}/gcc-${GCC_VER}/patched_11.marker
-    fi
-    if [ ! -f ${BUILD_DIR}/gcc-${GCC_VER}/patched_12.marker ] ; then
         patch -p1 < ${PATCHES_DIR}/gcc-${GCC_VER}/isl.patch \
             >> ${LOGS_DIR}/gcc_patches.log 2>&1 || exit 1
-        touch ${BUILD_DIR}/gcc-${GCC_VER}/patched_12.marker
+        touch ${BUILD_DIR}/gcc-${GCC_VER}/patched_11.marker
     fi
 
     for arch in i686 x86_64

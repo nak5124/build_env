@@ -17,7 +17,7 @@ _LDFLAGS="-pipe -Wl,-O1 -Wl,--as-needed -Wl,-s -Wl,--nxcompat -Wl,--dynamicbase"
 jobs=3
 
 # version
-GCC_VER="4.9.0"
+GCC_VER="4.9.1"
 BINUTILS_VER="2.24"
 ICONV_VER="1.14"
 BZIP2_VER="1.0.6"

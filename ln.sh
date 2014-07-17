@@ -4,7 +4,7 @@
 shdir=$(cd $(dirname $0);pwd)
 dot_files=( .bashrc .gitconfig .hgrc .minttyrc .profile .vimrc .bash_logout \
             .tigrc )
-mg_patches=( autoconf automake binutils bzip2 cloog gcc-4.9.0 libiconv \
+mg_patches=( autoconf automake binutils bzip2 cloog gcc-4.9.1 libiconv \
              libtool mpfr )
 ln -sf ${shdir}/bat/mintty* /
 cp -f ${shdir}/bat/autorebase.bat /
