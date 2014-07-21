@@ -708,7 +708,7 @@ build_gcc1() {
         touch ${BUILD_DIR}/gcc-${GCC_VER}/patched_10.marker
     fi
     if [ ! -f ${BUILD_DIR}/gcc-${GCC_VER}/patched_11.marker ] ; then
-        patch -p1 < ${PATCHES_DIR}/gcc-${GCC_VER}/isl.patch \
+        patch -p0 < ${PATCHES_DIR}/gcc-${GCC_VER}/isl.patch \
             >> ${LOGS_DIR}/gcc_patches.log 2>&1 || exit 1
         touch ${BUILD_DIR}/gcc-${GCC_VER}/patched_11.marker
     fi
