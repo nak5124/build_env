@@ -16,6 +16,7 @@ let g:molokai_original = 0
 let g:rehash256 = 1
 colorscheme molokai
 syntax on
+let g:is_bash = 1
 filetype plugin indent on
 set foldmethod=syntax
 " tabs
@@ -73,7 +74,7 @@ set viminfo+=n/tmp/.viminfo
 " wrap
 set nowrap
 set textwidth=0
-set colorcolumn=80
+set colorcolumn=128
 " search
 set hlsearch
 set incsearch

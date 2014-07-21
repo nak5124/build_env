@@ -9,8 +9,8 @@ AllowBlinking=no
 FontSmoothing=full
 RightClickAction=paste
 ClicksPlaceCursor=no
-Columns=107
-Rows=69
+Columns=132
+Rows=50
 Term=xterm-256color
 CursorBlinks=yes
 BoldAsColour=no
@@ -18,4 +18,3 @@ ForegroundColour=255,255,255
 FontHeight=11
 ConfirmExit=yes
 Blue=65,105,225
-
