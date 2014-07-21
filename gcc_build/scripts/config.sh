@@ -10,9 +10,9 @@ LIBS_DIR=${WORK_DIR}/libs
 LOGS_DIR=${WORK_DIR}/logs
 
 # flags
-_CFLAGS="-pipe -Os -msse4 -fomit-frame-pointer -D__USE_MINGW_ANSI_STDIO=1"
-_CXXFLAGS="-pipe -Os -msse4 -fomit-frame-pointer -D__USE_MINGW_ANSI_STDIO=1"
-_CPPFLAGS="-D__USE_MINGW_ANSI_STDIO=1"
+_CFLAGS="-pipe -Os -msse4 -fomit-frame-pointer"
+_CXXFLAGS="-pipe -Os -msse4 -fomit-frame-pointer"
+_CPPFLAGS="-D_FORTIFY_SOURCE=2 -D__USE_MINGW_ANSI_STDIO=1"
 _LDFLAGS="-pipe -Wl,-O1 -Wl,--as-needed -Wl,-s -Wl,--nxcompat -Wl,--dynamicbase"
 jobs=3
 
