@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+DIR_LIST=(
+    /usr
+    /mingw32
+    /mingw64
+    /opt
+    /var
+    /etc
+)
+for dir in ${DIR_LIST[@]}
+do
+    echo "$dir"
+    chmod 500 -R $dir
+done
