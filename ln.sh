@@ -6,7 +6,7 @@ dot_files=( .bashrc .gitconfig .hgrc .minttyrc .profile .vimrc .bash_logout .tig
 mg_patches=( autoconf automake binutils bzip2 cloog gcc isl libiconv libtool mpfr zlib )
 ln -sf ${shdir}/bat/mintty* /
 cp -f ${shdir}/bat/autorebase.bat /
-ln -sf ${shdir}/buildscripts/* $HOME
+ln -sf ${shdir}/buildscripts/*.sh $HOME
 for fname in ${dot_files[@]}
 do
     ln -sf ${shdir}/dotfiles/$fname ${HOME}/$fname
