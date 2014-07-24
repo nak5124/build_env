@@ -1,0 +1,32 @@
+# Maintainer: Yuta Nakai <nak5124@live.jp>
+
+_realname=l-smash
+pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
+pkgdesc="Loyal to Spec of Mpeg4 and Ad-hoc Simple Hackwork. Yet another opensource mp4 handler"
+pkgver=1.11.8
+pkgrel=1
+arch=('any')
+url="http://l-smash.github.io/l-smash/"
+license=('ISC')
+#makedepends=("${MINGW_PACKAGE_PREFIX}-gcc")
+options=('strip' 'staticlibs')
+source=(${_realname}-${pkgver}.tar.gz::"https://github.com/l-smash/l-smash/archive/v${pkgver}.tar.gz")
+md5sums=('b2468800a35632f1ac659dadf94982c9')
+
+build() {
+  mkdir -p ${srcdir}/build-${MINGW_CHOST}
+  cd ${srcdir}/build-${MINGW_CHOST}
+
+  ../${_realname}-${pkgver}/configure \
+    --prefix=${MINGW_PREFIX} \
+    --enable-shared
+
+  make ${MAKEFLAGS}
+}
+
+package() {
+  cd ${srcdir}/build-${MINGW_CHOST}
+  make DESTDIR=${pkgdir} install
+
+  install -Dm644 ${srcdir}/${_realname}-${pkgver}/LICENSE ${pkgdir}${MINGW_PREFIX}/share/licenses/${_realname}/LICENSE
+}
