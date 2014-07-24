@@ -2,10 +2,8 @@
 
 
 shdir=$(cd $(dirname $0);pwd)
-dot_files=( .bashrc .gitconfig .hgrc .minttyrc .profile .vimrc .bash_logout \
-            .tigrc )
-mg_patches=( autoconf automake binutils bzip2 cloog gcc-4.9.1 libiconv \
-             libtool mpfr )
+dot_files=( .bashrc .gitconfig .hgrc .minttyrc .profile .vimrc .bash_logout .tigrc )
+mg_patches=( autoconf automake binutils bzip2 cloog gcc isl libiconv libtool mpfr zlib )
 ln -sf ${shdir}/bat/mintty* /
 cp -f ${shdir}/bat/autorebase.bat /
 ln -sf ${shdir}/buildscripts/* $HOME
@@ -26,6 +24,7 @@ ln -sf ${shdir}/etc/* /etc
 if [ ! -d ${HOME}/gcc_build/scripts ] ; then
     mkdir -p ${HOME}/gcc_build/scripts
 fi
+ln -sf ${shdir}/gcc_build/mingw-w64.gcc.sh ${HOME}/gcc_build
 ln -sf ${shdir}/gcc_build/scripts/* ${HOME}/gcc_build/scripts
 for dname in ${mg_patches[@]}
 do
