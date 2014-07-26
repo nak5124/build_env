@@ -10,5 +10,5 @@ DIR_LIST=(
 for dir in ${DIR_LIST[@]}
 do
     echo "$dir"
-    chmod 500 -R $dir
+    chmod a-w -R $dir
 done
