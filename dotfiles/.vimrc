@@ -72,7 +72,8 @@ set noswapfile
 autocmd BufWritePre * :%s/\s\+$//e
 set viminfo+=n/tmp/.viminfo
 " wrap
-set nowrap
+set wrap
+set breakindent
 set textwidth=0
 set colorcolumn=128
 " search
