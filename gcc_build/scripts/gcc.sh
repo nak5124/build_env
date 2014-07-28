@@ -134,6 +134,7 @@ function build_gcc1() {
             --enable-languages=c,c++,lto                                \
             --enable-threads=win32                                      \
             --enable-lto                                                \
+            --enable-checking=release                                   \
             --enable-version-specific-runtime-libs                      \
             --enable-fully-dynamic-string                               \
             --enable-libgomp                                            \

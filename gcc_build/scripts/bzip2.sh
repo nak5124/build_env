@@ -98,8 +98,8 @@ function build_bzip2() {
         echo "done"
 
         printf "===> copying bzip2 %s to %s/mingw%s\n" $arch $DST_DIR $bitval
+        cp -fa ${PREIN_DIR}/bzip2/mingw${bitval}/bin/{bzdiff,bzgrep,bzmore} ${DST_DIR}/mingw${bitval}/bin
         cp -fra ${PREIN_DIR}/bzip2/mingw$bitval $DST_DIR
-        
         echo "done"
     done
 
@@ -116,6 +116,7 @@ function copy_only_bzip2() {
         local bitval=$(get_arch_bit ${arch})
 
         printf "===> copying bzip2 %s to %s/mingw%s\n" $arch $DST_DIR $bitval
+        cp -fa ${PREIN_DIR}/bzip2/mingw${bitval}/bin/{bzdiff,bzgrep,bzmore} ${DST_DIR}/mingw${bitval}/bin
         cp -fra ${PREIN_DIR}/bzip2/mingw$bitval $DST_DIR
         echo "done"
     done
