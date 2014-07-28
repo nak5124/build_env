@@ -7,23 +7,21 @@ index 8ff380d..464f4d8 100644
      <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkIncremental>
    </PropertyGroup>
 +  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-+    <IncludePath>C:\msys2\LSW_libs\i686\include;$(IncludePath)</IncludePath>
-+    <LibraryPath>C:\msys2\LSW_libs\i686\lib;$(LibraryPath)</LibraryPath>
++    <IncludePath>C:\msys2\mingw32\include;$(IncludePath)</IncludePath>
++    <LibraryPath>C:\msys2\mingw32\i686-w64-mingw32\lib;C:\msys2\mingw32\lib\gcc\i686-w64-mingw32\4.9.1;C:\msys2\mingw32\lib;$(LibraryPath)</LibraryPath>
 +  </PropertyGroup>
 +  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-+    <IncludePath>C:\msys2\LSW_libs\x86_64\include;$(VCInstallDir)atlmfc\include;$(WindowsSDK_IncludePath);$(VCInstallDir)include</IncludePath>
-+    <LibraryPath>C:\msys2\LSW_libs\x86_64\lib;$(VCInstallDir)atlmfc\lib\amd64;$(WindowsSDK_LibraryPath_x64);$(VCInstallDir)lib\amd64</LibraryPath>
++    <IncludePath>C:\msys2\mingw64\include;$(VCInstallDir)atlmfc\include;$(WindowsSDK_IncludePath);$(VCInstallDir)include</IncludePath>
++    <LibraryPath>C:\msys2\mingw64\x86_64-w64-mingw32\lib;C:\msys2\mingw64\lib\gcc\x86_64-w64-mingw32\4.9.1;C:\msys2\mingw64\lib;$(VCInstallDir)atlmfc\lib\amd64;$(WindowsSDK_LibraryPath_x64);$(VCInstallDir)lib\amd64</LibraryPath>
 +  </PropertyGroup>
    <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
      <ClCompile>
        <Optimization>Disabled</Optimization>
-@@ -118,14 +126,22 @@
+@@ -118,14 +126,20 @@
        </PrecompiledHeader>
        <WarningLevel>Level3</WarningLevel>
        <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
 +      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
-+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
-+      <OmitFramePointers>true</OmitFramePointers>
 +      <FloatingPointModel>Fast</FloatingPointModel>
 +      <ProgramDataBaseFileName />
 +      <MultiProcessorCompilation>true</MultiProcessorCompilation>
@@ -41,13 +39,12 @@ index 8ff380d..464f4d8 100644
      </Link>
    </ItemDefinitionGroup>
    <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-@@ -139,13 +155,19 @@
+@@ -139,13 +155,18 @@
        </PrecompiledHeader>
        <WarningLevel>Level3</WarningLevel>
        <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
 +      <MultiProcessorCompilation>true</MultiProcessorCompilation>
 +      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
-+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
 +      <FloatingPointModel>Fast</FloatingPointModel>
      </ClCompile>
      <Link>

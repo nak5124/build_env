@@ -1,25 +1,25 @@
 #!/usr/bin/env bash
 
 
-all_build=false
+declare all_build=false
 
 for opt in "$@"
 do
-    case "$opt" in
+    case "${opt}" in
         all)
             all_build=true
             ;;
     esac
 done
 
-PATCHES_DIR=${HOME}/patches/ffmpeg
-LOGS_DIR=${HOME}/logs/ffmpeg
+declare -r PATCHES_DIR=${HOME}/patches/ffmpeg
+declare -r LOGS_DIR=${HOME}/logs/ffmpeg
 if [ ! -d $LOGS_DIR ] ; then
     mkdir -p $LOGS_DIR
 fi
 
 # libopencore-amr
-build_libopencore_amr() {
+function build_libopencore_amr() {
     clear; echo "Build libopencore-amr git-master"
 
     if [ ! -d ${HOME}/OSS/opencore-amr ] ; then
@@ -34,32 +34,37 @@ build_libopencore_amr() {
     git_hash > ${LOGS_DIR}/opencore-amr.hash
     git_rev >> ${LOGS_DIR}/opencore-amr.hash
 
-    autoreconf -fiv > /dev/null 2>&1
+    autoreconf -fi > /dev/null 2>&1
 
     for arch in i686 x86_64
     do
+        if [ "${arch}" = "i686" ] ; then
+            local FFPREFIX=/mingw32
+        else
+            local FFPREFIX=/mingw64
+        fi
+
         source cpath $arch
-        echo "===> configure libopencore-amr ${arch}"
-        ./configure --prefix=${HOME}/local/$arch \
-                    --build=${arch}-w64-mingw32  \
-                    --host=${arch}-w64-mingw32   \
-                    --disable-shared             \
-                    --enable-static              \
-                    CFLAGS="${BASE_CFLAGS}"      \
-                    CPPFLAGS="${BASE_CPPFLAGS}"  \
-                    CXXFLAGS="${BASE_CXXFLAGS}"  \
-                    LDFLAGS="${BASE_LDFLAGS}"    \
-        > ${LOGS_DIR}/opencore-amr_config_${arch}.log 2>&1 || exit 1
+        printf "===> configure libopencore-amr %s\n" $arch
+        ./configure --prefix=$FFPREFIX          \
+                    --build=${arch}-w64-mingw32 \
+                    --host=${arch}-w64-mingw32  \
+                    --disable-shared            \
+                    --enable-static             \
+                    CFLAGS="${BASE_CFLAGS}"     \
+                    CPPFLAGS="${BASE_CPPFLAGS}" \
+                    CXXFLAGS="${BASE_CXXFLAGS}" \
+                    LDFLAGS="${BASE_LDFLAGS}"   \
+            > ${LOGS_DIR}/opencore-amr_config_${arch}.log 2>&1 || exit 1
         echo "done"
 
         make clean > /dev/null 2>&1
-        echo "===> make libopencore-amr ${arch}"
-        make -j5 -O > ${LOGS_DIR}/opencore-amr_make_${arch}.log 2>&1 || exit 1
+        printf "===> making libopencore-amr %s\n"  $arch
+        make -j9 -O > ${LOGS_DIR}/opencore-amr_make_${arch}.log 2>&1 || exit 1
         echo "done"
 
-        echo "===> install libopencore-amr ${arch}"
-        make install-strip > ${LOGS_DIR}/opencore-amr_install_${arch}.log \
-            2>&1 || exit 1
+        printf "===> installing libopencore-amr %s\n" $arch
+        make install-strip > ${LOGS_DIR}/opencore-amr_install_${arch}.log 2>&1 || exit 1
         echo "done"
         make distclean > /dev/null 2>&1
     done
@@ -68,19 +73,17 @@ build_libopencore_amr() {
 }
 
 # FFmpeg
-patch_ffmpeg() {
+function patch_ffmpeg() {
     echo "===> patching... FFmpeg"
 
     local _N=34
     for i in `seq 1 ${_N}`
     do
-        local num=$(printf "%04d" $i )
-        if [ "$i" == 1 ] ; then
-            patch -p1 < ${PATCHES_DIR}/${num}*.patch \
-                > ${LOGS_DIR}/ffmpeg_patches.log 2>&1 || exit 1
+        local num=$( printf "%04d" $i )
+        if [ "${i}" = 1 ] ; then
+            patch -p1 < ${PATCHES_DIR}/${num}*.patch > ${LOGS_DIR}/ffmpeg_patches.log 2>&1 || exit 1
         else
-            patch -p1 < ${PATCHES_DIR}/${num}*.patch \
-                >> ${LOGS_DIR}/ffmpeg_patches.log 2>&1 || exit 1
+            patch -p1 < ${PATCHES_DIR}/${num}*.patch >> ${LOGS_DIR}/ffmpeg_patches.log 2>&1 || exit 1
         fi
     done
 
@@ -89,7 +92,7 @@ patch_ffmpeg() {
     return 0
 }
 
-build_ffmpeg() {
+function build_ffmpeg() {
     clear; echo "Build FFmpeg libraries git-master"
 
     if [ ! ${HOME}/OSS/videolan/ffmpeg ] ; then
@@ -108,18 +111,20 @@ build_ffmpeg() {
 
     for arch in i686 x86_64
     do
-        if [ "$arch" == "i686" ] ; then
+        if [ "${arch}" = "i686" ] ; then
             local _archopt="--arch=x86 --cpu=i686"
+            local FFPREFIX=/mingw32
         else
             local _archopt="--arch=x86_64"
+            local FFPREFIX=/mingw64
         fi
-        local _EXCFLAGS="-I${HOME}/local/${arch}/include -fexcess-precision=fast"
-        local _EXLDFLAGS="-L${HOME}/local/${arch}/lib"
+        local _EXCFLAGS="-I${FFPREFIX}/include -fexcess-precision=fast"
+        local _EXLDFLAGS="-L${FFPREFIX}/lib"
 
         source cpath $arch
-        echo "===> configure FFmpeg libraries ${arch}"
-        PKG_CONFIG_PATH=${HOME}/local/${arch}/lib/pkgconfig \
-        ./configure --prefix=${HOME}/local/$arch            \
+        printf "===> configure FFmpeg libraries %s\n" $arch
+        PKG_CONFIG_PATH=${FFPREFIX}/lib/pkgconfig           \
+        ./configure --prefix=$FFPREFIX                      \
                     --enable-version3                       \
                     --disable-programs --disable-doc        \
                     --disable-avdevice --disable-swresample \
@@ -143,15 +148,15 @@ build_ffmpeg() {
                     --disable-debug                         \
                     --extra-cflags="${_EXCFLAGS}"           \
                     --extra-ldflags="${_EXLDFLAGS}"         \
-        > ${LOGS_DIR}/ffmpeg_config_${arch}.log 2>&1 || exit 1
+            > ${LOGS_DIR}/ffmpeg_config_${arch}.log 2>&1 || exit 1
         echo "done"
 
         make clean > /dev/null 2>&1
-        echo "===> make FFmpeg libraries ${arch}"
+        printf "===> making FFmpeg libraries %s\n" $arch
         make -j9 -O > ${LOGS_DIR}/ffmpeg_make_${arch}.log 2>&1 || exit 1
         echo "done"
 
-        echo "===> install FFmpeg libraries ${arch}"
+        printf "===> installing FFmpeg libraries %s\n" $arch
         make install > ${LOGS_DIR}/ffmpeg_install_${arch}.log 2>&1 || exit 1
         echo "done"
         make distclean > /dev/null 2>&1
@@ -166,4 +171,3 @@ fi
 build_ffmpeg
 
 clear; echo "Everything has been successfully completed!"
-
