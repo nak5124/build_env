@@ -30,7 +30,7 @@ MANPATH="/usr/local/man:/usr/share/man:/usr/man:/share/man:${MANPATH}"
 INFOPATH="/usr/local/info:/usr/share/info:/usr/info:/share/info:${INFOPATH}"
 VC64_DIR="/c/progra~2/Microsoft Visual Studio 12.0/VC/bin/amd64"
 INNO_DIR="/c/progra~2/Inno Setup 5"
-PATH=".:/mingw64/bin:${MSYS2_PATH}:/opt/cmake/bin:${CMD_PATH}:${INNO_DIR}:/d/encode/tools"
+PATH=".:/mingw64/bin:/opt/mercurial:${MSYS2_PATH}:/opt/cmake/bin:${CMD_PATH}:${INNO_DIR}:/d/encode/tools"
 
 MAYBE_FIRST_START=false
 SYSCONFDIR="${SYSCONFDIR:=/etc}"

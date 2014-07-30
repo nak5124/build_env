@@ -1,6 +1,7 @@
 [ui]
 username = Yuta NAKAI <nak5124@live.jp>
 verbose = True
+editor = vim
 
 [extensions]
 purge =
