@@ -3,5 +3,9 @@ username = Yuta NAKAI <nak5124@live.jp>
 verbose = True
 editor = vim
 
+[web]
+cacerts = C:\msys2\usr\ssl\cert.pem
+
 [extensions]
 purge =
+mq =

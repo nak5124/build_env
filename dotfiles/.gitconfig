@@ -6,7 +6,7 @@
 	symlinks = false
 	autocrlf = false
 	whitespace = cr-at-eol
-
+	editor = vim -c \"set fenc=utf-8\"
 
 [push]
 	default = simple

@@ -25,7 +25,7 @@ alias ps='procps u'
 alias ls='ls -CF -a --color=auto --show-control-chars'
 alias ll='ls -AlFh --show-control-chars --color=auto'
 alias la='ls -CFal'
-alias sl=nde
+alias sl='erutaso -Fa'
 alias dir='ls --color=auto --format=vertical'
 alias vdir='ls --color=auto --format=long'
 alias l='ls -CF'
@@ -59,8 +59,8 @@ alias tar_lzma='tar xf'
 alias tar_xz='tar Jxf'
 
 # omake
-alias sanchi='\cat /usr/local/bin/sanchi.txt'
-alias nde='\cat /usr/local/bin/nde.txt'
+alias sanchi='clear; \cat /usr/local/bin/sanchi.txt'
+alias nde='clear; \cat /usr/local/bin/nde.txt'
 
 # TVTest
 alias TV_T='/d/PT2/TVTest/TVTest.exe //d BonDriver_PT-T.dll & '
