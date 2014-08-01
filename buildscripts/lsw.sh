@@ -82,9 +82,15 @@ function build_LSW_avisynth() {
 
     echo "===> build LSW AviSynth win32"
     cmd /c 'build_2013.bat' > ${LOGS_DIR}/lsw_avisynth_i686.log 2>&1 || exit 1
+    iconv -f CP932 -t UTF-8 ${LOGS_DIR}/lsw_avisynth_i686.log > ${LOGS_DIR}/lsw_avisynth_i686.log.new
+    rm ${LOGS_DIR}/lsw_avisynth_i686.log
+    mv ${LOGS_DIR}/lsw_avisynth_i686.log.new ${LOGS_DIR}/lsw_avisynth_i686.log
     echo "done"
     echo "===> build LSW AviSynth x64"
     cmd /c 'build_2013_x64.bat' > ${LOGS_DIR}/lsw_avisynth_x86_64.log 2>&1 || exit 1
+    iconv -f CP932 -t UTF-8 ${LOGS_DIR}/lsw_avisynth_x86_64.log > ${LOGS_DIR}/lsw_avisynth_x86_64.log.new
+    rm ${LOGS_DIR}/lsw_avisynth_x86_64.log
+    mv ${LOGS_DIR}/lsw_avisynth_x86_64.log.new ${LOGS_DIR}/lsw_avisynth_x86_64.log
     echo "done"
 
     echo "===> copy LSW AviSynth"
