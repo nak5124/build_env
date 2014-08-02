@@ -93,7 +93,7 @@ function build_binutils() {
             export PATH
         fi
 
-        printf "===> configure Binutils %s\n" $arch
+        printf "===> configuring Binutils %s\n" $arch
         ../src/binutils-${BINUTILS_VER}/configure          \
             --prefix=/mingw$bitval                         \
             --with-sysroot=/mingw$bitval                   \
@@ -115,7 +115,7 @@ function build_binutils() {
             > ${LOGS_DIR}/binutils/binutils_config_${arch}.log 2>&1 || exit 1
         echo "done"
 
-        printf "===> building Binutils %s\n" $arch
+        printf "===> making Binutils %s\n" $arch
         make $MAKEFLAGS all > ${LOGS_DIR}/binutils/binutils_make_${arch}.log 2>&1 || exit 1
         echo "done"
 

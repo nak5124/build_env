@@ -56,7 +56,7 @@ function build_mpfr() {
         local bitval=$(get_arch_bit ${arch})
 
         source cpath $arch
-        printf "===> configure MPFR %s\n" $arch
+        printf "===> configuring MPFR %s\n" $arch
         ../src/mpfr-${MPFR_VER}/configure       \
             --prefix=/mingw$bitval              \
             --build=${arch}-w64-mingw32         \
@@ -72,7 +72,7 @@ function build_mpfr() {
             > ${LOGS_DIR}/gcc_libs/mpfr/mpfr_config_${arch}.log 2>&1 || exit 1
         echo "done"
 
-        printf "===> building MPFR %s\n" $arch
+        printf "===> making MPFR %s\n" $arch
         make $MAKEFLAGS all > ${LOGS_DIR}/gcc_libs/mpfr/mpfr_make_${arch}.log 2>&1 || exit 1
         echo "done"
 

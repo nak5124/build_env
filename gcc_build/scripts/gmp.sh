@@ -42,7 +42,7 @@ function build_gmp() {
         fi
 
         source cpath $arch
-        printf "===> configure GMP %s\n" $arch
+        printf "===> configuring GMP %s\n" $arch
         ../src/gmp-${GMP_VER}/configure \
             --prefix=/mingw$bitval      \
             --build=${arch}-w64-mingw32 \
@@ -59,7 +59,7 @@ function build_gmp() {
             > ${LOGS_DIR}/gcc_libs/gmp/gmp_config_${arch}.log 2>&1 || exit 1
         echo "done"
 
-        printf "===> building GMP %s\n" $arch
+        printf "===> making GMP %s\n" $arch
         make $MAKEFLAGS all > ${LOGS_DIR}/gcc_libs/gmp/gmp_make_${arch}.log 2>&1 || exit 1
         echo "done"
 

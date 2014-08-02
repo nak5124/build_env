@@ -74,7 +74,7 @@ function build_bzip2() {
         local bitval=$(get_arch_bit ${arch})
 
         source cpath $arch
-        printf "===> configure bzip2 %s\n" $arch
+        printf "===> configuring bzip2 %s\n" $arch
         ../src/bzip2-${BZIP2_VER}/configure \
             --prefix=/mingw$bitval          \
             --build=${arch}-w64-mingw32     \
@@ -85,7 +85,7 @@ function build_bzip2() {
             > ${LOGS_DIR}/bzip2/bzip2_config_${arch}.log 2>&1 || exit 1
         echo "done"
 
-        printf "===> building bzip2 %s\n" $arch
+        printf "===> making bzip2 %s\n" $arch
         make $MAKEFLAGS all > ${LOGS_DIR}/bzip2/bzip2_make_${arch}.log 2>&1 || exit 1
         echo "done"
 

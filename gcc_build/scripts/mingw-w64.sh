@@ -33,7 +33,7 @@ function build_headers() {
         local bitval=$(get_arch_bit ${arch})
 
         source cpath $arch
-        printf "===> configure MinGW-w64 headers %s\n" $arch
+        printf "===> configuring MinGW-w64 headers %s\n" $arch
         ../../src/mingw-w64-${MINGW_VER}/mingw-w64-headers/configure \
             --prefix=/mingw${bitval}/${arch}-w64-mingw32             \
             --build=${arch}-w64-mingw32                              \
@@ -47,7 +47,7 @@ function build_headers() {
             > ${LOGS_DIR}/mingw-w64/headers/headers_config_${arch}.log 2>&1 || exit 1
         echo "done"
 
-        printf "===> building MinGW-w64 headers %s\n" $arch
+        printf "===> making MinGW-w64 headers %s\n" $arch
         make $MAKEFLAGS all > ${LOGS_DIR}/mingw-w64/headers/headers_make_${arch}.log 2>&1 || exit 1
         echo "done"
 
@@ -102,7 +102,7 @@ function build_threads() {
             export PATH
         fi
 
-        printf "===> configure MinGW-w64 winpthreads %s\n" $arch
+        printf "===> configuring MinGW-w64 winpthreads %s\n" $arch
         ../../src/mingw-w64-${MINGW_VER}/mingw-w64-libraries/winpthreads/configure \
             --prefix=/mingw${bitval}/${arch}-w64-mingw32                           \
             --build=${arch}-w64-mingw32                                            \
@@ -116,7 +116,7 @@ function build_threads() {
             > ${LOGS_DIR}/mingw-w64/winpthreads/winpthreads_config_${arch}.log 2>&1 || exit 1
         echo "done"
 
-        printf "===> building MinGW-w64 winpthreads %s\n" $arch
+        printf "===> making MinGW-w64 winpthreads %s\n" $arch
         make $MAKEFLAGS all > ${LOGS_DIR}/mingw-w64/winpthreads/winpthreads_make_${arch}.log 2>&1 || exit 1
         echo "done"
 
@@ -188,7 +188,7 @@ function build_crt() {
             export PATH
         fi
 
-        printf "===> configure MinGW-w64 crt %s\n" $arch
+        printf "===> configuring MinGW-w64 crt %s\n" $arch
         ../../src/mingw-w64-${MINGW_VER}/mingw-w64-crt/configure         \
             --prefix=/mingw${bitval}/${arch}-w64-mingw32                 \
             --with-sysroot=${DST_DIR}/mingw${bitval}/${arch}-w64-mingw32 \
@@ -204,7 +204,7 @@ function build_crt() {
             > ${LOGS_DIR}/mingw-w64/crt/crt_config_${arch}.log 2>&1 || exit 1
         echo "done"
 
-        printf "===> building MinGW-w64 crt %s\n" $arch
+        printf "===> making MinGW-w64 crt %s\n" $arch
         make -j1 all > ${LOGS_DIR}/mingw-w64/crt/crt_make_${arch}.log 2>&1 || exit 1
         echo "done"
 

@@ -15,6 +15,7 @@ declare -ra BUILD_TARGETS=(
     "mingw-w64 headers crt winpthreads"
     "gcc"
     "autotools autoconf automake libtool"
+    "nyasm nasm yasm"
 )
 
 declare -ra TARGET_ARCH=(
@@ -37,6 +38,9 @@ declare -r _CXXFLAGS="-pipe -Os -msse4 -fomit-frame-pointer"
 declare -r _LDFLAGS="-pipe -Wl,-O1 -Wl,--as-needed -Wl,--nxcompat -Wl,--dynamicbase"
 declare -r MAKEFLAGS="-O -j9"
 
+# GCC thread model
+declare -r THREAD_MODEL="posix"
+
 # version
 declare -r GMP_VER="6.0.0"
 declare -r MPFR_VER="3.1.2"
@@ -49,6 +53,8 @@ declare -r ZLIB_VER="1.2.8"
 declare -r MINGW_VER="git"
 declare -r BINUTILS_VER="2.24"
 declare -r GCC_VER="4.9.1"
+declare -r NASM_VER="2.11.05"
+declare -r YASM_VER="1.2.0"
 declare -r AUTOCONF_VER="2.69"
 declare -r AUTOMAKE_VER="1.14.1"
 declare -r LIBTOOL_VER="2.4.2.418"
@@ -81,6 +87,9 @@ if is_defined HEADERS_REBUILD     > /dev/null \
 || is_defined CRT_REBUILD         > /dev/null ; then
     define_rov MINGW_REBUILD
 fi
+
+define_rov NASM_REBUILD
+define_rov YASM_REBUILD
 
 define_rov BINUTILS2ND_REBUILD
 define_rov CRT2ND_REBUILD

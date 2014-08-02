@@ -88,7 +88,7 @@ function build_autoconf() {
         PATH=${DST_DIR}/mingw${bitval}/bin:/usr/local/bin:/usr/bin:/bin
         export PATH
 
-        printf "===> configure Autoconf %s\n" $arch
+        printf "===> configuring Autoconf %s\n" $arch
         ../src/autoconf-${AUTOCONF_VER}/configure \
             --prefix=/mingw$bitval                \
             --build=${arch}-w64-mingw32           \
@@ -96,7 +96,7 @@ function build_autoconf() {
             > ${LOGS_DIR}/autotools/autoconf/autoconf_config_${arch}.log 2>&1 || exit 1
         echo "done"
 
-        printf "===> building Autoconf %s\n" $arch
+        printf "===> making Autoconf %s\n" $arch
         make $MAKEFLAGS > ${LOGS_DIR}/autotools/autoconf/autoconf_make_${arch}.log 2>&1 || exit 1
         echo "done"
 
@@ -187,7 +187,7 @@ function build_automake() {
         PATH=${DST_DIR}/mingw${bitval}/bin:/usr/local/bin:/usr/bin:/bin
         export PATH
 
-        printf "===> configure Automake %s\n" $arch
+        printf "===> configuring Automake %s\n" $arch
         ../src/automake-${AUTOMAKE_VER}/configure \
             --prefix=/mingw$bitval                \
             --build=${arch}-w64-mingw32           \
@@ -195,7 +195,7 @@ function build_automake() {
             > ${LOGS_DIR}/autotools/automake/automake_config_${arch}.log 2>&1 || exit 1
         echo "done"
 
-        printf "===> building Automake %s\n" $arch
+        printf "===> making Automake %s\n" $arch
         make $MAKEFLAGS > ${LOGS_DIR}/autotools/automake/automake_make_${arch}.log 2>&1 || exit 1
         echo "done"
 
@@ -316,7 +316,7 @@ function build_libtool() {
         PATH=${DST_DIR}/mingw${bitval}/bin:/usr/local/bin:/usr/bin:/bin
         export PATH
 
-        printf "===> configure Libtool %s\n" $arch
+        printf "===> configuring Libtool %s\n" $arch
         ../src/libtool-${LIBTOOL_VER}/configure \
             --prefix=/mingw$bitval                \
             --build=${arch}-w64-mingw32           \
@@ -324,7 +324,7 @@ function build_libtool() {
             > ${LOGS_DIR}/autotools/libtool/libtool_config_${arch}.log 2>&1 || exit 1
         echo "done"
 
-        printf "===> building Libtool %s\n" $arch
+        printf "===> making Libtool %s\n" $arch
         make $MAKEFLAGS > ${LOGS_DIR}/autotools/libtool/libtool_make_${arch}.log 2>&1 || exit 1
         echo "done"
 

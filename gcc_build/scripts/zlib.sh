@@ -62,13 +62,13 @@ function build_zlib() {
         local bitval=$(get_arch_bit ${arch})
 
         source cpath $arch
-        printf "===> configure zlib %s\n" $arch
+        printf "===> configuring zlib %s\n" $arch
         CHOST=${arch}-w64-mingw32 CFLAGS="${_CFLAGS}" LDFLAGS="${_LDFLAGS}" \
             ./configure --prefix=/mingw$bitval --static                     \
             > ${LOGS_DIR}/zlib/zlib_config_${arch}.log 2>&1 || exit 1
         echo "done"
 
-        printf "===> building zlib %s\n" $arch
+        printf "===> making zlib %s\n" $arch
         make -j1 all LOC=-DASMV OBJA=match.o > ${LOGS_DIR}/zlib/zlib_make_${arch}.log 2>&1 || exit 1
         echo "done"
 

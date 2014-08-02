@@ -58,7 +58,7 @@ function build_cloog() {
         local bitval=$(get_arch_bit ${arch})
 
         source cpath $arch
-        printf "===> configure CLooG %s\n" $arch
+        printf "===> configuring CLooG %s\n" $arch
         ../src/cloog-${CLOOG_VER}/configure            \
             --prefix=/mingw$bitval                     \
             --build=${arch}-w64-mingw32                \
@@ -78,7 +78,7 @@ function build_cloog() {
             > ${LOGS_DIR}/gcc_libs/cloog/cloog_config_${arch}.log 2>&1 || exit 1
         echo "done"
 
-        printf "===> building CLooG %s\n" $arch
+        printf "===> making CLooG %s\n" $arch
         make $MAKEFLAGS all > ${LOGS_DIR}/gcc_libs/cloog/cloog_make_${arch}.log 2>&1 || exit 1
         echo "done"
 

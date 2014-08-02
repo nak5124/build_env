@@ -61,7 +61,7 @@ function build_iconv() {
         local bitval=$(get_arch_bit ${arch})
 
         source cpath $arch
-        printf "===> configure libiconv %s\n" $arch
+        printf "===> configuring libiconv %s\n" $arch
         ../src/libiconv-${ICONV_VER}/configure \
             --prefix=/mingw$bitval             \
             --build=${arch}-w64-mingw32        \
@@ -80,7 +80,7 @@ function build_iconv() {
             > ${LOGS_DIR}/libiconv/libiconv_config_${arch}.log 2>&1 || exit 1
         echo "done"
 
-        printf "===> building libiconv %s\n" $arch
+        printf "===> making libiconv %s\n" $arch
         make $MAKEFLAGS all > ${LOGS_DIR}/libiconv/libiconv_make_${arch}.log 2>&1 || exit 1
         echo "done"
 

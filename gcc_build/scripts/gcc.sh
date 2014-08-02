@@ -118,8 +118,14 @@ function build_gcc1() {
             local _LAA=""
         fi
 
+        if [ "${THREAD_MODEL}" = "posix" ] ; then
+            local _threads="--enable-threads=posix --enable-libstdcxx-time=yes"
+        else
+            local _threads="--enable-threads=win32"
+        fi
+
         source cpath $arch
-        printf "===> configure GCC %s\n" $arch
+        printf "===> configuring GCC %s\n" $arch
         ../src/gcc-${GCC_VER}/configure                                 \
             --prefix=/mingw$bitval                                      \
             --with-local-prefix=/mingw${bitval}/local                   \
@@ -132,7 +138,7 @@ function build_gcc1() {
             --enable-static                                             \
             --disable-multilib                                          \
             --enable-languages=c,c++,lto                                \
-            --enable-threads=win32                                      \
+            ${_threads}                                                 \
             --enable-lto                                                \
             --enable-checking=release                                   \
             --enable-version-specific-runtime-libs                      \
@@ -166,7 +172,7 @@ function build_gcc1() {
             > ${LOGS_DIR}/gcc/gcc_config_${arch}.log 2>&1 || exit 1
         echo "done"
 
-        printf "===> building GCC 1st step %s\n" $arch
+        printf "===> making GCC 1st step %s\n" $arch
         local -i make_num=0
         local -i make_num_old=0
         # retry 3 times
@@ -185,6 +191,7 @@ function build_gcc1() {
         echo "done"
 
         printf "===> installing GCC 1st step %s\n" $arch
+        rm -fr ${PREIN_DIR}/gcc/mingw$bitval
         make DESTDIR=${PREIN_DIR}/gcc install-gcc > ${LOGS_DIR}/gcc/gcc1_install_${arch}.log 2>&1 || exit 1
         del_empty_dir ${PREIN_DIR}/gcc/mingw$bitval
         remove_la_files ${PREIN_DIR}/gcc/mingw$bitval
@@ -214,7 +221,7 @@ function build_gcc2() {
         PATH=${DST_DIR}/mingw${bitval}/bin:/usr/local/bin:/usr/bin:/bin
         export PATH
 
-        printf "===> building GCC 2nd step %s\n" $arch
+        printf "===> making GCC 2nd step %s\n" $arch
         local -i make_num=0
         local -i make_num_old=0
         # retry 3 times
@@ -244,6 +251,8 @@ function build_gcc2() {
 
         printf "===> copying GCC 2nd step %s to %s/mingw%s\n" $arch $DST_DIR $bitval
         cp -fra ${PREIN_DIR}/gcc/mingw$bitval $DST_DIR
+        cd ${DST_DIR}/mingw${bitval}/bin
+        ln -sr ../bin/gcc.exe ./cc.exe
         echo "done"
     done
 
@@ -265,6 +274,8 @@ function copy_only_gcc() {
         if [ -d ${DST_DIR}/mingw${bitval}/mingw ] ; then
             rm -fr ${DST_DIR}/mingw${bitval}/mingw
         fi
+        cd ${DST_DIR}/mingw${bitval}/bin
+        ln -sr ../bin/gcc.exe ./cc.exe
         echo "done"
     done
 

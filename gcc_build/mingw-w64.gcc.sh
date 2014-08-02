@@ -25,6 +25,12 @@ do
         tc)
             unset NO_TOOLCHAIN
             ;;
+        noasm)
+            define_rov NO_NYASM
+            ;;
+        asm)
+            unset NO_NYASM
+            ;;
         no2nd)
             define_rov NO_2ND_BUILD
             ;;
@@ -176,6 +182,23 @@ else
     copy_only_gcc
 fi
 
+# nyasm
+if ! is_defined NO_NYASM > /dev/null ; then
+    source ${SCRIPTS_DIR}/nyasm.sh
+    # NASM
+    if is_defined NASM_REBUILD > /dev/null ; then
+        build_nasm
+    else
+        copy_only_nasm
+    fi
+    # Yasm
+    if is_defined YASM_REBUILD > /dev/null ; then
+        build_yasm
+    else
+        copy_only_yasm
+    fi
+fi
+
 # rebuild
 if ! is_defined NO_2ND_BUILD > /dev/null ; then
     # Binutils
@@ -215,4 +238,4 @@ if ! is_defined NO_AUTOTOOLS > /dev/null ; then
     fi
 fi
 
-reset; echo "Everything has been successfully completed\!"
+reset; echo "Everything has been successfully completed!"

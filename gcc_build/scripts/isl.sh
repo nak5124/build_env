@@ -51,7 +51,7 @@ function build_isl() {
         local bitval=$(get_arch_bit ${arch})
 
         source cpath $arch
-        printf "===> configure ISL %s\n" $arch
+        printf "===> configuring ISL %s\n" $arch
         ../src/isl-${ISL_VER}/configure                \
             --prefix=/mingw$bitval                     \
             --build=${arch}-w64-mingw32                \
@@ -69,7 +69,7 @@ function build_isl() {
             > ${LOGS_DIR}/gcc_libs/isl/isl_config_${arch}.log 2>&1 || exit 1
         echo "done"
 
-        printf "===> building ISL %s\n" $arch
+        printf "===> making ISL %s\n" $arch
         make $MAKEFLAGS all > ${LOGS_DIR}/gcc_libs/isl/isl_make_${arch}.log 2>&1 || exit 1
         echo "done"
 

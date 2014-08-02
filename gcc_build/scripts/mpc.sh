@@ -34,7 +34,7 @@ function build_mpc() {
         local bitval=$(get_arch_bit ${arch})
 
         source cpath $arch
-        printf "===> configure MPC %s\n" $arch
+        printf "===> configuring MPC %s\n" $arch
         ../src/mpc-${MPC_VER}/configure          \
             --prefix=/mingw$bitval               \
             --build=${arch}-w64-mingw32          \
@@ -50,7 +50,7 @@ function build_mpc() {
             > ${LOGS_DIR}/gcc_libs/mpc/mpc_config_${arch}.log 2>&1 || exit 1
         echo "done"
 
-        printf "===> building MPC %s\n" $arch
+        printf "===> making MPC %s\n" $arch
         make $MAKEFLAGS all > ${LOGS_DIR}/gcc_libs/mpc/mpc_make_${arch}.log 2>&1 || exit 1
         echo "done"
 
