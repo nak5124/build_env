@@ -30,10 +30,12 @@ INNO_DIR="/c/progra~2/Inno Setup 5"
 MSYS2_PATH="/usr/local/bin:/usr/bin:/bin"
 MANPATH="/usr/local/man:/usr/share/man:/usr/man:/share/man"
 INFOPATH="/usr/local/info:/usr/share/info:/usr/info:/share/info"
+ACLOCAL_PATH="/usr/share/aclocal"
 if [ -n "${MSYSTEM}" ] ; then
     case "${MSYSTEM}" in
         MINGW32)
             PATH=".:/mingw32/bin:/opt/mercurial:${MSYS2_PATH}:/opt/cmake/bin:${CMD_PATH}:${INNO_DIR}:/d/encode/tools"
+            ACLOCAL_PATH="/mingw32/share/aclocal:${ACLOCAL_PATH}"
             PKG_CONFIG_PATH="/mingw32/lib/pkgconfig"
             MANPATH="/mingw32/share/man:${MANPATH}"
             INFOPATH="/mingw32/share/info:${INFOPATH}"
@@ -42,6 +44,7 @@ if [ -n "${MSYSTEM}" ] ; then
             ;;
         MINGW64)
             PATH=".:/mingw64/bin:/opt/mercurial:${MSYS2_PATH}:/opt/cmake/bin:${CMD_PATH}:${INNO_DIR}:/d/encode/tools"
+            ACLOCAL_PATH="/mingw64/share/aclocal:${ACLOCAL_PATH}"
             PKG_CONFIG_PATH="/mingw64/lib/pkgconfig"
             MANPATH="/mingw64/share/man:${MANPATH}"
             INFOPATH="/mingw64/share/info:${INFOPATH}"
@@ -50,6 +53,7 @@ if [ -n "${MSYSTEM}" ] ; then
             ;;
         MSYS)
             PATH=".:${MSYS2_PATH}:/opt/cmake/bin:${CMD_PATH}"
+            ACLOCAL_PATH="${ACLOCAL_PATH}"
             PKG_CONFIG_PATH="/usr/lib/pkgconfig:/lib/pkgconfig"
             MANPATH="${MANPATH}"
             INFOPATH="${INFOPATH}"
@@ -427,7 +431,7 @@ HISTFILE=/tmp/.bash_history
 # term
 TERM=xterm-256color
 
-export PATH MANPATH INFOPATH PKG_CONFIG_PATH USER TMP TEMP PRINTER HOSTNAME PS1 SHELL tmp temp HISTCONTROL HISTIGNORE HISTTIMEFORMAT HISTFILE TERM CMD_PATH MSYS2_PATH VC64_DIR INNO_DIR CARCH CHOST
+export PATH MANPATH INFOPATH ACLOCAL_PATH PKG_CONFIG_PATH USER TMP TEMP PRINTER HOSTNAME PS1 SHELL tmp temp HISTCONTROL HISTIGNORE HISTTIMEFORMAT HISTFILE TERM CMD_PATH MSYS2_PATH VC64_DIR INNO_DIR CARCH CHOST
 
 # Check to see if mkpasswd/mkgroup needs to be run try and cut down the emails
 #   about this on the lists!

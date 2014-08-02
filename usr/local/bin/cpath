@@ -13,11 +13,13 @@ function is_defined() {
 
 MANPATH="/usr/local/man:/usr/share/man:/usr/man:/share/man"
 INFOPATH="/usr/local/info:/usr/share/info:/usr/info:/share/info"
+ACLOCAL_PATH="/usr/share/aclocal"
 for opt in "$@"
 do
     case "${opt}" in
         i686 | x86 | mingw32)
             PATH=".:/mingw32/bin:/opt/mercurial:${MSYS2_PATH}:/opt/cmake/bin:${CMD_PATH}:${INNO_DIR}:/d/encode/tools"
+            ACLOCAL_PATH="/mingw32/share/aclocal:${ACLOCAL_PATH}"
             PKG_CONFIG_PATH="/mingw32/lib/pkgconfig"
             MANPATH="/mingw32/share/man:${MANPATH}"
             INFOPATH="/mingw32/share/info:${INFOPATH}"
@@ -27,6 +29,7 @@ do
             ;;
         x86_64 | x64 | mingw64)
             PATH=".:/mingw64/bin:/opt/mercurial:${MSYS2_PATH}:/opt/cmake/bin:${CMD_PATH}:${INNO_DIR}:/d/encode/tools"
+            ACLOCAL_PATH="/mingw64/share/aclocal:${ACLOCAL_PATH}"
             PKG_CONFIG_PATH="/mingw64/lib/pkgconfig"
             MANPATH="/mingw64/share/man:${MANPATH}"
             INFOPATH="/mingw64/share/info:${INFOPATH}"
@@ -67,7 +70,7 @@ do
     esac
 done
 
-export PATH MANPATH INFOPATH MSYSTEM CARCH CHOST
+export PATH ACLOCAL_PATH MANPATH INFOPATH MSYSTEM CARCH CHOST
 
 if is_defined PKG_CONFIG_PATH > /dev/null ; then
     export PKG_CONFIG_PATH
