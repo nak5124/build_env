@@ -81,7 +81,7 @@ export PS1
 # GCC
 GCC_COLORS='error=01;31;255:warning=01;35;255:note=01;36;255:caret=01;32;255:locus=01:quote=01'
 export GCC_COLORS
-BASE_CFLAGS="-pipe -Os -msse4 -fomit-frame-pointer -fexcess-precision=fast -march=x86-64 -mtune=generic"
+BASE_CFLAGS="-pipe -Os -msse4 -fomit-frame-pointer -fexcess-precision=fast"
 BASE_CPPFLAGS="-D_FORTIFY_SOURCE=2 -D__USE_MINGW_ANSI_STDIO=1"
 BASE_CXXFLAGS="${BASE_CFLAGS}"
 BASE_LDFLAGS="-pipe -s -Wl,-O1 -Wl,--as-needed -Wl,--nxcompat -Wl,--dynamicbase"
