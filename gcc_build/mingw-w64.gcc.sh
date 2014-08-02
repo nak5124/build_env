@@ -102,30 +102,32 @@ if ! is_defined NO_GCC_LIBS > /dev/null ; then
 fi
 
 # build mingw-w64 toolchain
+source ${SCRIPTS_DIR}/libiconv.sh
+source ${SCRIPTS_DIR}/bzip2.sh
+source ${SCRIPTS_DIR}/zlib.sh
+source ${SCRIPTS_DIR}/mingw-w64.sh
+source ${SCRIPTS_DIR}/binutils.sh
+source ${SCRIPTS_DIR}/gcc.sh
 if ! is_defined NO_TOOLCHAIN > /dev/null ; then
     # libiconv
-    source ${SCRIPTS_DIR}/libiconv.sh
     if is_defined ICONV_REBUILD > /dev/null ; then
         build_iconv
     else
         copy_only_iconv
     fi
     # bzip2
-    source ${SCRIPTS_DIR}/bzip2.sh
     if is_defined BZIP2_REBUILD > /dev/null ; then
         build_bzip2
     else
         copy_only_bzip2
     fi
     # zlib
-    source ${SCRIPTS_DIR}/zlib.sh
     if is_defined ZLIB_REBUILD > /dev/null ; then
         build_zlib
     else
         copy_only_zlib
     fi
     # MinGW-w64 common
-    source ${SCRIPTS_DIR}/mingw-w64.sh
     if is_defined MINGW_REBUILD > /dev/null ; then
         prepare_mingw_w64
     fi
@@ -136,7 +138,6 @@ if ! is_defined NO_TOOLCHAIN > /dev/null ; then
         copy_only_headers
     fi
     # Binutils
-    source ${SCRIPTS_DIR}/binutils.sh
     if is_defined BINUTILS_REBUILD > /dev/null ; then
         build_binutils
     else
@@ -149,7 +150,6 @@ if ! is_defined NO_TOOLCHAIN > /dev/null ; then
         copy_only_threads
     fi
     # GCC 1st step
-    source ${SCRIPTS_DIR}/gcc.sh
     if is_defined GCC_REBUILD > /dev/null ; then
         build_gcc1
     else
@@ -166,12 +166,6 @@ if ! is_defined NO_TOOLCHAIN > /dev/null ; then
         build_gcc2
     fi
 else
-    source ${SCRIPTS_DIR}/libiconv.sh
-    source ${SCRIPTS_DIR}/bzip2.sh
-    source ${SCRIPTS_DIR}/zlib.sh
-    source ${SCRIPTS_DIR}/mingw-w64.sh
-    source ${SCRIPTS_DIR}/binutils.sh
-    source ${SCRIPTS_DIR}/gcc.sh
     copy_only_iconv
     copy_only_bzip2
     copy_only_zlib
@@ -183,8 +177,8 @@ else
 fi
 
 # nyasm
+source ${SCRIPTS_DIR}/nyasm.sh
 if ! is_defined NO_NYASM > /dev/null ; then
-    source ${SCRIPTS_DIR}/nyasm.sh
     # NASM
     if is_defined NASM_REBUILD > /dev/null ; then
         build_nasm
@@ -197,6 +191,9 @@ if ! is_defined NO_NYASM > /dev/null ; then
     else
         copy_only_yasm
     fi
+else
+    copy_only_nasm
+    copy_only_yasm
 fi
 
 # rebuild
@@ -216,9 +213,9 @@ if ! is_defined NO_2ND_BUILD > /dev/null ; then
 fi
 
 # autotools
+source ${SCRIPTS_DIR}/autotools.sh
 if ! is_defined NO_AUTOTOOLS > /dev/null ; then
     # Autoconf
-    source ${SCRIPTS_DIR}/autotools.sh
     if is_defined AUTOCONF_REBUILD > /dev/null ; then
         build_autoconf
     else
@@ -236,6 +233,10 @@ if ! is_defined NO_AUTOTOOLS > /dev/null ; then
     else
         copy_only_libtool
     fi
+else
+    copy_only_autoconf
+    copy_only_automake
+    copy_only_libtool
 fi
 
 reset; echo "Everything has been successfully completed!"
