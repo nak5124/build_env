@@ -8,6 +8,7 @@ set fileencoding=utf-8
 set fileencodings=iso-2022-jp,utf-8,cp932,euc-jp,ucs-2,sjis,default,latin
 set fileformat=unix
 " scheme
+set t_ut=
 set t_Co=256
 set t_Sf=[3%dm
 set t_Sb=[4%dm

@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 DIR_LIST=(
-    /usr
+#    /usr
     /mingw32
     /mingw64
     /opt
     /var
-    /etc
+#    /etc
 )
 for dir in ${DIR_LIST[@]}
 do
