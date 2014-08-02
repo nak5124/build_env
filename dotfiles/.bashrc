@@ -70,8 +70,6 @@ alias tv_t='TV_T'
 alias tv_bs='TV_BS'
 alias tv_cs='TV_CS'
 
-alias tmux='rm -rf /tmp/tmux* && tmux'
-
 # shell
 PS1='\[\033]0;$MSYSTEM:\w\007
 \033[1;32m\]\u@\h \[\033[1;31m\w\033[0m\]
