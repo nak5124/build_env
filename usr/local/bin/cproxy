@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 for opt in "$@"
 do
-    case "$opt" in
+    case "${opt}" in
         -k)
             http_proxy=proxy.kuins.net:8080
             https_proxy=$http_proxy
@@ -15,4 +15,3 @@ do
             echo "Unknown Option ${opt}"
     esac
 done
-

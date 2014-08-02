@@ -20,33 +20,57 @@
 # software to override 'system' software.
 # Modifying these default path settings can be done in different ways.
 # To learn more about startup files, refer to your shell's man page.
-if [ -z "$MSYSTEM" ]; then
-  MSYSTEM=MINGW64
+if [ -z "${MSYSTEM}" ]; then
+    MSYSTEM=MINGW64
 fi
 
 CMD_PATH="${PATH}"
+VC64_DIR="/c/progra~2/Microsoft Visual Studio 12.0/VC/bin/amd64"
+INNO_DIR="/c/progra~2/Inno Setup 5"
 MSYS2_PATH="/usr/local/bin:/usr/bin:/bin"
 MANPATH="/usr/local/man:/usr/share/man:/usr/man:/share/man:${MANPATH}"
 INFOPATH="/usr/local/info:/usr/share/info:/usr/info:/share/info:${INFOPATH}"
-VC64_DIR="/c/progra~2/Microsoft Visual Studio 12.0/VC/bin/amd64"
-INNO_DIR="/c/progra~2/Inno Setup 5"
-PATH=".:/mingw64/bin:/opt/mercurial:${MSYS2_PATH}:/opt/cmake/bin:${CMD_PATH}:${INNO_DIR}:/d/encode/tools"
+if [ -n "${MSYSTEM}" ] ; then
+    case "${MSYSTEM}" in
+        MINGW32)
+            PATH=".:/mingw32/bin:/opt/mercurial:${MSYS2_PATH}:/opt/cmake/bin:${CMD_PATH}:${INNO_DIR}:/d/encode/tools"
+            PKG_CONFIG_PATH="/mingw32/lib/pkgconfig"
+            MANPATH="/mingw32/share/man:${MANPATH}"
+            CARCH=i686
+            CHOST=${CARCH}-w64-mingw32
+            ;;
+        MINGW64)
+            PATH=".:/mingw64/bin:/opt/mercurial:${MSYS2_PATH}:/opt/cmake/bin:${CMD_PATH}:${INNO_DIR}:/d/encode/tools"
+            PKG_CONFIG_PATH="/mingw64/lib/pkgconfig"
+            MANPATH="/mingw64/share/man:${MANPATH}"
+            CARCH=x86_64
+            CHOST=${CARCH}-w64-mingw32
+            ;;
+        MSYS)
+            PATH=".:${MSYS2_PATH}:/opt/cmake/bin:${CMD_PATH}"
+            PKG_CONFIG_PATH="/usr/lib/pkgconfig:/lib/pkgconfig"
+            MANPATH="${MANPATH}"
+            CARCH=x86_64
+            CHOST=${CARCH}-unknown-msys
+            ;;
+    esac
+else
+    PATH="${MSYS2_PATH}:${CMD_PATH}"
+fi
 
 MAYBE_FIRST_START=false
 SYSCONFDIR="${SYSCONFDIR:=/etc}"
 
 # TMP and TEMP as defined in the Windows environment must be kept
-# for windows apps, even if started from cygwin. However, leaving
+# for windows apps, even if started from msys2. However, leaving
 # them set to the default Windows temporary directory or unset
-# can have unexpected consequences for cygwin apps, so we define
+# can have unexpected consequences for msys2 apps, so we define
 # our own to match GNU/Linux behaviour.
 # ORIGINAL_TMP=$TMP
 # ORIGINAL_TEMP=$TEMP
 # unset TMP TEMP
 # tmp=$(cygpath -w "$ORIGINAL_TMP" 2> /dev/null)
 # temp=$(cygpath -w "$ORIGINAL_TEMP" 2> /dev/null)
-# TMP=$TMP
-# TEMP=$TEMP
 TMP="/tmp"
 TEMP="/tmp"
 
@@ -57,6 +81,14 @@ if [ -e "${p}" ] ; then
   PRINTER=${PRINTER%%,*}
 fi
 unset p
+
+print_flags ()
+{
+  (( $1 & 0x0002 )) && echo -n "binary" || echo -n "text"
+  (( $1 & 0x0010 )) && echo -n ",exec"
+  (( $1 & 0x0040 )) && echo -n ",cygexec"
+  (( $1 & 0x0100 )) && echo -n ",notexec"
+}
 
 maybe_create_fstab ()
 {
@@ -88,6 +120,8 @@ maybe_create_fstab ()
 
 # DO NOT REMOVE NEXT LINE. It remove cygdrive prefix from path
 none / cygdrive binary,posix=0,noacl,user 0 0
+
+# MSYS style fstab
 # Win32_Path		Mount_Point
 z:/temp		/tmp
 EOF
@@ -290,10 +324,10 @@ maybe_create_home ()
 {
   # Set the user id
   USER="$(id -un)"
-  if [ -z "$USERNAME" ]; then
-    LOGNAME="$USER"
+  if [ -z "${USERNAME}" ]; then
+    LOGNAME="${USER}"
   else
-    LOGNAME="$USERNAME"
+    LOGNAME="${USERNAME}"
   fi
   # Default to removing the write permission for group and other
   #  (files normally created with mode 777 become 755; files created with
@@ -309,7 +343,7 @@ maybe_create_home ()
   if [ ! -d "${HOME}" ]; then
     if mkdir -p "${HOME}"; then
       echo "Copying skeleton files."
-      echo "These files are for the users to personalise their cygwin experience."
+      echo "These files are for the users to personalise their msys2 experience."
       echo
       echo "They will never be overwritten nor automatically updated."
       echo
@@ -347,8 +381,8 @@ maybe_create_home ()
 maybe_create_fstab
 maybe_create_mtab
 maybe_create_devs
-# maybe_create_passwd
-# maybe_create_winetc
+#maybe_create_passwd
+#maybe_create_winetc
 maybe_create_home
 
 # Shell dependent settings
@@ -360,7 +394,7 @@ profile_d ()
   done
 }
 
-if [ ! "x${BASH_VERSION}" = "x"  ]; then
+if [ ! "x${BASH_VERSION}" = "x" ]; then
   HOSTNAME="$(/usr/bin/hostname)"
   profile_d sh
   [ -f "/etc/bash.bashrc" ] && . "/etc/bash.bashrc"
@@ -390,7 +424,70 @@ HISTFILE=/tmp/.bash_history
 # term
 TERM=xterm-256color
 
-export PATH MANPATH INFOPATH USER TMP TEMP PRINTER HOSTNAME PS1 SHELL tmp temp HISTCONTROL HISTIGNORE HISTTIMEFORMAT HISTFILE TERM CMD_PATH MSYS2_PATH VC64_DIR INNO_DIR
+export PATH MANPATH INFOPATH PKG_CONFIG_PATH USER TMP TEMP PRINTER HOSTNAME PS1 SHELL tmp temp HISTCONTROL HISTIGNORE HISTTIMEFORMAT HISTFILE TERM CMD_PATH MSYS2_PATH VC64_DIR INNO_DIR CARCH CHOST
+
+# Check to see if mkpasswd/mkgroup needs to be run try and cut down the emails
+#   about this on the lists!
+#
+# The following are the conditions under which the group name special cases
+#   will appear (where uid and gid are the effective user and group ids
+#   for the current user, and pgsid is the primary group associated with the
+#   SID for the current user):
+#       mkpasswd:
+#         gid is not in /etc/group
+#         uid is not in /etc/passwd
+#       passwd/group_GID_clash(<gid>/<pgsid>):
+#         gid is not in /etc/group
+#         uid is in /etc/passwd
+#         pgsid is in /etc/group (and does not match gid)
+#       mkgroup:
+#         gid is not in /etc/group
+#         uid is in /etc/passwd
+#         pgsid is not in /etc/group
+#
+# If this message keeps appearing and you are sure it's a mistake (ie, don't
+#   email about it!), comment out the test below.
+case "$(id -ng)" in
+mkpasswd )
+  echo "Your group is currently \"mkpasswd\".  This indicates that your"
+  echo "gid is not in /etc/group and your uid is not in /etc/passwd."
+  echo
+  echo "The /etc/passwd (and possibly /etc/group) files should be rebuilt."
+  echo "See the man pages for mkpasswd and mkgroup then, for example, run"
+  echo
+  echo "mkpasswd -l [-d] > /etc/passwd"
+  echo "mkgroup  -l [-d] > /etc/group"
+  echo
+  echo "Note that the -d switch is necessary for domain users."
+  ;;
+passwd/group_GID_clash* )
+  echo "Your group is currently \"passwd/group_GID_clash(gid/pgsid)\".  This"
+  echo "indicates that your gid is not in /etc/group, but the pgsid (primary "
+  echo "group associated with your SID) is in /etc/group."
+  echo
+  echo "The /etc/passwd (and possibly /etc/group) files should be rebuilt."
+  echo "See the man pages for mkpasswd and mkgroup then, for example, run"
+  echo
+  echo "mkpasswd -l [-d] > /etc/passwd"
+  echo "mkgroup  -l [-d] > /etc/group"
+  echo
+  echo "Note that the -d switch is necessary for domain users."
+  ;;
+mkgroup )
+  echo "Your group is currently \"mkgroup\".  This indicates that neither"
+  echo "your gid nor your pgsid (primary group associated with your SID)"
+  echo "is in /etc/group."
+  echo
+  echo "The /etc/group (and possibly /etc/passwd) files should be rebuilt."
+  echo "See the man pages for mkpasswd and mkgroup then, for example, run"
+  echo
+  echo "mkpasswd -l [-d] > /etc/passwd"
+  echo "mkgroup  -l [-d] > /etc/group"
+  echo
+  echo "Note that the -d switch is necessary for domain users."
+  ;;
+esac
+
 
 if [ "$MAYBE_FIRST_START" = "true" ]; then
   sh /usr/sbin/regen-info.sh
@@ -423,4 +520,3 @@ if [ "$MAYBE_FIRST_START" = "true" ]; then
   echo
 fi
 unset MAYBE_FIRST_START
-

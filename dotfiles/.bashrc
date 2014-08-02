@@ -78,23 +78,6 @@ PS1='\[\033]0;$MSYSTEM:\w\007
 $ '
 export PS1
 
-# C{ARCH,HOST}
-case "$MSYSTEM" in
-    MINGW32)
-        CARCH=i686
-        CHOST=${CARCH}-w64-mingw32
-        ;;
-    MINGW64)
-        CARCH=x86_64
-        CHOST=${CARCH}-w64-mingw32
-        ;;
-    MSYSTEM)
-        CARCH=x86_64
-        CHOST=${CARCH}-pc-msys
-        ;;
-esac
-export CARCH CHOST
-
 # GCC
 GCC_COLORS='error=01;31;255:warning=01;35;255:note=01;36;255:caret=01;32;255:locus=01:quote=01'
 export GCC_COLORS
