@@ -1,4 +1,16 @@
 #!/usr/bin/env bash
+
+
+function is_defined() {
+    eval local tmp=$(echo '${'${1}'-undefined}')
+    eval local tmp2=$(echo '${'${1}'}')
+    if [ "${tmp}" = "undefined" -a "${tmp2}" != "undefined" ] ; then
+        return 1
+    else
+        return 0
+    fi
+}
+
 MANPATH="/usr/local/man:/usr/share/man:/usr/man:/share/man"
 INFOPATH="/usr/local/info:/usr/share/info:/usr/info:/share/info"
 for opt in "$@"
@@ -60,13 +72,3 @@ export PATH MANPATH INFOPATH MSYSTEM CARCH CHOST
 if is_defined PKG_CONFIG_PATH > /dev/null ; then
     export PKG_CONFIG_PATH
 fi
-
-function is_defined() {
-    eval local tmp=$(echo '${'${1}'-undefined}')
-    eval local tmp2=$(echo '${'${1}'}')
-    if [ "${tmp}" = "undefined" -a "${tmp2}" != "undefined" ] ; then
-        return 1
-    else
-        return 0
-    fi
-}
