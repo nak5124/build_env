@@ -59,6 +59,11 @@ function patch_binutils() {
             >> ${LOGS_DIR}/binutils/binutils_patch.log 2>&1 || exit 1
         touch ${BUILD_DIR}/binutils/src/binutils-${BINUTILS_VER}/patched_07.marker
     fi
+    if [ ! -f ${BUILD_DIR}/binutils/src/binutils-${BINUTILS_VER}/patched_08.marker ] ; then
+        # https://sourceware.org/bugzilla/show_bug.cgi?id=13557
+        patch -p1 < ${PATCHES_DIR}/binutils/0007-PR13557.patch >> ${LOGS_DIR}/binutils/binutils_patch.log 2>&1 || exit 1
+        touch ${BUILD_DIR}/binutils/src/binutils-${BINUTILS_VER}/patched_08.marker
+    fi
 
     popd > /dev/null
 
