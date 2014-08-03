@@ -36,7 +36,7 @@ declare -r _CPPFLAGS="-D_FORTIFY_SOURCE=2 -D__USE_MINGW_ANSI_STDIO=1"
 declare -r _CFLAGS="-pipe -Os -msse4 -fomit-frame-pointer"
 declare -r _CXXFLAGS="-pipe -Os -msse4 -fomit-frame-pointer"
 declare -r _LDFLAGS="-pipe -Wl,-O1 -Wl,--as-needed -Wl,--nxcompat -Wl,--dynamicbase"
-declare -r MAKEFLAGS="-O -j9"
+declare -r MAKEFLAGS="-j$(($(nproc)+1)) -O"
 
 # GCC thread model
 declare -r THREAD_MODEL="posix"

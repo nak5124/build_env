@@ -20,9 +20,9 @@ function remove_la_files() {
 
 # strip files
 function strip_files() {
-    find "$1" -name "*.exe" | xargs -rl1 strip --preserve-dates --strip-all
-    find "$1" -name "*.dll" | xargs -rl1 strip --preserve-dates --strip-unneeded
-    find "$1" -name "*.a"   | xargs -rl1 strip --preserve-dates --strip-debug
+    find "$1" -name "*.exe"              | xargs -rl1 strip --preserve-dates --strip-all
+    find "$1" -name "*.dll"              | xargs -rl1 strip --preserve-dates --strip-unneeded
+    find "$1" -name "*.a" -o -name "*.o" | xargs -rl1 strip --preserve-dates --strip-debug
 }
 
 # define readonly variable

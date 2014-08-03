@@ -1,3 +1,0 @@
-#!/usr/bin/env bash
-
-exec /d/Program_Files_portable/mpc-hc/mpc-hc.exe "$@" &
