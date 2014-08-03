@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+echo '
+CALL chcp 65001 > nul
+taskkill -IM '${@}*'
+exit
+' | cmd > /dev/null
