@@ -1,6 +1,14 @@
 #!/usr/bin/env bash
 echo '
 CALL chcp 65001 > nul
-taskkill -IM '${@}*'
+taskkill -IM '${1}*'
 exit
 ' | cmd > /dev/null
+
+if [ -f /tmp/win32applist ] ; then
+    sed -i "s/${1}//gi" /tmp/win32applist
+    sed -i '/^$/d' /tmp/win32applist
+    if [ ! -s /tmp/win32applist ] ; then
+        rm -f /tmp/win32applist
+    fi
+fi

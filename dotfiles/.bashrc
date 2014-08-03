@@ -62,21 +62,152 @@ alias sanchi='clear; \cat /usr/local/bin/sanchi.txt'
 alias nde='clear; \cat /usr/local/bin/nde.txt'
 
 # TVTest
-alias TV_T='start /d/PT2/TVTest/TVTest.exe //d BonDriver_PT-T.dll'
-alias TV_BS='start /d/PT2/TVTest/TVTest.exe //d BonDriver_PT-S.dll //chspace 0 //rch 11'
-alias TV_CS='start /d/PT2/TVTest/TVTest.exe //d BonDriver_PT-S.dll //chspace 1 //rch 330'
-alias tv_t='TV_T'
-alias tv_bs='TV_BS'
-alias tv_cs='TV_CS'
+function tv_t() {
+    start /d/PT2/TVTest/TVTest.exe //d BonDriver_PT-T.dll
+
+    local _exists=false
+    if [ -f /tmp/win32applist ] ; then
+        local -i i=0
+        local -a list
+        while read line
+        do
+            list[i]=$line
+            i=$((${i} + 1))
+        done < /tmp/win32applist
+        for (( i = 0; i < ${#list[*]}; i++ ))
+        do
+            if [ "${list[${i}]}" = "TVTest" ] ; then
+                _exists=true
+            fi
+        done
+    fi
+    if ! $_exists ; then
+        echo TVTest >> /tmp/win32applist
+    fi
+}
+
+function tv_bs() {
+    start /d/PT2/TVTest/TVTest.exe //d BonDriver_PT-S.dll //chspace 0 //rch 11
+
+    local _exists=false
+    if [ -f /tmp/win32applist ] ; then
+        local -i i=0
+        local -a list
+        while read line
+        do
+            list[i]=$line
+            i=$((${i} + 1))
+        done < /tmp/win32applist
+        for (( i = 0; i < ${#list[*]}; i++ ))
+        do
+            if [ "${list[${i}]}" = "TVTest" ] ; then
+                _exists=true
+            fi
+        done
+    fi
+    if ! $_exists ; then
+        echo TVTest >> /tmp/win32applist
+    fi
+}
+
+function tv_cs() {
+    start /d/PT2/TVTest/TVTest.exe //d BonDriver_PT-S.dll //chspace 1 //rch 330
+
+    local _exists=false
+    if [ -f /tmp/win32applist ] ; then
+        local -i i=0
+        local -a list
+        while read line
+        do
+            list[i]=$line
+            i=$((${i} + 1))
+        done < /tmp/win32applist
+        for (( i = 0; i < ${#list[*]}; i++ ))
+        do
+            if [ "${list[${i}]}" = "TVTest" ] ; then
+                _exists=true
+            fi
+        done
+    fi
+    if ! $_exists ; then
+        echo TVTest >> /tmp/win32applist
+    fi
+}
 
 # firefox
-alias firefox='start /c/firefox/firefox.exe -p nightly_x64'
+function firefox() {
+    start /c/firefox/firefox.exe -p nightly_x64
+
+    local _exists=false
+    if [ -f /tmp/win32applist ] ; then
+        local -i i=0
+        local -a list
+        while read line
+        do
+            list[i]=$line
+            i=$((${i} + 1))
+        done < /tmp/win32applist
+        for (( i = 0; i < ${#list[*]}; i++ ))
+        do
+            if [ "${list[${i}]}" = "firefox" ] ; then
+                _exists=true
+            fi
+        done
+    fi
+    if ! $_exists ; then
+        echo firefox >> /tmp/win32applist
+    fi
+}
 
 # mpc-hc
-alias play='start /d/Program_Files_portable/mpc-hc/mpc-hc.exe "$@"'
+function play() {
+    start /d/Program_Files_portable/mpc-hc/mpc-hc.exe "$@"
+
+    local _exists=false
+    if [ -f /tmp/win32applist ] ; then
+        local -i i=0
+        local -a list
+        while read line
+        do
+            list[i]=$line
+            i=$((${i} + 1))
+        done < /tmp/win32applist
+        for (( i = 0; i < ${#list[*]}; i++ ))
+        do
+            if [ "${list[${i}]}" = "mpc-hc" ] ; then
+                _exists=true
+            fi
+        done
+    fi
+    if ! $_exists ; then
+        echo mpc-hc >> /tmp/win32applist
+    fi
+}
 
 # notepad++
-alias nppp='start /c/progra~2/Notepad++/notepad++.exe "$@"'
+function nppp() {
+    start /c/progra~2/Notepad++/notepad++.exe "$@"
+
+    local _exists=false
+    if [ -f /tmp/win32applist ] ; then
+        local -i i=0
+        local -a list
+        while read line
+        do
+            list[i]=$line
+            i=$((${i} + 1))
+        done < /tmp/win32applist
+        for (( i = 0; i < ${#list[*]}; i++ ))
+        do
+            if [ "${list[${i}]}" = "notepad++" ] ; then
+                _exists=true
+            fi
+        done
+    fi
+    if ! $_exists ; then
+        echo notepad++ >> /tmp/win32applist
+    fi
+}
 
 # shell
 PROMPT_COMMAND='printf "\033]0;%s: %s\007" "${MSYSTEM}" "${PWD/${HOME}/\~}"'
