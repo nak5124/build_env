@@ -59,13 +59,15 @@ function del_empty_dir() {
 function dl_files() {
     local is_curl=false
 
-    if ! is_defined ${1} > /dev/null \
-    || ! is_defined ${2} > /dev/null ; then
+    local -r prtcl=${1}
+    local -r url=${2}
+    local -r oname=${3}
+    if [ -z "${prtcl}" -o -z "${url}" ] ; then
         echo 'dl_files: ${1} and ${2} should be specified!'
         exit 1
     fi
 
-    case "${1}" in
+    case "${prtcl}" in
         ftp )
             local curl_opt="--fail --continue-at - --ftp-pasv --retry 10 --retry-delay 5 --speed-limit 1 --speed-time 30"
             is_curl=true
@@ -76,18 +78,18 @@ function dl_files() {
             is_curl=true
             ;;
         git )
-            git clone ${2} ${3}
+            git clone $url $oname
             ;;
         * )
-            printf "dl_files: %s is unknown protocol\n" "${1}"
+            printf "dl_files: %s is unknown protocol\n" $prtcl
             exit 1
     esac
 
     if $is_curl ; then
-        if is_defined ${3} > /dev/null ; then
-            curl $curl_opt -o ${3} ${2}
+        if [ ! -z "${oname}" ] ; then
+            curl $curl_opt -o $oname $url
         else
-            curl $curl_opt --remote-name ${2}
+            curl $curl_opt --remote-name $url
         fi
     fi
 
@@ -96,12 +98,11 @@ function dl_files() {
 
 # decompress archive
 function decomp_arch() {
-    if ! is_defined ${1} > /dev/null ; then
+    local fname=${1}
+    if [ -z "${fname}" ] ; then
         echo 'decomp_arch: ${1} should be specified!'
         exit 1
     fi
-
-    local fname=${1}
     local ext='.'${fname##*.}
     local fname_noext=${fname%${ext}}
     local is_ok=false

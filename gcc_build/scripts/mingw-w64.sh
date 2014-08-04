@@ -107,7 +107,7 @@ function build_threads() {
             --prefix=/mingw${bitval}/${arch}-w64-mingw32                           \
             --build=${arch}-w64-mingw32                                            \
             --host=${arch}-w64-mingw32                                             \
-            --disable-shared                                                       \
+            --enable-shared                                                        \
             --enable-static                                                        \
             CPPFLAGS="${_CPPFLAGS}"                                                \
             CFLAGS="${_CFLAGS}"                                                    \
@@ -123,6 +123,9 @@ function build_threads() {
         printf "===> installing MinGW-w64 winpthreads %s\n" $arch
         make DESTDIR=${PREIN_DIR}/mingw-w64/winpthreads install \
             > ${LOGS_DIR}/mingw-w64/winpthreads/winpthreads_install_${arch}.log 2>&1 || exit 1
+        mkdir -p ${PREIN_DIR}/mingw-w64/winpthreads/mingw${bitval}/bin
+        cp -fa ${PREIN_DIR}/mingw-w64/winpthreads/mingw${bitval}/${arch}-w64-mingw32/bin/*.dll \
+            ${PREIN_DIR}/mingw-w64/winpthreads/mingw${bitval}/bin
         del_empty_dir ${PREIN_DIR}/mingw-w64/winpthreads/mingw$bitval
         remove_la_files ${PREIN_DIR}/mingw-w64/winpthreads/mingw$bitval
         strip_files ${PREIN_DIR}/mingw-w64/winpthreads/mingw$bitval

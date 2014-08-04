@@ -112,9 +112,11 @@ function build_gcc1() {
 
         if [ "${arch}" = "i686" ] ; then
             local _optimization="--with-arch=i686 --with-tune=generic"
+            local _ehconf="--disable-sjlj-exceptions --with-dwarf2"
             local _LAA=" -Wl,--large-address-aware"
         else
             local _optimization="--with-arch=x86-64 --with-tune=generic"
+            local _ehconf=""
             local _LAA=""
         fi
 
@@ -134,11 +136,12 @@ function build_gcc1() {
             --libexecdir=/mingw${bitval}/lib                            \
             --build=${arch}-w64-mingw32                                 \
             --target=${arch}-w64-mingw32                                \
-            --disable-shared                                            \
+            --enable-shared                                             \
             --enable-static                                             \
             --disable-multilib                                          \
             --enable-languages=c,c++,lto                                \
             ${_threads}                                                 \
+            ${_ehconf}                                                  \
             --enable-lto                                                \
             --enable-checking=release                                   \
             --enable-version-specific-runtime-libs                      \
@@ -241,7 +244,9 @@ function build_gcc2() {
 
         printf "===> installing GCC 2nd step %s\n" $arch
         make DESTDIR=${PREIN_DIR}/gcc install > ${LOGS_DIR}/gcc/gcc2_install_${arch}.log 2>&1 || exit 1
-        rm -f ${PREIN_DIR}/gcc/mingw${bitval}/lib/gcc/${arch}-w64-mingw32/${GCC_VER}/libstdc++.a-gdb.py
+        cp -fa ${PREIN_DIR}/gcc/mingw${bitval}/lib/gcc/${arch}-w64-mingw32/lib/libgcc_s.a \
+            ${PREIN_DIR}/gcc/mingw${bitval}/lib/gcc/${arch}-w64-mingw32/${GCC_VER}
+        rm -f ${PREIN_DIR}/gcc/mingw${bitval}/lib/gcc/${arch}-w64-mingw32/${GCC_VER}/*.py
         rm -fr ${PREIN_DIR}/gcc/mingw${bitval}/share/gcc-$GCC_VER
         del_empty_dir ${PREIN_DIR}/gcc/mingw$bitval
         remove_la_files ${PREIN_DIR}/gcc/mingw$bitval
