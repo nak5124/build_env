@@ -4,7 +4,7 @@ function download_cloog_src() {
     if [ ! -f ${BUILD_DIR}/gcc_libs/cloog/src/cloog-${CLOOG_VER}.tar.gz ] ; then
         printf "===> downloading CLooG %s\n" $CLOOG_VER
         pushd ${BUILD_DIR}/gcc_libs/cloog/src > /dev/null
-        wget -c http://www.bastoul.net/cloog/pages/download/cloog-${CLOOG_VER}.tar.gz
+        dl_files http http://www.bastoul.net/cloog/pages/download/cloog-${CLOOG_VER}.tar.gz
         popd > /dev/null
         echo "done"
     fi
@@ -12,7 +12,7 @@ function download_cloog_src() {
     if [ ! -d ${BUILD_DIR}/gcc_libs/cloog/src/cloog-$CLOOG_VER ] ; then
         printf "===> extracting CLooG %s\n" $CLOOG_VER
         pushd ${BUILD_DIR}/gcc_libs/cloog/src > /dev/null
-        tar xzf ${BUILD_DIR}/gcc_libs/cloog/src/cloog-${CLOOG_VER}.tar.gz
+        decomp_arch ${BUILD_DIR}/gcc_libs/cloog/src/cloog-${CLOOG_VER}.tar.gz
         popd > /dev/null
         echo "done"
     fi

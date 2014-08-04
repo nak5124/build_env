@@ -4,7 +4,7 @@ function download_mpfr_src() {
     if [ ! -f ${BUILD_DIR}/gcc_libs/mpfr/src/mpfr-${MPFR_VER}.tar.bz2 ] ; then
         printf "===> downloading MPFR %s\n" $MPFR_VER
         pushd ${BUILD_DIR}/gcc_libs/mpfr/src > /dev/null
-        wget -c http://www.mpfr.org/mpfr-current/mpfr-${MPFR_VER}.tar.bz2
+        dl_files http http://www.mpfr.org/mpfr-current/mpfr-${MPFR_VER}.tar.bz2
         popd > /dev/null
         echo "done"
     fi
@@ -14,7 +14,7 @@ function download_mpfr_src() {
     if [ -d ${BUILD_DIR}/gcc_libs/mpfr/src/mpfr-$MPFR_VER ] ; then
         rm -fr ${BUILD_DIR}/gcc_libs/mpfr/src/mpfr-$MPFR_VER
     fi
-    tar xjf ${BUILD_DIR}/gcc_libs/mpfr/src/mpfr-${MPFR_VER}.tar.bz2
+    decomp_arch ${BUILD_DIR}/gcc_libs/mpfr/src/mpfr-${MPFR_VER}.tar.bz2
     popd > /dev/null
     echo "done"
 
@@ -31,7 +31,7 @@ function download_mpfr_patch() {
     if [ -f ${PATCHES_DIR}/mpfr/allpatches ] ; then
         rm -f ${PATCHES_DIR}/mpfr/allpatches
     fi
-    wget http://www.mpfr.org/mpfr-current/allpatches > /dev/null 2>&1
+    dl_files http http://www.mpfr.org/mpfr-current/allpatches
     popd > /dev/null
     echo "done"
 

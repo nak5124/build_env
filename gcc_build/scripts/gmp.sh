@@ -4,7 +4,7 @@ function download_gmp_src() {
     if [ ! -f ${BUILD_DIR}/gcc_libs/gmp/src/gmp-${GMP_VER}a.tar.lz ] ; then
         printf "===> downloading GMP %s\n" $GMP_VER
         pushd ${BUILD_DIR}/gcc_libs/gmp/src > /dev/null
-        wget -c ftp://ftp.gmplib.org/pub/gmp/gmp-${GMP_VER}a.tar.lz
+        dl_files ftp ftp://ftp.gmplib.org/pub/gmp/gmp-${GMP_VER}a.tar.lz
         popd > /dev/null
         echo "done"
     fi
@@ -12,7 +12,7 @@ function download_gmp_src() {
     if [ ! -d ${BUILD_DIR}/gcc_libs/gmp/src/gmp-$GMP_VER ] ; then
         printf "===> extracting GMP %s\n" $GMP_VER
         pushd ${BUILD_DIR}/gcc_libs/gmp/src > /dev/null
-        tar xf ${BUILD_DIR}/gcc_libs/gmp/src/gmp-${GMP_VER}a.tar.lz
+        decomp_arch ${BUILD_DIR}/gcc_libs/gmp/src/gmp-${GMP_VER}a.tar.lz
         popd > /dev/null
         echo "done"
     fi

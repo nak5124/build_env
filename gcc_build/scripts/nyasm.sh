@@ -4,7 +4,7 @@ function download_nasm_src() {
     if [ ! -f ${BUILD_DIR}/nyasm/nasm/src/nasm-${NASM_VER}.tar.xz ] ; then
         printf "===> downloading NASM %s\n" $NASM_VER
         pushd ${BUILD_DIR}/nyasm/nasm/src > /dev/null
-        wget -c http://www.nasm.us/pub/nasm/releasebuilds/${NASM_VER}/nasm-${NASM_VER}.tar.xz
+        dl_files http http://www.nasm.us/pub/nasm/releasebuilds/${NASM_VER}/nasm-${NASM_VER}.tar.xz
         popd > /dev/null
         echo "done"
     fi
@@ -12,7 +12,7 @@ function download_nasm_src() {
     if [ ! -d ${BUILD_DIR}/nyasm/nasm/src/nasm-$NASM_VER ] ; then
         printf "===> extracting NASM %s\n" $NASM_VER
         pushd ${BUILD_DIR}/nyasm/nasm/src > /dev/null
-        tar Jxf ${BUILD_DIR}/nyasm/nasm/src/nasm-${NASM_VER}.tar.xz
+        decomp_arch ${BUILD_DIR}/nyasm/nasm/src/nasm-${NASM_VER}.tar.xz
         popd > /dev/null
         echo "done"
     fi
@@ -95,7 +95,7 @@ function download_yasm_src() {
     if [ ! -f ${BUILD_DIR}/nyasm/yasm/src/yasm-${YASM_VER}.tar.gz ] ; then
         printf "===> downloading Yasm %s\n" $YASM_VER
         pushd ${BUILD_DIR}/nyasm/yasm/src > /dev/null
-        wget -c http://www.tortall.net/projects/yasm/releases/yasm-${YASM_VER}.tar.gz
+        dl_files http http://www.tortall.net/projects/yasm/releases/yasm-${YASM_VER}.tar.gz
         popd > /dev/null
         echo "done"
     fi
@@ -103,7 +103,7 @@ function download_yasm_src() {
     if [ ! -d ${BUILD_DIR}/nyasm/yasm/src/yasm-$YASM_VER ] ; then
         printf "===> extracting Yasm %s\n" $YASM_VER
         pushd ${BUILD_DIR}/nyasm/yasm/src > /dev/null
-        tar xzf ${BUILD_DIR}/nyasm/yasm/src/yasm-${YASM_VER}.tar.gz
+        decomp_arch ${BUILD_DIR}/nyasm/yasm/src/yasm-${YASM_VER}.tar.gz
         popd > /dev/null
         echo "done"
     fi

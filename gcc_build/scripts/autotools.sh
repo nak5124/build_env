@@ -4,7 +4,7 @@ function download_autoconf_src() {
     if [ ! -f ${BUILD_DIR}/autotools/autoconf/src/autoconf-${AUTOCONF_VER}.tar.xz ] ; then
         printf "===> downloading Autoconf %s\n" $AUTOCONF_VER
         pushd ${BUILD_DIR}/autotools/autoconf/src > /dev/null
-        wget -c ftp://ftp.gnu.org/gnu/autoconf/autoconf-${AUTOCONF_VER}.tar.xz
+        dl_files ftp ftp://ftp.gnu.org/gnu/autoconf/autoconf-${AUTOCONF_VER}.tar.xz
         popd > /dev/null
         echo "done"
     fi
@@ -12,7 +12,7 @@ function download_autoconf_src() {
     if [ ! -d ${BUILD_DIR}/autotools/autoconf/src/autoconf-$AUTOCONF_VER ] ; then
         printf "===> extracting Autoconf %s\n" $AUTOCONF_VER
         pushd ${BUILD_DIR}/autotools/autoconf/src > /dev/null
-        tar Jxf ${BUILD_DIR}/autotools/autoconf/src/autoconf-${AUTOCONF_VER}.tar.xz
+        decomp_arch ${BUILD_DIR}/autotools/autoconf/src/autoconf-${AUTOCONF_VER}.tar.xz
         popd > /dev/null
         echo "done"
     fi
@@ -138,7 +138,7 @@ function download_automake_src() {
     if [ ! -f ${BUILD_DIR}/autotools/automake/src/automake-${AUTOMAKE_VER}.tar.xz ] ; then
         printf "===> downloading Automake %s\n" $AUTOMAKE_VER
         pushd ${BUILD_DIR}/autotools/automake/src > /dev/null
-        wget -c ftp://ftp.gnu.org/gnu/automake/automake-${AUTOMAKE_VER}.tar.xz
+        dl_files ftp ftp://ftp.gnu.org/gnu/automake/automake-${AUTOMAKE_VER}.tar.xz
         popd > /dev/null
         echo "done"
     fi
@@ -146,7 +146,7 @@ function download_automake_src() {
     if [ ! -d ${BUILD_DIR}/autotools/automake/src/automake-$AUTOMAKE_VER ] ; then
         printf "===> extracting Automake %s\n" $AUTOMAKE_VER
         pushd ${BUILD_DIR}/autotools/automake/src > /dev/null
-        tar Jxf ${BUILD_DIR}/autotools/automake/src/automake-${AUTOMAKE_VER}.tar.xz
+        decomp_arch ${BUILD_DIR}/autotools/automake/src/automake-${AUTOMAKE_VER}.tar.xz
         popd > /dev/null
         echo "done"
     fi
@@ -236,8 +236,8 @@ function download_libtool_src() {
     if [ ! -f ${BUILD_DIR}/autotools/libtool/src/libtool-${LIBTOOL_VER}.tar.xz ] ; then
         printf "===> downloading  %s\n" $ISL_VER
         pushd ${BUILD_DIR}/autotools/libtool/src > /dev/null
-        # wget -c ftp://ftp.gnu.org/gnu/libtool/libtool-${LIBTOOL_VER}.tar.xz
-        wget -c ftp://alpha.gnu.org/gnu/libtool/libtool-${LIBTOOL_VER}.tar.xz
+        # dl_files ftp ftp://ftp.gnu.org/gnu/libtool/libtool-${LIBTOOL_VER}.tar.xz
+        dl_files ftp ftp://alpha.gnu.org/gnu/libtool/libtool-${LIBTOOL_VER}.tar.xz
         popd > /dev/null
         echo "done"
     fi
@@ -245,7 +245,7 @@ function download_libtool_src() {
     if [ ! -d ${BUILD_DIR}/autotools/libtool/src/libtool-$LIBTOOL_VER ] ; then
         printf "===> extracting Libtool %s\n" $LIBTOOL_VER
         pushd ${BUILD_DIR}/autotools/libtool/src > /dev/null
-        tar Jxf ${BUILD_DIR}/autotools/libtool/src/libtool-${LIBTOOL_VER}.tar.xz
+        decomp_arch ${BUILD_DIR}/autotools/libtool/src/libtool-${LIBTOOL_VER}.tar.xz
         popd > /dev/null
         echo "done"
     fi

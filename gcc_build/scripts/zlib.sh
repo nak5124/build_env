@@ -4,7 +4,7 @@ function download_zlib_src() {
     if [ ! -f ${BUILD_DIR}/zlib/src/zlib-${ZLIB_VER}.tar.xz ] ; then
         printf "===> downloading zlib %s\n" $ZLIB_VER
         pushd ${BUILD_DIR}/zlib/src > /dev/null
-        wget -c http://zlib.net/current/zlib-${ZLIB_VER}.tar.xz
+        dl_files http http://zlib.net/current/zlib-${ZLIB_VER}.tar.xz
         popd > /dev/null
         echo "done"
     fi
@@ -12,7 +12,7 @@ function download_zlib_src() {
     if [ ! -d ${BUILD_DIR}/zlib/src/zlib-$ZLIB_VER ] ; then
         printf "===> extracting zlib %s\n" $ZLIB_VER
         pushd ${BUILD_DIR}/zlib/src > /dev/null
-        tar Jxf ${BUILD_DIR}/zlib/src/zlib-${ZLIB_VER}.tar.xz
+        decomp_arch ${BUILD_DIR}/zlib/src/zlib-${ZLIB_VER}.tar.xz
         popd > /dev/null
         echo "done"
     fi

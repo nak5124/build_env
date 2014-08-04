@@ -4,7 +4,7 @@ function download_binutils_src() {
     if [ ! -f ${BUILD_DIR}/binutils/src/binutils-${BINUTILS_VER}.tar.bz2 ] ; then
         printf "===> downloading Binutils %s\n" $BINUTILS_VER
         pushd ${BUILD_DIR}/binutils/src > /dev/null
-        wget -c http://ftp.gnu.org/gnu/binutils/binutils-${BINUTILS_VER}.tar.bz2
+        dl_files http http://ftp.gnu.org/gnu/binutils/binutils-${BINUTILS_VER}.tar.bz2
         popd > /dev/null
         echo "done"
     fi
@@ -12,7 +12,7 @@ function download_binutils_src() {
     if [ ! -d ${BUILD_DIR}/binutils/src/binutils-$BINUTILS_VER ] ; then
         printf "===> extracting Binutils %s\n" $BINUTILS_VER
         pushd ${BUILD_DIR}/binutils/src > /dev/null
-        tar xjf ${BUILD_DIR}/binutils/src/binutils-${BINUTILS_VER}.tar.bz2
+        decomp_arch ${BUILD_DIR}/binutils/src/binutils-${BINUTILS_VER}.tar.bz2
         popd > /dev/null
         echo "done"
     fi

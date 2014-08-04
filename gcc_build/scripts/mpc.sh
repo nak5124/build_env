@@ -4,7 +4,7 @@ function download_mpc_src() {
     if [ ! -f ${BUILD_DIR}/gcc_libs/mpc/src/mpc-${MPC_VER}.tar.gz ] ; then
         printf "===> downloading MPC %s\n" $MPC_VER
         pushd ${BUILD_DIR}/gcc_libs/mpc/src > /dev/null
-        wget -c ftp://ftp.gnu.org/gnu/mpc/mpc-${MPC_VER}.tar.gz
+        dl_files ftp ftp://ftp.gnu.org/gnu/mpc/mpc-${MPC_VER}.tar.gz
         popd > /dev/null
         echo "done"
     fi
@@ -12,7 +12,7 @@ function download_mpc_src() {
     if [ ! -d ${BUILD_DIR}/gcc_libs/mpc/src/mpc-$MPC_VER ] ; then
         printf "===> extracting MPC %s\n" $MPC_VER
         pushd ${BUILD_DIR}/gcc_libs/mpc/src > /dev/null
-        tar xzf ${BUILD_DIR}/gcc_libs/mpc/src/mpc-${MPC_VER}.tar.gz
+        decomp_arch ${BUILD_DIR}/gcc_libs/mpc/src/mpc-${MPC_VER}.tar.gz
         popd > /dev/null
         echo "done"
     fi

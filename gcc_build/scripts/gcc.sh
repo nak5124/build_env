@@ -4,7 +4,7 @@ function download_gcc_src() {
     if [ ! -f ${BUILD_DIR}/gcc/src/gcc-${GCC_VER}.tar.bz2 ] ; then
         printf "===> downloading GCC %s\n" $GCC_VER
         pushd ${BUILD_DIR}/gcc/src > /dev/null
-        wget -c ftp://gcc.gnu.org/pub/gcc/releases/gcc-${GCC_VER}/gcc-${GCC_VER}.tar.bz2
+        dl_files ftp ftp://gcc.gnu.org/pub/gcc/releases/gcc-${GCC_VER}/gcc-${GCC_VER}.tar.bz2
         popd > /dev/null
         echo "done"
     fi
@@ -12,7 +12,7 @@ function download_gcc_src() {
     if [ ! -d ${BUILD_DIR}/gcc/src/gcc-$GCC_VER ] ; then
         printf "===> extracting GCC %s\n" $GCC_VER
         pushd ${BUILD_DIR}/gcc/src > /dev/null
-        tar xjf ${BUILD_DIR}/gcc/src/gcc-${GCC_VER}.tar.bz2
+        decomp_arch ${BUILD_DIR}/gcc/src/gcc-${GCC_VER}.tar.bz2
         popd > /dev/null
         echo "done"
     fi

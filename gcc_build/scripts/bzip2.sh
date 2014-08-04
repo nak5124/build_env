@@ -4,7 +4,7 @@ function download_bzip2_src() {
     if [ ! -f ${BUILD_DIR}/bzip2/src/bzip2-${BZIP2_VER}.tar.gz ] ; then
         printf "===> downloading bzip2 %s\n" $BZIP2_VER
         pushd ${BUILD_DIR}/bzip2/src > /dev/null
-        wget -c http://www.bzip.org/${BZIP2_VER}/bzip2-${BZIP2_VER}.tar.gz
+        dl_files http http://www.bzip.org/${BZIP2_VER}/bzip2-${BZIP2_VER}.tar.gz
         popd > /dev/null
         echo "done"
     fi
@@ -12,7 +12,7 @@ function download_bzip2_src() {
     if [ ! -d ${BUILD_DIR}/bzip2/src/bzip2-$BZIP2_VER ] ; then
         printf "===> extracting bzip2 %s\n" $BZIP2_VER
         pushd ${BUILD_DIR}/bzip2/src > /dev/null
-        tar xzf ${BUILD_DIR}/bzip2/src/bzip2-${BZIP2_VER}.tar.gz
+        decomp_arch ${BUILD_DIR}/bzip2/src/bzip2-${BZIP2_VER}.tar.gz
         popd > /dev/null
         echo "done"
     fi

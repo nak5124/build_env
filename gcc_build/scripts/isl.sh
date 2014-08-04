@@ -4,7 +4,7 @@ function download_isl_src() {
     if [ ! -f ${BUILD_DIR}/gcc_libs/isl/src/isl-${ISL_VER}.tar.xz ] ; then
         printf "===> downloading ISL %s\n" $ISL_VER
         pushd ${BUILD_DIR}/gcc_libs/isl/src > /dev/null
-        wget -c http://isl.gforge.inria.fr/isl-${ISL_VER}.tar.xz
+        dl_files http http://isl.gforge.inria.fr/isl-${ISL_VER}.tar.xz
         popd > /dev/null
         echo "done"
     fi
@@ -12,7 +12,7 @@ function download_isl_src() {
     if [ ! -d ${BUILD_DIR}/gcc_libs/isl/src/isl-$ISL_VER ] ; then
         printf "===> extracting ISL %s\n" $ISL_VER
         pushd ${BUILD_DIR}/gcc_libs/isl/src > /dev/null
-        tar Jxf ${BUILD_DIR}/gcc_libs/isl/src/isl-${ISL_VER}.tar.xz
+        decomp_arch ${BUILD_DIR}/gcc_libs/isl/src/isl-${ISL_VER}.tar.xz
         popd > /dev/null
         echo "done"
     fi

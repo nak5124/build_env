@@ -5,7 +5,7 @@ function prepare_mingw_w64() {
     if [ ! -d ${BUILD_DIR}/mingw-w64/src/mingw-w64-$MINGW_VER ] ; then
         cd ${BUILD_DIR}/mingw-w64/src
         printf "===> cloning MinGW-w64 %s\n" $MINGW_VER
-        git clone git://git.code.sf.net/p/mingw-w64/mingw-w64 mingw-w64-$MINGW_VER
+        dl_files git git://git.code.sf.net/p/mingw-w64/mingw-w64 mingw-w64-$MINGW_VER
         echo "done"
     fi
     cd ${BUILD_DIR}/mingw-w64/src/mingw-w64-$MINGW_VER

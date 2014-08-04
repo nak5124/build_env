@@ -54,3 +54,91 @@ function is_defined() {
 function del_empty_dir() {
     find "${1}" -type d -empty | xargs rmdir > /dev/null 2>&1
 }
+
+# download files
+function dl_files() {
+    local is_curl=false
+
+    if ! is_defined ${1} > /dev/null \
+    || ! is_defined ${2} > /dev/null ; then
+        echo 'dl_files: ${1} and ${2} should be specified!'
+        exit 1
+    fi
+
+    case "${1}" in
+        ftp )
+            local curl_opt="--fail --continue-at - --ftp-pasv --retry 10 --retry-delay 5 --speed-limit 1 --speed-time 30"
+            is_curl=true
+            ;;
+        http | https )
+            local curl_opt="--fail --location --max-redirs 2 --continue-at - --retry 10 --retry-delay 5 \
+                            --speed-limit 1 --speed-time 30"
+            is_curl=true
+            ;;
+        git )
+            git clone ${2} ${3}
+            ;;
+        * )
+            printf "dl_files: %s is unknown protocol\n" "${1}"
+            exit 1
+    esac
+
+    if $is_curl ; then
+        if is_defined ${3} > /dev/null ; then
+            curl $curl_opt -o ${3} ${2}
+        else
+            curl $curl_opt --remote-name ${2}
+        fi
+    fi
+
+    return 0
+}
+
+# decompress archive
+function decomp_arch() {
+    if ! is_defined ${1} > /dev/null ; then
+        echo 'decomp_arch: ${1} should be specified!'
+        exit 1
+    fi
+
+    local fname=${1}
+    local ext='.'${fname##*.}
+    local fname_noext=${fname%${ext}}
+    local is_ok=false
+    case "${ext}" in
+        .gz )
+            if [ "${fname_noext##*.}" = "tar" ] ; then
+                tar xzf $fname
+                is_ok=true
+            fi
+            ;;
+        .bz2 )
+            if [ "${fname_noext##*.}" = "tar" ] ; then
+                tar xjf $fname
+                is_ok=true
+            fi
+            ;;
+        .lz | .lzma )
+            if [ "${fname_noext##*.}" = "tar" ] ; then
+                tar xf $fname
+                is_ok=true
+            fi
+            ;;
+        .xz )
+            if [ "${fname_noext##*.}" = "tar" ] ; then
+                tar Jxf $fname
+                is_ok=true
+            fi
+            ;;
+        * )
+            printf "decomp_arch: %s is an unknown format.\n" $fname
+            exit 1
+    esac
+
+    if $is_ok ; then
+        return 0
+    else
+        printf "decomp_arch: %s is not a tar archive.\n" $fname
+        exit 1
+    fi
+}

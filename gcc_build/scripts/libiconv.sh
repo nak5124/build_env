@@ -4,7 +4,7 @@ function download_iconv_src() {
     if [ ! -f ${BUILD_DIR}/libiconv/src/libiconv-${ICONV_VER}.tar.gz ] ; then
         printf "===> downloading libiconv %s\n" $ICONV_VER
         pushd ${BUILD_DIR}/libiconv/src > /dev/null
-        wget -c http://ftp.gnu.org/gnu/libiconv/libiconv-${ICONV_VER}.tar.gz
+        dl_files http http://ftp.gnu.org/gnu/libiconv/libiconv-${ICONV_VER}.tar.gz
         popd > /dev/null
         echo "done"
     fi
@@ -12,7 +12,7 @@ function download_iconv_src() {
     if [ ! -d ${BUILD_DIR}/libiconv/src/libiconv-$ICONV_VER ] ; then
         printf "===> extracting libiconv %s\n" $ICONV_VER
         pushd ${BUILD_DIR}/libiconv/src > /dev/null
-        tar xzf ${BUILD_DIR}/libiconv/src/libiconv-${ICONV_VER}.tar.gz
+        decomp_arch ${BUILD_DIR}/libiconv/src/libiconv-${ICONV_VER}.tar.gz
         popd > /dev/null
         echo "done"
     fi
