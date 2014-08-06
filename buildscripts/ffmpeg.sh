@@ -149,6 +149,8 @@ function build_ffmpeg() {
                     --extra-cflags="${_EXCFLAGS}"           \
                     --extra-ldflags="${_EXLDFLAGS}"         \
             > ${LOGS_DIR}/ffmpeg_config_${arch}.log 2>&1 || exit 1
+        sed -i '/HAVE_CLOCK_GETTIME/d' config.h
+        sed -i '/HAVE_NANOSLEEP/d' config.h
         echo "done"
 
         make clean > /dev/null 2>&1
