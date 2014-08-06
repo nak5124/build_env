@@ -1,6 +1,12 @@
 # If not running interactively, don't do anything
 [[ "$-" != *i* ]] && return
 
+# cmd
+echo '
+CALL chcp 65001 > nul
+exit
+' | cmd > /dev/null
+
 # PATH
 alias cpath='source cpath'
 
