@@ -85,10 +85,15 @@ function patch_gcc() {
         patch -p1 < ${PATCHES_DIR}/gcc/0010-relocate.patch >> ${LOGS_DIR}/gcc/gcc_patch.log 2>&1 || exit 1
         touch ${BUILD_DIR}/gcc/src/gcc-${GCC_VER}/patched_12.marker
     fi
-    if [ ! -f ${BUILD_DIR}/gcc/src/gcc-${GCC_VER}/patched_12.marker ] ; then
+    if [ ! -f ${BUILD_DIR}/gcc/src/gcc-${GCC_VER}/patched_13.marker ] ; then
         # Instead of specifying '--with-gxx-include-dir=/mingw${bitval}/include/c++/$GCC_VER'
         patch -p1 < ${PATCHES_DIR}/gcc/0011-gxx-search-dir.patch >> ${LOGS_DIR}/gcc/gcc_patch.log 2>&1 || exit 1
-        touch ${BUILD_DIR}/gcc/src/gcc-${GCC_VER}/patched_12.marker
+        touch ${BUILD_DIR}/gcc/src/gcc-${GCC_VER}/patched_13.marker
+    fi
+    if [ ! -f ${BUILD_DIR}/gcc/src/gcc-${GCC_VER}/patched_14.marker ] ; then
+        # Enable colorizing diagnostics by default
+        patch -p1 < ${PATCHES_DIR}/gcc/0012-color.patch >> ${LOGS_DIR}/gcc/gcc_patch.log 2>&1 || exit 1
+        touch ${BUILD_DIR}/gcc/src/gcc-${GCC_VER}/patched_14.marker
     fi
 
     popd > /dev/null
