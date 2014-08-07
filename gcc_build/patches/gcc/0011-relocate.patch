@@ -1,6 +1,3 @@
-# HG changeset patch
-# Parent 2a1167ee4ed20c6ff3558a104218585837e9963f
-
 diff -r 2a1167ee4ed2 gcc/config/i386/mingw32.h
 --- a/gcc/config/i386/mingw32.h	Mon Sep 23 10:33:18 2013 -0600
 +++ b/gcc/config/i386/mingw32.h	Sun Sep 29 07:43:21 2013 -0600

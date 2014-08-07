@@ -114,8 +114,8 @@ function build_binutils() {
             --with-libiconv-prefix=${DST_DIR}/mingw$bitval \
             ${_64_bit_bfd}                                 \
             CPPFLAGS="${_CPPFLAGS}"                        \
-            CFLAGS="${_CFLAGS}"                            \
-            CXXFLAGS="${_CXXFLAGS}"                        \
+            CFLAGS="${_CFLAGS} ${_CPPFLAGS}"               \
+            CXXFLAGS="${_CXXFLAGS} ${_CPPFLAGS}"           \
             LDFLAGS="${_LDFLAGS} ${_LAA}"                  \
             > ${LOGS_DIR}/binutils/binutils_config_${arch}.log 2>&1 || exit 1
         echo "done"

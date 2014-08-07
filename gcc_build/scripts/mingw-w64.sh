@@ -58,7 +58,6 @@ function build_headers() {
 
         printf "===> copying MinGW-w64 headers %s to %s/mingw%s\n" $arch $DST_DIR $bitval
         cp -fra ${PREIN_DIR}/mingw-w64/headers/mingw$bitval $DST_DIR
-        ln -s ${DST_DIR}/mingw${bitval}/${arch}-w64-mingw32 ${DST_DIR}/mingw${bitval}/mingw
         echo "done"
     done
 
@@ -76,7 +75,6 @@ function copy_only_headers() {
 
         printf "===> copying MinGW-w64 headers %s to %s/mingw%s\n" $arch $DST_DIR $bitval
         cp -fra ${PREIN_DIR}/mingw-w64/headers/mingw$bitval $DST_DIR
-        ln -s ${DST_DIR}/mingw${bitval}/${arch}-w64-mingw32 ${DST_DIR}/mingw${bitval}/mingw
         echo "done"
     done
 
@@ -88,6 +86,10 @@ function copy_only_headers() {
 # build
 function build_threads() {
     clear; printf "Build MinGW-w64 winpthreads %s\n" $MINGW_VER
+
+    cd ${BUILD_DIR}/mingw-w64/src/mingw-w64-${MINGW_VER}/mingw-w64-libraries/winpthreads
+    patch -p1 < ${PATCHES_DIR}/winpthreads/0001-force-static.patch \
+        > ${LOGS_DIR}/mingw-w64/winpthreads/winpthreads_patch.log 2>&1 || exit 1
 
     for arch in ${TARGET_ARCH[@]}
     do
@@ -133,12 +135,6 @@ function build_threads() {
 
         printf "===> copying MinGW-w64 winpthreads %s to %s/mingw%s\n" $arch $DST_DIR $bitval
         cp -fra ${PREIN_DIR}/mingw-w64/winpthreads/mingw$bitval $DST_DIR
-        if [ -d ${DST_DIR}/mingw${bitval}/mingw ] ; then
-            rm -fr ${DST_DIR}/mingw${bitval}/mingw
-        fi
-        if [ "${1}" != "-2nd" ] ; then
-            ln -s ${DST_DIR}/mingw${bitval}/${arch}-w64-mingw32 ${DST_DIR}/mingw${bitval}/mingw
-        fi
         echo "done"
     done
 
@@ -156,10 +152,6 @@ function copy_only_threads() {
 
         printf "===> copying MinGW-w64 winpthreads %s to %s/mingw%s\n" $arch $DST_DIR $bitval
         cp -fra ${PREIN_DIR}/mingw-w64/winpthreads/mingw$bitval $DST_DIR
-        if [ -d ${DST_DIR}/mingw${bitval}/mingw ] ; then
-            rm -fr ${DST_DIR}/mingw${bitval}/mingw
-        fi
-        ln -s ${DST_DIR}/mingw${bitval}/${arch}-w64-mingw32 ${DST_DIR}/mingw${bitval}/mingw
         echo "done"
     done
 

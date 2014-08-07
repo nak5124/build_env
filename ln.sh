@@ -3,7 +3,7 @@
 
 shdir=$(cd $(dirname $0);pwd)
 dot_files=( .bashrc .gitconfig .hgrc .minttyrc .bash_profile .vimrc .bash_logout .tigrc .tmux.conf )
-mg_patches=( autoconf automake binutils bzip2 cloog gcc isl libiconv libtool mpfr zlib yasm )
+mg_patches=( autoconf automake binutils bzip2 cloog gcc isl libiconv winpthreads libtool mpfr zlib yasm )
 cp -f ${shdir}/bat/* /
 ln -sf ${shdir}/buildscripts/*.sh $HOME
 for fname in ${dot_files[@]}

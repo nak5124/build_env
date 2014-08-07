@@ -1,0 +1,11 @@
+--- gcc-4.9.1/gcc/config.gcc	2014-06-16 17:15:35.000000000 +0900
++++ gcc-4.9.1/gcc/config.gcc.new	2014-08-07 16:57:07.072221800 +0900
+@@ -1661,7 +1661,7 @@
+ 			tmake_file="${tmake_file} i386/t-mingw-w32"
+ 			;;
+ 	esac
+-        native_system_header_dir=/mingw/include
++        native_system_header_dir=/${target}/include
+ 	target_gtfiles="\$(srcdir)/config/i386/winnt.c"
+ 	extra_options="${extra_options} i386/cygming.opt i386/mingw.opt"
+ 	case ${target} in

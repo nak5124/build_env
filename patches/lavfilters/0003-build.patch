@@ -46,15 +46,25 @@ index 569e75f..06c7a9c 100644
      --enable-libspeex               \
      --enable-libopencore-amrnb      \
      --enable-libopencore-amrwb      \
-@@ -93,10 +98,9 @@ configure() (
+@@ -95,10 +99,9 @@ configure() (
      --build-suffix=-lav             \
      --arch=${arch}"
  
 -  EXTRA_CFLAGS="-D_WIN32_WINNT=0x0502 -DWINVER=0x0502 -I../thirdparty/include"
-+  EXTRA_CFLAGS="-D_WIN32_WINNT=0x0601 -DWINVER=0x0601 -I../thirdparty/include"
-   EXTRA_LDFLAGS=""
+-  EXTRA_LDFLAGS=""
++  EXTRA_CFLAGS="-D_WIN32_WINNT=0x0601 -DWINVER=0x0601 -I../thirdparty/include -DWINPTHREAD_STATIC"
++  EXTRA_LDFLAGS="-static-libgcc -static-libstdc++ -Wl,--exclude-libs,libpthread.a"
    if [ "${arch}" == "x86_64" ]; then
 -    OPTIONS="${OPTIONS} --enable-cross-compile --cross-prefix=x86_64-w64-mingw32- --target-os=mingw32"
      EXTRA_LDFLAGS="${EXTRA_LDFLAGS} -L../thirdparty/lib64"
    else
      OPTIONS="${OPTIONS} --cpu=i686"
+@@ -107,6 +110,8 @@ configure() (
+   fi
+ 
+   sh configure --extra-ldflags="${EXTRA_LDFLAGS}" --extra-cflags="${EXTRA_CFLAGS}" ${OPTIONS}
++        sed -i '/HAVE_CLOCK_GETTIME/d' config.h
++        sed -i '/HAVE_NANOSLEEP/d' config.h
+ )
+ 
+ build() (
