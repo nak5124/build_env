@@ -46,9 +46,9 @@ function build_lsmash() {
     for arch in i686 x86_64
     do
         if [ "${arch}" = "i686" ] ; then
-            local LSPREFIX=/mingw32
+            local LSPREFIX=/mingw32/local
         else
-            local LSPREFIX=/mingw64
+            local LSPREFIX=/mingw64/local
         fi
 
         source cpath $arch
@@ -79,8 +79,8 @@ make_package() {
     fi
 
     clear; echo "making package..."
-    cp -fa /mingw32/bin/{muxer,remuxer,boxdumper,timelineeditor}.exe ${DEST_DIR}/win32
-    cp -fa /mingw64/bin/{muxer,remuxer,boxdumper,timelineeditor}.exe ${DEST_DIR}/x64
+    cp -fa /mingw32/local/bin/{muxer,remuxer,boxdumper,timelineeditor}.exe ${DEST_DIR}/win32
+    cp -fa /mingw64/local/bin/{muxer,remuxer,boxdumper,timelineeditor}.exe ${DEST_DIR}/x64
     cp -fa ./LICENSE $DEST_DIR
     echo_helpfile
     cp -fa ${DEST_DIR}/x64/* ${DEST_DIR}/..

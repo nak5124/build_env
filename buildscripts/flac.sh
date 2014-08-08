@@ -38,9 +38,9 @@ function build_libogg() {
     for arch in i686 x86_64
     do
         if [ "${arch}" = "i686" ] ; then
-            local FLPREFIX=/mingw32
+            local FLPREFIX=/mingw32/local
         else
-            local FLPREFIX=/mingw64
+            local FLPREFIX=/mingw64/local
         fi
 
         source cpath $arch
@@ -93,10 +93,10 @@ function build_flac() {
     for arch in i686 x86_64
     do
         if [ "${arch}" = "i686" ] ; then
-            local FLPREFIX=/mingw32
+            local FLPREFIX=/mingw32/local
             local _LAA=" -Wl,--large-address-aware"
         else
-            local FLPREFIX=/mingw64
+            local FLPREFIX=/mingw64/local
             local _LAA=""
         fi
 
@@ -142,8 +142,8 @@ function make_package() {
     fi
 
     clear; echo "making package..."
-    cp -fa /mingw32/bin/{flac,metaflac}.exe ${DEST_DIR}/win32
-    cp -fa /mingw64/bin/{flac,metaflac}.exe ${DEST_DIR}/x64
+    cp -fa /mingw32/local/bin/{flac,metaflac}.exe ${DEST_DIR}/win32
+    cp -fa /mingw64/local/bin/{flac,metaflac}.exe ${DEST_DIR}/x64
     cp -fa ${HOME}/OSS/xiph/flac/COPYING.GPL $DEST_DIR
     cp -fa ${DEST_DIR}/x64/* ${DEST_DIR}/..
     cp -fa ${DEST_DIR}/x64/* /d/encode/tools

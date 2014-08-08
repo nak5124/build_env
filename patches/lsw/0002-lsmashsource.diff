@@ -7,12 +7,12 @@ index 8ff380d..464f4d8 100644
      <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkIncremental>
    </PropertyGroup>
 +  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-+    <IncludePath>C:\msys2\mingw32\include;$(IncludePath)</IncludePath>
-+    <LibraryPath>C:\msys2\mingw32\i686-w64-mingw32\lib;C:\msys2\mingw32\lib\gcc\i686-w64-mingw32\4.9.1;C:\msys2\mingw32\lib;$(LibraryPath)</LibraryPath>
++    <IncludePath>C:\msys2\mingw32\local\include;$(IncludePath)</IncludePath>
++    <LibraryPath>C:\msys2\mingw32\i686-w64-mingw32\lib;C:\msys2\mingw32\lib\gcc\i686-w64-mingw32\4.9.1;C:\msys2\mingw32\lib;C:\msys2\mingw32\local\lib;$(LibraryPath)</LibraryPath>
 +  </PropertyGroup>
 +  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-+    <IncludePath>C:\msys2\mingw64\include;$(VCInstallDir)atlmfc\include;$(WindowsSDK_IncludePath);$(VCInstallDir)include</IncludePath>
-+    <LibraryPath>C:\msys2\mingw64\x86_64-w64-mingw32\lib;C:\msys2\mingw64\lib\gcc\x86_64-w64-mingw32\4.9.1;C:\msys2\mingw64\lib;$(VCInstallDir)atlmfc\lib\amd64;$(WindowsSDK_LibraryPath_x64);$(VCInstallDir)lib\amd64</LibraryPath>
++    <IncludePath>C:\msys2\mingw64\local\include;$(VCInstallDir)atlmfc\include;$(WindowsSDK_IncludePath);$(VCInstallDir)include</IncludePath>
++    <LibraryPath>C:\msys2\mingw64\x86_64-w64-mingw32\lib;C:\msys2\mingw64\lib\gcc\x86_64-w64-mingw32\4.9.1;C:\msys2\mingw64\lib;C:\msys2\mingw64\local\lib;$(VCInstallDir)atlmfc\lib\amd64;$(WindowsSDK_LibraryPath_x64);$(VCInstallDir)lib\amd64</LibraryPath>
 +  </PropertyGroup>
    <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
      <ClCompile>

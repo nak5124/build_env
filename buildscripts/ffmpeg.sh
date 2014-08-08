@@ -39,9 +39,9 @@ function build_libopencore_amr() {
     for arch in i686 x86_64
     do
         if [ "${arch}" = "i686" ] ; then
-            local FFPREFIX=/mingw32
+            local FFPREFIX=/mingw32/local
         else
-            local FFPREFIX=/mingw64
+            local FFPREFIX=/mingw64/local
         fi
 
         source cpath $arch
@@ -113,10 +113,10 @@ function build_ffmpeg() {
     do
         if [ "${arch}" = "i686" ] ; then
             local _archopt="--arch=x86 --cpu=i686"
-            local FFPREFIX=/mingw32
+            local FFPREFIX=/mingw32/local
         else
             local _archopt="--arch=x86_64"
-            local FFPREFIX=/mingw64
+            local FFPREFIX=/mingw64/local
         fi
         local _EXCFLAGS="-I${FFPREFIX}/include -fexcess-precision=fast"
         local _EXLDFLAGS="-L${FFPREFIX}/lib"

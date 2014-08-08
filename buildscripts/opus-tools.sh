@@ -41,9 +41,9 @@ function build_libopus() {
     for arch in i686 x86_64
     do
         if [ "${arch}" = "i686" ] ; then
-            local OPPREFIX=/mingw32
+            local OPPREFIX=/mingw32/local
         else
-            local OPPREFIX=/mingw64
+            local OPPREFIX=/mingw64/local
         fi
 
         source cpath $arch
@@ -99,10 +99,10 @@ function build_tools() {
     for arch in i686 x86_64
     do
         if [ "${arch}" = "i686" ] ; then
-            local OPPREFIX=/mingw32
+            local OPPREFIX=/mingw32/local
             local _LAA=" -Wl,--large-address-aware"
         else
-            local OPPREFIX=/mingw64
+            local OPPREFIX=/mingw64/local
             local _LAA=""
         fi
 
@@ -145,8 +145,8 @@ function make_package() {
     fi
 
     clear; echo "making package..."
-    cp -fa /mingw32/bin/opus*.exe ${DEST_DIR}/win32
-    cp -fa /mingw64/bin/opus*.exe ${DEST_DIR}/x64
+    cp -fa /mingw32/local/bin/opus*.exe ${DEST_DIR}/win32
+    cp -fa /mingw64/local/bin/opus*.exe ${DEST_DIR}/x64
     cp -fa ${HOME}/OSS/xiph/opus-tools/COPYING $DEST_DIR
     cp -fa ${DEST_DIR}/x64/* ${DEST_DIR}/..
     cp -fa ${DEST_DIR}/x64/* /d/encode/tools
