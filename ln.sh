@@ -3,7 +3,8 @@
 
 shdir=$(cd $(dirname $0);pwd)
 dot_files=( .bashrc .gitconfig .hgrc .minttyrc .bash_profile .vimrc .bash_logout .tigrc .tmux.conf )
-mg_patches=( autoconf automake binutils bzip2 cloog gcc isl libiconv winpthreads libtool mpfr zlib yasm )
+mg_patches=( autoconf automake binutils binutils-git bzip2 cloog gcc gcc-bs isl libiconv libintl \
+    winpthreads libtool mpfr zlib yasm )
 cp -f ${shdir}/bat/* /
 ln -sf ${shdir}/buildscripts/*.sh $HOME
 for fname in ${dot_files[@]}
@@ -23,7 +24,7 @@ ln -sf ${shdir}/etc/* /etc
 if [ ! -d ${HOME}/gcc_build/scripts ] ; then
     mkdir -p ${HOME}/gcc_build/scripts
 fi
-ln -sf ${shdir}/gcc_build/mingw-w64.gcc.sh ${HOME}/gcc_build
+ln -sf ${shdir}/gcc_build/*.sh ${HOME}/gcc_build
 ln -sf ${shdir}/gcc_build/scripts/* ${HOME}/gcc_build/scripts
 for dname in ${mg_patches[@]}
 do

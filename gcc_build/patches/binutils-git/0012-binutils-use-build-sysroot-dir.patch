@@ -1,0 +1,18 @@
+--- gcc-4.9.1/configure	2014-03-26 18:19:44.000000000 +0900
++++ gcc-4.9.1/configure.new	2014-08-07 10:59:00.443583000 +0900
+@@ -7645,7 +7645,14 @@
+   x86_64-*mingw* | *-w64-mingw*)
+   # MinGW-w64 does not use newlib, nor does it use winsup. It may,
+   # however, use a symlink named 'mingw' in ${prefix} .
+-    FLAGS_FOR_TARGET=$FLAGS_FOR_TARGET' -L${prefix}/${target}/lib -L${prefix}/mingw/lib -isystem ${prefix}/${target}/include -isystem ${prefix}/mingw/include'
++    # Check whether --with-build-sysroot was given.
++    if test "${with_build_sysroot+set}" = set; then :
++    withval=$with_build_sysroot; if test x"$withval" != x ; then
++        FLAGS_FOR_TARGET=$FLAGS_FOR_TARGET" -L${withval}/${target}/lib -L${withval}/lib -isystem ${withval}/${target}/include -isystem ${withval}/include"
++    fi
++    else
++        FLAGS_FOR_TARGET=$FLAGS_FOR_TARGET' -L${prefix}/${target}/lib -L${prefix}/lib -isystem ${prefix}/${target}/include -isystem ${prefix}/include'
++    fi
+     ;;
+   *-mingw*)
+   # MinGW can't be handled as Cygwin above since it does not use newlib.
