@@ -19,8 +19,8 @@ do
     case "${opt}" in
         i686 | x86 | mingw32)
             PATH="/mingw32/local/bin:/mingw32/bin:/opt/mercurial:${MSYS2_PATH}:/opt/cmake/bin:${CMD_PATH}:${INNO_DIR}:/d/encode/tools"
-            ACLOCAL_PATH="/mingw32/share/aclocal:${ACLOCAL_PATH}"
-            PKG_CONFIG_PATH="/mingw32/lib/pkgconfig"
+            ACLOCAL_PATH="/mingw32/local/share/aclocal:/mingw32/share/aclocal:${ACLOCAL_PATH}"
+            PKG_CONFIG_PATH="/mingw32/local/lib/pkgconfig:/mingw32/lib/pkgconfig"
             MANPATH="/mingw32/share/man:${MANPATH}"
             INFOPATH="/mingw32/share/info:${INFOPATH}"
             MSYSTEM=MINGW32
@@ -29,8 +29,8 @@ do
             ;;
         x86_64 | x64 | mingw64)
             PATH="/mingw64/local/bin:/mingw64/bin:/opt/mercurial:${MSYS2_PATH}:/opt/cmake/bin:${CMD_PATH}:${INNO_DIR}:/d/encode/tools"
-            ACLOCAL_PATH="/mingw64/share/aclocal:${ACLOCAL_PATH}"
-            PKG_CONFIG_PATH="/mingw64/lib/pkgconfig"
+            ACLOCAL_PATH="/mingw64/local/share/aclocal:/mingw64/share/aclocal:${ACLOCAL_PATH}"
+            PKG_CONFIG_PATH="/mingw64/local/lib/pkgconfig:/mingw64/lib/pkgconfig"
             MANPATH="/mingw64/share/man:${MANPATH}"
             INFOPATH="/mingw64/share/info:${INFOPATH}"
             MSYSTEM=MINGW64
@@ -39,7 +39,7 @@ do
             ;;
         msys | msys2)
             PATH="${MSYS2_PATH}:/opt/cmake/bin:${CMD_PATH}"
-            PKG_CONFIG_PATH="/usr/lib/pkgconfig:/lib/pkgconfig"
+            PKG_CONFIG_PATH="/usr/local/lib/pkgconfig:/usr/lib/pkgconfig:/lib/pkgconfig"
             MSYSTEM=MSYS
             CARCH=x86_64
             CHOST=${CARCH}-unknown-msys
