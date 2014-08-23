@@ -1,0 +1,21 @@
+--- /z/mingw32.h	2014-08-22 13:31:06.739289900 +0900
++++ gcc-4.9.1/gcc/config/i386/mingw32.h	2014-08-22 13:34:32.155039000 +0900
+@@ -116,7 +116,8 @@
+   %{shared: --shared} %{mdll:--dll} \
+   %{static:-Bstatic} %{!static:-Bdynamic} \
+   %{shared|mdll: " SUB_LINK_ENTRY " --enable-auto-image-base} \
+-  %(shared_libgcc_undefs)"
++  %(shared_libgcc_undefs) \
++  %{!shared: %{!mdll: --large-address-aware}}"
+ 
+ /* Include in the mingw32 libraries with libgcc */
+ #ifdef ENABLE_SHARED_LIBGCC
+--- /z/mingw-w64.h	2014-08-22 13:35:01.455714900 +0900
++++ gcc-4.9.1/gcc/config/i386/mingw-w64.h	2014-08-22 13:35:35.938687200 +0900
+@@ -83,4 +83,5 @@
+   %{shared: --shared} %{mdll:--dll} \
+   %{static:-Bstatic} %{!static:-Bdynamic} \
+   %{shared|mdll: " SUB_LINK_ENTRY " --enable-auto-image-base} \
+-  %(shared_libgcc_undefs)"
++  %(shared_libgcc_undefs) \
++  %{!shared: %{!mdll: %{" SPEC_32 ": --large-address-aware}}}"

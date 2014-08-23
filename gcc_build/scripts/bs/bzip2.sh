@@ -72,6 +72,7 @@ function build_bzip2() {
         rm -fr ${BUILD_DIR}/bzip2/build_${arch}/*
 
         local bitval=$(get_arch_bit ${arch})
+        local _aof=$(arch_optflags ${arch})
 
         source cpath $arch
         PATH=${DST_DIR}/mingw${bitval}/bin:$PATH
@@ -84,7 +85,7 @@ function build_bzip2() {
             --host=${arch}-w64-mingw32      \
             --enable-shared                 \
             CPPFLAGS="${_CPPFLAGS}"         \
-            CFLAGS="${_CFLAGS}"             \
+            CFLAGS="${_aof} ${_CFLAGS}"     \
             LDFLAGS="${_LDFLAGS}"           \
             > ${LOGS_DIR}/bzip2/bzip2_config_${arch}.log 2>&1 || exit 1
         echo "done"
@@ -99,9 +100,6 @@ function build_bzip2() {
         del_empty_dir ${PREIN_DIR}/bzip2/mingw$bitval
         remove_la_files ${PREIN_DIR}/bzip2/mingw$bitval
         strip_files ${PREIN_DIR}/bzip2/mingw$bitval
-        if [ "${arch}" = "i686" ] ; then
-            add_laa ${PREIN_DIR}/bzip2/mingw$bitval
-        fi
         echo "done"
 
         printf "===> copying bzip2 %s to %s/mingw%s\n" $arch $DST_DIR $bitval

@@ -73,14 +73,15 @@ function build_zlib() {
         fi
 
         local bitval=$(get_arch_bit ${arch})
+        local _aof=$(arch_optflags ${arch})
 
         source cpath $arch
         PATH=${DST_DIR}/mingw${bitval}/bin:$PATH
         export PATH
 
         printf "===> configuring libz %s\n" $arch
-        CHOST=${arch}-w64-mingw32 CFLAGS="${_CFLAGS}" LDFLAGS="${_LDFLAGS}" \
-            ./configure --prefix=/mingw$bitval --shared                     \
+        CHOST=${arch}-w64-mingw32 CFLAGS="${_aof} ${_CFLAGS}" LDFLAGS="${_LDFLAGS}" \
+            ./configure --prefix=/mingw$bitval --shared                             \
             > ${LOGS_DIR}/zlib/libz_config_${arch}.log 2>&1 || exit 1
         echo "done"
 
@@ -105,7 +106,7 @@ function build_zlib() {
             --enable-demos                                                           \
             --with-gnu-ld                                                            \
             CPPFLAGS="${_CPPFLAGS} -DHAVE_BZIP2 -I${DST_DIR}/mingw${bitval}/include" \
-            CFLAGS="${_CFLAGS}"                                                      \
+            CFLAGS="${_aof} ${_CFLAGS}"                                              \
             LDFLAGS="${_LDFLAGS} -L${DST_DIR}/mingw${bitval}/lib"                    \
             LIBS="-lbz2"                                                             \
             > ${LOGS_DIR}/zlib/minizip_config_${arch}.log 2>&1 || exit 1
@@ -120,9 +121,6 @@ function build_zlib() {
         del_empty_dir ${PREIN_DIR}/zlib/mingw$bitval
         remove_la_files ${PREIN_DIR}/zlib/mingw$bitval
         strip_files ${PREIN_DIR}/zlib/mingw$bitval
-        if [ "${arch}" = "i686" ] ; then
-            add_laa ${PREIN_DIR}/zlib/mingw$bitval
-        fi
         echo "done"
 
         printf "===> copying zlib %s to %s/mingw%s\n" $arch $DST_DIR $bitval

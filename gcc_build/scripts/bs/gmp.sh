@@ -32,34 +32,26 @@ function build_gmp() {
         rm -fr ${BUILD_DIR}/gcc_libs/gmp/build_${arch}/{.*,*} > /dev/null 2>&1
 
         local bitval=$(get_arch_bit ${arch})
-
-        if [ "${arch}" = "i686" ] ; then
-            local GMP_MPN="x86/coreisbr x86/pentium4/sse2 x86/pentium4/mmx x86/pentium4 \
-                            x86/pentium/mmx x86/pentium x86/fat x86 generic"
-        else
-            local GMP_MPN="x86_64/coreisbr x86_64/fastavx x86_64/coreinhm x86_64/fastsse \
-                            x86_64/core2 x86_64/pentium4 x86_64/fat x86_64 generic"
-        fi
+        local _aof=$(arch_optflags ${arch})
 
         source cpath $arch
         PATH=${DST_DIR}/mingw${bitval}/bin:$PATH
         export PATH
 
         printf "===> configuring GMP %s\n" $arch
-        ../src/gmp-${GMP_VER}/configure \
-            --prefix=/mingw$bitval      \
-            --build=${arch}-w64-mingw32 \
-            --host=${arch}-w64-mingw32  \
-            --enable-cxx                \
-            --enable-fat                \
-            --disable-shared            \
-            --enable-static             \
-            --with-gnu-ld               \
-            MPN_PATH="${GMP_MPN}"       \
-            CPPFLAGS="${_CPPFLAGS}"     \
-            CFLAGS="${_CFLAGS}"         \
-            CXXFLAGS="${_CXXFLAGS}"     \
-            LDFLAGS="${_LDFLAGS}"       \
+        ../src/gmp-${GMP_VER}/configure     \
+            --prefix=/mingw$bitval          \
+            --build=${arch}-w64-mingw32     \
+            --host=${arch}-w64-mingw32      \
+            --enable-cxx                    \
+            --enable-fat                    \
+            --disable-shared                \
+            --enable-static                 \
+            --with-gnu-ld                   \
+            CPPFLAGS="${_CPPFLAGS}"         \
+            CFLAGS="${_aof} ${_CFLAGS}"     \
+            CXXFLAGS="${_aof} ${_CXXFLAGS}" \
+            LDFLAGS="${_LDFLAGS}"           \
             > ${LOGS_DIR}/gcc_libs/gmp/gmp_config_${arch}.log 2>&1 || exit 1
         echo "done"
 

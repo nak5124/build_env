@@ -37,6 +37,7 @@ function build_nasm() {
         cp -fra ${BUILD_DIR}/nyasm/nasm/src/nasm-${NASM_VER}/* ${BUILD_DIR}/nyasm/nasm/build_$arch
 
         local bitval=$(get_arch_bit ${arch})
+        local _aof=$(arch_optflags ${arch})
 
         source cpath $arch
         PATH=${DST_DIR}/mingw${bitval}/bin:$PATH
@@ -48,7 +49,7 @@ function build_nasm() {
             --build=${arch}-w64-mingw32 \
             --host=${arch}-w64-mingw32  \
             CPPFLAGS="${_CPPFLAGS}"     \
-            CFLAGS="${_CFLAGS}"         \
+            CFLAGS="${_aof} ${_CFLAGS}" \
             LDFLAGS="${_LDFLAGS}"       \
             > ${LOGS_DIR}/nyasm/nasm/nasm_config_${arch}.log 2>&1 || exit 1
         echo "done"
@@ -64,9 +65,6 @@ function build_nasm() {
         del_empty_dir ${PREIN_DIR}/nyasm/nasm/mingw$bitval
         remove_la_files ${PREIN_DIR}/nyasm/nasm/mingw$bitval
         strip_files ${PREIN_DIR}/nyasm/nasm/mingw$bitval
-        if [ "${arch}" = "i686" ] ; then
-            add_laa ${PREIN_DIR}/nyasm/nasm/mingw$bitval
-        fi
         echo "done"
 
         printf "===> copying NASM %s to %s/mingw%s\n" $arch $DST_DIR $bitval
@@ -148,6 +146,7 @@ function build_yasm() {
         rm -fr ${BUILD_DIR}/nyasm/yasm/build_${arch}/*
 
         local bitval=$(get_arch_bit ${arch})
+        local _aof=$(arch_optflags ${arch})
 
         source cpath $arch
         PATH=${DST_DIR}/mingw${bitval}/bin:$PATH
@@ -159,7 +158,7 @@ function build_yasm() {
             --build=${arch}-w64-mingw32   \
             --host=${arch}-w64-mingw32    \
             CPPFLAGS="${_CPPFLAGS}"       \
-            CFLAGS="${_CFLAGS}"           \
+            CFLAGS="${_aof} ${_CFLAGS}"   \
             LDFLAGS="${_LDFLAGS}"         \
             > ${LOGS_DIR}/nyasm/yasm/yasm_config_${arch}.log 2>&1 || exit 1
         echo "done"
@@ -173,9 +172,6 @@ function build_yasm() {
         del_empty_dir ${PREIN_DIR}/nyasm/yasm/mingw$bitval
         remove_la_files ${PREIN_DIR}/nyasm/yasm/mingw$bitval
         strip_files ${PREIN_DIR}/nyasm/yasm/mingw$bitval
-        if [ "${arch}" = "i686" ] ; then
-            add_laa ${PREIN_DIR}/nyasm/yasm/mingw$bitval
-        fi
         echo "done"
 
         printf "===> copying Yasm %s to %s/mingw%s\n" $arch $DST_DIR $bitval

@@ -59,6 +59,7 @@ function build_iconv() {
         rm -fr ${BUILD_DIR}/libiconv/build_${arch}/*
 
         local bitval=$(get_arch_bit ${arch})
+        local _aof=$(arch_optflags ${arch})
 
         source cpath $arch
         PATH=${DST_DIR}/mingw${bitval}/bin:$PATH
@@ -83,7 +84,7 @@ function build_iconv() {
             --enable-nls                       \
             ${_intl}                           \
             CPPFLAGS="${_CPPFLAGS}"            \
-            CFLAGS="${_CFLAGS}"                \
+            CFLAGS="${_aof} ${_CFLAGS}"        \
             LDFLAGS="${_LDFLAGS}"              \
             > ${LOGS_DIR}/libiconv/libiconv_config_${arch}.log 2>&1 || exit 1
         echo "done"
@@ -98,9 +99,6 @@ function build_iconv() {
         del_empty_dir ${PREIN_DIR}/libiconv/mingw$bitval
         remove_la_files ${PREIN_DIR}/libiconv/mingw$bitval
         strip_files ${PREIN_DIR}/libiconv/mingw$bitval
-        if [ "${arch}" = "i686" ] ; then
-            add_laa ${PREIN_DIR}/libiconv/mingw$bitval
-        fi
         echo "done"
 
         printf "===> copying libiconv %s to %s/mingw%s\n" $arch $DST_DIR $bitval

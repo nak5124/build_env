@@ -58,6 +58,7 @@ function build_intl() {
         rm -fr ${BUILD_DIR}/libintl/build_${arch}/*
 
         local bitval=$(get_arch_bit ${arch})
+        local _aof=$(arch_optflags ${arch})
 
         source cpath $arch
         PATH=${DST_DIR}/mingw${bitval}/bin:$PATH
@@ -77,7 +78,7 @@ function build_intl() {
             --enable-relocatable                             \
             --with-gnu-ld                                    \
             --with-libiconv-prefix=${DST_DIR}/mingw$bitval   \
-            CFLAGS="${_CFLAGS}"                              \
+            CFLAGS="${_aof} ${_CFLAGS}"                      \
             LDFLAGS="${_LDFLAGS}"                            \
             > ${LOGS_DIR}/libintl/libintl_config_${arch}.log 2>&1 || exit 1
         echo "done"
@@ -91,9 +92,6 @@ function build_intl() {
         del_empty_dir ${PREIN_DIR}/libintl/mingw$bitval
         remove_la_files ${PREIN_DIR}/libintl/mingw$bitval
         strip_files ${PREIN_DIR}/libintl/mingw$bitval
-        if [ "${arch}" = "i686" ] ; then
-            add_laa ${PREIN_DIR}/libintl/mingw$bitval
-        fi
         echo "done"
 
         printf "===> copying libintl %s to %s/mingw%s\n" $arch $DST_DIR $bitval

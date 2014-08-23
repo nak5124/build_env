@@ -24,6 +24,11 @@ function download_gcc_src() {
 function patch_gcc() {
     pushd ${BUILD_DIR}/gcc/src_bs/gcc-$GCC_VER > /dev/null
 
+    if [ ! -f ${BUILD_DIR}/gcc/src_bs/gcc-${GCC_VER}/patched_00.marker ] ; then
+        patch -p1 < ${PATCHES_DIR}/gcc-bs/0000-gcc-4_9-branch-update-to-g4f3ec92.patch \
+            > ${LOGS_DIR}/gcc/gcc_patch.log 2>&1 || exit 1
+        touch ${BUILD_DIR}/gcc/src_bs/gcc-${GCC_VER}/patched_00.marker
+    fi
     if [ ! -f ${BUILD_DIR}/gcc/src_bs/gcc-${GCC_VER}/patched_01.marker ] ; then
         # do not install libiberty
         sed -i 's/install_to_$(INSTALL_DEST) //' libiberty/Makefile.in
@@ -35,7 +40,7 @@ function patch_gcc() {
         touch ${BUILD_DIR}/gcc/src_bs/gcc-${GCC_VER}/patched_02.marker
     fi
     if [ ! -f ${BUILD_DIR}/gcc/src_bs/gcc-${GCC_VER}/patched_03.marker ] ; then
-        patch -p1 < ${PATCHES_DIR}/gcc-bs/0001-gcc-4.8-libstdc++export.patch > ${LOGS_DIR}/gcc/gcc_patch.log 2>&1 || exit 1
+        patch -p1 < ${PATCHES_DIR}/gcc-bs/0001-gcc-4.8-libstdc++export.patch >> ${LOGS_DIR}/gcc/gcc_patch.log 2>&1 || exit 1
         touch ${BUILD_DIR}/gcc/src_bs/gcc-${GCC_VER}/patched_03.marker
     fi
     if [ ! -f ${BUILD_DIR}/gcc/src_bs/gcc-${GCC_VER}/patched_04.marker ] ; then
@@ -95,6 +100,11 @@ function patch_gcc() {
         patch -p1 < ${PATCHES_DIR}/gcc-bs/0012-local_path.patch >> ${LOGS_DIR}/gcc/gcc_patch.log 2>&1 || exit 1
         touch ${BUILD_DIR}/gcc/src_bs/gcc-${GCC_VER}/patched_14.marker
     fi
+    if [ ! -f ${BUILD_DIR}/gcc/src_bs/gcc-${GCC_VER}/patched_15.marker ] ; then
+        # when building executables, not DLLs. Add --large-address-aware.
+        patch -p1 < ${PATCHES_DIR}/gcc-bs/0013-LAA-default.patch >> ${LOGS_DIR}/gcc/gcc_patch.log 2>&1 || exit 1
+        touch ${BUILD_DIR}/gcc/src_bs/gcc-${GCC_VER}/patched_15.marker
+    fi
 
     popd > /dev/null
 
@@ -115,15 +125,19 @@ function build_gcc_pre() {
 
         local bitval=$(get_arch_bit ${arch})
 
+        mkdir -p ${BUILD_DIR}/gcc/build_${arch}/include/../lib
+        ln -sf ${DST_DIR}/mingw${bitval}/{include,${arch}-w64-mingw32/include}/* ${BUILD_DIR}/gcc/build_${arch}/include
+        ln -sf ${DST_DIR}/mingw${bitval}/{lib,${arch}-w64-mingw32/lib}/* ${BUILD_DIR}/gcc/build_${arch}/lib
+
         source cpath $arch
         PATH=${DST_DIR}/mingw${bitval}/bin:$PATH
         export PATH
 
         if [ "${arch}" = "i686" ] ; then
-            local _optimization="--with-arch=sandybridge --with-tune=generic"
+            local _optimization="--with-arch=i686 --with-tune=generic"
             local _ehconf="--disable-sjlj-exceptions --with-dwarf2"
         else
-            local _optimization="--with-arch=sandybridge --with-tune=generic"
+            local _optimization="--with-arch=x86-64 --with-tune=generic"
             local _ehconf=""
         fi
 
@@ -138,48 +152,48 @@ function build_gcc_pre() {
 
         printf "===> configuring GCC %s\n" $arch
         # Don't set any {CPP,C,CXX,LD}FLAGS.
-        ../src_bs/gcc-${GCC_VER}/configure                                              \
-            --prefix=/mingw$bitval                                                      \
-            --with-local-prefix=/mingw${bitval}/local                                   \
-            --with-build-sysroot=${DST_DIR}/mingw$bitval                                \
-            --with-native-system-header-dir=/mingw${bitval}/${arch}-w64-mingw32/include \
-            --with-gxx-include-dir=/mingw${bitval}/include/c++/${GCC_VER}               \
-            --libexecdir=/mingw${bitval}/lib                                            \
-            --build=${arch}-w64-mingw32                                                 \
-            --host=${arch}-w64-mingw32                                                  \
-            --target=${arch}-w64-mingw32                                                \
-            --enable-shared                                                             \
-            --enable-static                                                             \
-            --disable-multilib                                                          \
-            --enable-languages=c,c++,lto                                                \
-            ${_threads}                                                                 \
-            ${_ehconf}                                                                  \
-            --enable-lto                                                                \
-            --enable-checking=release                                                   \
-            --enable-version-specific-runtime-libs                                      \
-            --enable-fully-dynamic-string                                               \
-            --disable-libgomp                                                           \
-            --disable-libssp                                                            \
-            --disable-libquadmath                                                       \
-            --disable-bootstrap                                                         \
-            --disable-win32-registry                                                    \
-            --disable-rpath                                                             \
-            --disable-nls                                                               \
-            --disable-werror                                                            \
-            --disable-symvers                                                           \
-            --disable-libstdcxx-pch                                                     \
-            --disable-libstdcxx-debug                                                   \
-            --with-{gmp,mpfr,mpc,isl,cloog}=${DST_DIR}/mingw$bitval                     \
-            --disable-isl-version-check                                                 \
-            --disable-cloog-version-check                                               \
-            --enable-cloog-backend=isl                                                  \
-            --enable-graphite                                                           \
-            --with-libiconv-prefix=${DST_DIR}/mingw$bitval                              \
-            --with-libintl-prefix=${DST_DIR}/mingw$bitval                               \
-            --with-system-zlib                                                          \
-            ${_optimization}                                                            \
-            --with-gnu-as                                                               \
-            --with-gnu-ld                                                               \
+        ../src_bs/gcc-${GCC_VER}/configure                                                        \
+            --prefix=/mingw$bitval                                                                \
+            --with-local-prefix=/mingw${bitval}/local                                             \
+            --with-build-sysroot=${DST_DIR}/mingw$bitval                                          \
+            --with-native-system-header-dir=${DST_DIR}/mingw${bitval}/${arch}-w64-mingw32/include \
+            --with-gxx-include-dir=/mingw${bitval}/include/c++/${GCC_VER}                         \
+            --libexecdir=/mingw${bitval}/lib                                                      \
+            --build=${arch}-w64-mingw32                                                           \
+            --host=${arch}-w64-mingw32                                                            \
+            --target=${arch}-w64-mingw32                                                          \
+            --enable-shared                                                                       \
+            --enable-static                                                                       \
+            --disable-multilib                                                                    \
+            --enable-languages=c,c++,lto                                                          \
+            ${_threads}                                                                           \
+            ${_ehconf}                                                                            \
+            --enable-lto                                                                          \
+            --enable-checking=release                                                             \
+            --enable-version-specific-runtime-libs                                                \
+            --enable-fully-dynamic-string                                                         \
+            --disable-libgomp                                                                     \
+            --disable-libssp                                                                      \
+            --disable-libquadmath                                                                 \
+            --disable-bootstrap                                                                   \
+            --disable-win32-registry                                                              \
+            --disable-rpath                                                                       \
+            --disable-nls                                                                         \
+            --disable-werror                                                                      \
+            --disable-symvers                                                                     \
+            --disable-libstdcxx-pch                                                               \
+            --disable-libstdcxx-debug                                                             \
+            --with-{gmp,mpfr,mpc,isl,cloog}=${DST_DIR}/mingw$bitval                               \
+            --disable-isl-version-check                                                           \
+            --disable-cloog-version-check                                                         \
+            --enable-cloog-backend=isl                                                            \
+            --enable-graphite                                                                     \
+            --with-libiconv-prefix=${DST_DIR}/mingw$bitval                                        \
+            --with-libintl-prefix=${DST_DIR}/mingw$bitval                                         \
+            --with-system-zlib                                                                    \
+            ${_optimization}                                                                      \
+            --with-gnu-as                                                                         \
+            --with-gnu-ld                                                                         \
             > ${LOGS_DIR}/gcc/gcc_pre_config_${arch}.log 2>&1 || exit 1
         echo "done"
 
@@ -238,10 +252,10 @@ function build_gcc() {
         export PATH
 
         if [ "${arch}" = "i686" ] ; then
-            local _optimization="--with-arch=sandybridge --with-tune=generic"
+            local _optimization="--with-arch=i686 --with-tune=generic"
             local _ehconf="--disable-sjlj-exceptions --with-dwarf2"
         else
-            local _optimization="--with-arch=sandybridge --with-tune=generic"
+            local _optimization="--with-arch=x86-64 --with-tune=generic"
             local _ehconf=""
         fi
 
@@ -256,48 +270,48 @@ function build_gcc() {
 
         printf "===> configuring GCC %s\n" $arch
         # Don't set any {CPP,C,CXX,LD}FLAGS.
-        ../src_bs/gcc-${GCC_VER}/configure                                              \
-            --prefix=/mingw$bitval                                                      \
-            --with-local-prefix=/mingw${bitval}/local                                   \
-            --with-build-sysroot=${DST_DIR}/mingw$bitval                                \
-            --with-native-system-header-dir=/mingw${bitval}/${arch}-w64-mingw32/include \
-            --with-gxx-include-dir=/mingw${bitval}/include/c++/${GCC_VER}               \
-            --libexecdir=/mingw${bitval}/lib                                            \
-            --build=${arch}-w64-mingw32                                                 \
-            --host=${arch}-w64-mingw32                                                  \
-            --target=${arch}-w64-mingw32                                                \
-            --enable-shared                                                             \
-            --enable-static                                                             \
-            --disable-multilib                                                          \
-            --enable-languages=c,c++,lto                                                \
-            ${_threads}                                                                 \
-            ${_ehconf}                                                                  \
-            --enable-lto                                                                \
-            --enable-checking=release                                                   \
-            --enable-version-specific-runtime-libs                                      \
-            --enable-fully-dynamic-string                                               \
-            --enable-libgomp                                                            \
-            --disable-libssp                                                            \
-            --disable-libquadmath                                                       \
-            --enable-bootstrap                                                          \
-            --disable-win32-registry                                                    \
-            --disable-rpath                                                             \
-            --disable-nls                                                               \
-            --disable-werror                                                            \
-            --disable-symvers                                                           \
-            --disable-libstdcxx-pch                                                     \
-            --disable-libstdcxx-debug                                                   \
-            --with-{gmp,mpfr,mpc,isl,cloog}=${DST_DIR}/mingw$bitval                     \
-            --disable-isl-version-check                                                 \
-            --disable-cloog-version-check                                               \
-            --enable-cloog-backend=isl                                                  \
-            --enable-graphite                                                           \
-            --with-libiconv-prefix=${DST_DIR}/mingw$bitval                              \
-            --with-libintl-prefix=${DST_DIR}/mingw$bitval                               \
-            --with-system-zlib                                                          \
-            ${_optimization}                                                            \
-            --with-gnu-as                                                               \
-            --with-gnu-ld                                                               \
+        ../src_bs/gcc-${GCC_VER}/configure                                                        \
+            --prefix=/mingw$bitval                                                                \
+            --with-local-prefix=/mingw${bitval}/local                                             \
+            --with-build-sysroot=${DST_DIR}/mingw$bitval                                          \
+            --with-native-system-header-dir=${DST_DIR}/mingw${bitval}/${arch}-w64-mingw32/include \
+            --with-gxx-include-dir=/mingw${bitval}/include/c++/${GCC_VER}                         \
+            --libexecdir=/mingw${bitval}/lib                                                      \
+            --build=${arch}-w64-mingw32                                                           \
+            --host=${arch}-w64-mingw32                                                            \
+            --target=${arch}-w64-mingw32                                                          \
+            --enable-shared                                                                       \
+            --enable-static                                                                       \
+            --disable-multilib                                                                    \
+            --enable-languages=c,c++,lto                                                          \
+            ${_threads}                                                                           \
+            ${_ehconf}                                                                            \
+            --enable-lto                                                                          \
+            --enable-checking=release                                                             \
+            --enable-version-specific-runtime-libs                                                \
+            --enable-fully-dynamic-string                                                         \
+            --enable-libgomp                                                                      \
+            --disable-libssp                                                                      \
+            --disable-libquadmath                                                                 \
+            --enable-bootstrap                                                                    \
+            --disable-win32-registry                                                              \
+            --disable-rpath                                                                       \
+            --disable-nls                                                                         \
+            --disable-werror                                                                      \
+            --disable-symvers                                                                     \
+            --disable-libstdcxx-pch                                                               \
+            --disable-libstdcxx-debug                                                             \
+            --with-{gmp,mpfr,mpc,isl,cloog}=${DST_DIR}/mingw$bitval                               \
+            --disable-isl-version-check                                                           \
+            --disable-cloog-version-check                                                         \
+            --enable-cloog-backend=isl                                                            \
+            --enable-graphite                                                                     \
+            --with-libiconv-prefix=${DST_DIR}/mingw$bitval                                        \
+            --with-libintl-prefix=${DST_DIR}/mingw$bitval                                         \
+            --with-system-zlib                                                                    \
+            ${_optimization}                                                                      \
+            --with-gnu-as                                                                         \
+            --with-gnu-ld                                                                         \
             > ${LOGS_DIR}/gcc/gcc_config_${arch}.log 2>&1 || exit 1
         echo "done"
 
@@ -318,9 +332,6 @@ function build_gcc() {
         del_empty_dir ${PREIN_DIR}/gcc/mingw$bitval
         remove_la_files ${PREIN_DIR}/gcc/mingw$bitval
         strip_files ${PREIN_DIR}/gcc/mingw$bitval
-        if [ "${arch}" = "i686" ] ; then
-            add_laa ${PREIN_DIR}/gcc/mingw$bitval
-        fi
         echo "done"
 
         # Enable win native symlink.
@@ -331,8 +342,12 @@ function build_gcc() {
         cp -fra ${PREIN_DIR}/gcc/mingw$bitval $DST_DIR
         cd ${DST_DIR}/mingw${bitval}/bin
         # Symlink for compatibility.
-        ln -sr ../bin/gcc.exe ./cc.exe
-        ln -sr ../bin/cpp.exe ../lib
+        ln -fsr ../bin/gcc.exe ./cc.exe
+        ln -fsr ../bin/cpp.exe ../lib
+        # Symlink lto plugin into /mingw{32,64}/lib/bfd-plugins. This is needed for slim LTO.
+        cd ${DST_DIR}/mingw${bitval}/lib/gcc/${arch}-w64-mingw32/$GCC_VER
+        mkdir -p ${DST_DIR}/mingw${bitval}/lib/bfd-plugins
+        ln -fsr ../${GCC_VER}/liblto_plugin-*.dll ../../../bfd-plugins
         echo "done"
     done
 
@@ -352,8 +367,12 @@ function copy_gcc() {
         cp -fra ${PREIN_DIR}/gcc/mingw$bitval $DST_DIR
         cd ${DST_DIR}/mingw${bitval}/bin
         # Symlink for compatibility.
-        ln -sr ../bin/gcc.exe ./cc.exe
-        ln -sr ../bin/cpp.exe ../lib
+        ln -fsr ../bin/gcc.exe ./cc.exe
+        ln -fsr ../bin/cpp.exe ../lib
+        # Symlink lto plugin into /mingw{32,64}/lib/bfd-plugins. This is needed for slim LTO.
+        cd ${DST_DIR}/mingw${bitval}/lib/gcc/${arch}-w64-mingw32/$GCC_VER
+        mkdir -p ${DST_DIR}/mingw${bitval}/lib/bfd-plugins
+        ln -fsr ../${GCC_VER}/liblto_plugin-*.dll ../../../bfd-plugins
         echo "done"
     done
 

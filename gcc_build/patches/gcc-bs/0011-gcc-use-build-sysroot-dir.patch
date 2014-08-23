@@ -1,5 +1,18 @@
 --- gcc-4.9.1/configure	2014-03-26 18:19:44.000000000 +0900
 +++ gcc-4.9.1/configure.new	2014-08-07 10:59:00.443583000 +0900
+@@ -7038,6 +7038,12 @@
+ # using) don't handle "\$" correctly, so don't use it here.
+ tooldir='${exec_prefix}'/${target_noncanonical}
+ build_tooldir=${tooldir}
++# Check whether --with-build-sysroot was given.
++if test "${with_build_sysroot+set}" = set; then :
++  withval=$with_build_sysroot; if test x"$withval" != x ; then
++  build_tooldir=${withval}/${target_noncanonical}
++  fi
++fi
+ 
+ # Create a .gdbinit file which runs the one in srcdir
+ # and tells GDB to look there for source files.
 @@ -7645,7 +7645,14 @@
    x86_64-*mingw* | *-w64-mingw*)
    # MinGW-w64 does not use newlib, nor does it use winsup. It may,
@@ -16,3 +29,36 @@
      ;;
    *-mingw*)
    # MinGW can't be handled as Cygwin above since it does not use newlib.
+--- gcc-4.9.1/gcc/configure.src   2014-08-22 22:22:34.295981700 +0900
++++ gcc-4.9.1/gcc/configure       2014-08-22 22:22:42.345442100 +0900
+@@ -670,6 +670,7 @@
+ srcdir
+ subdirs
+ dollar
++build_tooldir
+ gcc_tooldir
+ enable_lto
+ DO_LINK_MUTEX
+@@ -7149,9 +7150,11 @@
+ if test "${with_build_sysroot+set}" = set; then :
+   withval=$with_build_sysroot; if test x"$withval" != x ; then
+      SYSROOT_CFLAGS_FOR_TARGET="--sysroot=$withval"
++     build_tooldir=${withval}/${target_noncanonical}
+    fi
+ else
+   SYSROOT_CFLAGS_FOR_TARGET=
++  build_tooldir='${exec_prefix}'/${target_noncanonical}
+ fi
+ 
+ 
+--- gcc-4.9.1/gcc/Makefile.in.src 2014-08-22 22:23:00.466478600 +0900
++++ gcc-4.9.1/gcc/Makefile.in     2014-08-22 22:23:32.152290900 +0900
+@@ -632,7 +632,7 @@
+ # Used in install-cross.
+ gcc_tooldir = @gcc_tooldir@
+ # Since gcc_tooldir does not exist at build-time, use -B$(build_tooldir)/bin/
+-build_tooldir = $(exec_prefix)/$(target_noncanonical)
++build_tooldir = @build_tooldir@
+ # Directory in which the compiler finds target-independent g++ includes.
+ gcc_gxx_include_dir = @gcc_gxx_include_dir@
+ gcc_gxx_include_dir_add_sysroot = @gcc_gxx_include_dir_add_sysroot@

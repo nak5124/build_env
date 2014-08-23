@@ -1,8 +1,6 @@
 --- gcc/c-family/c-opts.c       (revision 200330)
 +++ gcc/c-family/c-opts.c       (working copy)
-@@ -1338,10 +1338,14 @@ c_finish_options (void)
- 
- /* Give CPP the next file given by -include, if any.  */
+@@ -1338,6 +1338,10 @@ c_finish_options (void)
  static void
  push_command_line_include (void)
  {
@@ -13,5 +11,3 @@
    if (!done_preinclude)
      {
        done_preinclude = true;
-       if (flag_hosted && std_inc && !cpp_opts->preprocessed)
-        {

@@ -126,9 +126,6 @@ function build_threads() {
         del_empty_dir ${PREIN_DIR}/mingw-w64/winpthreads/mingw$bitval
         remove_la_files ${PREIN_DIR}/mingw-w64/winpthreads/mingw$bitval
         strip_files ${PREIN_DIR}/mingw-w64/winpthreads/mingw$bitval
-        if [ "${arch}" = "i686" ] ; then
-            add_laa ${PREIN_DIR}/mingw-w64/winpthreads/mingw$bitval
-        fi
         echo "done"
 
         printf "===> copying MinGW-w64 winpthreads %s to %s/mingw%s\n" $arch $DST_DIR $bitval

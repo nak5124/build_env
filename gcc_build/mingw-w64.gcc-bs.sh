@@ -181,7 +181,8 @@ if ! is_defined NO_TOOLCHAIN > /dev/null ; then
     fi
     # GCC
     if is_defined GCC_REBUILD > /dev/null ; then
-        build_gcc_pre
+        # build_gcc_pre
+        copy_gcc
         build_gcc
     else
         copy_gcc

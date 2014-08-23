@@ -49,6 +49,7 @@ function build_isl() {
         rm -fr ${BUILD_DIR}/gcc_libs/isl/build_${arch}/{.*,*} > /dev/null 2>&1
 
         local bitval=$(get_arch_bit ${arch})
+        local _aof=$(arch_optflags ${arch})
 
         source cpath $arch
         PATH=${DST_DIR}/mingw${bitval}/bin:$PATH
@@ -65,8 +66,8 @@ function build_isl() {
             --with-gmp=system                         \
             --with-gmp-prefix=${DST_DIR}/mingw$bitval \
             CPPFLAGS="${_CPPFLAGS}"                   \
-            CFLAGS="${_CFLAGS}"                       \
-            CXXFLAGS="${_CXXFLAGS}"                   \
+            CFLAGS="${_aof} ${_CFLAGS}"               \
+            CXXFLAGS="${_aof} ${_CXXFLAGS}"           \
             LDFLAGS="${_LDFLAGS}"                     \
             > ${LOGS_DIR}/gcc_libs/isl/isl_config_${arch}.log 2>&1 || exit 1
         echo "done"

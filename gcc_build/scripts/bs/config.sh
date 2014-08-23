@@ -14,7 +14,7 @@ declare -ra BUILD_TARGETS=(
 
 declare -ra TARGET_ARCH=(
     "x86_64"
-    # "i686"
+    "i686"
 )
 
 # LANG
@@ -78,15 +78,15 @@ if is_defined GMP_REBUILD   > /dev/null \
 fi
 
 # mingw-w64 toolchain
-# define_rov ICONV_REBUILD
-# define_rov INTL_REBUILD
-# define_rov ICONV2ND_REBUILD
-# define_rov BZIP2_REBUILD
-# define_rov ZLIB_REBUILD
-# define_rov HEADERS_REBUILD
-# define_rov WINPTHREADS_REBUILD
-# define_rov CRT_REBUILD
-# define_rov BINUTILS_REBUILD
+define_rov ICONV_REBUILD
+define_rov INTL_REBUILD
+define_rov ICONV2ND_REBUILD
+define_rov BZIP2_REBUILD
+define_rov ZLIB_REBUILD
+define_rov HEADERS_REBUILD
+define_rov WINPTHREADS_REBUILD
+define_rov CRT_REBUILD
+define_rov BINUTILS_REBUILD
 define_rov GCC_REBUILD
 if is_defined HEADERS_REBUILD     > /dev/null \
 || is_defined WINPTHREADS_REBUILD > /dev/null \

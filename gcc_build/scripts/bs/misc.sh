@@ -7,7 +7,7 @@ function get_arch_bit() {
         "x86_64" )
             echo "64"
             ;;
-        *)
+        * )
             echo "64"
             ;;
     esac
@@ -144,7 +144,22 @@ function decomp_arch() {
     fi
 }
 
+# arch optimization flags
+function arch_optflags() {
+    case "$1" in
+        "i686" )
+            echo "-march=i686 -mtune=generic"
+            ;;
+        "x86_64" )
+            echo "-march=x86-64 -mtune=generic"
+            ;;
+        * )
+            echo "-mtune=generic"
+            ;;
+    esac
+}
+
 # add large-address-aware flag
 function add_laa() {
-    find "$1" -name "*.exe" -o -name "*.dll" | xargs -rl1 genpeimg -p +l
+    find "$1" -name "*.exe" | xargs -rl1 genpeimg -p +l
 }

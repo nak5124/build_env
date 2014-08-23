@@ -54,6 +54,7 @@ function build_mpfr() {
         rm -fr ${BUILD_DIR}/gcc_libs/mpfr/build_${arch}/*
 
         local bitval=$(get_arch_bit ${arch})
+        local _aof=$(arch_optflags ${arch})
 
         source cpath $arch
         PATH=${DST_DIR}/mingw${bitval}/bin:$PATH
@@ -69,7 +70,7 @@ function build_mpfr() {
             --with-gmp=${DST_DIR}/mingw$bitval \
             --with-gnu-ld                      \
             CPPFLAGS="${_CPPFLAGS}"            \
-            CFLAGS="${_CFLAGS}"                \
+            CFLAGS="${_aof} ${_CFLAGS}"        \
             LDFLAGS="${_LDFLAGS}"              \
             > ${LOGS_DIR}/gcc_libs/mpfr/mpfr_config_${arch}.log 2>&1 || exit 1
         echo "done"

@@ -63,6 +63,7 @@ function build_binutils() {
         rm -fr ${BUILD_DIR}/binutils/build_${arch}/*
 
         local bitval=$(get_arch_bit ${arch})
+        local _aof=$(arch_optflags ${arch})
 
         source cpath $arch
         PATH=${DST_DIR}/mingw${bitval}/bin:$PATH
@@ -109,8 +110,8 @@ function build_binutils() {
             --with-sysroot=/mingw$bitval                                                                    \
             --with-lib-path=${DST_DIR}/mingw${bitval}/lib:${DST_DIR}/mingw${bitval}/${arch}-w64-mingw32/lib \
             CPPFLAGS="${_CPPFLAGS} ${_incf}"                                                                \
-            CFLAGS="${_CFLAGS} ${_incf}"                                                                    \
-            CXXFLAGS="${_CXXFLAGS} ${_incf}"                                                                \
+            CFLAGS="${_aof} ${_CFLAGS} ${_incf}"                                                            \
+            CXXFLAGS="${_aof} ${_CXXFLAGS} ${_incf}"                                                        \
             LDFLAGS="${_LDFLAGS} ${_ldge} ${_lnkf}"                                                         \
             > ${LOGS_DIR}/binutils/binutils_config_${arch}.log 2>&1 || exit 1
         echo "done"
@@ -126,9 +127,6 @@ function build_binutils() {
         del_empty_dir ${PREIN_DIR}/binutils/mingw$bitval
         remove_la_files ${PREIN_DIR}/binutils/mingw$bitval
         strip_files ${PREIN_DIR}/binutils/mingw$bitval
-        if [ "${arch}" = "i686" ] ; then
-            add_laa ${PREIN_DIR}/binutils/mingw$bitval
-        fi
         echo "done"
 
         # For modifying SEARCH_DIR.
@@ -143,9 +141,6 @@ function build_binutils() {
         make -C ld DESTDIR=${PREIN_DIR}/binutils_ld install \
             > ${LOGS_DIR}/binutils/binutils_reinstallld_${arch}.log 2>&1 || exit 1
         strip_files ${PREIN_DIR}/binutils_ld/mingw$bitval
-        if [ "${arch}" = "i686" ] ; then
-            add_laa ${PREIN_DIR}/binutils_ld/mingw$bitval
-        fi
         echo "done"
 
         printf "===> copying Binutils %s to %s/mingw%s\n" $arch $DST_DIR $bitval
