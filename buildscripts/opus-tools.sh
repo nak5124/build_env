@@ -100,24 +100,22 @@ function build_tools() {
     do
         if [ "${arch}" = "i686" ] ; then
             local OPPREFIX=/mingw32/local
-            local _LAA=" -Wl,--large-address-aware"
         else
             local OPPREFIX=/mingw64/local
-            local _LAA=""
         fi
 
         source cpath $arch
         printf "===> configure opus-tools %s\n" $arch
-        PKG_CONFIG_PATH=${OPPREFIX}/lib/pkgconfig     \
-        ./configure --prefix=$OPPREFIX                \
-                    --build=${arch}-w64-mingw32       \
-                    --host=${arch}-w64-mingw32        \
-                    --disable-shared --enable-static  \
-                    --enable-sse                      \
-                    CFLAGS="${BASE_CFLAGS}"           \
-                    CPPFLAGS="${BASE_CPPFLAGS}"       \
-                    CXXFLAGS="${BASE_CXXFLAGS}"       \
-                    LDFLAGS="${BASE_LDFLAGS} ${_LAA}" \
+        PKG_CONFIG_PATH=${OPPREFIX}/lib/pkgconfig    \
+        ./configure --prefix=$OPPREFIX               \
+                    --build=${arch}-w64-mingw32      \
+                    --host=${arch}-w64-mingw32       \
+                    --disable-shared --enable-static \
+                    --enable-sse                     \
+                    CFLAGS="${BASE_CFLAGS}"          \
+                    CPPFLAGS="${BASE_CPPFLAGS}"      \
+                    CXXFLAGS="${BASE_CXXFLAGS}"      \
+                    LDFLAGS="${BASE_LDFLAGS}"        \
             > ${LOGS_DIR}/tools_config_${arch}.log 2>&1 || exit 1
         echo "done"
 

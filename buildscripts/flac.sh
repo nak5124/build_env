@@ -94,28 +94,26 @@ function build_flac() {
     do
         if [ "${arch}" = "i686" ] ; then
             local FLPREFIX=/mingw32/local
-            local _LAA=" -Wl,--large-address-aware"
         else
             local FLPREFIX=/mingw64/local
-            local _LAA=""
         fi
 
         source cpath $arch
         printf "===> configure flac %s\n" $arch
-        ./configure --prefix=$FLPREFIX                \
-                    --build=${arch}-w64-mingw32       \
-                    --host=${arch}-w64-mingw32        \
-                    --disable-shared                  \
-                    --enable-static                   \
-                    --enable-sse                      \
-                    --disable-xmms-plugin             \
-                    --disable-cpplibs                 \
-                    --disable-rpath                   \
-                    --with-ogg=$FLPREFIX              \
-                    CFLAGS="${BASE_CFLAGS}"           \
-                    CPPFLAGS="${BASE_CPPFLAGS}"       \
-                    CXXFLAGS="${BASE_CXXFLAGS}"       \
-                    LDFLAGS="${BASE_LDFLAGS} ${_LAA}" \
+        ./configure --prefix=$FLPREFIX          \
+                    --build=${arch}-w64-mingw32 \
+                    --host=${arch}-w64-mingw32  \
+                    --disable-shared            \
+                    --enable-static             \
+                    --enable-sse                \
+                    --disable-xmms-plugin       \
+                    --disable-cpplibs           \
+                    --disable-rpath             \
+                    --with-ogg=$FLPREFIX        \
+                    CFLAGS="${BASE_CFLAGS}"     \
+                    CPPFLAGS="${BASE_CPPFLAGS}" \
+                    CXXFLAGS="${BASE_CXXFLAGS}" \
+                    LDFLAGS="${BASE_LDFLAGS}"   \
             > ${LOGS_DIR}/flac_config_${arch}.log 2>&1 || exit 1
         echo "done"
 

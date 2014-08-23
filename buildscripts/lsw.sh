@@ -54,9 +54,9 @@ function build_LSW_aviutl() {
 
     source cpath i686
     echo "===> configure LSW AviUtl"
-    PKG_CONFIG_PATH=/mingw32/local/lib/pkgconfig                           \
-    ./configure --prefix=/mingw32/local                                    \
-                --extra-ldflags="-Wl,--large-address-aware -static -static-libgcc" \
+    PKG_CONFIG_PATH=/mingw32/local/lib/pkgconfig         \
+    ./configure --prefix=/mingw32/local                  \
+                --extra-ldflags="-static -static-libgcc" \
     > ${LOGS_DIR}/lsw_config_aviutl.log 2>&1 || exit 1
     echo "done"
 
@@ -110,10 +110,8 @@ function build_LSW_vapoursynth() {
     for arch in i686 x86_64
     do
         if [ "${arch}" = "i686" ] ; then
-            local _LAA=" -Wl,--large-address-aware"
             local LSWPREFIX=/mingw32/local
         else
-            local _LAA=""
             local LSWPREFIX=/mingw64/local
         fi
 
@@ -121,7 +119,7 @@ function build_LSW_vapoursynth() {
         printf "===> configure LSW VapourSynth %s\n" $arch
         PKG_CONFIG_PATH=${LSWPREFIX}/lib/pkgconfig           \
         ./configure --prefix=$LSWPREFIX                      \
-                    --extra-ldflags="${_LAA} -static -static-libgcc" \
+                    --extra-ldflags="-static -static-libgcc" \
                     --target-os=mingw32                      \
         > ${LOGS_DIR}/lsw_config_VS_${arch}.log 2>&1 || exit 1
         echo "done"
