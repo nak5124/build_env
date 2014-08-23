@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+src=$(cygpath -w ${1})
+if [ -d "${1}" -a -d "${2}" ] ; then
+    dst=$(cygpath -w ${2})'\'${src##*\\}
+else
+    dst=$(cygpath -w ${2})
+fi
+xcp=$(cygpath -w /c/Windows/system32/xcopy)
+echo '
+CALL chcp 65001 > nul
+'${xcp}' /E /I /Q /K /Y /B /J '${src}' '${dst}'
+exit
+' | cmd > /dev/null

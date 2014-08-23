@@ -194,6 +194,7 @@ function build_gcc_pre() {
             ${_optimization}                                                                      \
             --with-gnu-as                                                                         \
             --with-gnu-ld                                                                         \
+            --program-suffix=-$GCC_VER                                                            \
             > ${LOGS_DIR}/gcc/gcc_pre_config_${arch}.log 2>&1 || exit 1
         echo "done"
 
@@ -226,6 +227,38 @@ function build_gcc_pre() {
     done
 
     cd $ROOT_DIR
+    return 0
+}
+
+# cleanup
+function symlink_gcc() {
+    local _arch=${1}
+    local _bitval=$(get_arch_bit ${_arch})
+
+    pushd ${PREIN_DIR}/gcc/mingw${_bitval}/bin > /dev/null
+
+    find . -type f -a \( -name "cpp*.exe" -o -name "g++*.exe" -o -name "gcc*.exe" -o -name "gcov*.exe" \) -printf '%f\n' | \
+        xargs -I% ln -fsr % ./${_arch}-w64-mingw32-%
+    find . -type f -a \( -name "cpp*.exe" -o -name "g++*.exe" -o -name "gcc*.exe" -o -name "gcov*.exe" \) -print0  | \
+        while read -r -d '' fname; do ln -fsr $fname ${fname%%-${GCC_VER}.exe}.exe; done
+    find . -type f -a \( -name "cpp*.exe" -o -name "g++*.exe" -o -name "gcc*.exe" -o -name "gcov*.exe" \) -printf '%f\n' | \
+        while read -r fname; do ln -fsr $fname ${_arch}-w64-mingw32-${fname%%-${GCC_VER}.exe}.exe; done
+    ln -fsr ./g++-${GCC_VER}.exe ./c++-${GCC_VER}.exe
+    ln -fsr ./g++-${GCC_VER}.exe ./c++.exe
+    ln -fsr ./g++-${GCC_VER}.exe ./${_arch}-w64-mingw32-c++-${GCC_VER}.exe
+    ln -fsr ./g++-${GCC_VER}.exe ./${_arch}-w64-mingw32-c++.exe
+    ln -fsr ./gcc.exe ./cc.exe
+    ln -fsr ./cpp.exe ../lib
+
+    popd > /dev/null
+
+    pushd ${PREIN_DIR}/gcc/mingw${_bitval}/lib/gcc/${arch}-w64-mingw32/$GCC_VER > /dev/null
+
+    mkdir -p ${PREIN_DIR}/gcc/mingw${_bitval}/lib/bfd-plugins
+    ln -fsr ./liblto_plugin-*.dll ../../../bfd-plugins
+
+    popd > /dev/null
+
     return 0
 }
 
@@ -312,6 +345,7 @@ function build_gcc() {
             ${_optimization}                                                                      \
             --with-gnu-as                                                                         \
             --with-gnu-ld                                                                         \
+            --program-suffix=-$GCC_VER                                                            \
             > ${LOGS_DIR}/gcc/gcc_config_${arch}.log 2>&1 || exit 1
         echo "done"
 
@@ -338,16 +372,11 @@ function build_gcc() {
         MSYS=winsymlinks:nativestrict
         export MSYS
 
+        # symlink
+        symlink_gcc $arch
+
         printf "===> copying GCC %s to %s/mingw%s\n" $arch $DST_DIR $bitval
-        cp -fra ${PREIN_DIR}/gcc/mingw$bitval $DST_DIR
-        cd ${DST_DIR}/mingw${bitval}/bin
-        # Symlink for compatibility.
-        ln -fsr ../bin/gcc.exe ./cc.exe
-        ln -fsr ../bin/cpp.exe ../lib
-        # Symlink lto plugin into /mingw{32,64}/lib/bfd-plugins. This is needed for slim LTO.
-        cd ${DST_DIR}/mingw${bitval}/lib/gcc/${arch}-w64-mingw32/$GCC_VER
-        mkdir -p ${DST_DIR}/mingw${bitval}/lib/bfd-plugins
-        ln -fsr ../${GCC_VER}/liblto_plugin-*.dll ../../../bfd-plugins
+        symcopy ${PREIN_DIR}/gcc/mingw$bitval $DST_DIR
         echo "done"
     done
 
@@ -364,15 +393,7 @@ function copy_gcc() {
         local bitval=$(get_arch_bit ${arch})
 
         printf "===> copying GCC %s to %s/mingw%s\n" $arch $DST_DIR $bitval
-        cp -fra ${PREIN_DIR}/gcc/mingw$bitval $DST_DIR
-        cd ${DST_DIR}/mingw${bitval}/bin
-        # Symlink for compatibility.
-        ln -fsr ../bin/gcc.exe ./cc.exe
-        ln -fsr ../bin/cpp.exe ../lib
-        # Symlink lto plugin into /mingw{32,64}/lib/bfd-plugins. This is needed for slim LTO.
-        cd ${DST_DIR}/mingw${bitval}/lib/gcc/${arch}-w64-mingw32/$GCC_VER
-        mkdir -p ${DST_DIR}/mingw${bitval}/lib/bfd-plugins
-        ln -fsr ../${GCC_VER}/liblto_plugin-*.dll ../../../bfd-plugins
+        symcopy ${PREIN_DIR}/gcc/mingw$bitval $DST_DIR
         echo "done"
     done
 
