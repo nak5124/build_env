@@ -85,10 +85,11 @@ function build_autoconf() {
         local bitval=$(get_arch_bit ${arch})
 
         source cpath $arch
-        PATH=${DST_DIR}/mingw${bitval}/bin:/usr/local/bin:/usr/bin:/bin
+        PATH=${DST_DIR}/mingw${bitval}/bin:/usr/local/bin:/usr/bin
         export PATH
 
         printf "===> configuring Autoconf %s\n" $arch
+        # Setting {CPP,C,CXX,LD}FLAGS does not make any sense.
         ../src/autoconf-${AUTOCONF_VER}/configure \
             --prefix=/mingw$bitval                \
             --build=${arch}-w64-mingw32           \
@@ -103,7 +104,6 @@ function build_autoconf() {
         printf "===> installing Autoconf %s\n" $arch
         make DESTDIR=${PREIN_DIR}/autotools/autoconf install \
             > ${LOGS_DIR}/autotools/autoconf/autoconf_install_${arch}.log 2>&1 || exit 1
-        rm -f ${PREIN_DIR}/autotools/autoconf/mingw${bitval}/share/info/standards.info
         echo "done"
 
         printf "===> copying Autoconf %s to %s/mingw%s\n" $arch $DST_DIR $bitval
@@ -116,7 +116,7 @@ function build_autoconf() {
 }
 
 # copy only
-function copy_only_autoconf() {
+function copy_autoconf() {
     clear; printf "Autoconf %s\n" $AUTOCONF_VER
 
     for arch in ${TARGET_ARCH[@]}
@@ -184,10 +184,11 @@ function build_automake() {
         local bitval=$(get_arch_bit ${arch})
 
         source cpath $arch
-        PATH=${DST_DIR}/mingw${bitval}/bin:/usr/local/bin:/usr/bin:/bin
+        PATH=${DST_DIR}/mingw${bitval}/bin:/usr/local/bin:/usr/bin
         export PATH
 
         printf "===> configuring Automake %s\n" $arch
+        # Setting {CPP,C,CXX,LD}FLAGS does not make any sense.
         ../src/automake-${AUTOMAKE_VER}/configure \
             --prefix=/mingw$bitval                \
             --build=${arch}-w64-mingw32           \
@@ -214,7 +215,7 @@ function build_automake() {
 }
 
 # copy only
-function copy_only_automake() {
+function copy_automake() {
     clear; printf "Automake %s\n" $AUTOMAKE_VER
 
     for arch in ${TARGET_ARCH[@]}
@@ -313,14 +314,15 @@ function build_libtool() {
         local bitval=$(get_arch_bit ${arch})
 
         source cpath $arch
-        PATH=${DST_DIR}/mingw${bitval}/bin:/usr/local/bin:/usr/bin:/bin
+        PATH=${DST_DIR}/mingw${bitval}/bin:/usr/local/bin:/usr/bin
         export PATH
 
         printf "===> configuring Libtool %s\n" $arch
+        # Setting {CPP,C,CXX,LD}FLAGS does not make any sense.
         ../src/libtool-${LIBTOOL_VER}/configure \
-            --prefix=/mingw$bitval                \
-            --build=${arch}-w64-mingw32           \
-            --host=${arch}-w64-mingw32            \
+            --prefix=/mingw$bitval              \
+            --build=${arch}-w64-mingw32         \
+            --host=${arch}-w64-mingw32          \
             > ${LOGS_DIR}/autotools/libtool/libtool_config_${arch}.log 2>&1 || exit 1
         echo "done"
 
@@ -329,9 +331,13 @@ function build_libtool() {
         echo "done"
 
         printf "===> installing Libtool %s\n" $arch
+        # Don't install libltdl.
         make DESTDIR=${PREIN_DIR}/autotools/libtool install-binSCRIPTS install-man install-info install-data-local \
             > ${LOGS_DIR}/autotools/libtool/libtool_install_${arch}.log 2>&1 || exit 1
         rm -fr ${PREIN_DIR}/autotools/libtool/mingw${bitval}/share/libtool/libltdl
+        # Modify hard coded file PATH.
+        sed -i "s|${DST_DIR//\//\\/}||g" ${PREIN_DIR}/autotools/libtool/mingw${bitval}/bin/libtool
+        sed -i "s|${DST_DIR//\//\\/}||g" ${PREIN_DIR}/autotools/libtool/mingw${bitval}/share/man/man1/libtool.1
         echo "done"
 
         printf "===> copying Libtool %s to %s/mingw%s\n" $arch $DST_DIR $bitval
@@ -344,7 +350,7 @@ function build_libtool() {
 }
 
 # copy only
-function copy_only_libtool() {
+function copy_libtool() {
     clear; printf "Libtool %s\n" $LIBTOOL_VER
 
     for arch in ${TARGET_ARCH[@]}

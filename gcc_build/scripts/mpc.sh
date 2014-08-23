@@ -32,31 +32,58 @@ function build_mpc() {
         rm -fr ${BUILD_DIR}/gcc_libs/mpc/build_${arch}/*
 
         local bitval=$(get_arch_bit ${arch})
+        local _aof=$(arch_optflags ${arch})
 
         source cpath $arch
+        PATH=${DST_DIR}/mingw${bitval}/bin:$PATH
+        export PATH
+
         printf "===> configuring MPC %s\n" $arch
-        ../src/mpc-${MPC_VER}/configure          \
-            --prefix=/mingw$bitval               \
-            --build=${arch}-w64-mingw32          \
-            --host=${arch}-w64-mingw32           \
-            --disable-shared                     \
-            --enable-static                      \
-            --with-gmp=${LIBS_DIR}/mingw$bitval  \
-            --with-mpfr=${LIBS_DIR}/mingw$bitval \
-            CPPFLAGS="${_CPPFLAGS}"              \
-            CFLAGS="${_CFLAGS}"                  \
-            CXXFLAGS="${_CXXFLAGS}"              \
-            LDFLAGS="${_LDFLAGS}"                \
+        ../src/mpc-${MPC_VER}/configure         \
+            --prefix=/mingw$bitval              \
+            --build=${arch}-w64-mingw32         \
+            --host=${arch}-w64-mingw32          \
+            --disable-shared                    \
+            --enable-static                     \
+            --with-mpfr=${DST_DIR}/mingw$bitval \
+            --with-gmp=${DST_DIR}/mingw$bitval  \
+            --with-gnu-ld                       \
+            CPPFLAGS="${_CPPFLAGS}"             \
+            CFLAGS="${_aof} ${_CFLAGS}"         \
+            LDFLAGS="${_LDFLAGS}"               \
             > ${LOGS_DIR}/gcc_libs/mpc/mpc_config_${arch}.log 2>&1 || exit 1
         echo "done"
 
         printf "===> making MPC %s\n" $arch
-        make $MAKEFLAGS all > ${LOGS_DIR}/gcc_libs/mpc/mpc_make_${arch}.log 2>&1 || exit 1
+        make $MAKEFLAGS > ${LOGS_DIR}/gcc_libs/mpc/mpc_make_${arch}.log 2>&1 || exit 1
         echo "done"
 
         printf "===> installing MPC %s\n" $arch
-        make DESTDIR=$LIBS_DIR install > ${LOGS_DIR}/gcc_libs/mpc/mpc_install_${arch}.log 2>&1 || exit 1
-        remove_la_files ${LIBS_DIR}/mingw$bitval
+        make DESTDIR=${PREIN_DIR}/gcc_libs/mpc install > ${LOGS_DIR}/gcc_libs/mpc/mpc_install_${arch}.log 2>&1 || exit 1
+        del_empty_dir ${PREIN_DIR}/gcc_libs/mpc/mingw$bitval
+        remove_la_files ${PREIN_DIR}/gcc_libs/mpc/mingw$bitval
+        strip_files ${PREIN_DIR}/gcc_libs/mpc/mingw$bitval
+        echo "done"
+
+        printf "===> copying MPC %s to %s/mingw%s\n" $arch $DST_DIR $bitval
+        cp -fra ${PREIN_DIR}/gcc_libs/mpc/mingw$bitval $DST_DIR
+        echo "done"
+    done
+
+    cd $ROOT_DIR
+    return 0
+}
+
+# copy only
+function copy_mpc() {
+    clear; printf "MPC %s\n" $MPC_VER
+
+    for arch in ${TARGET_ARCH[@]}
+    do
+        local bitval=$(get_arch_bit ${arch})
+
+        printf "===> copying MPC %s to %s/mingw%s\n" $arch $DST_DIR $bitval
+        cp -fra ${PREIN_DIR}/gcc_libs/mpc/mingw$bitval $DST_DIR
         echo "done"
     done
 

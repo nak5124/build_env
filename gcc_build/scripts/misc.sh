@@ -7,7 +7,7 @@ function get_arch_bit() {
         "x86_64" )
             echo "64"
             ;;
-        *)
+        * )
             echo "64"
             ;;
     esac
@@ -142,4 +142,24 @@ function decomp_arch() {
         printf "decomp_arch: %s is not a tar archive.\n" $fname
         exit 1
     fi
+}
+
+# arch optimization flags
+function arch_optflags() {
+    case "$1" in
+        "i686" )
+            echo "-march=i686 -mtune=generic"
+            ;;
+        "x86_64" )
+            echo "-march=x86-64 -mtune=generic"
+            ;;
+        * )
+            echo "-mtune=generic"
+            ;;
+    esac
+}
+
+# add large-address-aware flag
+function add_laa() {
+    find "$1" -name "*.exe" | xargs -rl1 genpeimg -p +l
 }

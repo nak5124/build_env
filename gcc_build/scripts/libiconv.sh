@@ -59,29 +59,38 @@ function build_iconv() {
         rm -fr ${BUILD_DIR}/libiconv/build_${arch}/*
 
         local bitval=$(get_arch_bit ${arch})
+        local _aof=$(arch_optflags ${arch})
 
         source cpath $arch
+        PATH=${DST_DIR}/mingw${bitval}/bin:$PATH
+        export PATH
+
+        if [ "$1" = "-2nd" ] ; then
+            local _intl="--with-libintl-prefix=${DST_DIR}/mingw${bitval}"
+        else
+            local _intl=""
+        fi
+
         printf "===> configuring libiconv %s\n" $arch
         ../src/libiconv-${ICONV_VER}/configure \
             --prefix=/mingw$bitval             \
             --build=${arch}-w64-mingw32        \
             --host=${arch}-w64-mingw32         \
-            --disable-shared                   \
-            --enable-static                    \
-            --enable-extra-encodings           \
             --enable-relocatable               \
+            --enable-extra-encodings           \
+            --enable-shared                    \
+            --enable-static                    \
             --disable-rpath                    \
             --enable-nls                       \
-            --enable-silent-rules              \
+            ${_intl}                           \
             CPPFLAGS="${_CPPFLAGS}"            \
-            CFLAGS="${_CFLAGS}"                \
-            CXXFLAGS="${_CXXFLAGS}"            \
+            CFLAGS="${_aof} ${_CFLAGS}"        \
             LDFLAGS="${_LDFLAGS}"              \
             > ${LOGS_DIR}/libiconv/libiconv_config_${arch}.log 2>&1 || exit 1
         echo "done"
 
         printf "===> making libiconv %s\n" $arch
-        make $MAKEFLAGS all > ${LOGS_DIR}/libiconv/libiconv_make_${arch}.log 2>&1 || exit 1
+        make $MAKEFLAGS > ${LOGS_DIR}/libiconv/libiconv_make_${arch}.log 2>&1 || exit 1
         echo "done"
 
         printf "===> installing libiconv %s\n" $arch
@@ -102,7 +111,7 @@ function build_iconv() {
 }
 
 # copy only
-function copy_only_iconv() {
+function copy_iconv() {
     clear; printf "libiconv %s\n" $ICONV_VER
 
     for arch in ${TARGET_ARCH[@]}

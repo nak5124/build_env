@@ -46,36 +46,66 @@ function build_isl() {
     for arch in ${TARGET_ARCH[@]}
     do
         cd ${BUILD_DIR}/gcc_libs/isl/build_$arch
-        rm -fr ${BUILD_DIR}/gcc_libs/isl/build_${arch}/*
+        rm -fr ${BUILD_DIR}/gcc_libs/isl/build_${arch}/{.*,*} > /dev/null 2>&1
 
         local bitval=$(get_arch_bit ${arch})
+        local _aof=$(arch_optflags ${arch})
 
         source cpath $arch
+        PATH=${DST_DIR}/mingw${bitval}/bin:$PATH
+        export PATH
+
         printf "===> configuring ISL %s\n" $arch
-        ../src/isl-${ISL_VER}/configure                \
-            --prefix=/mingw$bitval                     \
-            --build=${arch}-w64-mingw32                \
-            --host=${arch}-w64-mingw32                 \
-            --disable-shared                           \
-            --enable-static                            \
-            --with-gmp=system                          \
-            --with-gmp-prefix=${LIBS_DIR}/mingw$bitval \
-            --with-piplib=no                           \
-            --with-clang=no                            \
-            CPPFLAGS="${_CPPFLAGS}"                    \
-            CFLAGS="${_CFLAGS}"                        \
-            CXXFLAGS="${_CXXFLAGS}"                    \
-            LDFLAGS="${_LDFLAGS}"                      \
+        ../src/isl-${ISL_VER}/configure               \
+            --prefix=/mingw$bitval                    \
+            --build=${arch}-w64-mingw32               \
+            --host=${arch}-w64-mingw32                \
+            --disable-shared                          \
+            --enable-static                           \
+            --with-gnu-ld                             \
+            --with-gmp=system                         \
+            --with-gmp-prefix=${DST_DIR}/mingw$bitval \
+            CPPFLAGS="${_CPPFLAGS}"                   \
+            CFLAGS="${_aof} ${_CFLAGS}"               \
+            CXXFLAGS="${_aof} ${_CXXFLAGS}"           \
+            LDFLAGS="${_LDFLAGS}"                     \
             > ${LOGS_DIR}/gcc_libs/isl/isl_config_${arch}.log 2>&1 || exit 1
         echo "done"
 
         printf "===> making ISL %s\n" $arch
-        make $MAKEFLAGS all > ${LOGS_DIR}/gcc_libs/isl/isl_make_${arch}.log 2>&1 || exit 1
+        # Setting -j$(($(nproc)+1)) sometimes makes error.
+        make > ${LOGS_DIR}/gcc_libs/isl/isl_make_${arch}.log 2>&1 || exit 1
         echo "done"
 
         printf "===> installing ISL %s\n" $arch
-        make DESTDIR=$LIBS_DIR install > ${LOGS_DIR}/gcc_libs/isl/isl_install_${arch}.log 2>&1 || exit 1
-        remove_la_files ${LIBS_DIR}/mingw$bitval
+        make DESTDIR=${PREIN_DIR}/gcc_libs/isl install > ${LOGS_DIR}/gcc_libs/isl/isl_install_${arch}.log 2>&1 || exit 1
+        sed -i "s|${DST_DIR}\/mingw${bitval}|\/mingw${bitval}|g" ${PREIN_DIR}/gcc_libs/isl/mingw${bitval}/lib/pkgconfig/isl.pc
+        # Remove unneeded file.
+        rm -f ${PREIN_DIR}/gcc_libs/isl/mingw${bitval}/lib/*.py
+        del_empty_dir ${PREIN_DIR}/gcc_libs/isl/mingw$bitval
+        remove_la_files ${PREIN_DIR}/gcc_libs/isl/mingw$bitval
+        strip_files ${PREIN_DIR}/gcc_libs/isl/mingw$bitval
+        echo "done"
+
+        printf "===> copying ISL %s to %s/mingw%s\n" $arch $DST_DIR $bitval
+        cp -fra ${PREIN_DIR}/gcc_libs/isl/mingw$bitval $DST_DIR
+        echo "done"
+    done
+
+    cd $ROOT_DIR
+    return 0
+}
+
+# copy only
+function copy_isl() {
+    clear; printf "ISL %s\n" $ISL_VER
+
+    for arch in ${TARGET_ARCH[@]}
+    do
+        local bitval=$(get_arch_bit ${arch})
+
+        printf "===> copying ISL %s to %s/mingw%s\n" $arch $DST_DIR $bitval
+        cp -fra ${PREIN_DIR}/gcc_libs/isl/mingw$bitval $DST_DIR
         echo "done"
     done
 

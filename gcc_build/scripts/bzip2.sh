@@ -72,15 +72,20 @@ function build_bzip2() {
         rm -fr ${BUILD_DIR}/bzip2/build_${arch}/*
 
         local bitval=$(get_arch_bit ${arch})
+        local _aof=$(arch_optflags ${arch})
 
         source cpath $arch
+        PATH=${DST_DIR}/mingw${bitval}/bin:$PATH
+        export PATH
+
         printf "===> configuring bzip2 %s\n" $arch
         ../src/bzip2-${BZIP2_VER}/configure \
             --prefix=/mingw$bitval          \
             --build=${arch}-w64-mingw32     \
             --host=${arch}-w64-mingw32      \
+            --enable-shared                 \
             CPPFLAGS="${_CPPFLAGS}"         \
-            CFLAGS="${_CFLAGS}"             \
+            CFLAGS="${_aof} ${_CFLAGS}"     \
             LDFLAGS="${_LDFLAGS}"           \
             > ${LOGS_DIR}/bzip2/bzip2_config_${arch}.log 2>&1 || exit 1
         echo "done"
@@ -98,6 +103,7 @@ function build_bzip2() {
         echo "done"
 
         printf "===> copying bzip2 %s to %s/mingw%s\n" $arch $DST_DIR $bitval
+        # For symlink.
         cp -fa ${PREIN_DIR}/bzip2/mingw${bitval}/bin/{bzdiff,bzgrep,bzmore} ${DST_DIR}/mingw${bitval}/bin
         cp -fra ${PREIN_DIR}/bzip2/mingw$bitval $DST_DIR
         echo "done"
@@ -108,7 +114,7 @@ function build_bzip2() {
 }
 
 # copy only
-function copy_only_bzip2() {
+function copy_bzip2() {
     clear; printf "bzip2 %s\n" $BZIP2_VER
 
     for arch in ${TARGET_ARCH[@]}
@@ -116,6 +122,7 @@ function copy_only_bzip2() {
         local bitval=$(get_arch_bit ${arch})
 
         printf "===> copying bzip2 %s to %s/mingw%s\n" $arch $DST_DIR $bitval
+        # For symlink.
         cp -fa ${PREIN_DIR}/bzip2/mingw${bitval}/bin/{bzdiff,bzgrep,bzmore} ${DST_DIR}/mingw${bitval}/bin
         cp -fra ${PREIN_DIR}/bzip2/mingw$bitval $DST_DIR
         echo "done"

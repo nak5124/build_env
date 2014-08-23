@@ -20,14 +20,3 @@
      }
  }
 -#endif
---- a/gcc/toplev.c
-+++ b/gcc/toplev.c
-@@ -1237,7 +1234,7 @@
-   if (!global_options_set.x_flag_diagnostics_show_color
-       && getenv ("GCC_COLORS"))
-     pp_show_color (global_dc->printer)
--      = colorize_init (DIAGNOSTICS_COLOR_AUTO);
-+      = colorize_init (DIAGNOSTICS_COLOR_YES);
- 
-   /* Allow the front end to perform consistency checks and do further
-      initialization based on the command line options.  This hook also

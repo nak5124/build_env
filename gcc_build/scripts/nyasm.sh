@@ -26,37 +26,41 @@ function build_nasm() {
 
     download_nasm_src
 
+    MSYS2_ARG_CONV_EXCL="-//OASIS"
+    export MSYS2_ARG_CONV_EXCL
+
     for arch in ${TARGET_ARCH[@]}
     do
         cd ${BUILD_DIR}/nyasm/nasm/build_$arch
         rm -fr ${BUILD_DIR}/nyasm/nasm/build_${arch}/*
+        # NASM cannot be built out of tree.
         cp -fra ${BUILD_DIR}/nyasm/nasm/src/nasm-${NASM_VER}/* ${BUILD_DIR}/nyasm/nasm/build_$arch
 
         local bitval=$(get_arch_bit ${arch})
+        local _aof=$(arch_optflags ${arch})
 
         source cpath $arch
-        PATH=${DST_DIR}/mingw${bitval}/bin:/usr/local/bin:/usr/bin:/bin
+        PATH=${DST_DIR}/mingw${bitval}/bin:$PATH
         export PATH
 
         printf "===> configuring NASM %s\n" $arch
-        MSYS2_ARG_CONV_EXCL="-//OASIS"
-        export MSYS2_ARG_CONV_EXCL
-        ./configure                            \
-            --prefix=/mingw$bitval             \
-            --build=${arch}-w64-mingw32        \
-            --host=${arch}-w64-mingw32         \
-            CPPFLAGS="${_CPPFLAGS}"            \
-            CFLAGS="${_CFLAGS}"                \
-            CXXFLAGS="${_CXXFLAGS}"            \
-            LDFLAGS="${_LDFLAGS}"              \
+        ./configure                     \
+            --prefix=/mingw$bitval      \
+            --build=${arch}-w64-mingw32 \
+            --host=${arch}-w64-mingw32  \
+            CPPFLAGS="${_CPPFLAGS}"     \
+            CFLAGS="${_aof} ${_CFLAGS}" \
+            LDFLAGS="${_LDFLAGS}"       \
             > ${LOGS_DIR}/nyasm/nasm/nasm_config_${arch}.log 2>&1 || exit 1
         echo "done"
 
         printf "===> making NASM %s\n" $arch
-        make -j1 -O all > ${LOGS_DIR}/nyasm/nasm/nasm_make_${arch}.log 2>&1 || exit 1
+        # Setting -j$(($(nproc)+1)) sometimes makes error.
+        make > ${LOGS_DIR}/nyasm/nasm/nasm_make_${arch}.log 2>&1 || exit 1
         echo "done"
 
         printf "===> installing NASM %s\n" $arch
+        # NASM don't use DESTDIR but INSTALLROOT.
         make INSTALLROOT=${PREIN_DIR}/nyasm/nasm install > ${LOGS_DIR}/nyasm/nasm/nasm_install_${arch}.log 2>&1 || exit 1
         del_empty_dir ${PREIN_DIR}/nyasm/nasm/mingw$bitval
         remove_la_files ${PREIN_DIR}/nyasm/nasm/mingw$bitval
@@ -68,12 +72,14 @@ function build_nasm() {
         echo "done"
     done
 
+    unset MSYS2_ARG_CONV_EXCL
+
     cd $ROOT_DIR
     return 0
 }
 
 # copy only
-function copy_only_nasm() {
+function copy_nasm() {
     clear; printf "NASM %s\n" $NASM_VER
 
     for arch in ${TARGET_ARCH[@]}
@@ -131,7 +137,8 @@ function build_yasm() {
     clear; printf "Build Yasm %s\n" $YASM_VER
 
     download_yasm_src
-    patch_yasm
+    # Since ver. 1.3.0, this patch was merged.
+    # patch_yasm
 
     for arch in ${TARGET_ARCH[@]}
     do
@@ -139,25 +146,25 @@ function build_yasm() {
         rm -fr ${BUILD_DIR}/nyasm/yasm/build_${arch}/*
 
         local bitval=$(get_arch_bit ${arch})
+        local _aof=$(arch_optflags ${arch})
 
         source cpath $arch
-        PATH=${DST_DIR}/mingw${bitval}/bin:/usr/local/bin:/usr/bin:/bin
+        PATH=${DST_DIR}/mingw${bitval}/bin:$PATH
         export PATH
 
         printf "===> configuring Yasm %s\n" $arch
-        ../src/yasm-${YASM_VER}/configure      \
-            --prefix=/mingw$bitval             \
-            --build=${arch}-w64-mingw32        \
-            --host=${arch}-w64-mingw32         \
-            CPPFLAGS="${_CPPFLAGS}"            \
-            CFLAGS="${_CFLAGS}"                \
-            CXXFLAGS="${_CXXFLAGS}"            \
-            LDFLAGS="${_LDFLAGS}"              \
+        ../src/yasm-${YASM_VER}/configure \
+            --prefix=/mingw$bitval        \
+            --build=${arch}-w64-mingw32   \
+            --host=${arch}-w64-mingw32    \
+            CPPFLAGS="${_CPPFLAGS}"       \
+            CFLAGS="${_aof} ${_CFLAGS}"   \
+            LDFLAGS="${_LDFLAGS}"         \
             > ${LOGS_DIR}/nyasm/yasm/yasm_config_${arch}.log 2>&1 || exit 1
         echo "done"
 
         printf "===> making Yasm %s\n" $arch
-        make $MAKEFLAGS all > ${LOGS_DIR}/nyasm/yasm/yasm_make_${arch}.log 2>&1 || exit 1
+        make $MAKEFLAGS > ${LOGS_DIR}/nyasm/yasm/yasm_make_${arch}.log 2>&1 || exit 1
         echo "done"
 
         printf "===> installing Yasm %s\n" $arch
@@ -177,7 +184,7 @@ function build_yasm() {
 }
 
 # copy only
-function copy_only_yasm() {
+function copy_yasm() {
     clear; printf "Yasm %s\n" $YASM_VER
 
     for arch in ${TARGET_ARCH[@]}

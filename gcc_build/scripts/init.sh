@@ -3,7 +3,6 @@ function init_dirs() {
     clear; echo "init directories"
 
     # BUILD_DIR
-    # BUILD_TARGETS
     for (( i = 0; i < ${#BUILD_TARGETS[@]}; i++ ))
     do
         local -a target=(${BUILD_TARGETS[${i}]})
@@ -34,27 +33,19 @@ function init_dirs() {
                     mkdir -p ${BUILD_DIR}/${target}/build_$arch
                 fi
             done
-            if [ ! -d ${BUILD_DIR}/${target}/src ] ; then
-                mkdir -p ${BUILD_DIR}/${target}/src
+            if [ "${target}" = "gcc" ] ; then
+                if [ ! -d ${BUILD_DIR}/${target}/src_bs ] ; then
+                    mkdir -p ${BUILD_DIR}/${target}/src_bs
+                fi
+            else
+                if [ ! -d ${BUILD_DIR}/${target}/src ] ; then
+                    mkdir -p ${BUILD_DIR}/${target}/src
+                fi
             fi
-        fi
-    done
-    # GCC_LIBS
-    for target in ${GCC_LIBS[@]}
-    do
-        for arch in ${TARGET_ARCH[@]}
-        do
-            if [ ! -d ${BUILD_DIR}/gcc_libs/${target}/build_$arch ] ; then
-                mkdir -p ${BUILD_DIR}/gcc_libs/${target}/build_$arch
-            fi
-        done
-        if [ ! -d ${BUILD_DIR}/gcc_libs/${target}/src ] ; then
-            mkdir -p ${BUILD_DIR}/gcc_libs/${target}/src
         fi
     done
 
     # LOGS_DIR
-    # BUILD_TARGETS
     for (( i = 0; i < ${#BUILD_TARGETS[@]}; i++ ))
     do
         local -a target=(${BUILD_TARGETS[${i}]})
@@ -71,16 +62,8 @@ function init_dirs() {
             fi
         fi
     done
-    # GCC_LIBS
-    for target in ${GCC_LIBS[@]}
-    do
-        if [ ! -d ${LOGS_DIR}/gcc_libs/$target ] ; then
-            mkdir -p ${LOGS_DIR}/gcc_libs/$target
-        fi
-    done
 
     # PREIN_DIR
-    # BUILD_TARGETS
     for (( i = 0; i < ${#BUILD_TARGETS[@]}; i++ ))
     do
         local -a target=(${BUILD_TARGETS[${i}]})
@@ -95,13 +78,17 @@ function init_dirs() {
             if [ ! -d ${PREIN_DIR}/$target ] ; then
                 mkdir -p ${PREIN_DIR}/$target
             fi
+            if [ "${target}" = "binutils" ] ; then
+                if [ ! -d ${PREIN_DIR}/${target}_ld ] ; then
+                    mkdir -p ${PREIN_DIR}/${target}_ld
+                fi
+            elif [ "${target}" = "gcc" ] ; then
+                if [ ! -d ${PREIN_DIR}/${target}_pre ] ; then
+                    mkdir -p ${PREIN_DIR}/${target}_pre
+                fi
+            fi
         fi
     done
-
-    # LIBS_DIR
-    if [ ! -d $LIBS_DIR ] ; then
-        mkdir -p $LIBS_DIR
-    fi
 
     # DST_DIR
     for arch in ${TARGET_ARCH[@]}
