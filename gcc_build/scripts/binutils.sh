@@ -108,8 +108,6 @@ function build_binutils() {
         echo "int _dowildcard = -1;" > glob_enable.c
         gcc -c -o glob_enable.o glob_enable.c
         local _ldge=" -Wl,${BUILD_DIR}/binutils/build_${arch}/glob_enable.o"
-        local _incf="-I${DST_DIR}/mingw${bitval}/include"
-        local _lnkf="-L${DST_DIR}/mingw${bitval}/lib -liconv"
 
         printf "===> configuring Binutils %s\n" $arch
         ../src/binutils-${BINUTILS_VER}/configure                                                           \
@@ -124,7 +122,7 @@ function build_binutils() {
             --enable-plugins                                                                                \
             ${_64_bit_bfd}                                                                                  \
             --enable-install-libbfd                                                                         \
-            --disable-nls                                                                                   \
+            --enable-nls                                                                                    \
             --disable-rpath                                                                                 \
             --disable-multilib                                                                              \
             --enable-install-libiberty                                                                      \
@@ -139,10 +137,10 @@ function build_binutils() {
             --with-libintl-prefix=${DST_DIR}/mingw$bitval                                                   \
             --with-sysroot=/mingw$bitval                                                                    \
             --with-lib-path=${DST_DIR}/mingw${bitval}/lib:${DST_DIR}/mingw${bitval}/${arch}-w64-mingw32/lib \
-            CPPFLAGS="${_CPPFLAGS} ${_incf}"                                                                \
-            CFLAGS="${_aof} ${_CFLAGS} ${_incf}"                                                            \
-            CXXFLAGS="${_aof} ${_CXXFLAGS} ${_incf}"                                                        \
-            LDFLAGS="${_LDFLAGS} ${_ldge} ${_lnkf}"                                                         \
+            CPPFLAGS="${_CPPFLAGS}"                                                                         \
+            CFLAGS="${_aof} ${_CFLAGS}"                                                                     \
+            CXXFLAGS="${_aof} ${_CXXFLAGS}"                                                                 \
+            LDFLAGS="${_LDFLAGS} ${_ldge}"                                                                  \
             > ${LOGS_DIR}/binutils/binutils_config_${arch}.log 2>&1 || exit 1
         echo "done"
 

@@ -66,9 +66,10 @@ function build_iconv() {
         export PATH
 
         if [ "$1" = "-2nd" ] ; then
-            local _intl="--with-libintl-prefix=${DST_DIR}/mingw${bitval}"
+            local _intl="--enable-nls --with-libiconv-prefix=${DST_DIR}/mingw${bitval} \
+                         --with-libintl-prefix=${DST_DIR}/mingw${bitval}"
         else
-            local _intl=""
+            local _intl="--disable-nls --without-libiconv-prefix --without-libintl-prefix"
         fi
 
         printf "===> configuring libiconv %s\n" $arch
@@ -81,7 +82,6 @@ function build_iconv() {
             --enable-shared                    \
             --enable-static                    \
             --disable-rpath                    \
-            --enable-nls                       \
             ${_intl}                           \
             CPPFLAGS="${_CPPFLAGS}"            \
             CFLAGS="${_aof} ${_CFLAGS}"        \

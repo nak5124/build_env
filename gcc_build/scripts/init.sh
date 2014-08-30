@@ -33,14 +33,8 @@ function init_dirs() {
                     mkdir -p ${BUILD_DIR}/${target}/build_$arch
                 fi
             done
-            if [ "${target}" = "gcc" ] ; then
-                if [ ! -d ${BUILD_DIR}/${target}/src_bs ] ; then
-                    mkdir -p ${BUILD_DIR}/${target}/src_bs
-                fi
-            else
-                if [ ! -d ${BUILD_DIR}/${target}/src ] ; then
-                    mkdir -p ${BUILD_DIR}/${target}/src
-                fi
+            if [ ! -d ${BUILD_DIR}/${target}/src ] ; then
+                mkdir -p ${BUILD_DIR}/${target}/src
             fi
         fi
     done

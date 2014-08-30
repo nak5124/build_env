@@ -1,0 +1,128 @@
+--- a/gcc/configure	2014-08-27 02:09:47.627361400 +0900
++++ b/gcc/configure	2014-08-27 02:14:17.595642500 +0900
+@@ -9883,9 +9883,9 @@
+                 found_la="$additional_libdir/lib$name.la"
+               fi
+             else
+-              if test -f "$additional_libdir/lib$name.$libext"; then
++              if test -f "$additional_libdir/lib$name.dll.a"; then
+                 found_dir="$additional_libdir"
+-                found_a="$additional_libdir/lib$name.$libext"
++                found_a="$additional_libdir/lib$name.dll.a"
+                 if test -f "$additional_libdir/lib$name.la"; then
+                   found_la="$additional_libdir/lib$name.la"
+                 fi
+@@ -9913,9 +9913,9 @@
+                       found_la="$dir/lib$name.la"
+                     fi
+                   else
+-                    if test -f "$dir/lib$name.$libext"; then
++                    if test -f "$dir/lib$name.dll.a"; then
+                       found_dir="$dir"
+-                      found_a="$dir/lib$name.$libext"
++                      found_a="$dir/lib$name.dll.a"
+                       if test -f "$dir/lib$name.la"; then
+                         found_la="$dir/lib$name.la"
+                       fi
+--- a/intl/configure	2014-08-27 02:16:04.371701400 +0900
++++ b/intl/configure	2014-08-27 02:16:11.220071000 +0900
+@@ -5097,9 +5097,9 @@
+                 found_la="$additional_libdir/lib$name.la"
+               fi
+             else
+-              if test -f "$additional_libdir/lib$name.$libext"; then
++              if test -f "$additional_libdir/lib$name.dll.a"; then
+                 found_dir="$additional_libdir"
+-                found_a="$additional_libdir/lib$name.$libext"
++                found_a="$additional_libdir/lib$name.dll.a"
+                 if test -f "$additional_libdir/lib$name.la"; then
+                   found_la="$additional_libdir/lib$name.la"
+                 fi
+@@ -5127,9 +5127,9 @@
+                       found_la="$dir/lib$name.la"
+                     fi
+                   else
+-                    if test -f "$dir/lib$name.$libext"; then
++                    if test -f "$dir/lib$name.dll.a"; then
+                       found_dir="$dir"
+-                      found_a="$dir/lib$name.$libext"
++                      found_a="$dir/lib$name.dll.a"
+                       if test -f "$dir/lib$name.la"; then
+                         found_la="$dir/lib$name.la"
+                       fi
+@@ -5889,9 +5889,9 @@
+                 found_la="$additional_libdir/lib$name.la"
+               fi
+             else
+-              if test -f "$additional_libdir/lib$name.$libext"; then
++              if test -f "$additional_libdir/lib$name.dll.a"; then
+                 found_dir="$additional_libdir"
+-                found_a="$additional_libdir/lib$name.$libext"
++                found_a="$additional_libdir/lib$name.dll.a"
+                 if test -f "$additional_libdir/lib$name.la"; then
+                   found_la="$additional_libdir/lib$name.la"
+                 fi
+@@ -5919,9 +5919,9 @@
+                       found_la="$dir/lib$name.la"
+                     fi
+                   else
+-                    if test -f "$dir/lib$name.$libext"; then
++                    if test -f "$dir/lib$name.dll.a"; then
+                       found_dir="$dir"
+-                      found_a="$dir/lib$name.$libext"
++                      found_a="$dir/lib$name.dll.a"
+                       if test -f "$dir/lib$name.la"; then
+                         found_la="$dir/lib$name.la"
+                       fi
+--- a/libcpp/configure	2014-08-27 02:17:03.084156900 +0900
++++ b/libcpp/configure	2014-08-27 02:17:09.123423800 +0900
+@@ -6605,9 +6605,9 @@
+                 found_la="$additional_libdir/lib$name.la"
+               fi
+             else
+-              if test -f "$additional_libdir/lib$name.$libext"; then
++              if test -f "$additional_libdir/lib$name.dll.a"; then
+                 found_dir="$additional_libdir"
+-                found_a="$additional_libdir/lib$name.$libext"
++                found_a="$additional_libdir/lib$name.dll.a"
+                 if test -f "$additional_libdir/lib$name.la"; then
+                   found_la="$additional_libdir/lib$name.la"
+                 fi
+@@ -6635,9 +6635,9 @@
+                       found_la="$dir/lib$name.la"
+                     fi
+                   else
+-                    if test -f "$dir/lib$name.$libext"; then
++                    if test -f "$dir/lib$name.dll.a"; then
+                       found_dir="$dir"
+-                      found_a="$dir/lib$name.$libext"
++                      found_a="$dir/lib$name.dll.a"
+                       if test -f "$dir/lib$name.la"; then
+                         found_la="$dir/lib$name.la"
+                       fi
+--- a/libstdc++-v3/configure	2014-08-27 02:17:54.369669300 +0900
++++ b/libstdc++-v3/configure	2014-08-27 02:18:00.819988400 +0900
+@@ -27275,9 +27275,9 @@
+                 found_la="$additional_libdir/lib$name.la"
+               fi
+             else
+-              if test -f "$additional_libdir/lib$name.$libext"; then
++              if test -f "$additional_libdir/lib$name.dll.a"; then
+                 found_dir="$additional_libdir"
+-                found_a="$additional_libdir/lib$name.$libext"
++                found_a="$additional_libdir/lib$name.dll.a"
+                 if test -f "$additional_libdir/lib$name.la"; then
+                   found_la="$additional_libdir/lib$name.la"
+                 fi
+@@ -27305,9 +27305,9 @@
+                       found_la="$dir/lib$name.la"
+                     fi
+                   else
+-                    if test -f "$dir/lib$name.$libext"; then
++                    if test -f "$dir/lib$name.dll.a"; then
+                       found_dir="$dir"
+-                      found_a="$dir/lib$name.$libext"
++                      found_a="$dir/lib$name.dll.a"
+                       if test -f "$dir/lib$name.la"; then
+                         found_la="$dir/lib$name.la"
+                       fi

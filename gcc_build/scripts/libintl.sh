@@ -39,6 +39,11 @@ function patch_intl() {
             >> ${LOGS_DIR}/libintl/libintl_patch.log 2>&1 || exit 1
         touch ${BUILD_DIR}/libintl/src/gettext-${INTL_VER}/patched_03.marker
     fi
+    if [ ! -f ${BUILD_DIR}/libintl/src/gettext-${INTL_VER}/patched_03.marker ] ; then
+        patch -p0 < ${PATCHES_DIR}/libintl/0004-static-locale_charset.patch \
+            >> ${LOGS_DIR}/libintl/libintl_patch.log 2>&1 || exit 1
+        touch ${BUILD_DIR}/libintl/src/gettext-${INTL_VER}/patched_03.marker
+    fi
 
     popd > /dev/null
 
@@ -76,6 +81,7 @@ function build_intl() {
             --enable-shared                                  \
             --enable-static                                  \
             --enable-relocatable                             \
+            --disable-libasprintf                            \
             --with-gnu-ld                                    \
             --with-libiconv-prefix=${DST_DIR}/mingw$bitval   \
             CFLAGS="${_aof} ${_CFLAGS}"                      \

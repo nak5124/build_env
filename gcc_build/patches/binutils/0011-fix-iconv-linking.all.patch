@@ -52,3 +52,111 @@
  
  
  #ifdef __cplusplus
+diff --git a/binutils/configure b/binutils/configure
+index 4198e12..ec4f61f 100755
+--- a/binutils/configure
++++ b/binutils/configure
+@@ -13571,9 +13571,9 @@ fi
+                 found_la="$additional_libdir/lib$name.la"
+               fi
+             else
+-              if test -f "$additional_libdir/lib$name.$libext"; then
++              if test -f "$additional_libdir/lib$name.dll.a"; then
+                 found_dir="$additional_libdir"
+-                found_a="$additional_libdir/lib$name.$libext"
++                found_a="$additional_libdir/lib$name.dll.a"
+                 if test -f "$additional_libdir/lib$name.la"; then
+                   found_la="$additional_libdir/lib$name.la"
+                 fi
+@@ -13601,9 +13601,9 @@ fi
+                       found_la="$dir/lib$name.la"
+                     fi
+                   else
+-                    if test -f "$dir/lib$name.$libext"; then
++                    if test -f "$dir/lib$name.dll.a"; then
+                       found_dir="$dir"
+-                      found_a="$dir/lib$name.$libext"
++                      found_a="$dir/lib$name.dll.a"
+                       if test -f "$dir/lib$name.la"; then
+                         found_la="$dir/lib$name.la"
+                       fi
+diff --git a/intl/configure b/intl/configure
+index 34da38b..4578bdb 100755
+--- a/intl/configure
++++ b/intl/configure
+@@ -5097,9 +5097,9 @@ fi
+                 found_la="$additional_libdir/lib$name.la"
+               fi
+             else
+-              if test -f "$additional_libdir/lib$name.$libext"; then
++              if test -f "$additional_libdir/lib$name.dll.a"; then
+                 found_dir="$additional_libdir"
+-                found_a="$additional_libdir/lib$name.$libext"
++                found_a="$additional_libdir/lib$name.dll.a"
+                 if test -f "$additional_libdir/lib$name.la"; then
+                   found_la="$additional_libdir/lib$name.la"
+                 fi
+@@ -5127,9 +5127,9 @@ fi
+                       found_la="$dir/lib$name.la"
+                     fi
+                   else
+-                    if test -f "$dir/lib$name.$libext"; then
++                    if test -f "$dir/lib$name.dll.a"; then
+                       found_dir="$dir"
+-                      found_a="$dir/lib$name.$libext"
++                      found_a="$dir/lib$name.dll.a"
+                       if test -f "$dir/lib$name.la"; then
+                         found_la="$dir/lib$name.la"
+                       fi
+@@ -5889,9 +5889,9 @@ fi
+                 found_la="$additional_libdir/lib$name.la"
+               fi
+             else
+-              if test -f "$additional_libdir/lib$name.$libext"; then
++              if test -f "$additional_libdir/lib$name.dll.a"; then
+                 found_dir="$additional_libdir"
+-                found_a="$additional_libdir/lib$name.$libext"
++                found_a="$additional_libdir/lib$name.dll.a"
+                 if test -f "$additional_libdir/lib$name.la"; then
+                   found_la="$additional_libdir/lib$name.la"
+                 fi
+@@ -5919,9 +5919,9 @@ fi
+                       found_la="$dir/lib$name.la"
+                     fi
+                   else
+-                    if test -f "$dir/lib$name.$libext"; then
++                    if test -f "$dir/lib$name.dll.a"; then
+                       found_dir="$dir"
+-                      found_a="$dir/lib$name.$libext"
++                      found_a="$dir/lib$name.dll.a"
+                       if test -f "$dir/lib$name.la"; then
+                         found_la="$dir/lib$name.la"
+                       fi
+diff --git a/opcodes/Makefile.am b/opcodes/Makefile.am
+index 4acc436..46f9763 100644
+--- a/opcodes/Makefile.am
++++ b/opcodes/Makefile.am
+@@ -320,7 +320,7 @@ libopcodes_la_SOURCES =  dis-buf.c disassemble.c dis-init.c
+ # hardcoded path to libbfd.so instead of relying on the entries in libbfd.la.
+ libopcodes_la_DEPENDENCIES = $(OFILES) @SHARED_DEPENDENCIES@
+ libopcodes_la_LIBADD = $(OFILES) @SHARED_LIBADD@
+-libopcodes_la_LDFLAGS += -release `cat ../bfd/libtool-soversion` @SHARED_LDFLAGS@
++libopcodes_la_LDFLAGS += -release `cat ../bfd/libtool-soversion` @SHARED_LDFLAGS@ -Wl,$(LIBIBERTY) $(addprefix -Wl$(comma),$(LIBINTL))
+ # Allow dependency tracking to work on all the source files.
+ EXTRA_libopcodes_la_SOURCES = $(LIBOPCODES_CFILES)
+ 
+diff --git a/opcodes/Makefile.in b/opcodes/Makefile.in
+index 46ef017..8654aff 100644
+--- a/opcodes/Makefile.in
++++ b/opcodes/Makefile.in
+@@ -319,8 +319,9 @@ COMPILE_FOR_BUILD = $(CC_FOR_BUILD) $(INCLUDES) $(AM_CPPFLAGS) \
+ LINK_FOR_BUILD = $(CC_FOR_BUILD) $(CFLAGS_FOR_BUILD) \
+ 	$(LDFLAGS_FOR_BUILD) -o $@
+ 
++comma := ,
+ libopcodes_la_LDFLAGS = $(am__append_1) -release `cat \
+-	../bfd/libtool-soversion` @SHARED_LDFLAGS@
++	../bfd/libtool-soversion` @SHARED_LDFLAGS@ -Wl,$(LIBIBERTY) $(addprefix -Wl$(comma),$(LIBINTL))
+ @INSTALL_LIBBFD_TRUE@bfdlib_LTLIBRARIES = libopcodes.la
+ @INSTALL_LIBBFD_TRUE@bfdinclude_DATA = $(INCDIR)/dis-asm.h
+ @INSTALL_LIBBFD_FALSE@rpath_bfdlibdir = @bfdlibdir@

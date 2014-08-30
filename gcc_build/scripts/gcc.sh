@@ -105,6 +105,10 @@ function patch_gcc() {
         patch -p1 < ${PATCHES_DIR}/gcc/0013-LAA-default.patch >> ${LOGS_DIR}/gcc/gcc_patch.log 2>&1 || exit 1
         touch ${BUILD_DIR}/gcc/src/gcc-${GCC_VER}/patched_15.marker
     fi
+    if [ ! -f ${BUILD_DIR}/gcc/src/gcc-${GCC_VER}/patched_16.marker ] ; then
+        patch -p1 < ${PATCHES_DIR}/gcc/0014-force-linking-to-dll.a.patch >> ${LOGS_DIR}/gcc/gcc_patch.log 2>&1 || exit 1
+        touch ${BUILD_DIR}/gcc/src/gcc-${GCC_VER}/patched_16.marker
+    fi
 
     popd > /dev/null
 
@@ -328,8 +332,8 @@ function build_gcc() {
             --disable-libquadmath                                                                 \
             --enable-bootstrap                                                                    \
             --disable-win32-registry                                                              \
+            --enable-nls                                                                          \
             --disable-rpath                                                                       \
-            --disable-nls                                                                         \
             --disable-werror                                                                      \
             --disable-symvers                                                                     \
             --disable-libstdcxx-pch                                                               \
