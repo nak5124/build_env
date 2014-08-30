@@ -4,9 +4,12 @@
 
 [core]
 	symlinks = false
+	ignorecase = false
 	autocrlf = false
 	whitespace = cr-at-eol
 	editor = vim -c \"set fenc=utf-8\"
+	packedGitWindowSize = 512m
+	packedGitLimit = 512m
 
 [push]
 	default = simple
@@ -21,14 +24,16 @@
 	autosquash = true
 
 [pack]
-	packsizelimit = 2g
+	windowMemory = 512m
+	threads = 4
+	deltaCacheSize = 512m
+	packsizelimit = 512m
 
 [help]
 	format = html
 
 [http]
 	sslcainfo = /usr/ssl/certs/ca-bundle.crt
-#	sslcainfo = /bin/curl-ca-bundle.crt
 
 [diff "astextplain"]
 	textconv = astextplain
