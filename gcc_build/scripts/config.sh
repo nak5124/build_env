@@ -6,7 +6,7 @@ declare -ra BUILD_TARGETS=(
     "bzip2"
     "zlib"
     "binutils"
-    "mingw-w64 headers crt winpthreads crt"
+    "mingw-w64 headers crt winpthreads crt libmangle tools"
     "gcc"
     "autotools autoconf automake libtool"
     "nyasm nasm yasm"
@@ -98,6 +98,10 @@ fi
 define_rov BINUTILS2ND_REBUILD
 define_rov CRT2ND_REBUILD
 define_rov WINPTHREADS2ND_REBUILD
+
+# mingw-w64 additional packages
+define_rov MANGLE_REBUILD
+define_rov TOOLS_REBUILD
 
 # nyasm
 define_rov NASM_REBUILD

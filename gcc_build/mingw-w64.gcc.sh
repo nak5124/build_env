@@ -17,6 +17,7 @@ do
             unset NO_GCC_LIBS
             unset NO_TOOLCHAIN
             unset NO_2ND_BUILD
+            unset NO_MAP
             unset NO_NYASM
             unset NO_AUTOTOOLS
             ;;
@@ -38,6 +39,12 @@ do
         2nd )
             unset NO_2ND_BUILD
             ;;
+        nomap )
+            define_rov NO_MAP
+            ;;
+        map )
+            unset NO_MAP
+            ;;
         noasm )
             define_rov NO_NYASM
             ;;
@@ -58,6 +65,7 @@ done
 if is_defined NO_TOOLCHAIN > /dev/null ; then
     define_rov NO_2ND_BUILD
     if is_defined NO_GCC_LIBS  > /dev/null \
+    && is_defined NO_MAP       > /dev/null \
     && is_defined NO_NYASM     > /dev/null \
     && is_defined NO_AUTOTOOLS > /dev/null ; then
         echo "Nothing is run!"
@@ -213,6 +221,25 @@ if ! is_defined NO_2ND_BUILD > /dev/null ; then
     if is_defined CRT2ND_REBUILD > /dev/null ; then
         build_crt
     fi
+fi
+
+# mingw-w64 additional packages
+if ! is_defined NO_MAP > /dev/null ; then
+    # libmangle
+    if is_defined MANGLE_REBUILD > /dev/null ; then
+        build_mangle
+    else
+        copy_mangle
+    fi
+    # tools
+    if is_defined TOOLS_REBUILD > /dev/null ; then
+        build_tools
+    else
+        copy_tools
+    fi
+else
+    copy_mangle
+    copy_tools
 fi
 
 # nyasm

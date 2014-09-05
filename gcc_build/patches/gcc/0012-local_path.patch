@@ -44,6 +44,15 @@
  #endif /* no INCLUDE_DEFAULTS */
 --- a/gcc/gcc.c
 +++ b/gcc/gcc.c
+@@ -4050,6 +4050,8 @@
+ #endif
+       add_prefix (&startfile_prefixes, standard_exec_prefix, "BINUTILS",
+ 		  PREFIX_PRIORITY_LAST, 1, 0);
++      add_prefix (&startfile_prefixes, standard_exec_prefix, "BINUTILS",
++		  PREFIX_PRIORITY_LAST, 0, 0);
+     }
+ 
+   gcc_assert (!IS_ABSOLUTE_PATH (tooldir_base_prefix));
 @@ -6328,6 +6328,7 @@
    char **old_argv = argv;
    struct cl_decoded_option *decoded_options;

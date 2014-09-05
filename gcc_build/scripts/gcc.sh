@@ -251,8 +251,8 @@ function symlink_gcc() {
     ln -fsr ./g++-${GCC_VER}.exe ./c++.exe
     ln -fsr ./g++-${GCC_VER}.exe ./${_arch}-w64-mingw32-c++-${GCC_VER}.exe
     ln -fsr ./g++-${GCC_VER}.exe ./${_arch}-w64-mingw32-c++.exe
-    ln -fsr ./gcc.exe ./cc.exe
-    ln -fsr ./cpp.exe ../lib
+    ln -fsr ./gcc.exe ./cc
+    ln -fsr ./cpp.exe ../lib/cpp
 
     popd > /dev/null
 
@@ -381,6 +381,42 @@ function build_gcc() {
 
         printf "===> copying GCC %s to %s/mingw%s\n" $arch $DST_DIR $bitval
         symcopy ${PREIN_DIR}/gcc/mingw$bitval $DST_DIR
+        # POSIX conformance launcher scripts for c89 and c99
+        cat > ${DST_DIR}/mingw${bitval}/bin/c89 <<"_EOF_"
+#!/usr/bin/env bash
+fl="-std=c89"
+for opt;
+do
+    case "${opt}" in
+        -ansi | -std=c89 | -std=iso9899:1990 )
+            fl=""
+            ;;
+        -std=* )
+            echo "`basename $0` called with non ANSI/ISO C option $opt" >&2
+            exit 1
+            ;;
+    esac
+done
+exec gcc $fl ${1+"$@"}
+_EOF_
+
+        cat > ${DST_DIR}/mingw${bitval}/bin/c99 <<"_EOF_"
+#!/usr/bin/env bash
+fl="-std=c99"
+for opt;
+do
+    case "${opt}" in
+        -std=c99 | -std=iso9899:1999 )
+            fl=""
+            ;;
+        -std=* )
+            echo "`basename $0` called with non ISO C99 option $opt" >&2
+            exit 1
+            ;;
+    esac
+done
+exec gcc $fl ${1+"$@"}
+_EOF_
         echo "done"
     done
 
@@ -398,6 +434,42 @@ function copy_gcc() {
 
         printf "===> copying GCC %s to %s/mingw%s\n" $arch $DST_DIR $bitval
         symcopy ${PREIN_DIR}/gcc/mingw$bitval $DST_DIR
+        # POSIX conformance launcher scripts for c89 and c99
+        cat > ${DST_DIR}/mingw${bitval}/bin/c89 <<"_EOF_"
+#!/usr/bin/env bash
+fl="-std=c89"
+for opt;
+do
+    case "${opt}" in
+        -ansi | -std=c89 | -std=iso9899:1990 )
+            fl=""
+            ;;
+        -std=* )
+            echo "`basename $0` called with non ANSI/ISO C option ${opt}" >&2
+            exit 1
+            ;;
+    esac
+done
+exec gcc $fl ${1+"$@"}
+_EOF_
+
+        cat > ${DST_DIR}/mingw${bitval}/bin/c99 <<"_EOF_"
+#!/usr/bin/env bash
+fl="-std=c99"
+for opt;
+do
+    case "${opt}" in
+        -std=c99 | -std=iso9899:1999 )
+            fl=""
+            ;;
+        -std=* )
+            echo "`basename $0` called with non ISO C99 option ${opt}" >&2
+            exit 1
+            ;;
+    esac
+done
+exec gcc $fl ${1+"$@"}
+_EOF_
         echo "done"
     done
 

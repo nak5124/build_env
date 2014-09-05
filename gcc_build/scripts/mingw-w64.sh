@@ -16,10 +16,6 @@ function prepare_mingw_w64() {
     git_hash > ${LOGS_DIR}/mingw-w64/mingw-w64.hash 2>&1
     git_rev >> ${LOGS_DIR}/mingw-w64/mingw-w64.hash 2>&1
 
-    cd ${BUILD_DIR}/mingw-w64/src/mingw-w64-${MINGW_VER}/mingw-w64-libraries/winpthreads
-    patch -p1 < ${PATCHES_DIR}/winpthreads/0001-force-static.patch \
-        > ${LOGS_DIR}/mingw-w64/winpthreads/winpthreads_patch.log 2>&1 || exit 1
-
     cd $ROOT_DIR
     return 0
 }
@@ -219,6 +215,152 @@ function copy_crt() {
 
         printf "===> copying MinGW-w64 crt %s to %s/mingw%s\n" $arch $DST_DIR $bitval
         cp -fra ${PREIN_DIR}/mingw-w64/crt/mingw$bitval $DST_DIR
+        echo "done"
+    done
+
+    cd $ROOT_DIR
+    return 0
+}
+
+# libmangle: MinGW-w64 libmangle
+# build
+function build_mangle() {
+    clear; printf "Build MinGW-w64 libmangle %s\n" $MINGW_VER
+
+    for arch in ${TARGET_ARCH[@]}
+    do
+        cd ${BUILD_DIR}/mingw-w64/libmangle/build_$arch
+        rm -fr ${BUILD_DIR}/mingw-w64/libmangle/build_${arch}/* > /dev/null 2>&1
+
+        local bitval=$(get_arch_bit ${arch})
+        local _aof=$(arch_optflags ${arch})
+
+        source cpath $arch
+        PATH=${DST_DIR}/mingw${bitval}/bin:$PATH
+        export PATH
+
+        printf "===> configuring MinGW-w64 libmangle %s\n" $arch
+        ../../src/mingw-w64-${MINGW_VER}/mingw-w64-libraries/libmangle/configure \
+            --prefix=/mingw$bitval                                               \
+            --build=${arch}-w64-mingw32                                          \
+            --host=${arch}-w64-mingw32                                           \
+            CPPFLAGS="${_CPPFLAGS}"                                              \
+            CFLAGS="${_aof} ${_CFLAGS}"                                          \
+            LDFLAGS="${_LDFLAGS}"                                                \
+            > ${LOGS_DIR}/mingw-w64/libmangle/libmangle_config_${arch}.log 2>&1 || exit 1
+        echo "done"
+
+        printf "===> making MinGW-w64 libmangle %s\n" $arch
+        make $MAKEFLAGS > ${LOGS_DIR}/mingw-w64/libmangle/libmangle_make_${arch}.log 2>&1 || exit 1
+        echo "done"
+
+        printf "===> installing MinGW-w64 libmangle %s\n" $arch
+        make DESTDIR=${PREIN_DIR}/mingw-w64/libmangle install \
+            > ${LOGS_DIR}/mingw-w64/libmangle/libmangle_install_${arch}.log 2>&1 || exit 1
+        del_empty_dir ${PREIN_DIR}/mingw-w64/libmangle/mingw$bitval
+        remove_la_files ${PREIN_DIR}/mingw-w64/libmangle/mingw$bitval
+        strip_files ${PREIN_DIR}/mingw-w64/libmangle/mingw$bitval
+        echo "done"
+
+        printf "===> copying MinGW-w64 libmangle %s to %s/mingw%s\n" $arch $DST_DIR $bitval
+        cp -fra ${PREIN_DIR}/mingw-w64/libmangle/mingw$bitval $DST_DIR
+        echo "done"
+    done
+
+    cd $ROOT_DIR
+    return 0
+}
+
+# copy only
+function copy_mangle() {
+    clear; printf "MinGW-w64 libmangle %s\n" $MINGW_VER
+
+    for arch in ${TARGET_ARCH[@]}
+    do
+        local bitval=$(get_arch_bit ${arch})
+
+        printf "===> copying MinGW-w64 libmangle %s to %s/mingw%s\n" $arch $DST_DIR $bitval
+        cp -fra ${PREIN_DIR}/mingw-w64/libmangle/mingw$bitval $DST_DIR
+        echo "done"
+    done
+
+    cd $ROOT_DIR
+    return 0
+}
+
+# tools: MinGW-w64 tools
+# build
+function build_tools() {
+    clear; printf "Build MinGW-w64 tools %s\n" $MINGW_VER
+
+    for arch in ${TARGET_ARCH[@]}
+    do
+        cd ${BUILD_DIR}/mingw-w64/tools/build_$arch
+        rm -fr ${BUILD_DIR}/mingw-w64/libmangle/build_${arch}/* > /dev/null 2>&1
+
+        local bitval=$(get_arch_bit ${arch})
+        local _aof=$(arch_optflags ${arch})
+
+        source cpath $arch
+        PATH=${DST_DIR}/mingw${bitval}/bin:$PATH
+        export PATH
+
+        for _tool in gendef genpeimg
+        do
+            mkdir -p ${BUILD_DIR}/mingw-w64/tools/build_${arch}/$_tool
+            cd ${BUILD_DIR}/mingw-w64/tools/build_${arch}/$_tool
+
+            if [ "${_tool}" = "gendef" ] ; then
+                local _mangle="--with-mangle=${DESTDIR}/mingw$bitval"
+            else
+                local _mangle=""
+            fi
+
+            printf "===> configuring MinGW-w64 tools [%s] %s\n" $_tool $arch
+            ../../../src/mingw-w64-${MINGW_VER}/mingw-w64-tools/${_tool}/configure \
+                --prefix=/mingw$bitval                                             \
+                --build=${arch}-w64-mingw32                                        \
+                --host=${arch}-w64-mingw32                                         \
+                ${_mangle}                                                         \
+                CPPFLAGS="${_CPPFLAGS}"                                            \
+                CFLAGS="${_aof} ${_CFLAGS}"                                        \
+                LDFLAGS="${_LDFLAGS}"                                              \
+                > ${LOGS_DIR}/mingw-w64/tools/${_tool}_config_${arch}.log 2>&1 || exit 1
+            echo "done"
+
+            printf "===> making MinGW-w64 tools [%s] %s\n" $_tool $arch
+            make $MAKEFLAGS > ${LOGS_DIR}/mingw-w64/tools/${_tool}_make_${arch}.log 2>&1 || exit 1
+            echo "done"
+
+            printf "===> installing MinGW-w64 tools [%s] %s\n" $_tool $arch
+            make DESTDIR=${PREIN_DIR}/mingw-w64/tools install \
+                > ${LOGS_DIR}/mingw-w64/tools/${_tool}_install_${arch}.log 2>&1 || exit 1
+            echo "done"
+        done
+
+        del_empty_dir ${PREIN_DIR}/mingw-w64/tools/mingw$bitval
+        remove_la_files ${PREIN_DIR}/mingw-w64/tools/mingw$bitval
+        strip_files ${PREIN_DIR}/mingw-w64/tools/mingw$bitval
+
+        printf "===> copying MinGW-w64 tools %s to %s/mingw%s\n" $arch $DST_DIR $bitval
+        cp -fra ${PREIN_DIR}/mingw-w64/tools/mingw$bitval $DST_DIR
+        echo "done"
+    done
+
+    cd $ROOT_DIR
+    return 0
+}
+
+# copy only
+function copy_tools() {
+    clear; printf "MinGW-w64 tools %s\n" $MINGW_VER
+
+    for arch in ${TARGET_ARCH[@]}
+    do
+        local bitval=$(get_arch_bit ${arch})
+
+        printf "===> copying MinGW-w64 tools %s to %s/mingw%s\n" $arch $DST_DIR $bitval
+        cp -fra ${PREIN_DIR}/mingw-w64/tools/mingw$bitval $DST_DIR
         echo "done"
     done
 
