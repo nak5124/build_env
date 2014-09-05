@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 
+declare -r PATCHES_DIR=${HOME}/patches/lsmash
 declare -r LOGS_DIR=${HOME}/logs/lsmash
 if [ ! -d $LOGS_DIR ] ; then
     mkdir -p $LOGS_DIR
@@ -43,17 +44,33 @@ function build_lsmash() {
     git_hash > ${LOGS_DIR}/lsmash.hash
     git_rev >> ${LOGS_DIR}/lsmash.hash
 
+    patch -p1 < ${PATCHES_DIR}/0001-configure-Link-static-liblsmash-to-cli-tools-when-st.patch \
+        > ${LOGS_DIR}/lsmash_patch.log 2>&1 || exit 1
+    patch -p1 < ${PATCHES_DIR}/0002-configure-Check-whether-SRCDIR-is-git-repo-or-not.patch \
+        >> ${LOGS_DIR}/lsmash_patch.log 2>&1 || exit 1
+    patch -p1 < ${PATCHES_DIR}/0003-configure-Add-api-version-to-SHAREDLIBNAME.patch \
+        >> ${LOGS_DIR}/lsmash_patch.log 2>&1 || exit 1
+    patch -p1 < ${PATCHES_DIR}/0004-build-Use-lib.exe-when-it-is-available-on-mingw.patch \
+        >> ${LOGS_DIR}/lsmash_patch.log 2>&1 || exit 1
+
     for arch in i686 x86_64
     do
         if [ "${arch}" = "i686" ] ; then
             local LSPREFIX=/mingw32/local
+            local LIBTARGET=i386
+            local VCDIR=$VC32_DIR
         else
             local LSPREFIX=/mingw64/local
+            local LIBTARGET=x64
+            local VCDIR=$VC64_DIR
         fi
 
         source cpath $arch
+        PATH=${VCDIR}:$PATH
+        export PATH
+
         printf "===> configure L-SMASH %s\n" $arch
-        ./configure --prefix=$LSPREFIX > ${LOGS_DIR}/lsmash_config_${arch}.log 2>&1 || exit 1
+        ./configure --prefix=$LSPREFIX --enable-shared > ${LOGS_DIR}/lsmash_config_${arch}.log 2>&1 || exit 1
         echo "done"
 
         make clean > /dev/null 2>&1

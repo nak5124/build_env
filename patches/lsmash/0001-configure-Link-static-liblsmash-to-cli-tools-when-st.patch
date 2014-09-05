@@ -1,0 +1,47 @@
+From ca320619bf5fd2915973165c7d6db911add4536d Mon Sep 17 00:00:00 2001
+From: Yuta NAKAI <nak5124@live.jp>
+Date: Sun, 31 Aug 2014 17:43:19 +0900
+Subject: [PATCH 1/4] configure: Link static liblsmash to cli tools when static
+ enabled.
+
+---
+ configure | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
+
+diff --git a/configure b/configure
+index 407243d..51a5799 100755
+--- a/configure
++++ b/configure
+@@ -235,7 +235,11 @@ test -n "$SHAREDLIB" && SHAREDLIB="$SHAREDLIBNAME"
+ test -z "$STATICLIB" -a -z "$SHAREDLIB" && \
+     error_exit "--disable-static requires --enable-shared were specified"
+ test -z "$SHAREDLIB" && SO_LDFLAGS=""
+-
++if test -z "$STATICLIB" -a -n "$SHAREDLIB"; then
++    CLI_LIBLSMASH="$SHAREDLIBNAME"
++else
++    CLI_LIBLSMASH="$STATICLIBNAME"
++fi
+ 
+ CFLAGS="$CFLAGS $XCFLAGS"
+ LDFLAGS="$LDFLAGS $XLDFLAGS"
+@@ -351,6 +355,7 @@ CFLAGS = $CFLAGS
+ LDFLAGS = $LDFLAGS
+ SO_LDFLAGS = $SO_LDFLAGS
+ LIBS = $LIBS
++CLI_LIBLSMASH = $CLI_LIBLSMASH
+ EOF
+ 
+ cat config.mak
+@@ -366,7 +371,7 @@ EOF
+ for tool in $TOOLS; do
+     cat >> config.mak2 << EOF
+ cli/${tool}${EXT}: cli/${tool}.o cli/cli.o cli/importer.o $STATICLIB $SHAREDLIB
+-	\$(CC) \$(CFLAGS) \$(LDFLAGS) -o \$@ \$< cli/cli.o cli/importer.o -llsmash \$(LIBS)
++	\$(CC) \$(CFLAGS) \$(LDFLAGS) -o \$@ \$< cli/cli.o cli/importer.o \$(CLI_LIBLSMASH) \$(LIBS)
+ 	-@ \$(if \$(STRIP), \$(STRIP) \$@)
+ 
+ EOF
+-- 
+2.1.0
+

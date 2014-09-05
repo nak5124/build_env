@@ -1,0 +1,41 @@
+From 718de728046be264797128691f398dc9e92d5045 Mon Sep 17 00:00:00 2001
+From: darealshinji <djcj@gmx.de>
+Date: Fri, 15 Aug 2014 17:28:09 +0200
+Subject: [PATCH] configure: Add version string to pkg-config file
+
+Use version plus revision: "Version: 1.13.8 rev.1041"
+If revision is 0 (= if the .git dir is missing) use only version: "Version: 1.13.8"
+---
+ configure | 11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
+
+diff --git a/configure b/configure
+index 8bc0273..54d3ac1 100755
+--- a/configure
++++ b/configure
+@@ -294,7 +294,16 @@ done
+ #=============================================================================
+ 
+ pushd $SRCDIR
++MAJVER=$(grep -e '#define LSMASH_VERSION_MAJOR' lsmash.h|sed -e 's/#define LSMASH_VERSION_MAJOR //;s/ //g')
++MINVER=$(grep -e '#define LSMASH_VERSION_MINOR' lsmash.h|sed -e 's/#define LSMASH_VERSION_MINOR //;s/ //g')
++MICVER=$(grep -e '#define LSMASH_VERSION_MICRO' lsmash.h|sed -e 's/#define LSMASH_VERSION_MICRO //;s/ //g')
++VER=$MAJVER.$MINVER.$MICVER
+ REV="$(git rev-list HEAD 2> /dev/null | wc -l)"
++if test $REV -ne 0; then
++    VER_STRING="$VER rev.$REV"
++else
++    VER_STRING="$VER"
++fi
+ HASH="$(git describe --always 2> /dev/null)"
+ popd
+ cat >> config.h << EOF
+@@ -311,7 +320,7 @@ includedir=$includedir
+ 
+ Name: liblsmash
+ Description: Loyal to Spec of MPEG4, and Ad-hock Simple Hackwork
+-Version: rev.$REV
++Version: $VER_STRING
+ Requires:
+ URL: http://code.google.com/p/l-smash/
+ Libs: -L${libdir} -llsmash $LIBS

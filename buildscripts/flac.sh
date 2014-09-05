@@ -45,15 +45,16 @@ function build_libogg() {
 
         source cpath $arch
         printf "===> configure libogg %s\n" $arch
-        ./configure --prefix=$FLPREFIX           \
-                    --build=${arch}-w64-mingw32  \
-                    --host=${arch}-w64-mingw32   \
-                    --disable-shared             \
-                    --enable-static              \
-                    CFLAGS="${BASE_CFLAGS}"      \
-                    CPPFLAGS="${BASE_CPPFLAGS}"  \
-                    CXXFLAGS="${BASE_CXXFLAGS}"  \
-                    LDFLAGS="${BASE_LDFLAGS}"    \
+        ./configure --prefix=$FLPREFIX          \
+                    --build=${arch}-w64-mingw32 \
+                    --host=${arch}-w64-mingw32  \
+                    --disable-silent-rules      \
+                    --disable-shared            \
+                    --enable-static             \
+                    --with-gnu-ld               \
+                    CPPFLAGS="${BASE_CPPFLAGS}" \
+                    CFLAGS="${BASE_CFLAGS}"     \
+                    LDFLAGS="${BASE_LDFLAGS}"   \
             > ${LOGS_DIR}/ogg_config_${arch}.log 2>&1 || exit 1
         echo "done"
 
@@ -100,20 +101,23 @@ function build_flac() {
 
         source cpath $arch
         printf "===> configure flac %s\n" $arch
-        ./configure --prefix=$FLPREFIX          \
-                    --build=${arch}-w64-mingw32 \
-                    --host=${arch}-w64-mingw32  \
-                    --disable-shared            \
-                    --enable-static             \
-                    --enable-sse                \
-                    --disable-xmms-plugin       \
-                    --disable-cpplibs           \
-                    --disable-rpath             \
-                    --with-ogg=$FLPREFIX        \
-                    CFLAGS="${BASE_CFLAGS}"     \
-                    CPPFLAGS="${BASE_CPPFLAGS}" \
-                    CXXFLAGS="${BASE_CXXFLAGS}" \
-                    LDFLAGS="${BASE_LDFLAGS}"   \
+        ./configure --prefix=$FLPREFIX               \
+                    --build=${arch}-w64-mingw32      \
+                    --host=${arch}-w64-mingw32       \
+                    --disable-silent-rules           \
+                    --disable-shared                 \
+                    --enable-static                  \
+                    --disable-doxygen-docs           \
+                    --disable-xmms-plugin            \
+                    --disable-cpplibs                \
+                    --disable-rpath                  \
+                    --with-gnu-ld                    \
+                    --with-ogg=$FLPREFIX             \
+                    --with-libiconv-prefix=$FLPREFIX \
+                    CPPFLAGS="${BASE_CPPFLAGS}"      \
+                    CFLAGS="${BASE_CFLAGS}"          \
+                    CXXFLAGS="${BASE_CXXFLAGS}"      \
+                    LDFLAGS="${BASE_LDFLAGS}"        \
             > ${LOGS_DIR}/flac_config_${arch}.log 2>&1 || exit 1
         echo "done"
 

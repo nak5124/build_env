@@ -1,5 +1,5 @@
 diff --git a/AviSynth/LSMASHSourceVCX.vcxproj b/AviSynth/LSMASHSourceVCX.vcxproj
-index 8ff380d..464f4d8 100644
+index 8ff380d..6223c2a 100644
 --- a/AviSynth/LSMASHSourceVCX.vcxproj
 +++ b/AviSynth/LSMASHSourceVCX.vcxproj
 @@ -71,6 +71,14 @@
@@ -8,16 +8,16 @@ index 8ff380d..464f4d8 100644
    </PropertyGroup>
 +  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
 +    <IncludePath>C:\msys2\mingw32\local\include;$(IncludePath)</IncludePath>
-+    <LibraryPath>C:\msys2\mingw32\i686-w64-mingw32\lib;C:\msys2\mingw32\lib\gcc\i686-w64-mingw32\4.9.1;C:\msys2\mingw32\lib;C:\msys2\mingw32\local\lib;$(LibraryPath)</LibraryPath>
++    <LibraryPath>C:\msys2\mingw32\local\bin;$(LibraryPath)</LibraryPath>
 +  </PropertyGroup>
 +  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
 +    <IncludePath>C:\msys2\mingw64\local\include;$(VCInstallDir)atlmfc\include;$(WindowsSDK_IncludePath);$(VCInstallDir)include</IncludePath>
-+    <LibraryPath>C:\msys2\mingw64\x86_64-w64-mingw32\lib;C:\msys2\mingw64\lib\gcc\x86_64-w64-mingw32\4.9.1;C:\msys2\mingw64\lib;C:\msys2\mingw64\local\lib;$(VCInstallDir)atlmfc\lib\amd64;$(WindowsSDK_LibraryPath_x64);$(VCInstallDir)lib\amd64</LibraryPath>
++    <LibraryPath>C:\msys2\mingw64\local\bin;$(VCInstallDir)atlmfc\lib\amd64;$(WindowsSDK_LibraryPath_x64);$(VCInstallDir)lib\amd64</LibraryPath>
 +  </PropertyGroup>
    <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
      <ClCompile>
        <Optimization>Disabled</Optimization>
-@@ -118,14 +126,20 @@
+@@ -118,14 +126,21 @@
        </PrecompiledHeader>
        <WarningLevel>Level3</WarningLevel>
        <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -36,10 +36,11 @@ index 8ff380d..464f4d8 100644
        <ImageHasSafeExceptionHandlers />
 +      <ProgramDatabaseFile />
 +      <LargeAddressAware>true</LargeAddressAware>
++      <AdditionalDependencies>avformat.lib;avutil.lib;avcodec.lib;swscale.lib;avresample.lib;lsmash.lib;%(AdditionalDependencies)</AdditionalDependencies>
      </Link>
    </ItemDefinitionGroup>
    <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-@@ -139,13 +155,18 @@
+@@ -139,13 +154,19 @@
        </PrecompiledHeader>
        <WarningLevel>Level3</WarningLevel>
        <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -56,6 +57,71 @@ index 8ff380d..464f4d8 100644
        <ImageHasSafeExceptionHandlers />
 +      <ProgramDatabaseFile />
 +      <LargeAddressAware>true</LargeAddressAware>
++      <AdditionalDependencies>avformat.lib;avutil.lib;avcodec.lib;swscale.lib;avresample.lib;lsmash.lib;%(AdditionalDependencies)</AdditionalDependencies>
      </Link>
    </ItemDefinitionGroup>
    <ItemGroup>
+@@ -160,7 +181,6 @@
+       <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">CompileAsCpp</CompileAs>
+     </ClCompile>
+     <ClCompile Include="audio_output.cpp" />
+-    <ClCompile Include="exlibs.cpp" />
+     <ClCompile Include="..\common\libavsmash.c">
+       <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">CompileAsCpp</CompileAs>
+       <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">CompileAsCpp</CompileAs>
+diff --git a/AviSynth/LSMASHSourceVCX.vcxproj.filters b/AviSynth/LSMASHSourceVCX.vcxproj.filters
+index c6626b8..ea53d8b 100644
+--- a/AviSynth/LSMASHSourceVCX.vcxproj.filters
++++ b/AviSynth/LSMASHSourceVCX.vcxproj.filters
+@@ -21,9 +21,6 @@
+     <ClCompile Include="audio_output.cpp">
+       <Filter>Source Files</Filter>
+     </ClCompile>
+-    <ClCompile Include="exlibs.cpp">
+-      <Filter>Source Files</Filter>
+-    </ClCompile>
+     <ClCompile Include="..\common\libavsmash.c">
+       <Filter>Source Files</Filter>
+     </ClCompile>
+diff --git a/AviSynth/exlibs.cpp b/AviSynth/exlibs.cpp
+deleted file mode 100644
+index 143261b..0000000
+--- a/AviSynth/exlibs.cpp
++++ /dev/null
+@@ -1,36 +0,0 @@
+-/*****************************************************************************
+- * exlibs.cpp
+- *****************************************************************************
+- * Copyright (C) 2012-2014 L-SMASH Works project
+- *
+- * Authors: Yusuke Nakamura <muken.the.vfrmaniac@gmail.com>
+- *
+- * Permission to use, copy, modify, and/or distribute this software for any
+- * purpose with or without fee is hereby granted, provided that the above
+- * copyright notice and this permission notice appear in all copies.
+- *
+- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+- * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+- * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+- * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+- * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+- * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+- * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+- *****************************************************************************/
+-
+-/* This file is available under an ISC license.
+- * However, when distributing its binary file, it will be under LGPL or GPL. */
+-
+-#pragma comment( lib, "libmingwex.a" )
+-#pragma comment( lib, "libgcc.a" )
+-#pragma comment( lib, "libz.a" )
+-#pragma comment( lib, "libbz2.a" )
+-#pragma comment( lib, "liblsmash.a" )
+-#pragma comment( lib, "libavutil.a" )
+-#pragma comment( lib, "libavcodec.a" )
+-#pragma comment( lib, "libavformat.a" )
+-#pragma comment( lib, "libswscale.a" )
+-#pragma comment( lib, "libavresample.a" )
+-#pragma comment( lib, "libwsock32.a" )
+-
+-/* Add more external libraries user-self if needed. */

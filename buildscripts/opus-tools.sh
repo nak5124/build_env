@@ -48,17 +48,18 @@ function build_libopus() {
 
         source cpath $arch
         printf "===> configure libopus %s\n" $arch
-        ./configure --prefix=$OPPREFIX           \
-                    --build=${arch}-w64-mingw32  \
-                    --host=${arch}-w64-mingw32   \
-                    --disable-shared             \
-                    --enable-static              \
-                    --disable-doc                \
-                    --disable-extra-programs     \
-                    CFLAGS="${BASE_CFLAGS}"      \
-                    CPPFLAGS="${BASE_CPPFLAGS}"  \
-                    CXXFLAGS="${BASE_CXXFLAGS}"  \
-                    LDFLAGS="${BASE_LDFLAGS}"    \
+        ./configure --prefix=$OPPREFIX                           \
+                    --build=${arch}-w64-mingw32                  \
+                    --host=${arch}-w64-mingw32                   \
+                    --disable-silent-rules                       \
+                    --disable-shared                             \
+                    --enable-static                              \
+                    --disable-doc                                \
+                    --disable-extra-programs                     \
+                    --with-gnu-ld                                \
+                    CPPFLAGS="${BASE_CPPFLAGS} -DOPUS_EXPORT=''" \
+                    CFLAGS="${BASE_CFLAGS}"                      \
+                    LDFLAGS="${BASE_LDFLAGS}"                    \
             > ${LOGS_DIR}/opus_config_${arch}.log 2>&1 || exit 1
         echo "done"
 
@@ -106,16 +107,14 @@ function build_tools() {
 
         source cpath $arch
         printf "===> configure opus-tools %s\n" $arch
-        PKG_CONFIG_PATH=${OPPREFIX}/lib/pkgconfig    \
-        ./configure --prefix=$OPPREFIX               \
-                    --build=${arch}-w64-mingw32      \
-                    --host=${arch}-w64-mingw32       \
-                    --disable-shared --enable-static \
-                    --enable-sse                     \
-                    CFLAGS="${BASE_CFLAGS}"          \
-                    CPPFLAGS="${BASE_CPPFLAGS}"      \
-                    CXXFLAGS="${BASE_CXXFLAGS}"      \
-                    LDFLAGS="${BASE_LDFLAGS}"        \
+        ./configure --prefix=$OPPREFIX          \
+                    --build=${arch}-w64-mingw32 \
+                    --host=${arch}-w64-mingw32  \
+                    --disable-silent-rules      \
+                    --enable-sse                \
+                    CPPFLAGS="${BASE_CPPFLAGS}" \
+                    CFLAGS="${BASE_CFLAGS}"     \
+                    LDFLAGS="${BASE_LDFLAGS}"   \
             > ${LOGS_DIR}/tools_config_${arch}.log 2>&1 || exit 1
         echo "done"
 
@@ -126,6 +125,7 @@ function build_tools() {
 
         printf "===> installing opus-tools %s\n" $arch
         make install-strip > ${LOGS_DIR}/tools_install_${arch}.log 2>&1 || exit 1
+        install -m 755 ./opusrtp.exe ${OPPREFIX}/bin
         echo "done"
         make distclean > /dev/null 2>&1
     done

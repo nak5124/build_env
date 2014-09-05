@@ -25,6 +25,7 @@ if [ -z "${MSYSTEM}" ]; then
 fi
 
 CMD_PATH="${PATH}"
+VC32_DIR="/c/progra~2/Microsoft Visual Studio 12.0/VC/bin"
 VC64_DIR="/c/progra~2/Microsoft Visual Studio 12.0/VC/bin/amd64"
 INNO_DIR="/c/progra~2/Inno Setup 5"
 MSYS2_PATH="/usr/local/bin:/usr/bin:/bin"
@@ -431,7 +432,7 @@ HISTFILE=/tmp/.bash_history
 # term
 TERM=xterm-256color
 
-export PATH MANPATH INFOPATH ACLOCAL_PATH PKG_CONFIG_PATH USER TMP TEMP PRINTER HOSTNAME PS1 SHELL tmp temp HISTCONTROL HISTIGNORE HISTTIMEFORMAT HISTFILE TERM CMD_PATH MSYS2_PATH VC64_DIR INNO_DIR CARCH CHOST
+export PATH MANPATH INFOPATH ACLOCAL_PATH PKG_CONFIG_PATH USER TMP TEMP PRINTER HOSTNAME PS1 SHELL tmp temp HISTCONTROL HISTIGNORE HISTTIMEFORMAT HISTFILE TERM CMD_PATH MSYS2_PATH VC32_DIR VC64_DIR INNO_DIR CARCH CHOST
 
 # Check to see if mkpasswd/mkgroup needs to be run try and cut down the emails
 #   about this on the lists!

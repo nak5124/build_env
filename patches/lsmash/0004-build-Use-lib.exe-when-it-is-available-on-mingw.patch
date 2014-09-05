@@ -1,0 +1,110 @@
+From 8ad6bb710321477912b74ff5639935f6059a1835 Mon Sep 17 00:00:00 2001
+From: Yuta NAKAI <nak5124@live.jp>
+Date: Tue, 2 Sep 2014 02:21:31 +0900
+Subject: [PATCH 4/4] build: Use lib.exe when it is available on mingw.
+
+---
+ .gitignore |  1 +
+ Makefile   |  9 ++++++++-
+ configure  | 25 +++++++++++++++++++++++++
+ 3 files changed, 34 insertions(+), 1 deletion(-)
+
+diff --git a/.gitignore b/.gitignore
+index a20f4c2..9ae81bd 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -6,6 +6,7 @@
+ *.dll*
+ *.dylib
+ *.exe
++*.exp
+ *.lib
+ *.o
+ *.orig
+diff --git a/Makefile b/Makefile
+index 8409ed2..9e07efd 100644
+--- a/Makefile
++++ b/Makefile
+@@ -28,6 +28,9 @@ $(STATICLIBNAME): $(OBJS)
+ $(SHAREDLIBNAME): $(OBJS)
+ 	$(LD) $(SO_LDFLAGS) $(LDFLAGS) -o $@ $^ $(LIBS)
+ 	-@ $(if $(STRIP), $(STRIP) -x $@)
++ifneq ($(SLIB_CMD),)
++	$(SLIB_CMD)
++endif
+ 
+ # $(TOOLS) is automatically generated as config.mak2 by configure.
+ # The reason for having config.mak2 is for making this Makefile easy to read.
+@@ -53,6 +56,10 @@ ifneq ($(IMPLIB),)
+ 	install -m 644 $(IMPLIB) $(DESTDIR)$(libdir)
+ 	install -d $(DESTDIR)$(bindir)
+ 	install -m 755 $(SHAREDLIB) $(DESTDIR)$(bindir)
++ifneq ($(SLIB_CMD),)
++	install -m 644 $(DEFNAME) $(DESTDIR)$(libdir)
++	install -m 644 lsmash.lib $(DESTDIR)$(bindir)
++endif
+ else
+ 	install -m 644 $(SHAREDLIB) $(DESTDIR)$(libdir)
+ endif
+@@ -65,7 +72,7 @@ uninstall:
+ 	$(RM) $(addprefix $(DESTDIR)$(bindir)/, $(TOOLS_ALL) $(TOOLS_ALL:%=%.exe) liblsmash.dll cyglsmash.dll)
+ 
+ clean:
+-	$(RM) */*.o *.a *.so *.dll *.dylib $(addprefix cli/, *.exe $(TOOLS_ALL)) .depend
++	$(RM) */*.o *.a *.so *.def *.exp *.lib *.dll *.dylib $(addprefix cli/, *.exe $(TOOLS_ALL)) .depend
+ 
+ distclean: clean
+ 	$(RM) config.* *.pc
+diff --git a/configure b/configure
+index d921f80..b26d3ef 100755
+--- a/configure
++++ b/configure
+@@ -56,6 +56,14 @@ cc_check()
+     return $ret
+ }
+ 
++is_64bit()
++{
++    echo 'int main(void){int a[2*(sizeof(void *)>4)-1]; return 0;}' > conftest.c
++    $CC conftest.c -o conftest 2> /dev/null
++    ret=$?
++    rm -f conftest*
++    return $ret
++}
+ #-----------------------------------------------------------------------------
+ 
+ rm -f config.* .depend conftest* liblsmash.pc
+@@ -316,6 +324,20 @@ else
+     CLI_LIBLSMASH="$STATICLIBNAME"
+ fi
+ 
++case "$TARGET_OS" in
++    *mingw*)
++        if lib.exe --list > /dev/null 2>&1 \
++        && type gendef > /dev/null 2>&1 ; then
++            if is_64bit ; then
++                LIBARCH=x64
++            else
++                LIBARCH=i386
++            fi
++            DEFNAME="lsmash-${MAJVER}.def"
++            SLIB_CMD='gendef - $(SHAREDLIBNAME) > $(DEFNAME) 2>/dev/null; lib.exe -machine:$(LIBARCH) -def:$(DEFNAME) -out:lsmash.lib'
++        fi
++esac
++
+ cat >> liblsmash.pc << EOF
+ prefix=$prefix
+ exec_prefix=$exec_prefix
+@@ -356,6 +378,9 @@ LDFLAGS = $LDFLAGS
+ SO_LDFLAGS = $SO_LDFLAGS
+ LIBS = $LIBS
+ CLI_LIBLSMASH = $CLI_LIBLSMASH
++LIBARCH = $LIBARCH
++DEFNAME = $DEFNAME
++SLIB_CMD = $SLIB_CMD
+ EOF
+ 
+ cat config.mak
+-- 
+2.1.0
+

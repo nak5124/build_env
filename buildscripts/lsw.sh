@@ -26,7 +26,6 @@ function build_LSW_common() {
     patch -p1 < ${PATCHES_DIR}/0001-vslsmashsource-Don-t-print-any-info-from-libav-ffmpe.patch \
         > ${LOGS_DIR}/lsw_patches.log 2>&1 || exit 1
     patch -p1 < ${PATCHES_DIR}/0002-lsmashsource.diff >> ${LOGS_DIR}/lsw_patches.log 2>&1 || exit 1
-    patch -p1 < ${PATCHES_DIR}/libs.diff >> ${LOGS_DIR}/lsw_patches.log 2>&1 || exit 1
 
     cp -fa ${PATCHES_DIR}/build_2013.bat ./AviSynth
     cp -fa ${PATCHES_DIR}/build_2013_x64.bat ./AviSynth
@@ -54,9 +53,8 @@ function build_LSW_aviutl() {
 
     source cpath i686
     echo "===> configure LSW AviUtl"
-    PKG_CONFIG_PATH=/mingw32/local/lib/pkgconfig         \
-    ./configure --prefix=/mingw32/local                  \
-                --extra-ldflags="-static -static-libgcc" \
+    ./configure --prefix=/mingw32/local        \
+                --extra-ldflags=-static-libgcc \
     > ${LOGS_DIR}/lsw_config_aviutl.log 2>&1 || exit 1
     echo "done"
 
@@ -71,6 +69,15 @@ function build_LSW_aviutl() {
     cp -fa ${DEST_DIR}/AviUtl/* /d/encode/aviutl/Plugins
     cp -fa ./README* ${DEST_DIR}/AviUtl
     cp -fa ./LICENSE ${DEST_DIR}/legal_stuff/L-SMASH-Works/AviUtl
+    ln -fs /mingw32/bin/libbz2-1.dll /d/encode/aviutl
+    ln -fs /mingw32/bin/zlib1.dll /d/encode/aviutl
+    ln -fs /mingw32/bin/libiconv-2.dll /d/encode/aviutl
+    ln -fs /mingw32/local/bin/liblsmash-1.dll /d/encode/aviutl
+    ln -fs /mingw32/local/bin/avcodec-56.dll /d/encode/aviutl
+    ln -fs /mingw32/local/bin/avformat-56.dll /d/encode/aviutl
+    ln -fs /mingw32/local/bin/avresample-2.dll /d/encode/aviutl
+    ln -fs /mingw32/local/bin/avutil-54.dll /d/encode/aviutl
+    ln -fs /mingw32/local/bin/swscale-3.dll /d/encode/aviutl
     echo "done"
 
     return 0
@@ -98,6 +105,24 @@ function build_LSW_avisynth() {
     cp -fa ./x64/Release/LSMASHSource.dll /c/AviSynth+/plugins64
     cp -fa ./README ${DEST_DIR}/AviSynth
     cp -fa ./LICENSE ${DEST_DIR}/legal_stuff/L-SMASH-Works/AviSynth
+    ln -fs /mingw32/bin/libbz2-1.dll /c/AviSynth+/plugins
+    ln -fs /mingw32/bin/zlib1.dll /c/AviSynth+/plugins
+    ln -fs /mingw32/bin/libiconv-2.dll /c/AviSynth+/plugins
+    ln -fs /mingw32/local/bin/liblsmash-1.dll /c/AviSynth+/plugins
+    ln -fs /mingw32/local/bin/avcodec-56.dll /c/AviSynth+/plugins
+    ln -fs /mingw32/local/bin/avformat-56.dll /c/AviSynth+/plugins
+    ln -fs /mingw32/local/bin/avresample-2.dll /c/AviSynth+/plugins
+    ln -fs /mingw32/local/bin/avutil-54.dll /c/AviSynth+/plugins
+    ln -fs /mingw32/local/bin/swscale-3.dll /c/AviSynth+/plugins
+    ln -fs /mingw64/bin/libbz2-1.dll /c/AviSynth+/plugins64
+    ln -fs /mingw64/bin/zlib1.dll /c/AviSynth+/plugins64
+    ln -fs /mingw64/bin/libiconv-2.dll /c/AviSynth+/plugins64
+    ln -fs /mingw64/local/bin/liblsmash-1.dll /c/AviSynth+/plugins64
+    ln -fs /mingw64/local/bin/avcodec-56.dll /c/AviSynth+/plugins64
+    ln -fs /mingw64/local/bin/avformat-56.dll /c/AviSynth+/plugins64
+    ln -fs /mingw64/local/bin/avresample-2.dll /c/AviSynth+/plugins64
+    ln -fs /mingw64/local/bin/avutil-54.dll /c/AviSynth+/plugins64
+    ln -fs /mingw64/local/bin/swscale-3.dll /c/AviSynth+/plugins64
     echo "done"
 
     return 0
@@ -117,10 +142,9 @@ function build_LSW_vapoursynth() {
 
         source cpath $arch
         printf "===> configure LSW VapourSynth %s\n" $arch
-        PKG_CONFIG_PATH=${LSWPREFIX}/lib/pkgconfig           \
-        ./configure --prefix=$LSWPREFIX                      \
-                    --extra-ldflags="-static -static-libgcc" \
-                    --target-os=mingw32                      \
+        ./configure --prefix=$LSWPREFIX            \
+                    --target-os=mingw32            \
+                    --extra-ldflags=-static-libgcc \
         > ${LOGS_DIR}/lsw_config_VS_${arch}.log 2>&1 || exit 1
         echo "done"
 
@@ -136,10 +160,26 @@ function build_LSW_vapoursynth() {
             cp -fa ./vslsmashsource.dll /c/VapourSynth/plugins32
             cp -fa ./README ${DEST_DIR}/VapourSynth
             cp -fa ./LICENSE ${DEST_DIR}/legal_stuff/L-SMASH-Works/VapourSynth
+            ln -fs /mingw32/bin/libbz2-1.dll /c/VapourSynth/plugins32
+            ln -fs /mingw32/bin/zlib1.dll /c/VapourSynth/plugins32
+            ln -fs /mingw32/bin/libiconv-2.dll /c/VapourSynth/plugins32
+            ln -fs /mingw32/local/bin/liblsmash-1.dll /c/VapourSynth/plugins32
+            ln -fs /mingw32/local/bin/avcodec-56.dll /c/VapourSynth/plugins32
+            ln -fs /mingw32/local/bin/avformat-56.dll /c/VapourSynth/plugins32
+            ln -fs /mingw32/local/bin/avutil-54.dll /c/VapourSynth/plugins32
+            ln -fs /mingw32/local/bin/swscale-3.dll /c/VapourSynth/plugins32
         else
             cp -fa ./vslsmashsource.dll ${DEST_DIR}/VapourSynth/x64
             cp -fa ./vslsmashsource.dll ${DEST_DIR}/../x64
             cp -fa ./vslsmashsource.dll  /c/VapourSynth/plugins64
+            ln -fs /mingw64/bin/libbz2-1.dll /c/VapourSynth/plugins64
+            ln -fs /mingw64/bin/zlib1.dll /c/VapourSynth/plugins64
+            ln -fs /mingw64/bin/libiconv-2.dll /c/VapourSynth/plugins64
+            ln -fs /mingw64/local/bin/liblsmash-1.dll /c/VapourSynth/plugins64
+            ln -fs /mingw64/local/bin/avcodec-56.dll /c/VapourSynth/plugins64
+            ln -fs /mingw64/local/bin/avformat-56.dll /c/VapourSynth/plugins64
+            ln -fs /mingw64/local/bin/avutil-54.dll /c/VapourSynth/plugins64
+            ln -fs /mingw64/local/bin/swscale-3.dll /c/VapourSynth/plugins64
         fi
         echo "done"
 
