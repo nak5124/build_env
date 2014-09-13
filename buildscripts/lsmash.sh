@@ -1,6 +1,28 @@
 #!/usr/bin/env bash
 
 
+declare -a target_arch=(
+    "x86_64"
+    "i686"
+)
+
+for opt in "$@"
+do
+    case "${opt}" in
+        arch=* )
+            optarg="${opt#*=}"
+            target_arch=( $(echo $optarg | tr -s ',' ' ' ) )
+            for arch in ${target_arch[@]}
+            do
+                if [ "${arch}" != "i686" -a "${arch}" != "x86_64" ] ; then
+                    echo "${arch} is an unknown arch"
+                    exit 1
+                fi
+            done
+            ;;
+    esac
+done
+
 declare -r PATCHES_DIR=${HOME}/patches/lsmash
 declare -r LOGS_DIR=${HOME}/logs/lsmash
 if [ ! -d $LOGS_DIR ] ; then
@@ -53,7 +75,7 @@ function build_lsmash() {
     patch -p1 < ${PATCHES_DIR}/0004-build-Use-lib.exe-when-it-is-available-on-mingw.patch \
         >> ${LOGS_DIR}/lsmash_patch.log 2>&1 || exit 1
 
-    for arch in i686 x86_64
+    for arch in ${target_arch[@]}
     do
         if [ "${arch}" = "i686" ] ; then
             local LSPREFIX=/mingw32/local
@@ -66,16 +88,19 @@ function build_lsmash() {
         fi
 
         source cpath $arch
-        PATH=${VCDIR}:$PATH
+        PATH=${PATH}:$VCDIR
         export PATH
 
         printf "===> configure L-SMASH %s\n" $arch
-        ./configure --prefix=$LSPREFIX --enable-shared > ${LOGS_DIR}/lsmash_config_${arch}.log 2>&1 || exit 1
+        ./configure --prefix=$LSPREFIX \
+                    --enable-shared    \
+            > ${LOGS_DIR}/lsmash_config_${arch}.log 2>&1 || exit 1
         echo "done"
 
         make clean > /dev/null 2>&1
         printf "===> making L-SMASH %s\n" $arch
         make -j9 -O > ${LOGS_DIR}/lsmash_make_${arch}.log 2>&1 || exit 1
+        dos2unix lsmash-1.def > /dev/null 2>&1
         echo "done"
 
         printf "===> installing L-SMASH %s\n" $arch
@@ -107,7 +132,13 @@ make_package() {
     return 0
 }
 
+unset MINTTY
+declare -r mintty_save=$MINTTY
+
 build_lsmash
 make_package
+
+MINTTY=$mintty_save
+export MINTTY
 
 clear; echo "Everything has been successfully completed!"

@@ -2,12 +2,27 @@
 
 
 declare all_build=false
+declare -a target_arch=(
+    "x86_64"
+    "i686"
+)
 
 for opt in "$@"
 do
     case "${opt}" in
-        all)
+        all )
             all_build=true
+            ;;
+        arch=* )
+            optarg="${opt#*=}"
+            target_arch=( $(echo $optarg | tr -s ',' ' ' ) )
+            for arch in ${target_arch[@]}
+            do
+                if [ "${arch}" != "i686" -a "${arch}" != "x86_64" ] ; then
+                    echo "${arch} is an unknown arch"
+                    exit 1
+                fi
+            done
             ;;
     esac
 done
@@ -38,7 +53,7 @@ function build_libopus() {
 
     patch -p1 < ${PATCHES_DIR}/version.patch > ${LOGS_DIR}/opus_patch.log 2>&1 || exit 1
 
-    for arch in i686 x86_64
+    for arch in ${target_arch[@]}
     do
         if [ "${arch}" = "i686" ] ; then
             local OPPREFIX=/mingw32/local
@@ -97,7 +112,7 @@ function build_tools() {
 
     patch -p1 < ${PATCHES_DIR}/version_tools.patch > ${LOGS_DIR}/tools_patch.log 2>&1 || exit 1
 
-    for arch in i686 x86_64
+    for arch in ${target_arch[@]}
     do
         if [ "${arch}" = "i686" ] ; then
             local OPPREFIX=/mingw32/local
@@ -153,10 +168,16 @@ function make_package() {
     return 0
 }
 
+declare -r mintty_save=$MINTTY
+unset MINTTY
+
 if $all_build ; then
     build_libopus
 fi
 build_tools
 make_package
+
+MINTTY=$mintty_save
+export MINTTY
 
 clear; echo "Everything has been successfully completed!"

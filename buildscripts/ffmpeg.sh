@@ -2,12 +2,27 @@
 
 
 declare all_build=false
+declare -a target_arch=(
+    "x86_64"
+    "i686"
+)
 
 for opt in "$@"
 do
     case "${opt}" in
         all)
             all_build=true
+            ;;
+        arch=* )
+            optarg="${opt#*=}"
+            target_arch=( $(echo $optarg | tr -s ',' ' ' ) )
+            for arch in ${target_arch[@]}
+            do
+                if [ "${arch}" != "i686" -a "${arch}" != "x86_64" ] ; then
+                    echo "${arch} is an unknown arch"
+                    exit 1
+                fi
+            done
             ;;
     esac
 done
@@ -34,7 +49,7 @@ function build_sdl() {
     fi
     cd ${HOME}/OSS/SDL-1.2.15
 
-    for arch in i686 x86_64
+    for arch in ${target_arch[@]}
     do
         if [ "${arch}" = "i686" ] ; then
             local FFPREFIX=/mingw32/local
@@ -88,9 +103,9 @@ function build_openjpeg() {
     svnversion > ${LOGS_DIR}/openjpeg.hash
 
     autoreconf -fi > /dev/null 2>&1
-    dos2unix libopenjpeg/opj_malloc.h > /dev/null
+    dos2unix libopenjpeg/opj_malloc.h > /dev/null 2>&1
 
-    for arch in i686 x86_64
+    for arch in ${target_arch[@]}
     do
         if [ "${arch}" = "i686" ] ; then
             local FFPREFIX=/mingw32/local
@@ -112,6 +127,7 @@ function build_openjpeg() {
                     CFLAGS="${BASE_CFLAGS}"                  \
                     LDFLAGS="${BASE_LDFLAGS}"                \
             > ${LOGS_DIR}/openjpeg_config_${arch}.log 2>&1 || exit 1
+        sed -i 's|-O3||g' config.status
         echo "done"
 
         make clean > /dev/null 2>&1
@@ -145,7 +161,7 @@ function build_libvpx() {
     git_hash > ${LOGS_DIR}/vpx.hash
     git_rev >> ${LOGS_DIR}/vpx.hash
 
-    for arch in i686 x86_64
+    for arch in ${target_arch[@]}
     do
         if [ "${arch}" = "i686" ] ; then
             local FFPREFIX=/mingw32/local
@@ -157,18 +173,24 @@ function build_libvpx() {
 
         source cpath $arch
         printf "===> configure libvpx %s\n" $arch
-        ./configure --prefix=$FFPREFIX                   \
-                    --target=$_target                    \
-                    --disable-install-docs               \
-                    --disable-examples                   \
-                    --disable-docs                       \
-                    --disable-unit-tests                 \
-                    --enable-runtime-cpu-detect          \
-                    --enable-multi-res-encoding          \
-                    --enable-webm-io                     \
-                    --enable-libyuv                      \
-                    --extra-cflags="-fno-tree-vectorize" \
+        CFLAGS="${BASE_CFLAGS}"                 \
+        CXXFLAGS="${BASE_CXXFLAGS}"             \
+        LDFLAGS="${BASE_LDFLAGS}"               \
+        ./configure --prefix=$FFPREFIX          \
+                    --target=$_target           \
+                    --disable-install-docs      \
+                    --disable-examples          \
+                    --disable-docs              \
+                    --disable-unit-tests        \
+                    --enable-runtime-cpu-detect \
+                    --enable-multi-res-encoding \
+                    --disable-vp8-decoder       \
+                    --disable-vp9-decoder       \
             > ${LOGS_DIR}/vpx_config_${arch}.log 2>&1 || exit 1
+        sed -i 's|-O3||g' libs-${_target}.mk
+        sed -i '/extralibs/d' libs-${_target}.mk
+        sed -i 's/HAVE_PTHREAD_H=yes/HAVE_PTHREAD_H=no/' libs-${_target}.mk
+        sed -i 's/#define HAVE_PTHREAD_H 1/#define HAVE_PTHREAD_H 0/' vpx_config.h
         echo "done"
 
         make clean > /dev/null 2>&1
@@ -203,7 +225,7 @@ function build_libspeex() {
 
     autoreconf -fi > /dev/null 2>&1
 
-    for arch in i686 x86_64
+    for arch in ${target_arch[@]}
     do
         if [ "${arch}" = "i686" ] ; then
             local FFPREFIX=/mingw32/local
@@ -226,6 +248,7 @@ function build_libspeex() {
                     CFLAGS="${BASE_CFLAGS}"           \
                     LDFLAGS="${BASE_LDFLAGS} -lwinmm" \
             > ${LOGS_DIR}/speex_config_${arch}.log 2>&1 || exit 1
+        sed -i 's|-O3||g' config.status
         echo "done"
 
         make clean > /dev/null 2>&1
@@ -260,7 +283,7 @@ function build_libopencore_amr() {
 
     autoreconf -fi > /dev/null 2>&1
 
-    for arch in i686 x86_64
+    for arch in ${target_arch[@]}
     do
         if [ "${arch}" = "i686" ] ; then
             local FFPREFIX=/mingw32/local
@@ -273,14 +296,15 @@ function build_libopencore_amr() {
         ./configure --prefix=$FFPREFIX          \
                     --build=${arch}-w64-mingw32 \
                     --host=${arch}-w64-mingw32  \
+                    --disable-silent-rules      \
                     --disable-shared            \
                     --enable-static             \
+                    --with-gnu-ld               \
                     CFLAGS="${BASE_CFLAGS}"     \
                     CPPFLAGS="${BASE_CPPFLAGS}" \
                     CXXFLAGS="${BASE_CXXFLAGS}" \
                     LDFLAGS="${BASE_LDFLAGS}"   \
             > ${LOGS_DIR}/opencore-amr_config_${arch}.log 2>&1 || exit 1
-        sed -i 's/#define HAVE_PTHREAD_H 1/#define HAVE_PTHREAD_H 0/' vpx_config.h
         echo "done"
 
         make clean > /dev/null 2>&1
@@ -343,7 +367,7 @@ function build_ffmpeg() {
 
     patch_ffmpeg
 
-    for arch in i686 x86_64
+    for arch in ${target_arch[@]}
     do
         if [ "${arch}" = "i686" ] ; then
             local _archopt="--arch=x86 --cpu=i686"
@@ -356,34 +380,34 @@ function build_ffmpeg() {
         fi
 
         source cpath $arch
-        PATH=${VCDIR}:$PATH
+        PATH=${PATH}:$VCDIR
         export PATH
 
         printf "===> configure FFmpeg %s\n" $arch
-        ./configure --prefix=$FFPREFIX                       \
-                    --enable-version3                        \
-                    --enable-shared                          \
-                    --disable-doc                            \
-                    --enable-avresample                      \
-                    --disable-pthreads                       \
-                    --enable-avisynth                        \
-                    --enable-libopencore-amrnb               \
-                    --disable-decoder=amrnb                  \
-                    --enable-libopencore-amrwb               \
-                    --disable-decoder=amrwb                  \
-                    --enable-libopenjpeg                     \
-                    --disable-decoder=jpeg2000               \
-                    --enable-libopus                         \
-                    --disable-decoder=opus                   \
-                    --disable-parser=opus                    \
-                    --enable-libspeex                        \
-                    --enable-libvpx                          \
-                    --disable-decoder=libvpx_vp9             \
-                    --disable-decoder=libvpx_vp8             \
-                    --disable-outdev=sdl                     \
-                    ${_archopt}                              \
-                    --disable-debug                          \
-                    --extra-cflags="-fexcess-precision=fast" \
+        ./configure --prefix=$FFPREFIX           \
+                    --enable-version3            \
+                    --enable-shared              \
+                    --disable-doc                \
+                    --enable-avresample          \
+                    --disable-pthreads           \
+                    --enable-avisynth            \
+                    --enable-libopencore-amrnb   \
+                    --disable-decoder=amrnb      \
+                    --enable-libopencore-amrwb   \
+                    --disable-decoder=amrwb      \
+                    --enable-libopenjpeg         \
+                    --disable-decoder=jpeg2000   \
+                    --enable-libopus             \
+                    --disable-decoder=opus       \
+                    --disable-parser=opus        \
+                    --enable-libspeex            \
+                    --enable-libvpx              \
+                    --disable-decoder=libvpx_vp9 \
+                    --disable-decoder=libvpx_vp8 \
+                    --disable-outdev=sdl         \
+                    ${_archopt}                  \
+                    --disable-debug              \
+                    --optflags="${BASE_CFLAGS}"  \
             > ${LOGS_DIR}/ffmpeg_config_${arch}.log 2>&1 || exit 1
         sed -i '/HAVE_CLOCK_GETTIME/d' config.h
         sed -i '/HAVE_NANOSLEEP/d' config.h
@@ -403,6 +427,9 @@ function build_ffmpeg() {
     return 0
 }
 
+declare -r mintty_save=$MINTTY
+unset MINTTY
+
 if $all_build ; then
     build_sdl
     build_openjpeg
@@ -411,5 +438,8 @@ if $all_build ; then
     build_libopencore_amr
 fi
 build_ffmpeg
+
+MINTTY=$mintty_save
+export MINTTY
 
 clear; echo "Everything has been successfully completed!"
