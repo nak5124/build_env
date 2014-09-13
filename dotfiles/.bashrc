@@ -7,6 +7,10 @@ CALL chcp 65001 > nul
 exit
 ' | cmd > /dev/null
 
+# MSYS
+MSYS='winsymlinks:nativestrict'
+export MSYS
+
 # PATH
 alias cpath='source cpath'
 
@@ -216,18 +220,19 @@ function nppp() {
 }
 
 # shell
+MINTTY=NO_FILE
 PROMPT_COMMAND='printf "\033]0;%s: %s\007" "${MSYSTEM}" "${PWD/${HOME}/\~}"'
 PS1="\n\033[1;32m\]\u@\h \[\033[1;31m\w\033[0m\]\n$ "
 IGNOREEOF=2
-export PROMPT_COMMAND PS1 IGNOREEOF
+export PROMPT_COMMAND PS1 IGNOREEOF MINTTY
 
 # GCC
 GCC_COLORS='error=01;31;255:warning=01;35;255:note=01;36;255:caret=01;32;255:locus=01:quote=01'
 export GCC_COLORS
-BASE_CFLAGS="-pipe -Os -msse4 -fomit-frame-pointer -fexcess-precision=fast"
-BASE_CPPFLAGS="-D_FORTIFY_SOURCE=2 -D__USE_MINGW_ANSI_STDIO=1"
+BASE_CFLAGS="-pipe -Os -foptimize-strlen -fexcess-precision=fast"
+BASE_CPPFLAGS="-D__USE_MINGW_ANSI_STDIO=1"
 BASE_CXXFLAGS="${BASE_CFLAGS}"
-BASE_LDFLAGS="-pipe -s -Wl,-O1 -Wl,--as-needed -Wl,--nxcompat -Wl,--dynamicbase"
+BASE_LDFLAGS="-s -Wl,-O1 -Wl,--as-needed -Wl,--nxcompat -Wl,--dynamicbase"
 export BASE_CFLAGS BASE_CPPFLAGS BASE_CXXFLAGS BASE_LDFLAGS
 
 # proxy
