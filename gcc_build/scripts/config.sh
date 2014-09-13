@@ -17,6 +17,9 @@ declare -ra TARGET_ARCH=(
     "i686"
 )
 
+# Color
+unset MINTTY
+
 # LANG
 LC_ALL=en_US.UTF-8
 export LC_ALL
@@ -34,8 +37,8 @@ declare -r DST_DIR=${ROOT_DIR}/dst
 
 # flags
 declare -r _CPPFLAGS="-D__USE_MINGW_ANSI_STDIO=1"
-declare -r _CFLAGS="-pipe -O2"
-declare -r _CXXFLAGS="-pipe -O2"
+declare -r _CFLAGS="-pipe -Os -foptimize-strlen"
+declare -r _CXXFLAGS="-pipe -Os -foptimize-strlen"
 declare -r _LDFLAGS="-s"
 declare -r MAKEFLAGS="-j$(($(nproc)+1)) -O"
 

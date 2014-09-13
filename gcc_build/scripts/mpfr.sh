@@ -65,8 +65,8 @@ function build_mpfr() {
             --prefix=/mingw$bitval             \
             --build=${arch}-w64-mingw32        \
             --host=${arch}-w64-mingw32         \
-            --disable-shared                   \
-            --enable-static                    \
+            --enable-shared                    \
+            --disable-static                   \
             --with-gmp=${DST_DIR}/mingw$bitval \
             --with-gnu-ld                      \
             CPPFLAGS="${_CPPFLAGS}"            \

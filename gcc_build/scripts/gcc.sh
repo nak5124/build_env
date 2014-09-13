@@ -36,7 +36,7 @@ function patch_gcc() {
     fi
     if [ ! -f ${BUILD_DIR}/gcc/src/gcc-${GCC_VER}/patched_02.marker ] ; then
         # hack! - some configure tests for header files using "$CPP $CPPFLAGS"
-        sed -i "/ac_cpp=/s/\$CPPFLAGS/\$CPPFLAGS -O2/" {libiberty,gcc}/configure
+        sed -i "/ac_cpp=/s/\$CPPFLAGS/\$CPPFLAGS -Os/" {libiberty,gcc}/configure
         touch ${BUILD_DIR}/gcc/src/gcc-${GCC_VER}/patched_02.marker
     fi
     if [ ! -f ${BUILD_DIR}/gcc/src/gcc-${GCC_VER}/patched_03.marker ] ; then
@@ -109,128 +109,22 @@ function patch_gcc() {
         patch -p1 < ${PATCHES_DIR}/gcc/0014-force-linking-to-dll.a.patch >> ${LOGS_DIR}/gcc/gcc_patch.log 2>&1 || exit 1
         touch ${BUILD_DIR}/gcc/src/gcc-${GCC_VER}/patched_16.marker
     fi
+    if [ ! -f ${BUILD_DIR}/gcc/src/gcc-${GCC_VER}/patched_17.marker ] ; then
+        # mintty can't handle isatty. This is an ugly hack.
+        patch -p1 < ${PATCHES_DIR}/gcc/0015-workaround-mintty.patch >> ${LOGS_DIR}/gcc/gcc_patch.log 2>&1 || exit 1
+        touch ${BUILD_DIR}/gcc/src/gcc-${GCC_VER}/patched_17.marker
+    fi
+    if [ ! -f ${BUILD_DIR}/gcc/src/gcc-${GCC_VER}/patched_18.marker ] ; then
+        patch -p1 < ${PATCHES_DIR}/gcc/0016-always use-utf8.patch >> ${LOGS_DIR}/gcc/gcc_patch.log 2>&1 || exit 1
+        touch ${BUILD_DIR}/gcc/src/gcc-${GCC_VER}/patched_18.marker
+    fi
+    if [ ! -f ${BUILD_DIR}/gcc/src/gcc-${GCC_VER}/patched_19.marker ] ; then
+        patch -p1 < ${PATCHES_DIR}/gcc/0017-wcswidth.patch >> ${LOGS_DIR}/gcc/gcc_patch.log 2>&1 || exit 1
+        touch ${BUILD_DIR}/gcc/src/gcc-${GCC_VER}/patched_19.marker
+    fi
 
     popd > /dev/null
 
-    return 0
-}
-
-# pre build
-function build_gcc_pre() {
-    clear; printf "Build GCC %s pre step\n" $GCC_VER
-
-    download_gcc_src
-    patch_gcc
-
-    for arch in ${TARGET_ARCH[@]}
-    do
-        cd ${BUILD_DIR}/gcc/build_$arch
-        rm -fr ${BUILD_DIR}/gcc/build_${arch}/*
-
-        local bitval=$(get_arch_bit ${arch})
-
-        mkdir -p ${BUILD_DIR}/gcc/build_${arch}/include/../lib
-        ln -sf ${DST_DIR}/mingw${bitval}/{include,${arch}-w64-mingw32/include}/* ${BUILD_DIR}/gcc/build_${arch}/include
-        ln -sf ${DST_DIR}/mingw${bitval}/{lib,${arch}-w64-mingw32/lib}/* ${BUILD_DIR}/gcc/build_${arch}/lib
-
-        source cpath $arch
-        PATH=${DST_DIR}/mingw${bitval}/bin:$PATH
-        export PATH
-
-        if [ "${arch}" = "i686" ] ; then
-            local _optimization="--with-arch=i686 --with-tune=generic"
-            local _ehconf="--disable-sjlj-exceptions --with-dwarf2"
-        else
-            local _optimization="--with-arch=x86-64 --with-tune=generic"
-            local _ehconf=""
-        fi
-
-        if [ "${THREAD_MODEL}" = "posix" ] ; then
-            local _threads="--enable-threads=posix --enable-libstdcxx-time=yes"
-        else
-            local _threads="--enable-threads=win32"
-        fi
-
-        # Don't use win native symlink during building GCC.
-        unset MSYS
-
-        printf "===> configuring GCC %s\n" $arch
-        # Don't set any {CPP,C,CXX,LD}FLAGS.
-        ../src/gcc-${GCC_VER}/configure                                                           \
-            --prefix=/mingw$bitval                                                                \
-            --with-local-prefix=/mingw${bitval}/local                                             \
-            --with-build-sysroot=${DST_DIR}/mingw$bitval                                          \
-            --with-native-system-header-dir=${DST_DIR}/mingw${bitval}/${arch}-w64-mingw32/include \
-            --with-gxx-include-dir=/mingw${bitval}/include/c++/${GCC_VER}                         \
-            --libexecdir=/mingw${bitval}/lib                                                      \
-            --build=${arch}-w64-mingw32                                                           \
-            --host=${arch}-w64-mingw32                                                            \
-            --target=${arch}-w64-mingw32                                                          \
-            --enable-shared                                                                       \
-            --enable-static                                                                       \
-            --disable-multilib                                                                    \
-            --enable-languages=c,c++,lto                                                          \
-            ${_threads}                                                                           \
-            ${_ehconf}                                                                            \
-            --enable-lto                                                                          \
-            --enable-checking=release                                                             \
-            --enable-version-specific-runtime-libs                                                \
-            --enable-fully-dynamic-string                                                         \
-            --disable-libgomp                                                                     \
-            --disable-libssp                                                                      \
-            --disable-libquadmath                                                                 \
-            --disable-bootstrap                                                                   \
-            --disable-win32-registry                                                              \
-            --disable-rpath                                                                       \
-            --disable-nls                                                                         \
-            --disable-werror                                                                      \
-            --disable-symvers                                                                     \
-            --disable-libstdcxx-pch                                                               \
-            --disable-libstdcxx-debug                                                             \
-            --with-{gmp,mpfr,mpc,isl,cloog}=${DST_DIR}/mingw$bitval                               \
-            --disable-isl-version-check                                                           \
-            --disable-cloog-version-check                                                         \
-            --enable-cloog-backend=isl                                                            \
-            --enable-graphite                                                                     \
-            --with-libiconv-prefix=${DST_DIR}/mingw$bitval                                        \
-            --with-libintl-prefix=${DST_DIR}/mingw$bitval                                         \
-            --with-system-zlib                                                                    \
-            ${_optimization}                                                                      \
-            --with-gnu-as                                                                         \
-            --with-gnu-ld                                                                         \
-            --program-suffix=-$GCC_VER                                                            \
-            > ${LOGS_DIR}/gcc/gcc_pre_config_${arch}.log 2>&1 || exit 1
-        echo "done"
-
-        printf "===> making GCC pre %s\n" $arch
-        make $MAKEFLAGS all > ${LOGS_DIR}/gcc/gcc_pre_make_${arch}.log 2>&1 || exit 1
-        echo "done"
-
-        printf "===> installing GCC pre %s\n" $arch
-        rm -fr ${PREIN_DIR}/gcc_pre/mingw$bitval
-        make DESTDIR=${PREIN_DIR}/gcc_pre install > ${LOGS_DIR}/gcc/gcc_pre_install_${arch}.log 2>&1 || exit 1
-        # Move libgcc_s.a to GCC EXEC_PREFIX.
-        mv -f ${PREIN_DIR}/gcc_pre/mingw${bitval}/lib/gcc/${arch}-w64-mingw32/lib/libgcc_s.a \
-            ${PREIN_DIR}/gcc_pre/mingw${bitval}/lib/gcc/${arch}-w64-mingw32/$GCC_VER
-        # Remove unneeded files.
-        rm -f ${PREIN_DIR}/gcc_pre/mingw${bitval}/lib/gcc/${arch}-w64-mingw32/${GCC_VER}/*.py
-        rm -fr ${PREIN_DIR}/gcc_pre/mingw${bitval}/share/gcc-$GCC_VER
-        del_empty_dir ${PREIN_DIR}/gcc_pre/mingw$bitval
-        remove_la_files ${PREIN_DIR}/gcc_pre/mingw$bitval
-        strip_files ${PREIN_DIR}/gcc_pre/mingw$bitval
-        echo "done"
-
-        # Enable win native symlink.
-        MSYS=winsymlinks:nativestrict
-        export MSYS
-
-        printf "===> copying GCC pre %s to %s/mingw%s\n" $arch $DST_DIR $bitval
-        cp -fra ${PREIN_DIR}/gcc_pre/mingw$bitval $DST_DIR
-        cd ${DST_DIR}/mingw${bitval}/bin
-        echo "done"
-    done
-
-    cd $ROOT_DIR
     return 0
 }
 
@@ -270,6 +164,15 @@ function symlink_gcc() {
 function build_gcc() {
     clear; printf "Build GCC %s\n" $GCC_VER
 
+    local -ra _dlllist=(
+        "libgmp-*.dll"
+        "libgmpxx-*.dll"
+        "libmpfr-*.dll"
+        "libmpc-*.dll"
+        "libisl-*.dll"
+        "libcloog-isl-*.dll"
+    )
+
     download_gcc_src
     patch_gcc
 
@@ -279,6 +182,7 @@ function build_gcc() {
         rm -fr ${BUILD_DIR}/gcc/build_${arch}/*
 
         local bitval=$(get_arch_bit ${arch})
+        local _aof=$(arch_optflags ${arch})
 
         mkdir -p ${BUILD_DIR}/gcc/build_${arch}/include/../lib
         ln -sf ${DST_DIR}/mingw${bitval}/{include,${arch}-w64-mingw32/include}/* ${BUILD_DIR}/gcc/build_${arch}/include
@@ -306,7 +210,6 @@ function build_gcc() {
         unset MSYS
 
         printf "===> configuring GCC %s\n" $arch
-        # Don't set any {CPP,C,CXX,LD}FLAGS.
         ../src/gcc-${GCC_VER}/configure                                                           \
             --prefix=/mingw$bitval                                                                \
             --with-local-prefix=/mingw${bitval}/local                                             \
@@ -350,12 +253,28 @@ function build_gcc() {
             --with-gnu-as                                                                         \
             --with-gnu-ld                                                                         \
             --program-suffix=-$GCC_VER                                                            \
+            CPPFLAGS="${_CPPFLAGS}"                                                               \
+            CPPFLAGS_FOR_TARGET="${_CPPFLAGS}"                                                    \
+            CFLAGS="${_aof} ${_CFLAGS}"                                                           \
+            CFLAGS_FOR_TARGET="${_aof} ${_CFLAGS}"                                                \
+            BOOT_CFLAGS="${_aof} ${_CFLAGS}"                                                      \
+            CXXFLAGS="${_aof} ${_CXXFLAGS}"                                                       \
+            CXXFLAGS_FOR_TARGET="${_aof} ${_CXXFLAGS}"                                            \
+            BOOT_CXXFLAGS="${_aof} ${_CXXFLAGS}"                                                  \
+            LDFLAGS="${_LDFLAGS}"                                                                 \
+            LDFLAGS_FOR_TARGET="${_LDFLAGS}"                                                      \
+            BOOT_LDFLAGS="${_LDFLAGS}"                                                            \
             > ${LOGS_DIR}/gcc/gcc_config_${arch}.log 2>&1 || exit 1
         echo "done"
 
         printf "===> making GCC %s\n" $arch
         # Setting -j$(($(nproc)+1)) sometimes makes error.
-        make all > ${LOGS_DIR}/gcc/gcc_make_${arch}.log 2>&1 || exit 1
+        make                                                                                                                \
+            CPPFLAGS="${_CPPFLAGS}" CPPFLAGS_FOR_TARGET="${_CPPFLAGS}"                                                      \
+            CFLAGS="${_aof} ${_CFLAGS}" CFLAGS_FOR_TARGET="${_aof} ${_CFLAGS}" BOOT_CFLAGS="${_aof} ${_CFLAGS}"             \
+            CXXFLAGS="${_aof} ${_CXXFLAGS}" CXXFLAGS_FOR_TARGET="${_aof} ${_CXXFLAGS}" BOOT_CXXFLAGS="${_aof} ${_CXXFLAGS}" \
+            LDFLAGS="${_LDFLAGS}" LDFLAGS_FOR_TARGET="${_LDFLAGS}" BOOT_LDFLAGS="${_LDFLAGS}"                               \
+            bootstrap > ${LOGS_DIR}/gcc/gcc_make_${arch}.log 2>&1 || exit 1
         echo "done"
 
         printf "===> installing GCC %s\n" $arch
@@ -417,6 +336,11 @@ do
 done
 exec gcc $fl ${1+"$@"}
 _EOF_
+        # relocate DLLs
+        for _dll in ${_dlllist[@]}
+        do
+            mv -f ${DST_DIR}/mingw${bitval}/bin/$_dll ${DST_DIR}/mingw${bitval}/lib/gcc/${arch}-w64-mingw32/$GCC_VER
+        done
         echo "done"
     done
 
@@ -470,6 +394,11 @@ do
 done
 exec gcc $fl ${1+"$@"}
 _EOF_
+        # relocate DLLs
+        for _dll in ${_dlllist[@]}
+        do
+            mv -f ${DST_DIR}/mingw${bitval}/bin/$_dll ${DST_DIR}/mingw${bitval}/lib/gcc/${arch}-w64-mingw32/$GCC_VER
+        done
         echo "done"
     done
 

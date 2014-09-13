@@ -45,8 +45,8 @@ function build_gmp() {
             --host=${arch}-w64-mingw32      \
             --enable-cxx                    \
             --enable-fat                    \
-            --disable-shared                \
-            --enable-static                 \
+            --enable-shared                 \
+            --disable-static                \
             --with-gnu-ld                   \
             CPPFLAGS="${_CPPFLAGS}"         \
             CFLAGS="${_aof} ${_CFLAGS}"     \

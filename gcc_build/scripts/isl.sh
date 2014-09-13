@@ -60,8 +60,8 @@ function build_isl() {
             --prefix=/mingw$bitval                    \
             --build=${arch}-w64-mingw32               \
             --host=${arch}-w64-mingw32                \
-            --disable-shared                          \
-            --enable-static                           \
+            --enable-shared                           \
+            --disable-static                          \
             --with-gnu-ld                             \
             --with-gmp=system                         \
             --with-gmp-prefix=${DST_DIR}/mingw$bitval \

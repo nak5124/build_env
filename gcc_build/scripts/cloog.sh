@@ -67,8 +67,8 @@ function build_cloog() {
             --prefix=/mingw$bitval                    \
             --build=${arch}-w64-mingw32               \
             --host=${arch}-w64-mingw32                \
-            --disable-shared                          \
-            --enable-static                           \
+            --enable-shared                           \
+            --disable-static                          \
             --with-gnu-ld                             \
             --with-isl=system                         \
             --with-isl-prefix=${DST_DIR}/mingw$bitval \

@@ -1,0 +1,18 @@
+--- libiconv-1.14/libcharset/lib/localcharset.c	2014-09-11 15:16:47.573840900 +0900
++++ libiconv-1.14/libcharset/lib/localcharset.c	2014-09-11 15:37:07.731231600 +0900
+@@ -458,14 +458,7 @@
+ 
+   static char buf[2 + 10 + 1];
+ 
+-  /* Woe32 has a function returning the locale's codepage as a number:
+-     GetACP().
+-     When the output goes to a console window, it needs to be provided in
+-     GetOEMCP() encoding if the console is using a raster font, or in
+-     GetConsoleOutputCP() encoding if it is using a TrueType font.
+-     But in GUI programs and for output sent to files and pipes, GetACP()
+-     encoding is the best bet.  */
+-  sprintf (buf, "CP%u", GetACP ());
++  sprintf (buf, "CP%u", GetConsoleOutputCP ());
+   codeset = buf;
+ 
+ #elif defined OS2

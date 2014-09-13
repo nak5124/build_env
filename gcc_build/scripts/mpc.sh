@@ -43,8 +43,8 @@ function build_mpc() {
             --prefix=/mingw$bitval              \
             --build=${arch}-w64-mingw32         \
             --host=${arch}-w64-mingw32          \
-            --disable-shared                    \
-            --enable-static                     \
+            --enable-shared                     \
+            --disable-static                    \
             --with-mpfr=${DST_DIR}/mingw$bitval \
             --with-gmp=${DST_DIR}/mingw$bitval  \
             --with-gnu-ld                       \

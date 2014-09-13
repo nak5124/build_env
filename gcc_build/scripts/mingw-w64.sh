@@ -90,13 +90,13 @@ function build_threads() {
         rm -fr ${BUILD_DIR}/mingw-w64/winpthreads/build_${arch}/{.*,*} > /dev/null 2>&1
 
         local bitval=$(get_arch_bit ${arch})
+        local _aof=$(arch_optflags ${arch})
 
         source cpath $arch
         PATH=${DST_DIR}/mingw${bitval}/bin:$PATH
         export PATH
 
         printf "===> configuring MinGW-w64 winpthreads %s\n" $arch
-        # Don't set any {CPP,C,CXX,LD}FLAGS.
         ../../src/mingw-w64-${MINGW_VER}/mingw-w64-libraries/winpthreads/configure \
             --prefix=/mingw${bitval}/${arch}-w64-mingw32                           \
             --build=${arch}-w64-mingw32                                            \
@@ -104,6 +104,8 @@ function build_threads() {
             --enable-shared                                                        \
             --enable-static                                                        \
             --with-gnu-ld                                                          \
+            CFLAGS="${_aof} ${_CFLAGS}"                                            \
+            LDFLAGS="${_LDFLAGS}"                                                  \
             > ${LOGS_DIR}/mingw-w64/winpthreads/winpthreads_config_${arch}.log 2>&1 || exit 1
         echo "done"
 
@@ -161,6 +163,7 @@ function build_crt() {
         rm -fr ${BUILD_DIR}/mingw-w64/crt/build_${arch}/{.*,*} > /dev/null 2>&1
 
         local bitval=$(get_arch_bit ${arch})
+        local _aof=$(arch_optflags ${arch})
 
         source cpath $arch
         PATH=${DST_DIR}/mingw${bitval}/bin:$PATH
@@ -173,7 +176,6 @@ function build_crt() {
         fi
 
         printf "===> configuring MinGW-w64 crt %s\n" $arch
-        # Don't set any {CPP,C,CXX,LD}FLAGS.
         ../../src/mingw-w64-${MINGW_VER}/mingw-w64-crt/configure         \
             --prefix=/mingw${bitval}/${arch}-w64-mingw32                 \
             --build=${arch}-w64-mingw32                                  \
@@ -182,6 +184,9 @@ function build_crt() {
             --disable-libarm32                                           \
             --enable-wildcard                                            \
             --with-sysroot=${DST_DIR}/mingw${bitval}/${arch}-w64-mingw32 \
+            CFLAGS="${_aof} ${_CFLAGS}"                                  \
+            CXXFLAGS="${_aof} ${_CXXFLAGS}"                              \
+            LDFLAGS="${_LDFLAGS}"                                        \
             > ${LOGS_DIR}/mingw-w64/crt/crt_config_${arch}.log 2>&1 || exit 1
         echo "done"
 

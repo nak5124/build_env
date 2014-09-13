@@ -40,6 +40,11 @@ function patch_iconv() {
             >> ${LOGS_DIR}/libiconv/libiconv_patch.log 2>&1 || exit 1
         touch ${BUILD_DIR}/libiconv/src/libiconv-${ICONV_VER}/patched_03.marker
     fi
+    if [ ! -f ${BUILD_DIR}/libiconv/src/libiconv-${ICONV_VER}/patched_04.marker ] ; then
+        patch -p1 < ${PATCHES_DIR}/libiconv/0004-use-GetConsoleOutputCP.patch \
+            >> ${LOGS_DIR}/libiconv/libiconv_patch.log 2>&1 || exit 1
+        touch ${BUILD_DIR}/libiconv/src/libiconv-${ICONV_VER}/patched_04.marker
+    fi
 
     popd > /dev/null
 

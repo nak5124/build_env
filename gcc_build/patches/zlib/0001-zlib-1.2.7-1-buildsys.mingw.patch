@@ -228,7 +228,7 @@
 +       SFLAGS="${CFLAGS}"
 +       LDFLAGS="-L. ${old_ldflags}"
 +       shared_ext=".dll"
-+       SHAREDLIB='zlib1.dll'
++       SHAREDLIB=libz-$VER1$shared_ext
 +		IMPORTLIB='libz.dll.a'
 +		LDSHARED=${LDSHARED-"$cc -shared -Wl,-export-all -Wl,--enable-auto-image-base -Wl,--out-implib=${IMPORTLIB}"}
 +		LDSHAREDLIBC=''
