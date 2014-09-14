@@ -65,8 +65,8 @@ function build_libogg() {
                     --build=${arch}-w64-mingw32 \
                     --host=${arch}-w64-mingw32  \
                     --disable-silent-rules      \
-                    --disable-shared            \
-                    --enable-static             \
+                    --enable-shared             \
+                    --disable-static            \
                     --with-gnu-ld               \
                     CPPFLAGS="${BASE_CPPFLAGS}" \
                     CFLAGS="${BASE_CFLAGS}"     \
@@ -107,6 +107,8 @@ function build_flac() {
     local -ra bin_list=(
         "flac.exe"
         "metaflac.exe"
+        "libFLAC-8.dll"
+        "libogg-0.dll"
     )
 
     patch -p1 -i ${PATCHES_DIR}/0001-win_utf8_io.c-Use-fputws-instead-of-fwprintf.patch \
@@ -130,8 +132,8 @@ function build_flac() {
                     --build=${arch}-w64-mingw32          \
                     --host=${arch}-w64-mingw32           \
                     --disable-silent-rules               \
-                    --disable-shared                     \
-                    --enable-static                      \
+                    --enable-shared                      \
+                    --disable-static                     \
                     --disable-doxygen-docs               \
                     --disable-xmms-plugin                \
                     --disable-cpplibs                    \

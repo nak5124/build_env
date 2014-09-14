@@ -60,6 +60,15 @@ function build_LSW_aviutl() {
     ln -fs /mingw32/local/bin/avresample-2.dll /d/encode/aviutl
     ln -fs /mingw32/local/bin/avutil-54.dll /d/encode/aviutl
     ln -fs /mingw32/local/bin/swscale-3.dll /d/encode/aviutl
+    ln -fs /mingw32/local/bin/libopencore-amrnb-0.dll /d/encode/aviutl
+    ln -fs /mingw32/local/bin/libopencore-amrwb-0.dll /d/encode/aviutl
+    ln -fs /mingw32/local/bin/libopenjpeg-1.dll /d/encode/aviutl
+    ln -fs /mingw32/local/bin/libopus-0.dll /d/encode/aviutl
+    ln -fs /mingw32/local/bin/libspeex-1.dll /d/encode/aviutl
+    ln -fs /mingw32/local/bin/libvorbis-0.dll /d/encode/aviutl
+    ln -fs /mingw32/local/bin/libvorbisenc-2.dll /d/encode/aviutl
+    ln -fs /mingw32/local/bin/libogg-0.dll /d/encode/aviutl
+    ln -fs /mingw32/local/bin/libvpx-1.dll /d/encode/aviutl
     echo "done"
 
     return 0
@@ -88,6 +97,15 @@ function build_LSW_avisynth() {
     ln -fs /mingw32/local/bin/avresample-2.dll /c/AviSynth+/plugins
     ln -fs /mingw32/local/bin/avutil-54.dll /c/AviSynth+/plugins
     ln -fs /mingw32/local/bin/swscale-3.dll /c/AviSynth+/plugins
+    ln -fs /mingw32/local/bin/libopencore-amrnb-0.dll /c/AviSynth+/plugins
+    ln -fs /mingw32/local/bin/libopencore-amrwb-0.dll /c/AviSynth+/plugins
+    ln -fs /mingw32/local/bin/libopenjpeg-1.dll /c/AviSynth+/plugins
+    ln -fs /mingw32/local/bin/libopus-0.dll /c/AviSynth+/plugins
+    ln -fs /mingw32/local/bin/libspeex-1.dll /c/AviSynth+/plugins
+    ln -fs /mingw32/local/bin/libvorbis-0.dll /c/AviSynth+/plugins
+    ln -fs /mingw32/local/bin/libvorbisenc-2.dll /c/AviSynth+/plugins
+    ln -fs /mingw32/local/bin/libogg-0.dll /c/AviSynth+/plugins
+    ln -fs /mingw32/local/bin/libvpx-1.dll /c/AviSynth+/plugins
     ln -fs /mingw64/bin/libbz2-1.dll /c/AviSynth+/plugins64
     ln -fs /mingw64/bin/libz-1.dll /c/AviSynth+/plugins64
     ln -fs /mingw64/bin/libiconv-2.dll /c/AviSynth+/plugins64
@@ -97,6 +115,15 @@ function build_LSW_avisynth() {
     ln -fs /mingw64/local/bin/avresample-2.dll /c/AviSynth+/plugins64
     ln -fs /mingw64/local/bin/avutil-54.dll /c/AviSynth+/plugins64
     ln -fs /mingw64/local/bin/swscale-3.dll /c/AviSynth+/plugins64
+    ln -fs /mingw64/local/bin/libopencore-amrnb-0.dll /c/AviSynth+/plugins64
+    ln -fs /mingw64/local/bin/libopencore-amrwb-0.dll /c/AviSynth+/plugins64
+    ln -fs /mingw64/local/bin/libopenjpeg-1.dll /c/AviSynth+/plugins64
+    ln -fs /mingw64/local/bin/libopus-0.dll /c/AviSynth+/plugins64
+    ln -fs /mingw64/local/bin/libspeex-1.dll /c/AviSynth+/plugins64
+    ln -fs /mingw64/local/bin/libvorbis-0.dll /c/AviSynth+/plugins64
+    ln -fs /mingw64/local/bin/libvorbisenc-2.dll /c/AviSynth+/plugins64
+    ln -fs /mingw64/local/bin/libogg-0.dll /c/AviSynth+/plugins64
+    ln -fs /mingw64/local/bin/libvpx-1.dll /c/AviSynth+/plugins64
     echo "done"
 
     return 0
@@ -138,6 +165,15 @@ function build_LSW_vapoursynth() {
             ln -fs /mingw32/local/bin/avformat-56.dll /c/VapourSynth/plugins32
             ln -fs /mingw32/local/bin/avutil-54.dll /c/VapourSynth/plugins32
             ln -fs /mingw32/local/bin/swscale-3.dll /c/VapourSynth/plugins32
+            ln -fs /mingw32/local/bin/libopencore-amrnb-0.dll /c/VapourSynth/plugins32
+            ln -fs /mingw32/local/bin/libopencore-amrwb-0.dll /c/VapourSynth/plugins32
+            ln -fs /mingw32/local/bin/libopenjpeg-1.dll /c/VapourSynth/plugins32
+            ln -fs /mingw32/local/bin/libopus-0.dll /c/VapourSynth/plugins32
+            ln -fs /mingw32/local/bin/libspeex-1.dll /c/VapourSynth/plugins32
+            ln -fs /mingw32/local/bin/libvorbis-0.dll /c/VapourSynth/plugins32
+            ln -fs /mingw32/local/bin/libvorbisenc-2.dll /c/VapourSynth/plugins32
+            ln -fs /mingw32/local/bin/libogg-0.dll /c/VapourSynth/plugins32
+            ln -fs /mingw32/local/bin/libvpx-1.dll /c/VapourSynth/plugins32
         else
             cp -fa ./vslsmashsource.dll  /c/VapourSynth/plugins64
             ln -fs /mingw64/bin/libbz2-1.dll /c/VapourSynth/plugins64
@@ -148,6 +184,15 @@ function build_LSW_vapoursynth() {
             ln -fs /mingw64/local/bin/avformat-56.dll /c/VapourSynth/plugins64
             ln -fs /mingw64/local/bin/avutil-54.dll /c/VapourSynth/plugins64
             ln -fs /mingw64/local/bin/swscale-3.dll /c/VapourSynth/plugins64
+            ln -fs /mingw64/local/bin/libopencore-amrnb-0.dll /c/VapourSynth/plugins64
+            ln -fs /mingw64/local/bin/libopencore-amrwb-0.dll /c/VapourSynth/plugins64
+            ln -fs /mingw64/local/bin/libopenjpeg-1.dll /c/VapourSynth/plugins64
+            ln -fs /mingw64/local/bin/libopus-0.dll /c/VapourSynth/plugins64
+            ln -fs /mingw64/local/bin/libspeex-1.dll /c/VapourSynth/plugins64
+            ln -fs /mingw64/local/bin/libvorbis-0.dll /c/VapourSynth/plugins64
+            ln -fs /mingw64/local/bin/libvorbisenc-2.dll /c/VapourSynth/plugins64
+            ln -fs /mingw64/local/bin/libogg-0.dll /c/VapourSynth/plugins64
+            ln -fs /mingw64/local/bin/libvpx-1.dll /c/VapourSynth/plugins64
         fi
         echo "done"
 

@@ -78,6 +78,7 @@ function build_lsmash() {
 
         printf "===> configure L-SMASH %s\n" $arch
         ./configure --prefix=$LSPREFIX \
+                    --disable-static   \
                     --enable-shared    \
             > ${LOGS_DIR}/lsmash_config_${arch}.log 2>&1 || exit 1
         echo "done"

@@ -35,7 +35,7 @@ fi
 
 # SDL
 function build_sdl() {
-    clear; echo "Build SDL"
+    clear; echo "Build SDL 1.2.15"
 
     if [ ! -f ${HOME}/OSS/SDL-1.2.15.tar.gz ] ; then
         cd ${HOME}/OSS
@@ -64,8 +64,8 @@ function build_sdl() {
         ./configure --prefix=$FFPREFIX          \
                     --build=${arch}-w64-mingw32 \
                     --host=${arch}-w64-mingw32  \
-                    --disable-shared            \
-                    --enable-static             \
+                    --enable-shared             \
+                    --disable-static            \
                     --with-gnu-ld               \
                     CPPFLAGS="${BASE_CPPFLAGS}" \
                     CFLAGS="${BASE_CFLAGS}"     \
@@ -82,240 +82,6 @@ function build_sdl() {
         printf "===> installing SDL %s\n" $arch
         make install > ${LOGS_DIR}/sdl_install_${arch}.log 2>&1 || exit 1
         sed -i "s|-mwindows||g" ${FFPREFIX}/lib/pkgconfig/sdl.pc
-        echo "done"
-        make distclean > /dev/null 2>&1
-    done
-
-    return 0
-}
-
-# openjpeg-1.5
-function build_openjpeg() {
-    clear; echo "Build OpenJPEG"
-
-    if [ ! -d ${HOME}/OSS/openjpeg-1.5 ] ; then
-        cd ${HOME}/OSS
-        svn checkout http://openjpeg.googlecode.com/svn/branches/openjpeg-1.5 openjpeg-1.5
-    fi
-    cd ${HOME}/OSS/openjpeg-1.5
-
-    svn cleanup > /dev/null
-    svn revert --recursive . > /dev/null
-    svn update > /dev/null
-    svnversion > ${LOGS_DIR}/openjpeg.hash
-
-    autoreconf -fi > /dev/null 2>&1
-    dos2unix libopenjpeg/opj_malloc.h > /dev/null 2>&1
-
-    for arch in ${target_arch[@]}
-    do
-        if [ "${arch}" = "i686" ] ; then
-            local FFPREFIX=/mingw32/local
-        else
-            local FFPREFIX=/mingw64/local
-        fi
-
-        source cpath $arch
-        printf "===> configure OpenJPEG %s\n" $arch
-        ./configure --prefix=$FFPREFIX                       \
-                    --build=${arch}-w64-mingw32              \
-                    --host=${arch}-w64-mingw32               \
-                    --disable-silent-rules                   \
-                    --disable-shared                         \
-                    --enable-static                          \
-                    --disable-doc                            \
-                    --with-gnu-ld                            \
-                    CPPFLAGS="${BASE_CPPFLAGS} -DOPJ_STATIC" \
-                    CFLAGS="${BASE_CFLAGS}"                  \
-                    LDFLAGS="${BASE_LDFLAGS}"                \
-            > ${LOGS_DIR}/openjpeg_config_${arch}.log 2>&1 || exit 1
-        sed -i 's|-O3||g' config.status
-        echo "done"
-
-        make clean > /dev/null 2>&1
-        printf "===> making OpenJPEG %s\n" $arch
-        make -j9 -O > ${LOGS_DIR}/openjpeg_make_${arch}.log 2>&1 || exit 1
-        echo "done"
-
-        printf "===> installing OpenJPEG %s\n" $arch
-        make install-strip > ${LOGS_DIR}/openjpeg_install_${arch}.log 2>&1 || exit 1
-        rm -fr ${FFPREFIX}/bin/*j2k*
-        echo "done"
-        make distclean > /dev/null 2>&1
-    done
-
-    return 0
-}
-
-# vpx
-function build_libvpx() {
-    clear; echo "Build libvpx git-master"
-
-    if [ ! -d ${HOME}/OSS/libvpx ] ; then
-        cd ${HOME}/OSS
-        git clone http://git.chromium.org/webm/libvpx.git
-    fi
-    cd ${HOME}/OSS/libvpx
-
-    git clean -fdx > /dev/null 2>&1
-    git reset --hard > /dev/null 2>&1
-    git pull > /dev/null 2>&1
-    git_hash > ${LOGS_DIR}/vpx.hash
-    git_rev >> ${LOGS_DIR}/vpx.hash
-
-    for arch in ${target_arch[@]}
-    do
-        if [ "${arch}" = "i686" ] ; then
-            local FFPREFIX=/mingw32/local
-            local _target=x86-win32-gcc
-        else
-            local FFPREFIX=/mingw64/local
-            local _target=x86_64-win64-gcc
-        fi
-
-        source cpath $arch
-        printf "===> configure libvpx %s\n" $arch
-        CFLAGS="${BASE_CFLAGS}"                 \
-        CXXFLAGS="${BASE_CXXFLAGS}"             \
-        LDFLAGS="${BASE_LDFLAGS}"               \
-        ./configure --prefix=$FFPREFIX          \
-                    --target=$_target           \
-                    --disable-install-docs      \
-                    --disable-examples          \
-                    --disable-docs              \
-                    --disable-unit-tests        \
-                    --enable-runtime-cpu-detect \
-                    --enable-multi-res-encoding \
-                    --disable-vp8-decoder       \
-                    --disable-vp9-decoder       \
-            > ${LOGS_DIR}/vpx_config_${arch}.log 2>&1 || exit 1
-        sed -i 's|-O3||g' libs-${_target}.mk
-        sed -i '/extralibs/d' libs-${_target}.mk
-        sed -i 's/HAVE_PTHREAD_H=yes/HAVE_PTHREAD_H=no/' libs-${_target}.mk
-        sed -i 's/#define HAVE_PTHREAD_H 1/#define HAVE_PTHREAD_H 0/' vpx_config.h
-        echo "done"
-
-        make clean > /dev/null 2>&1
-        printf "===> making libvpx %s\n" $arch
-        make -j9 -O > ${LOGS_DIR}/vpx_make_${arch}.log 2>&1 || exit 1
-        echo "done"
-
-        printf "===> installing libvpx %s\n" $arch
-        make install > ${LOGS_DIR}/vpx_install_${arch}.log 2>&1 || exit 1
-        echo "done"
-        make distclean > /dev/null 2>&1
-    done
-
-    return 0
-}
-
-# vorbis
-function build_libvorbis() {
-    clear; echo "Build libvorbis(aoTuV)"
-
-    if [ ! -f ${HOME}/OSS/xiph/aotuv_b6.03_2014.tar.bz2 ] ; then
-        cd ${HOME}/OSS/xiph
-        curl --fail --location --max-redirs 2 --continue-at - --retry 10 --retry-delay 5 --speed-limit 1 --speed-time 30 \
-            -o aotuv_b6.03_2014.tar.bz2 http://www.geocities.jp/aoyoume/aotuv/source_code/libvorbis-aotuv_b6.03_2014.tar.bz2
-    fi
-
-    if [ ! -d ${HOME}/OSS/xiph/aotuv-b6.03_20110424-20140429 ] ; then
-        cd ${HOME}/OSS/xiph
-        tar xjf aotuv_b6.03_2014.tar.bz2
-    fi
-    cd ${HOME}/OSS/xiph/aotuv-b6.03_20110424-20140429
-
-    for arch in ${target_arch[@]}
-    do
-        if [ "${arch}" = "i686" ] ; then
-            local FFPREFIX=/mingw32/local
-        else
-            local FFPREFIX=/mingw64/local
-        fi
-
-        source cpath $arch
-        printf "===> configure libvorbis(aoTuV) %s\n" $arch
-        ./autogen.sh --prefix=$FFPREFIX           \
-                     --build=${arch}-w64-mingw32  \
-                     --host=${arch}-w64-mingw32   \
-                     --target=${arch}-w64-mingw32 \
-                     --disable-shared             \
-                     --enable-static              \
-                     --disable-docs               \
-                     --disable-examples           \
-                     --with-gnu-ld                \
-                     --with-ogg=$FFPREFIX         \
-                     CPPFLAGS="${BASE_CPPFLAGS}"  \
-                     CFLAGS="${BASE_CFLAGS}"      \
-                     LDFLAGS="${BASE_LDFLAGS}"    \
-            > ${LOGS_DIR}/vorbis_config_${arch}.log 2>&1 || exit 1
-        echo "done"
-
-        make clean > /dev/null 2>&1
-        printf "===> making libvorbis(aoTuV) %s\n" $arch
-        make -j9 -O > ${LOGS_DIR}/vorbis_make_${arch}.log 2>&1 || exit 1
-        echo "done"
-
-        printf "===> installing libvorbis(aoTuV) %s\n" $arch
-        make install-strip > ${LOGS_DIR}/vorbis_install_${arch}.log 2>&1 || exit 1
-        echo "done"
-        make distclean > /dev/null 2>&1
-    done
-
-    return 0
-}
-
-# speex
-function build_libspeex() {
-    clear; echo "Build libspeex git-master"
-
-    if [ ! -d ${HOME}/OSS/xiph/speex ] ; then
-        cd ${HOME}/OSS/xiph
-        git clone git://git.xiph.org/speex.git
-    fi
-    cd ${HOME}/OSS/xiph/speex
-
-    git clean -fdx > /dev/null 2>&1
-    git reset --hard > /dev/null 2>&1
-    git pull > /dev/null 2>&1
-    git_hash > ${LOGS_DIR}/speex.hash
-    git_rev >> ${LOGS_DIR}/speex.hash
-
-    autoreconf -fi > /dev/null 2>&1
-
-    for arch in ${target_arch[@]}
-    do
-        if [ "${arch}" = "i686" ] ; then
-            local FFPREFIX=/mingw32/local
-        else
-            local FFPREFIX=/mingw64/local
-        fi
-
-        source cpath $arch
-        printf "===> configure libspeex %s\n" $arch
-        ./configure --prefix=$FFPREFIX                \
-                    --build=${arch}-w64-mingw32       \
-                    --host=${arch}-w64-mingw32        \
-                    --disable-silent-rules            \
-                    --disable-shared                  \
-                    --enable-static                   \
-                    --enable-sse                      \
-                    --with-gnu-ld                     \
-                    --with-ogg                        \
-                    CPPFLAGS="${BASE_CPPFLAGS}"       \
-                    CFLAGS="${BASE_CFLAGS}"           \
-                    LDFLAGS="${BASE_LDFLAGS} -lwinmm" \
-            > ${LOGS_DIR}/speex_config_${arch}.log 2>&1 || exit 1
-        sed -i 's|-O3||g' config.status
-        echo "done"
-
-        make clean > /dev/null 2>&1
-        printf "===> making libspeex %s\n" $arch
-        make -j9 -O > ${LOGS_DIR}/speex_make_${arch}.log 2>&1 || exit 1
-        echo "done"
-
-        printf "===> installing libspeex %s\n" $arch
-        make install-strip > ${LOGS_DIR}/speex_install_${arch}.log 2>&1 || exit 1
         echo "done"
         make distclean > /dev/null 2>&1
     done
@@ -355,8 +121,8 @@ function build_libopencore_amr() {
                     --build=${arch}-w64-mingw32 \
                     --host=${arch}-w64-mingw32  \
                     --disable-silent-rules      \
-                    --disable-shared            \
-                    --enable-static             \
+                    --enable-shared             \
+                    --disable-static            \
                     --with-gnu-ld               \
                     CFLAGS="${BASE_CFLAGS}"     \
                     CPPFLAGS="${BASE_CPPFLAGS}" \
@@ -372,6 +138,251 @@ function build_libopencore_amr() {
 
         printf "===> installing libopencore-amr %s\n" $arch
         make install-strip > ${LOGS_DIR}/opencore-amr_install_${arch}.log 2>&1 || exit 1
+        echo "done"
+        make distclean > /dev/null 2>&1
+    done
+
+    return 0
+}
+
+# openjpeg-1.5
+function build_openjpeg() {
+    clear; echo "Build OpenJPEG svn openjpeg-1.5 branch"
+
+    if [ ! -d ${HOME}/OSS/openjpeg-1.5 ] ; then
+        cd ${HOME}/OSS
+        svn checkout http://openjpeg.googlecode.com/svn/branches/openjpeg-1.5 openjpeg-1.5
+    fi
+    cd ${HOME}/OSS/openjpeg-1.5
+
+    svn cleanup > /dev/null
+    svn revert --recursive . > /dev/null
+    svn update > /dev/null
+    svnversion > ${LOGS_DIR}/openjpeg.hash
+
+    patch -p1 -i ${PATCHES_DIR}/openjpeg/0001-cdecl.patch > ${LOGS_DIR}/openjpeg_patch.log 2>&1 || exit 1
+
+    autoreconf -fi > /dev/null 2>&1
+    dos2unix libopenjpeg/opj_malloc.h > /dev/null 2>&1
+
+    for arch in ${target_arch[@]}
+    do
+        if [ "${arch}" = "i686" ] ; then
+            local FFPREFIX=/mingw32/local
+        else
+            local FFPREFIX=/mingw64/local
+        fi
+
+        source cpath $arch
+        printf "===> configure OpenJPEG %s\n" $arch
+        ./configure --prefix=$FFPREFIX          \
+                    --build=${arch}-w64-mingw32 \
+                    --host=${arch}-w64-mingw32  \
+                    --disable-silent-rules      \
+                    --enable-shared             \
+                    --disable-static            \
+                    --disable-doc               \
+                    --with-gnu-ld               \
+                    CPPFLAGS="${BASE_CPPFLAGS}" \
+                    CFLAGS="${BASE_CFLAGS}"     \
+                    LDFLAGS="${BASE_LDFLAGS}"   \
+            > ${LOGS_DIR}/openjpeg_config_${arch}.log 2>&1 || exit 1
+        sed -i 's|-O3||g' config.status
+        echo "done"
+
+        make clean > /dev/null 2>&1
+        printf "===> making OpenJPEG %s\n" $arch
+        make -j9 -O > ${LOGS_DIR}/openjpeg_make_${arch}.log 2>&1 || exit 1
+        echo "done"
+
+        printf "===> installing OpenJPEG %s\n" $arch
+        make install-strip > ${LOGS_DIR}/openjpeg_install_${arch}.log 2>&1 || exit 1
+        rm -fr ${FFPREFIX}/bin/*j2k*.exe
+        echo "done"
+        make distclean > /dev/null 2>&1
+    done
+
+    return 0
+}
+
+# speex
+function build_libspeex() {
+    clear; echo "Build libspeex git-master"
+
+    if [ ! -d ${HOME}/OSS/xiph/speex ] ; then
+        cd ${HOME}/OSS/xiph
+        git clone git://git.xiph.org/speex.git
+    fi
+    cd ${HOME}/OSS/xiph/speex
+
+    git clean -fdx > /dev/null 2>&1
+    git reset --hard > /dev/null 2>&1
+    git pull > /dev/null 2>&1
+    git_hash > ${LOGS_DIR}/speex.hash
+    git_rev >> ${LOGS_DIR}/speex.hash
+
+    autoreconf -fi > /dev/null 2>&1
+
+    for arch in ${target_arch[@]}
+    do
+        if [ "${arch}" = "i686" ] ; then
+            local FFPREFIX=/mingw32/local
+        else
+            local FFPREFIX=/mingw64/local
+        fi
+
+        source cpath $arch
+        printf "===> configure libspeex %s\n" $arch
+        ./configure --prefix=$FFPREFIX                \
+                    --build=${arch}-w64-mingw32       \
+                    --host=${arch}-w64-mingw32        \
+                    --disable-silent-rules            \
+                    --enable-shared                   \
+                    --disable-static                  \
+                    --enable-sse                      \
+                    --with-gnu-ld                     \
+                    --with-ogg                        \
+                    CPPFLAGS="${BASE_CPPFLAGS}"       \
+                    CFLAGS="${BASE_CFLAGS}"           \
+                    LDFLAGS="${BASE_LDFLAGS} -lwinmm" \
+            > ${LOGS_DIR}/speex_config_${arch}.log 2>&1 || exit 1
+        sed -i 's|-O3||g' config.status
+        echo "done"
+
+        make clean > /dev/null 2>&1
+        printf "===> making libspeex %s\n" $arch
+        make -j9 -O > ${LOGS_DIR}/speex_make_${arch}.log 2>&1 || exit 1
+        echo "done"
+
+        printf "===> installing libspeex %s\n" $arch
+        make install-strip > ${LOGS_DIR}/speex_install_${arch}.log 2>&1 || exit 1
+        rm -f ${FFPREFIX}/bin/speex*.exe
+        echo "done"
+        make distclean > /dev/null 2>&1
+    done
+
+    return 0
+}
+
+# vorbis
+function build_libvorbis() {
+    clear; echo "Build libvorbis(aoTuV b6.03)"
+
+    if [ ! -f ${HOME}/OSS/xiph/aotuv_b6.03_2014.tar.bz2 ] ; then
+        cd ${HOME}/OSS/xiph
+        curl --fail --location --max-redirs 2 --continue-at - --retry 10 --retry-delay 5 --speed-limit 1 --speed-time 30 \
+            -o aotuv_b6.03_2014.tar.bz2 http://www.geocities.jp/aoyoume/aotuv/source_code/libvorbis-aotuv_b6.03_2014.tar.bz2
+    fi
+
+    if [ ! -d ${HOME}/OSS/xiph/aotuv-b6.03_20110424-20140429 ] ; then
+        cd ${HOME}/OSS/xiph
+        tar xjf aotuv_b6.03_2014.tar.bz2
+    fi
+    cd ${HOME}/OSS/xiph/aotuv-b6.03_20110424-20140429
+
+    for arch in ${target_arch[@]}
+    do
+        if [ "${arch}" = "i686" ] ; then
+            local FFPREFIX=/mingw32/local
+        else
+            local FFPREFIX=/mingw64/local
+        fi
+
+        source cpath $arch
+        printf "===> configure libvorbis(aoTuV) %s\n" $arch
+        ./autogen.sh --prefix=$FFPREFIX           \
+                     --build=${arch}-w64-mingw32  \
+                     --host=${arch}-w64-mingw32   \
+                     --target=${arch}-w64-mingw32 \
+                     --enable-shared              \
+                     --disable-static             \
+                     --disable-docs               \
+                     --disable-examples           \
+                     --with-gnu-ld                \
+                     --with-ogg=$FFPREFIX         \
+                     CPPFLAGS="${BASE_CPPFLAGS}"  \
+                     CFLAGS="${BASE_CFLAGS}"      \
+                     LDFLAGS="${BASE_LDFLAGS}"    \
+            > ${LOGS_DIR}/vorbis_config_${arch}.log 2>&1 || exit 1
+        echo "done"
+
+        make clean > /dev/null 2>&1
+        printf "===> making libvorbis(aoTuV) %s\n" $arch
+        make -j9 -O > ${LOGS_DIR}/vorbis_make_${arch}.log 2>&1 || exit 1
+        echo "done"
+
+        printf "===> installing libvorbis(aoTuV) %s\n" $arch
+        make install-strip > ${LOGS_DIR}/vorbis_install_${arch}.log 2>&1 || exit 1
+        echo "done"
+        make distclean > /dev/null 2>&1
+    done
+
+    return 0
+}
+
+# vpx
+function build_libvpx() {
+    clear; echo "Build libvpx git-master"
+
+    if [ ! -d ${HOME}/OSS/libvpx ] ; then
+        cd ${HOME}/OSS
+        git clone http://git.chromium.org/webm/libvpx.git
+    fi
+    cd ${HOME}/OSS/libvpx
+
+    git clean -fdx > /dev/null 2>&1
+    git reset --hard > /dev/null 2>&1
+    git pull > /dev/null 2>&1
+    git_hash > ${LOGS_DIR}/vpx.hash
+    git_rev >> ${LOGS_DIR}/vpx.hash
+
+    patch -p1 -i ${PATCHES_DIR}/libvpx/0001-enable-shared-on.mingw.patch > ${LOGS_DIR}/vpx_patch.log 2>&1 || exit 1
+    patch -p1 -i ${PATCHES_DIR}/libvpx/0002-implib.mingw.patch >> ${LOGS_DIR}/vpx_patch.log 2>&1 || exit 1
+    patch -p1 -i ${PATCHES_DIR}/libvpx/0003-fix-exports.mingw.patch >> ${LOGS_DIR}/vpx_patch.log 2>&1 || exit 1
+    patch -p1 -i ${PATCHES_DIR}/libvpx/0004-instll-implib.mingw.patch >> ${LOGS_DIR}/vpx_patch.log 2>&1 || exit 1
+    patch -p1 -i ${PATCHES_DIR}/libvpx/0005-fix-ln-on-install.mingw.patch >> ${LOGS_DIR}/vpx_patch.log 2>&1 || exit 1
+
+    for arch in ${target_arch[@]}
+    do
+        if [ "${arch}" = "i686" ] ; then
+            local FFPREFIX=/mingw32/local
+            local _target=x86-win32-gcc
+        else
+            local FFPREFIX=/mingw64/local
+            local _target=x86_64-win64-gcc
+        fi
+
+        source cpath $arch
+        printf "===> configure libvpx %s\n" $arch
+        CFLAGS="${BASE_CFLAGS}"                 \
+        CXXFLAGS="${BASE_CXXFLAGS}"             \
+        LDFLAGS="${BASE_LDFLAGS}"               \
+        ./configure --prefix=$FFPREFIX          \
+                    --target=$_target           \
+                    --disable-install-docs      \
+                    --disable-examples          \
+                    --disable-docs              \
+                    --disable-unit-tests        \
+                    --enable-runtime-cpu-detect \
+                    --enable-shared             \
+                    --disable-static            \
+                    --enable-multi-res-encoding \
+                    --disable-vp8-decoder       \
+                    --disable-vp9-decoder       \
+            > ${LOGS_DIR}/vpx_config_${arch}.log 2>&1 || exit 1
+        sed -i 's|-O3||g' libs-${_target}.mk
+        sed -i '/extralibs/d' libs-${_target}.mk
+        sed -i 's/HAVE_PTHREAD_H=yes/HAVE_PTHREAD_H=no/' libs-${_target}.mk
+        sed -i 's/#define HAVE_PTHREAD_H 1/#define HAVE_PTHREAD_H 0/' vpx_config.h
+        echo "done"
+
+        make clean > /dev/null 2>&1
+        printf "===> making libvpx %s\n" $arch
+        make -j9 -O > ${LOGS_DIR}/vpx_make_${arch}.log 2>&1 || exit 1
+        echo "done"
+
+        printf "===> installing libvpx %s\n" $arch
+        make install > ${LOGS_DIR}/vpx_install_${arch}.log 2>&1 || exit 1
         echo "done"
         make distclean > /dev/null 2>&1
     done
@@ -443,6 +454,14 @@ function build_ffmpeg() {
         "avutil-${AVUTIL_API_VER}.dll"
         "swresample-${SWRESAMPLE_API_VER}.dll"
         "swscale-${SWSCALE_API_VER}.dll"
+        "SDL.dll"
+        "libopencore-amrnb-0.dll"
+        "libopencore-amrwb-0.dll"
+        "libopenjpeg-1.dll"
+        "libspeex-1.dll"
+        "libvorbis-0.dll"
+        "libvorbisenc-2.dll"
+        "libvpx-1.dll"
     )
 
     patch_ffmpeg
@@ -466,6 +485,7 @@ function build_ffmpeg() {
         printf "===> configure FFmpeg %s\n" $arch
         ./configure --prefix=$FFPREFIX           \
                     --enable-version3            \
+                    --disable-static             \
                     --enable-shared              \
                     --disable-doc                \
                     --enable-avresample          \
@@ -524,11 +544,11 @@ unset MINTTY
 
 if $all_build ; then
     build_sdl
-    build_openjpeg
-    build_libvpx
-    build_libvorbis
-    build_libspeex
     build_libopencore_amr
+    build_openjpeg
+    build_libspeex
+    build_libvorbis
+    build_libvpx
 fi
 build_ffmpeg
 

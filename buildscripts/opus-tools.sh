@@ -51,7 +51,8 @@ function build_libopus() {
 
     autoreconf -fi > /dev/null 2>&1
 
-    patch -p1 < ${PATCHES_DIR}/version.patch > ${LOGS_DIR}/opus_patch.log 2>&1 || exit 1
+    patch -p1 < ${PATCHES_DIR}/0001-correctly-detect-alloca.mingw.patch > ${LOGS_DIR}/opus_patch.log 2>&1 || exit 1
+    patch -p1 < ${PATCHES_DIR}/version.patch >> ${LOGS_DIR}/opus_patch.log 2>&1 || exit 1
 
     for arch in ${target_arch[@]}
     do
@@ -63,18 +64,18 @@ function build_libopus() {
 
         source cpath $arch
         printf "===> configure libopus %s\n" $arch
-        ./configure --prefix=$OPPREFIX                           \
-                    --build=${arch}-w64-mingw32                  \
-                    --host=${arch}-w64-mingw32                   \
-                    --disable-silent-rules                       \
-                    --disable-shared                             \
-                    --enable-static                              \
-                    --disable-doc                                \
-                    --disable-extra-programs                     \
-                    --with-gnu-ld                                \
-                    CPPFLAGS="${BASE_CPPFLAGS} -DOPUS_EXPORT=''" \
-                    CFLAGS="${BASE_CFLAGS}"                      \
-                    LDFLAGS="${BASE_LDFLAGS}"                    \
+        ./configure --prefix=$OPPREFIX          \
+                    --build=${arch}-w64-mingw32 \
+                    --host=${arch}-w64-mingw32  \
+                    --disable-silent-rules      \
+                    --enable-shared             \
+                    --disable-static            \
+                    --disable-doc               \
+                    --disable-extra-programs    \
+                    --with-gnu-ld               \
+                    CPPFLAGS="${BASE_CPPFLAGS}" \
+                    CFLAGS="${BASE_CFLAGS}"     \
+                    LDFLAGS="${BASE_LDFLAGS}"   \
             > ${LOGS_DIR}/opus_config_${arch}.log 2>&1 || exit 1
         echo "done"
 
@@ -112,7 +113,7 @@ function build_tools() {
         "opusenc.exe"
         "opusdec.exe"
         "opusinfo.exe"
-        "opusrtp.exe"
+        "libopus-0.dll"
     )
 
     ./autogen.sh > /dev/null 2>&1
@@ -147,7 +148,6 @@ function build_tools() {
 
         printf "===> installing opus-tools %s\n" $arch
         make install-strip > ${LOGS_DIR}/tools_install_${arch}.log 2>&1 || exit 1
-        install -m 755 ./opusrtp.exe ${OPPREFIX}/bin
         if [ "${arch}" = "x86_64" ] ; then
             for bin in ${bin_list[@]}
             do
