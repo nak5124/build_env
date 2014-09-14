@@ -209,6 +209,62 @@ function build_libvpx() {
     return 0
 }
 
+# vorbis
+function build_libvorbis() {
+    clear; echo "Build libvorbis(aoTuV)"
+
+    if [ ! -f ${HOME}/OSS/xiph/aotuv_b6.03_2014.tar.bz2 ] ; then
+        cd ${HOME}/OSS/xiph
+        curl --fail --location --max-redirs 2 --continue-at - --retry 10 --retry-delay 5 --speed-limit 1 --speed-time 30 \
+            -o aotuv_b6.03_2014.tar.bz2 http://www.geocities.jp/aoyoume/aotuv/source_code/libvorbis-aotuv_b6.03_2014.tar.bz2
+    fi
+
+    if [ ! -d ${HOME}/OSS/xiph/aotuv-b6.03_20110424-20140429 ] ; then
+        cd ${HOME}/OSS/xiph
+        tar xjf aotuv_b6.03_2014.tar.bz2
+    fi
+    cd ${HOME}/OSS/xiph/aotuv-b6.03_20110424-20140429
+
+    for arch in ${target_arch[@]}
+    do
+        if [ "${arch}" = "i686" ] ; then
+            local FFPREFIX=/mingw32/local
+        else
+            local FFPREFIX=/mingw64/local
+        fi
+
+        source cpath $arch
+        printf "===> configure libvorbis(aoTuV) %s\n" $arch
+        ./autogen.sh --prefix=$FFPREFIX           \
+                     --build=${arch}-w64-mingw32  \
+                     --host=${arch}-w64-mingw32   \
+                     --target=${arch}-w64-mingw32 \
+                     --disable-shared             \
+                     --enable-static              \
+                     --disable-docs               \
+                     --disable-examples           \
+                     --with-gnu-ld                \
+                     --with-ogg=$FFPREFIX         \
+                     CPPFLAGS="${BASE_CPPFLAGS}"  \
+                     CFLAGS="${BASE_CFLAGS}"      \
+                     LDFLAGS="${BASE_LDFLAGS}"    \
+            > ${LOGS_DIR}/vorbis_config_${arch}.log 2>&1 || exit 1
+        echo "done"
+
+        make clean > /dev/null 2>&1
+        printf "===> making libvorbis(aoTuV) %s\n" $arch
+        make -j9 -O > ${LOGS_DIR}/vorbis_make_${arch}.log 2>&1 || exit 1
+        echo "done"
+
+        printf "===> installing libvorbis(aoTuV) %s\n" $arch
+        make install-strip > ${LOGS_DIR}/vorbis_install_${arch}.log 2>&1 || exit 1
+        echo "done"
+        make distclean > /dev/null 2>&1
+    done
+
+    return 0
+}
+
 # speex
 function build_libspeex() {
     clear; echo "Build libspeex git-master"
@@ -425,6 +481,9 @@ function build_ffmpeg() {
                     --disable-decoder=opus       \
                     --disable-parser=opus        \
                     --enable-libspeex            \
+                    --enable-libvorbis           \
+                    --disable-encoder=vorbis     \
+                    --disable-decoder=vorbis     \
                     --enable-libvpx              \
                     --disable-decoder=libvpx_vp9 \
                     --disable-decoder=libvpx_vp8 \
@@ -465,10 +524,11 @@ unset MINTTY
 
 if $all_build ; then
     build_sdl
-    # build_openjpeg
-    # build_libvpx
-    # build_libspeex
-    # build_libopencore_amr
+    build_openjpeg
+    build_libvpx
+    build_libvorbis
+    build_libspeex
+    build_libopencore_amr
 fi
 build_ffmpeg
 
