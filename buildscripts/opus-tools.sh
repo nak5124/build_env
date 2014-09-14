@@ -108,6 +108,13 @@ function build_tools() {
     git_hash > ${LOGS_DIR}/tools.hash
     git_rev >> ${LOGS_DIR}/tools.hash
 
+    local -ra bin_list=(
+        "opusenc.exe"
+        "opusdec.exe"
+        "opusinfo.exe"
+        "opusrtp.exe"
+    )
+
     ./autogen.sh > /dev/null 2>&1
 
     patch -p1 < ${PATCHES_DIR}/version_tools.patch > ${LOGS_DIR}/tools_patch.log 2>&1 || exit 1
@@ -141,29 +148,15 @@ function build_tools() {
         printf "===> installing opus-tools %s\n" $arch
         make install-strip > ${LOGS_DIR}/tools_install_${arch}.log 2>&1 || exit 1
         install -m 755 ./opusrtp.exe ${OPPREFIX}/bin
+        if [ "${arch}" = "x86_64" ] ; then
+            for bin in ${bin_list[@]}
+            do
+                ln -fs ${OPPREFIX}/bin/$bin /d/encode/tools
+            done
+        fi
         echo "done"
         make distclean > /dev/null 2>&1
     done
-
-    return 0
-}
-
-function make_package() {
-    cd ${HOME}/OSS/xiph/opus-tools
-
-    local -r DEST_DIR=${HOME}/local/dist/opus-tools/opus-tools_$(git describe --long)
-
-    if [[ ! -d ${DEST_DIR}/{win32,x64} ]] ; then
-        mkdir -p ${DEST_DIR}/{win32,x64}
-    fi
-
-    clear; echo "making package..."
-    cp -fa /mingw32/local/bin/opus*.exe ${DEST_DIR}/win32
-    cp -fa /mingw64/local/bin/opus*.exe ${DEST_DIR}/x64
-    cp -fa ${HOME}/OSS/xiph/opus-tools/COPYING $DEST_DIR
-    cp -fa ${DEST_DIR}/x64/* ${DEST_DIR}/..
-    cp -fa ${DEST_DIR}/x64/* /d/encode/tools
-    echo "done"
 
     return 0
 }
@@ -175,7 +168,6 @@ if $all_build ; then
     build_libopus
 fi
 build_tools
-make_package
 
 MINTTY=$mintty_save
 export MINTTY

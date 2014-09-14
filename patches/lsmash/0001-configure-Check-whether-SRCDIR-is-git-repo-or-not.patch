@@ -1,7 +1,7 @@
-From d0ff612e06ae791930a3f870da1711e709cf6f5b Mon Sep 17 00:00:00 2001
+From ad3ae66a412301c448eac01daa5ee7ef48ad3e60 Mon Sep 17 00:00:00 2001
 From: Yuta NAKAI <nak5124@live.jp>
 Date: Sun, 31 Aug 2014 18:19:54 +0900
-Subject: [PATCH 2/4] configure: Check whether SRCDIR is git repo or not.
+Subject: [PATCH 1/3] configure: Check whether SRCDIR is git repo or not.
 
 This is for building from a released tarball.
 ---
@@ -9,10 +9,10 @@ This is for building from a released tarball.
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/configure b/configure
-index 51a5799..bc4840c 100755
+index 407243d..a28028a 100755
 --- a/configure
 +++ b/configure
-@@ -303,7 +303,7 @@ MINVER=$(grep -e '#define LSMASH_VERSION_MINOR' lsmash.h|sed -e 's/#define LSMAS
+@@ -299,7 +299,7 @@ MINVER=$(grep -e '#define LSMASH_VERSION_MINOR' lsmash.h|sed -e 's/#define LSMAS
  MICVER=$(grep -e '#define LSMASH_VERSION_MICRO' lsmash.h|sed -e 's/#define LSMASH_VERSION_MICRO //;s/ //g')
  VER=$MAJVER.$MINVER.$MICVER
  REV="$(git rev-list HEAD 2> /dev/null | wc -l)"

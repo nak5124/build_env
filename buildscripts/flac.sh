@@ -27,6 +27,7 @@ do
     esac
 done
 
+declare -r PATCHES_DIR=${HOME}/patches/flac
 declare -r LOGS_DIR=${HOME}/logs/flac
 if [ ! -d $LOGS_DIR ] ; then
     mkdir -p $LOGS_DIR
@@ -103,7 +104,14 @@ function build_flac() {
     git_hash > ${LOGS_DIR}/flac.hash
     git_rev >> ${LOGS_DIR}/flac.hash
 
-    cp -fa /usr/share/gettext/config.rpath .
+    local -ra bin_list=(
+        "flac.exe"
+        "metaflac.exe"
+    )
+
+    patch -p1 -i ${PATCHES_DIR}/0001-win_utf8_io.c-Use-fputws-instead-of-fwprintf.patch \
+        > ${LOGS_DIR}/flac_patch.log 2>&1 || exit 1
+    touch config.rpath
     autoreconf -fi > /dev/null 2>&1
 
     for arch in ${target_arch[@]}
@@ -145,6 +153,12 @@ function build_flac() {
 
         printf "===> installing flac %s\n" $arch
         make install-strip > ${LOGS_DIR}/flac_install_${arch}.log 2>&1 || exit 1
+        if [ "${arch}" = "x86_64" ] ; then
+            for bin in ${bin_list[@]}
+            do
+                ln -fs ${FLPREFIX}/bin/$bin /d/encode/tools
+            done
+        fi
         echo "done"
         make distclean > /dev/null 2>&1
     done
@@ -152,21 +166,9 @@ function build_flac() {
     return 0
 }
 
-function make_package() {
-    cd ${HOME}/OSS/xiph/flac
-
-    local -r DEST_DIR=${HOME}/local/dist/flac/flac_$(git describe)
-    if [[ ! -d ${DEST_DIR}/{win32,x64} ]] ; then
-        mkdir -p ${DEST_DIR}/{win32,x64}
-    fi
-
-    clear; echo "making package..."
-    cp -fa /mingw32/local/bin/{flac,metaflac}.exe ${DEST_DIR}/win32
-    cp -fa /mingw64/local/bin/{flac,metaflac}.exe ${DEST_DIR}/x64
-    cp -fa ${HOME}/OSS/xiph/flac/COPYING.GPL $DEST_DIR
-    cp -fa ${DEST_DIR}/x64/* ${DEST_DIR}/..
-    cp -fa ${DEST_DIR}/x64/* /d/encode/tools
-    echo "done"
+function symlink_flac() {
+    ln -fs /mingw64/local/bin/flac.exe /d/encode/tools
+    ln -fs /mingw64/local/bin/metaflac.exe /d/encode/tools
 
     return 0
 }
@@ -178,7 +180,6 @@ if $all_build ; then
     build_libogg
 fi
 build_flac
-make_package
 
 MINTTY=$mintty_save
 export MINTTY

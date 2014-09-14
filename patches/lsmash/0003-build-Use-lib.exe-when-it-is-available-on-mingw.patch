@@ -1,7 +1,7 @@
-From 8ad6bb710321477912b74ff5639935f6059a1835 Mon Sep 17 00:00:00 2001
+From afdf961a0a7beaf29888c735937c0940c95c4a13 Mon Sep 17 00:00:00 2001
 From: Yuta NAKAI <nak5124@live.jp>
 Date: Tue, 2 Sep 2014 02:21:31 +0900
-Subject: [PATCH 4/4] build: Use lib.exe when it is available on mingw.
+Subject: [PATCH 3/3] build: Use lib.exe when it is available on mingw.
 
 ---
  .gitignore |  1 +
@@ -56,7 +56,7 @@ index 8409ed2..9e07efd 100644
  distclean: clean
  	$(RM) config.* *.pc
 diff --git a/configure b/configure
-index d921f80..b26d3ef 100755
+index 35b570b..fb1d2d9 100755
 --- a/configure
 +++ b/configure
 @@ -56,6 +56,14 @@ cc_check()
@@ -74,9 +74,9 @@ index d921f80..b26d3ef 100755
  #-----------------------------------------------------------------------------
  
  rm -f config.* .depend conftest* liblsmash.pc
-@@ -316,6 +324,20 @@ else
-     CLI_LIBLSMASH="$STATICLIBNAME"
- fi
+@@ -311,6 +319,20 @@ test -z "$STATICLIB" -a -z "$SHAREDLIB" && \
+     error_exit "--disable-static requires --enable-shared were specified"
+ test -z "$SHAREDLIB" && SO_LDFLAGS=""
  
 +case "$TARGET_OS" in
 +    *mingw*)
@@ -95,10 +95,10 @@ index d921f80..b26d3ef 100755
  cat >> liblsmash.pc << EOF
  prefix=$prefix
  exec_prefix=$exec_prefix
-@@ -356,6 +378,9 @@ LDFLAGS = $LDFLAGS
+@@ -350,6 +372,9 @@ CFLAGS = $CFLAGS
+ LDFLAGS = $LDFLAGS
  SO_LDFLAGS = $SO_LDFLAGS
  LIBS = $LIBS
- CLI_LIBLSMASH = $CLI_LIBLSMASH
 +LIBARCH = $LIBARCH
 +DEFNAME = $DEFNAME
 +SLIB_CMD = $SLIB_CMD

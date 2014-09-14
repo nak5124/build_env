@@ -49,6 +49,8 @@ function build_sdl() {
     fi
     cd ${HOME}/OSS/SDL-1.2.15
 
+    sed -i 's|-mwindows||g' ${HOME}/OSS/SDL-1.2.15/configure
+
     for arch in ${target_arch[@]}
     do
         if [ "${arch}" = "i686" ] ; then
@@ -365,6 +367,28 @@ function build_ffmpeg() {
     git_hash > ${LOGS_DIR}/ffmpeg.hash
     git_rev >> ${LOGS_DIR}/ffmpeg.hash
 
+    local -r AVCODEC_API_VER=$(echo $(cat libavcodec/version.h | grep "#define LIBAVCODEC_VERSION_MAJOR" | awk '{print $3}'))
+    local -r AVDEVICE_API_VER=$(echo $(cat libavdevice/version.h | grep "#define LIBAVDEVICE_VERSION_MAJOR" | awk '{print $3}'))
+    local -r AVFILTER_API_VER=$(echo $(cat libavfilter/version.h | grep "#define LIBAVFILTER_VERSION_MAJOR" | awk '{print $3}'))
+    local -r AVFORMAT_API_VER=$(echo $(cat libavformat/version.h | grep "#define LIBAVFORMAT_VERSION_MAJOR" | awk '{print $3}'))
+    local -r AVRESAMPLE_API_VER=$(echo $(cat libavresample/version.h | grep "#define LIBAVRESAMPLE_VERSION_MAJOR" | awk '{print $3}'))
+    local -r AVUTIL_API_VER=$(echo $(cat libavutil/version.h | grep "#define LIBAVUTIL_VERSION_MAJOR" | awk '{print $3}'))
+    local -r SWRESAMPLE_API_VER=$(echo $(cat libswresample/version.h | grep "#define LIBSWRESAMPLE_VERSION_MAJOR" | awk '{print $3}'))
+    local -r SWSCALE_API_VER=$(echo $(cat libswscale/version.h | grep "#define LIBSWSCALE_VERSION_MAJOR" | awk '{print $3}'))
+    local -ra bin_list=(
+        "ffmpeg.exe"
+        "ffprobe.exe"
+        "ffplay.exe"
+        "avcodec-${AVCODEC_API_VER}.dll"
+        "avdevice-${AVDEVICE_API_VER}.dll"
+        "avfilter-${AVFILTER_API_VER}.dll"
+        "avformat-${AVFORMAT_API_VER}.dll"
+        "avresample-${AVRESAMPLE_API_VER}.dll"
+        "avutil-${AVUTIL_API_VER}.dll"
+        "swresample-${SWRESAMPLE_API_VER}.dll"
+        "swscale-${SWSCALE_API_VER}.dll"
+    )
+
     patch_ffmpeg
 
     for arch in ${target_arch[@]}
@@ -420,6 +444,15 @@ function build_ffmpeg() {
 
         printf "===> installing FFmpeg %s\n" $arch
         make install > ${LOGS_DIR}/ffmpeg_install_${arch}.log 2>&1 || exit 1
+        if [ "${arch}" = "x86_64" ] ; then
+            for bin in ${bin_list[@]}
+            do
+                ln -fs ${FFPREFIX}/bin/$bin /d/encode/tools
+            done
+            ln -fs /mingw64/bin/libiconv-2.dll /d/encode/tools
+            ln -fs /mingw64/bin/libz-1.dll /d/encode/tools
+            ln -fs /mingw64/bin/libbz2-1.dll /d/encode/tools
+        fi
         echo "done"
         make distclean > /dev/null 2>&1
     done
@@ -432,10 +465,10 @@ unset MINTTY
 
 if $all_build ; then
     build_sdl
-    build_openjpeg
-    build_libvpx
-    build_libspeex
-    build_libopencore_amr
+    # build_openjpeg
+    # build_libvpx
+    # build_libspeex
+    # build_libopencore_amr
 fi
 build_ffmpeg
 

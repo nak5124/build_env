@@ -1,0 +1,25 @@
+From aa42dfb7778b7de9a030e4cb7fc1b2e2b8a46496 Mon Sep 17 00:00:00 2001
+From: Yuta NAKAI <nak5124@live.jp>
+Date: Fri, 12 Sep 2014 23:53:45 +0900
+Subject: [PATCH] win_utf8_io.c: Use fputws instead of fwprintf.
+
+---
+ src/share/win_utf8_io/win_utf8_io.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/share/win_utf8_io/win_utf8_io.c b/src/share/win_utf8_io/win_utf8_io.c
+index 1c49c19..e612ec5 100644
+--- a/src/share/win_utf8_io/win_utf8_io.c
++++ b/src/share/win_utf8_io/win_utf8_io.c
+@@ -162,7 +162,7 @@ int print_console(FILE *stream, const wchar_t *text, uint32_t len)
+ 		if (WriteConsoleW(hErr, text, len, &out, NULL) == 0) return -1;
+ 		return out;
+ 	} else {
+-		int ret = fwprintf(stream, L"%s", text);
++		int ret = fputws(text, stream);
+ 		if (ret < 0) return ret;
+ 		return len;
+ 	}
+-- 
+2.1.0
+

@@ -30,20 +30,6 @@ function build_LSW_common() {
     cp -fa ${PATCHES_DIR}/build_2013.bat ./AviSynth
     cp -fa ${PATCHES_DIR}/build_2013_x64.bat ./AviSynth
 
-    readonly DEST_DIR=${HOME}/local/dist/lsw/L-SMASH-Works_r$(git_rev)-g$(git_hash)
-
-    if [[ ! -d ${DEST_DIR}/{AviUtl,AviSynth/x64,VapourSynth/x64,legal_stuff/{FFmpeg,L-SMASH,L-SMASH-Works/{AviUtl,AviSynth,VapourSynth}}} ]] ; then
-        mkdir -p ${DEST_DIR}/{AviUtl,AviSynth/x64,VapourSynth/x64,legal_stuff/{FFmpeg,L-SMASH,L-SMASH-Works/{AviUtl,AviSynth,VapourSynth}}}
-    fi
-
-    cp -fa ${HOME}/OSS/videolan/ffmpeg/COPYING.LGPLv3 ${DEST_DIR}/legal_stuff/FFmpeg
-    cp -fa ${DEST_DIR}/../patches ${DEST_DIR}/legal_stuff/FFmpeg/patches
-    cp -fa ${HOME}/OSS/l-smash/LICENSE ${DEST_DIR}/legal_stuff/L-SMASH
-
-    git_log > ${DEST_DIR}/../log
-    python2 ${DEST_DIR}/../commitloggenerator.py ${DEST_DIR}/../log ${DEST_DIR}/../ChangeLog
-    cp -fa ${DEST_DIR}/../ChangeLog $DEST_DIR
-
     return 0
 }
 
@@ -64,11 +50,7 @@ function build_LSW_aviutl() {
     echo "done"
 
     echo "===> copy LSW AviUtl"
-    cp -fa ./*.aui ./*.auf ./*.auc ${DEST_DIR}/AviUtl
-    cp -fa ${DEST_DIR}/AviUtl/* ${DEST_DIR}/..
-    cp -fa ${DEST_DIR}/AviUtl/* /d/encode/aviutl/Plugins
-    cp -fa ./README* ${DEST_DIR}/AviUtl
-    cp -fa ./LICENSE ${DEST_DIR}/legal_stuff/L-SMASH-Works/AviUtl
+    cp -fa ./*.aui ./*.auf ./*.auc /d/encode/aviutl/Plugins
     ln -fs /mingw32/bin/libbz2-1.dll /d/encode/aviutl
     ln -fs /mingw32/bin/libz-1.dll /d/encode/aviutl
     ln -fs /mingw32/bin/libiconv-2.dll /d/encode/aviutl
@@ -95,16 +77,8 @@ function build_LSW_avisynth() {
     echo "done"
 
     echo "===> copy LSW AviSynth"
-    cp -fa ${DEST_DIR}/../msvcr120.dll ${DEST_DIR}/AviSynth
-    cp -fa ${DEST_DIR}/../x64/msvcr120.dll ${DEST_DIR}/AviSynth/x64
-    cp -fa ./Release/LSMASHSource.dll ${DEST_DIR}/Avisynth
-    cp -fa ./Release/LSMASHSource.dll ${DEST_DIR}/..
     cp -fa ./Release/LSMASHSource.dll /c/AviSynth+/plugins
-    cp -fa ./x64/Release/LSMASHSource.dll ${DEST_DIR}/Avisynth/x64
-    cp -fa ./x64/Release/LSMASHSource.dll ${DEST_DIR}/../x64
     cp -fa ./x64/Release/LSMASHSource.dll /c/AviSynth+/plugins64
-    cp -fa ./README ${DEST_DIR}/AviSynth
-    cp -fa ./LICENSE ${DEST_DIR}/legal_stuff/L-SMASH-Works/AviSynth
     ln -fs /mingw32/bin/libbz2-1.dll /c/AviSynth+/plugins
     ln -fs /mingw32/bin/libz-1.dll /c/AviSynth+/plugins
     ln -fs /mingw32/bin/libiconv-2.dll /c/AviSynth+/plugins
@@ -155,11 +129,7 @@ function build_LSW_vapoursynth() {
 
         printf "===> copy LSW VapourSynth %s\n" $arch
         if [ "${arch}" = "i686" ] ; then
-            cp -fa ./vslsmashsource.dll ${DEST_DIR}/VapourSynth
-            cp -fa ./vslsmashsource.dll ${DEST_DIR}/..
             cp -fa ./vslsmashsource.dll /c/VapourSynth/plugins32
-            cp -fa ./README ${DEST_DIR}/VapourSynth
-            cp -fa ./LICENSE ${DEST_DIR}/legal_stuff/L-SMASH-Works/VapourSynth
             ln -fs /mingw32/bin/libbz2-1.dll /c/VapourSynth/plugins32
             ln -fs /mingw32/bin/libz-1.dll /c/VapourSynth/plugins32
             ln -fs /mingw32/bin/libiconv-2.dll /c/VapourSynth/plugins32
@@ -169,8 +139,6 @@ function build_LSW_vapoursynth() {
             ln -fs /mingw32/local/bin/avutil-54.dll /c/VapourSynth/plugins32
             ln -fs /mingw32/local/bin/swscale-3.dll /c/VapourSynth/plugins32
         else
-            cp -fa ./vslsmashsource.dll ${DEST_DIR}/VapourSynth/x64
-            cp -fa ./vslsmashsource.dll ${DEST_DIR}/../x64
             cp -fa ./vslsmashsource.dll  /c/VapourSynth/plugins64
             ln -fs /mingw64/bin/libbz2-1.dll /c/VapourSynth/plugins64
             ln -fs /mingw64/bin/libz-1.dll /c/VapourSynth/plugins64
