@@ -111,8 +111,6 @@ function build_flac() {
         "libogg-0.dll"
     )
 
-    patch -p1 -i ${PATCHES_DIR}/0001-win_utf8_io.c-Use-fputws-instead-of-fwprintf.patch \
-        > ${LOGS_DIR}/flac_patch.log 2>&1 || exit 1
     touch config.rpath
     autoreconf -fi > /dev/null 2>&1
 
