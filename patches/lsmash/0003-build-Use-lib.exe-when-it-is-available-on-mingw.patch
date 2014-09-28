@@ -1,13 +1,13 @@
-From afdf961a0a7beaf29888c735937c0940c95c4a13 Mon Sep 17 00:00:00 2001
+From 6b0265d803b50161448b4cec09bfa0e172dcc99b Mon Sep 17 00:00:00 2001
 From: Yuta NAKAI <nak5124@live.jp>
-Date: Tue, 2 Sep 2014 02:21:31 +0900
+Date: Sun, 28 Sep 2014 15:26:19 +0900
 Subject: [PATCH 3/3] build: Use lib.exe when it is available on mingw.
 
 ---
  .gitignore |  1 +
  Makefile   |  9 ++++++++-
- configure  | 25 +++++++++++++++++++++++++
- 3 files changed, 34 insertions(+), 1 deletion(-)
+ configure  | 26 ++++++++++++++++++++++++++
+ 3 files changed, 35 insertions(+), 1 deletion(-)
 
 diff --git a/.gitignore b/.gitignore
 index a20f4c2..9ae81bd 100644
@@ -22,7 +22,7 @@ index a20f4c2..9ae81bd 100644
  *.o
  *.orig
 diff --git a/Makefile b/Makefile
-index 8409ed2..9e07efd 100644
+index 4f7a7a5..8b1f8f7 100644
 --- a/Makefile
 +++ b/Makefile
 @@ -28,6 +28,9 @@ $(STATICLIBNAME): $(OBJS)
@@ -32,10 +32,10 @@ index 8409ed2..9e07efd 100644
 +ifneq ($(SLIB_CMD),)
 +	$(SLIB_CMD)
 +endif
- 
- # $(TOOLS) is automatically generated as config.mak2 by configure.
- # The reason for having config.mak2 is for making this Makefile easy to read.
-@@ -53,6 +56,10 @@ ifneq ($(IMPLIB),)
+ ifeq ($(SHAREDLIBNAME), liblsmash.so.$(MAJVER))
+ 	ln -s $(SHAREDLIBNAME) liblsmash.so
+ endif
+@@ -59,6 +62,10 @@ ifneq ($(IMPLIB),)
  	install -m 644 $(IMPLIB) $(DESTDIR)$(libdir)
  	install -d $(DESTDIR)$(bindir)
  	install -m 755 $(SHAREDLIB) $(DESTDIR)$(bindir)
@@ -43,20 +43,20 @@ index 8409ed2..9e07efd 100644
 +	install -m 644 $(DEFNAME) $(DESTDIR)$(libdir)
 +	install -m 644 lsmash.lib $(DESTDIR)$(bindir)
 +endif
- else
- 	install -m 644 $(SHAREDLIB) $(DESTDIR)$(libdir)
+ ifeq ($(SHAREDLIB), liblsmash-$(MAJVER).dll)
+ 	ln -s $(DESTDIR)$(bindir)/$(SHAREDLIB) $(DESTDIR)$(bindir)/liblsmash.dll
  endif
-@@ -65,7 +72,7 @@ uninstall:
+@@ -77,7 +84,7 @@ uninstall:
  	$(RM) $(addprefix $(DESTDIR)$(bindir)/, $(TOOLS_ALL) $(TOOLS_ALL:%=%.exe) liblsmash.dll cyglsmash.dll)
  
  clean:
--	$(RM) */*.o *.a *.so *.dll *.dylib $(addprefix cli/, *.exe $(TOOLS_ALL)) .depend
-+	$(RM) */*.o *.a *.so *.def *.exp *.lib *.dll *.dylib $(addprefix cli/, *.exe $(TOOLS_ALL)) .depend
+-	$(RM) */*.o *.a *.so* *.dll *.dylib $(addprefix cli/, *.exe $(TOOLS_ALL)) .depend
++	$(RM) */*.o *.a *.so* *.def *.exp *.lib *.dll *.dylib $(addprefix cli/, *.exe $(TOOLS_ALL)) .depend
  
  distclean: clean
  	$(RM) config.* *.pc
 diff --git a/configure b/configure
-index 35b570b..fb1d2d9 100755
+index 36e0d41..b196d72 100755
 --- a/configure
 +++ b/configure
 @@ -56,6 +56,14 @@ cc_check()
@@ -74,7 +74,7 @@ index 35b570b..fb1d2d9 100755
  #-----------------------------------------------------------------------------
  
  rm -f config.* .depend conftest* liblsmash.pc
-@@ -311,6 +319,20 @@ test -z "$STATICLIB" -a -z "$SHAREDLIB" && \
+@@ -244,6 +252,21 @@ test -z "$STATICLIB" -a -z "$SHAREDLIB" && \
      error_exit "--disable-static requires --enable-shared were specified"
  test -z "$SHAREDLIB" && SO_LDFLAGS=""
  
@@ -87,15 +87,16 @@ index 35b570b..fb1d2d9 100755
 +            else
 +                LIBARCH=i386
 +            fi
-+            DEFNAME="lsmash-${MAJVER}.def"
-+            SLIB_CMD='gendef - $(SHAREDLIBNAME) > $(DEFNAME) 2>/dev/null; lib.exe -machine:$(LIBARCH) -def:$(DEFNAME) -out:lsmash.lib'
++            DEFNAME="lsmash-$MAJVER.def"
++            SLIB_CMD='gendef - $(SHAREDLIB) > $(DEFNAME) 2>/dev/null; lib.exe -machine:$(LIBARCH) -def:$(DEFNAME) -out:lsmash.lib'
 +        fi
++        ;;
 +esac
 +
- cat >> liblsmash.pc << EOF
- prefix=$prefix
- exec_prefix=$exec_prefix
-@@ -350,6 +372,9 @@ CFLAGS = $CFLAGS
+ 
+ CFLAGS="$CFLAGS $XCFLAGS"
+ LDFLAGS="$LDFLAGS $XLDFLAGS"
+@@ -357,6 +380,9 @@ CFLAGS = $CFLAGS
  LDFLAGS = $LDFLAGS
  SO_LDFLAGS = $SO_LDFLAGS
  LIBS = $LIBS
@@ -106,5 +107,5 @@ index 35b570b..fb1d2d9 100755
  
  cat config.mak
 -- 
-2.1.0
+2.1.1
 

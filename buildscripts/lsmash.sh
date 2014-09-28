@@ -55,7 +55,7 @@ function build_lsmash() {
 
     patch -p1 -i ${PATCHES_DIR}/0001-configure-Check-whether-SRCDIR-is-git-repo-or-not.patch \
         > ${LOGS_DIR}/lsmash_patch.log 2>&1 || exit 1
-    patch -p1 -i ${PATCHES_DIR}/0002-configure-Add-api-version-to-SHAREDLIBNAME.patch \
+    patch -p1 -i ${PATCHES_DIR}/0002-configure-Add-api-version-to-mingw-shared-library-na.patch \
         >> ${LOGS_DIR}/lsmash_patch.log 2>&1 || exit 1
     patch -p1 -i ${PATCHES_DIR}/0003-build-Use-lib.exe-when-it-is-available-on-mingw.patch \
         >> ${LOGS_DIR}/lsmash_patch.log 2>&1 || exit 1
