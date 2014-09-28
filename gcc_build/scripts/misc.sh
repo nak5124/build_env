@@ -39,6 +39,19 @@ _EOT_
     fi
 }
 
+function define_nrov() {
+    if [ "${1:-undefined}" = "undefined" -a "${1}" != "undefined" ] ; then
+        cat << _EOT_ 1>&2
+define_nrov:
+The 1st argument should be defined.
+In addition, the 1st argument cannot be null character or a blank string.
+_EOT_
+        exit 1
+    else
+        eval export ${1}=${2}
+    fi
+}
+
 # check wheter a variable is defined
 function is_defined() {
     eval local tmp=$(echo '${'${1}'-undefined}')

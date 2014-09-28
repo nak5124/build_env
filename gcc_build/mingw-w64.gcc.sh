@@ -21,38 +21,46 @@ do
             unset NO_NYASM
             unset NO_AUTOTOOLS
             ;;
+        noall )
+            define_nrov NO_GCC_LIBS
+            define_nrov NO_TOOLCHAIN
+            define_nrov NO_2ND_BUILD
+            define_nrov NO_MAP
+            define_nrov NO_NYASM
+            define_nrov NO_AUTOTOOLS
+            ;;
         nolibs )
-            define_rov NO_GCC_LIBS
+            define_nrov NO_GCC_LIBS
             ;;
         libs )
             unset NO_GCC_LIBS
             ;;
         notc )
-            define_rov NO_TOOLCHAIN
+            define_nrov NO_TOOLCHAIN
             ;;
         tc )
             unset NO_TOOLCHAIN
             ;;
         no2nd )
-            define_rov NO_2ND_BUILD
+            define_nrov NO_2ND_BUILD
             ;;
         2nd )
             unset NO_2ND_BUILD
             ;;
         nomap )
-            define_rov NO_MAP
+            define_nrov NO_MAP
             ;;
         map )
             unset NO_MAP
             ;;
         noasm )
-            define_rov NO_NYASM
+            define_nrov NO_NYASM
             ;;
         asm )
             unset NO_NYASM
             ;;
         noat )
-            define_rov NO_AUTOTOOLS
+            define_nrov NO_AUTOTOOLS
             ;;
         at )
             unset NO_AUTOTOOLS
@@ -63,7 +71,7 @@ do
     esac
 done
 if is_defined NO_TOOLCHAIN > /dev/null ; then
-    define_rov NO_2ND_BUILD
+    define_nrov NO_2ND_BUILD
     if is_defined NO_GCC_LIBS  > /dev/null \
     && is_defined NO_MAP       > /dev/null \
     && is_defined NO_NYASM     > /dev/null \
