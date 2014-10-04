@@ -13,10 +13,12 @@ i=0
 while read line
 do
     tmp=($line)
-    if [ "${tmp[3]}" == "[installed]" ] ; then
-        pl_array[i]=${tmp[1]}
-        i=$((${i} + 1))
-    fi
+    case "${tmp[3]}" in
+        "*installed*" )
+            pl_array[i]=${tmp[1]}
+            i=$((${i} + 1))
+            ;;
+    esac
 done < $plist
 
 if [ "$1" == "-n" ] ; then

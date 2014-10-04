@@ -52,7 +52,6 @@ alias fgrep='fgrep --color'
 alias less='less -r'
 LESSHISTFILE=/tmp/.lesshst
 export LESSHISTFILE
-alias more="\less '-E -P?f--More-- (%pb\%):--More--.'"
 
 # cat
 alias cat='cat -n'
@@ -70,6 +69,11 @@ alias tar_xz='tar Jxf'
 # omake
 alias sanchi='clear; \cat /usr/local/bin/sanchi.txt'
 alias nde='clear; \cat /usr/local/bin/nde.txt'
+
+# ldd for i686
+function ldd32() {
+    /usr/local/bin32/ldd "$@" | sed 's| /cygdrive| |g' | sed 's| /c/msys2| |g'
+}
 
 # TVTest
 function tv_t() {
@@ -219,12 +223,28 @@ function nppp() {
     fi
 }
 
+# mercurial
+HG=${HOME}/winn/mercurial/hg.exe
+export HG
+
 # shell
 MINTTY=NO_FILE
 PROMPT_COMMAND='printf "\033]0;%s: %s\007" "${MSYSTEM}" "${PWD/${HOME}/\~}"'
 PS1="\n\033[1;32m\]\u@\h \[\033[1;31m\w\033[0m\]\n$ "
 IGNOREEOF=2
-export PROMPT_COMMAND PS1 IGNOREEOF MINTTY
+EXECIGNORE="*.dll"
+export PROMPT_COMMAND PS1 IGNOREEOF MINTTY EXECIGNORE
+
+shopt -s autocd
+shopt -s cdable_vars
+shopt -s cdspell
+shopt -s checkhash
+shopt -s completion_strip_exe
+shopt -s dirspell
+shopt -s dotglob
+shopt -s extglob
+shopt -s globstar
+shopt -s lithist
 
 # GCC
 GCC_COLORS='error=01;31;255:warning=01;35;255:note=01;36;255:caret=01;32;255:locus=01:quote=01'
