@@ -205,6 +205,69 @@ function build_openjpeg() {
     return 0
 }
 
+# openjpeg2
+function build_openjpeg2() {
+    clear; echo "Build OpenJPEG svn openjpeg svn trunk"
+
+    if [ ! -d ${HOME}/OSS/openjpeg ] ; then
+        cd ${HOME}/OSS
+        svn checkout http://openjpeg.googlecode.com/svn/trunk/ openjpeg
+    fi
+    cd ${HOME}/OSS/openjpeg
+
+    svn cleanup > /dev/null
+    svn revert --recursive . > /dev/null
+    svn update > /dev/null
+    svnversion > ${LOGS_DIR}/openjpeg2.hash
+
+    patch -p1 -i ${PATCHES_DIR}/openjpeg2/0001-fix-install-for-dlls.all.patch > ${LOGS_DIR}/openjpeg2_patch.log 2>&1 || exit 1
+    patch -p1 -i ${PATCHES_DIR}/openjpeg2/0002-versioned-dlls.mingw.patch >> ${LOGS_DIR}/openjpeg2_patch.log 2>&1 || exit 1
+    patch -p1 -i ${PATCHES_DIR}/openjpeg2/0003-cdecl.patch >> ${LOGS_DIR}/openjpeg2_patch.log 2>&1 || exit 1
+
+    for arch in ${target_arch[@]}
+    do
+        if [ "${arch}" = "i686" ] ; then
+            local FFPREFIX=/mingw32/local
+        else
+            local FFPREFIX=/mingw64/local
+        fi
+
+        source cpath $arch
+        printf "===> configure OpenJPEG %s\n" $arch
+        cmake -G "MSYS Makefiles"                             \
+              -DCMAKE_INSTALL_PREFIX=$FFPREFIX                \
+              -DCMAKE_BUILD_TYPE=Release                      \
+              -DBUILD_SHARED_LIBS:bool=ON                     \
+              -DBUILD_DOC:bool=OFF                            \
+              -DBUILD_MJ2:bool=ON                             \
+              -DBUILD_JPWL:bool=OFF                           \
+              -DBUILD_JPIP:bool=OFF                           \
+              -DBUILD_JPIP_SERVER:bool=OFF                    \
+              -DBUILD_JP3D:bool=OFF                           \
+              -DBUILD_JAVA:bool=OFF                           \
+              -DBUILD_TESTING:BOOL=OFF                        \
+              -DCMAKE_SYSTEM_PREFIX_PATH=$(pwd -W)            \
+              -DCMAKE_C_FLAGS_RELEASE:STRING="${BASE_CFLAGS}" \
+            > ${LOGS_DIR}/openjpeg2_config_${arch}.log 2>&1 || exit 1
+        echo "done"
+
+        make clean > /dev/null 2>&1
+        printf "===> making OpenJPEG %s\n" $arch
+        make openmj2 > ${LOGS_DIR}/openjpeg2_make_${arch}.log 2>&1 || exit 1
+        echo "done"
+
+        printf "===> installing OpenJPEG %s\n" $arch
+        pushd ${HOME}/OSS/openjpeg/src/lib/openmj2 > /dev/null
+        make install > ${LOGS_DIR}/openjpeg2_install_${arch}.log 2>&1 || exit 1
+        popd > /dev/null
+        install -m 644 ${HOME}/OSS/openjpeg/src/lib/openmj2/openjpeg.h ${FFPREFIX}/include
+        echo "done"
+        svn status | grep ^? | awk '{print $2}' | xargs rm -rf
+    done
+
+    return 0
+}
+
 # speex
 function build_libspeex() {
     clear; echo "Build libspeex git-master"
@@ -240,6 +303,7 @@ function build_libspeex() {
                     --enable-shared                   \
                     --disable-static                  \
                     --enable-sse                      \
+                    --disable-binaries                \
                     --with-gnu-ld                     \
                     --with-ogg                        \
                     CPPFLAGS="${BASE_CPPFLAGS}"       \
@@ -256,7 +320,6 @@ function build_libspeex() {
 
         printf "===> installing libspeex %s\n" $arch
         make install-strip > ${LOGS_DIR}/speex_install_${arch}.log 2>&1 || exit 1
-        rm -f ${FFPREFIX}/bin/speex*.exe
         echo "done"
         make distclean > /dev/null 2>&1
     done
@@ -457,7 +520,7 @@ function build_ffmpeg() {
         "SDL.dll"
         "libopencore-amrnb-0.dll"
         "libopencore-amrwb-0.dll"
-        "libopenjpeg-1.dll"
+        "libopenmj2-7.dll"
         "libspeex-1.dll"
         "libvorbis-0.dll"
         "libvorbisenc-2.dll"
@@ -545,7 +608,8 @@ unset MINTTY
 if $all_build ; then
     build_sdl
     build_libopencore_amr
-    build_openjpeg
+    # build_openjpeg
+    build_openjpeg2
     build_libspeex
     build_libvorbis
     build_libvpx

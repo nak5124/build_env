@@ -35,19 +35,24 @@ fi
 
 # libogg
 function build_libogg() {
-    clear; echo "Build libogg git-master"
+    clear; echo "Build libogg svn-trunk"
 
     if [ ! -d ${HOME}/OSS/xiph/ogg ] ; then
         cd ${HOME}/OSS/xiph
-        git clone git://git.xiph.org/mirrors/ogg.git
+        # git clone git://git.xiph.org/mirrors/ogg.git
+        svn co http://svn.xiph.org/trunk/ogg
     fi
     cd ${HOME}/OSS/xiph/ogg
 
-    git clean -fdx > /dev/null 2>&1
-    git reset --hard > /dev/null 2>&1
-    git pull > /dev/null 2>&1
-    git_hash > ${LOGS_DIR}/ogg.hash
-    git_rev >> ${LOGS_DIR}/ogg.hash
+    # git clean -fdx > /dev/null 2>&1
+    # git reset --hard > /dev/null 2>&1
+    # git pull > /dev/null 2>&1
+    # git_hash > ${LOGS_DIR}/ogg.hash
+    # git_rev >> ${LOGS_DIR}/ogg.hash
+    svn cleanup > /dev/null
+    svn revert --recursive . > /dev/null
+    svn update > /dev/null
+    svnversion > ${LOGS_DIR}/ogg.hash
 
     autoreconf -fi > /dev/null 2>&1
 

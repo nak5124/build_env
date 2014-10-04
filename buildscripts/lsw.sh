@@ -62,7 +62,7 @@ function build_LSW_aviutl() {
     ln -fs /mingw32/local/bin/swscale-3.dll /d/encode/aviutl
     ln -fs /mingw32/local/bin/libopencore-amrnb-0.dll /d/encode/aviutl
     ln -fs /mingw32/local/bin/libopencore-amrwb-0.dll /d/encode/aviutl
-    ln -fs /mingw32/local/bin/libopenjpeg-1.dll /d/encode/aviutl
+    ln -fs /mingw32/local/bin/libopenmj2-7.dll /d/encode/aviutl
     ln -fs /mingw32/local/bin/libopus-0.dll /d/encode/aviutl
     ln -fs /mingw32/local/bin/libspeex-1.dll /d/encode/aviutl
     ln -fs /mingw32/local/bin/libvorbis-0.dll /d/encode/aviutl
@@ -99,7 +99,7 @@ function build_LSW_avisynth() {
     ln -fs /mingw32/local/bin/swscale-3.dll /c/AviSynth+/plugins
     ln -fs /mingw32/local/bin/libopencore-amrnb-0.dll /c/AviSynth+/plugins
     ln -fs /mingw32/local/bin/libopencore-amrwb-0.dll /c/AviSynth+/plugins
-    ln -fs /mingw32/local/bin/libopenjpeg-1.dll /c/AviSynth+/plugins
+    ln -fs /mingw32/local/bin/libopenmj2-7.dll /c/AviSynth+/plugins
     ln -fs /mingw32/local/bin/libopus-0.dll /c/AviSynth+/plugins
     ln -fs /mingw32/local/bin/libspeex-1.dll /c/AviSynth+/plugins
     ln -fs /mingw32/local/bin/libvorbis-0.dll /c/AviSynth+/plugins
@@ -117,7 +117,7 @@ function build_LSW_avisynth() {
     ln -fs /mingw64/local/bin/swscale-3.dll /c/AviSynth+/plugins64
     ln -fs /mingw64/local/bin/libopencore-amrnb-0.dll /c/AviSynth+/plugins64
     ln -fs /mingw64/local/bin/libopencore-amrwb-0.dll /c/AviSynth+/plugins64
-    ln -fs /mingw64/local/bin/libopenjpeg-1.dll /c/AviSynth+/plugins64
+    ln -fs /mingw64/local/bin/libopenmj2-7.dll /c/AviSynth+/plugins64
     ln -fs /mingw64/local/bin/libopus-0.dll /c/AviSynth+/plugins64
     ln -fs /mingw64/local/bin/libspeex-1.dll /c/AviSynth+/plugins64
     ln -fs /mingw64/local/bin/libvorbis-0.dll /c/AviSynth+/plugins64
@@ -167,7 +167,7 @@ function build_LSW_vapoursynth() {
             ln -fs /mingw32/local/bin/swscale-3.dll /c/VapourSynth/plugins32
             ln -fs /mingw32/local/bin/libopencore-amrnb-0.dll /c/VapourSynth/plugins32
             ln -fs /mingw32/local/bin/libopencore-amrwb-0.dll /c/VapourSynth/plugins32
-            ln -fs /mingw32/local/bin/libopenjpeg-1.dll /c/VapourSynth/plugins32
+            ln -fs /mingw32/local/bin/libopenmj2-7.dll /c/VapourSynth/plugins32
             ln -fs /mingw32/local/bin/libopus-0.dll /c/VapourSynth/plugins32
             ln -fs /mingw32/local/bin/libspeex-1.dll /c/VapourSynth/plugins32
             ln -fs /mingw32/local/bin/libvorbis-0.dll /c/VapourSynth/plugins32
@@ -186,7 +186,7 @@ function build_LSW_vapoursynth() {
             ln -fs /mingw64/local/bin/swscale-3.dll /c/VapourSynth/plugins64
             ln -fs /mingw64/local/bin/libopencore-amrnb-0.dll /c/VapourSynth/plugins64
             ln -fs /mingw64/local/bin/libopencore-amrwb-0.dll /c/VapourSynth/plugins64
-            ln -fs /mingw64/local/bin/libopenjpeg-1.dll /c/VapourSynth/plugins64
+            ln -fs /mingw64/local/bin/libopenmj2-7.dll /c/VapourSynth/plugins64
             ln -fs /mingw64/local/bin/libopus-0.dll /c/VapourSynth/plugins64
             ln -fs /mingw64/local/bin/libspeex-1.dll /c/VapourSynth/plugins64
             ln -fs /mingw64/local/bin/libvorbis-0.dll /c/VapourSynth/plugins64
