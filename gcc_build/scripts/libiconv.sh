@@ -26,22 +26,22 @@ function patch_iconv() {
 
     if [ ! -f ${BUILD_DIR}/libiconv/src/libiconv-${ICONV_VER}/patched_01.marker ] ; then
         # http://apolloron.org/software/libiconv-1.14-ja/
-        patch -p1 < ${PATCHES_DIR}/libiconv/0001-libiconv-1.14-ja-1.patch \
+        patch -p1 -i ${PATCHES_DIR}/libiconv/0001-libiconv-1.14-ja-1.patch \
             > ${LOGS_DIR}/libiconv/libiconv_patch.log 2>&1 || exit 1
         touch ${BUILD_DIR}/libiconv/src/libiconv-${ICONV_VER}/patched_01.marker
     fi
     if [ ! -f ${BUILD_DIR}/libiconv/src/libiconv-${ICONV_VER}/patched_02.marker ] ; then
-        patch -p1 < ${PATCHES_DIR}/libiconv/0002-compile-relocatable-in-gnulib.mingw.patch \
+        patch -p1 -i ${PATCHES_DIR}/libiconv/0002-compile-relocatable-in-gnulib.mingw.patch \
             >> ${LOGS_DIR}/libiconv/libiconv_patch.log 2>&1 || exit 1
         touch ${BUILD_DIR}/libiconv/src/libiconv-${ICONV_VER}/patched_02.marker
     fi
     if [ ! -f ${BUILD_DIR}/libiconv/src/libiconv-${ICONV_VER}/patched_03.marker ] ; then
-        patch -p1 < ${PATCHES_DIR}/libiconv/0003-fix-cr-for-awk-in-configure.all.patch \
+        patch -p1 -i ${PATCHES_DIR}/libiconv/0003-fix-cr-for-awk-in-configure.all.patch \
             >> ${LOGS_DIR}/libiconv/libiconv_patch.log 2>&1 || exit 1
         touch ${BUILD_DIR}/libiconv/src/libiconv-${ICONV_VER}/patched_03.marker
     fi
     if [ ! -f ${BUILD_DIR}/libiconv/src/libiconv-${ICONV_VER}/patched_04.marker ] ; then
-        patch -p1 < ${PATCHES_DIR}/libiconv/0004-use-GetConsoleOutputCP.patch \
+        patch -p1 -i ${PATCHES_DIR}/libiconv/0004-use-GetConsoleOutputCP.patch \
             >> ${LOGS_DIR}/libiconv/libiconv_patch.log 2>&1 || exit 1
         touch ${BUILD_DIR}/libiconv/src/libiconv-${ICONV_VER}/patched_04.marker
     fi
@@ -85,7 +85,7 @@ function build_iconv() {
             --enable-relocatable               \
             --enable-extra-encodings           \
             --enable-shared                    \
-            --enable-static                    \
+            --disable-static                   \
             --disable-rpath                    \
             ${_intl}                           \
             CPPFLAGS="${_CPPFLAGS}"            \
@@ -100,7 +100,8 @@ function build_iconv() {
 
         printf "===> installing libiconv %s\n" $arch
         make DESTDIR=${PREIN_DIR}/libiconv install > ${LOGS_DIR}/libiconv/libiconv_install_${arch}.log 2>&1 || exit 1
-        rm -r ${PREIN_DIR}/libiconv/mingw${bitval}/lib/charset.alias
+        # Remove unneeded file.
+        rm -f ${PREIN_DIR}/libiconv/mingw${bitval}/lib/charset.alias
         del_empty_dir ${PREIN_DIR}/libiconv/mingw$bitval
         remove_la_files ${PREIN_DIR}/libiconv/mingw$bitval
         strip_files ${PREIN_DIR}/libiconv/mingw$bitval

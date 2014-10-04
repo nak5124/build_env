@@ -25,31 +25,13 @@ function patch_bzip2() {
     pushd ${BUILD_DIR}/bzip2/src/bzip2-$BZIP2_VER > /dev/null
 
     if [ ! -f ${BUILD_DIR}/bzip2/src/bzip2-${BZIP2_VER}/patched_01.marker ] ; then
-        patch -p1 < ${PATCHES_DIR}/bzip2/0001-bzip2-1.0.4-bzip2recover.patch > ${LOGS_DIR}/bzip2/bzip2_patch.log 2>&1 || exit 1
+        patch -p1 -i ${PATCHES_DIR}/bzip2/0001-bzip2-cygming-1.0.6.src.all.patch \
+            > ${LOGS_DIR}/bzip2/bzip2_patch.log 2>&1 || exit 1
         touch ${BUILD_DIR}/bzip2/src/bzip2-${BZIP2_VER}/patched_01.marker
     fi
     if [ ! -f ${BUILD_DIR}/bzip2/src/bzip2-${BZIP2_VER}/patched_02.marker ] ; then
-        patch -p1 < ${PATCHES_DIR}/bzip2/0002-bzip2-1.0.5-slash.patch >> ${LOGS_DIR}/bzip2/bzip2_patch.log 2>&1 || exit 1
+        patch -p1 -i ${PATCHES_DIR}/bzip2/0002-bzip2-buildsystem.all.patch >> ${LOGS_DIR}/bzip2/bzip2_patch.log 2>&1 || exit 1
         touch ${BUILD_DIR}/bzip2/src/bzip2-${BZIP2_VER}/patched_02.marker
-    fi
-    if [ ! -f ${BUILD_DIR}/bzip2/src/bzip2-${BZIP2_VER}/patched_03.marker ] ; then
-        patch -p1 < ${PATCHES_DIR}/bzip2/0003-bzgrep-debian-1.0.5-6.all.patch \
-            >> ${LOGS_DIR}/bzip2/bzip2_patch.log 2>&1 || exit 1
-        touch ${BUILD_DIR}/bzip2/src/bzip2-${BZIP2_VER}/patched_03.marker
-    fi
-    if [ ! -f ${BUILD_DIR}/bzip2/src/bzip2-${BZIP2_VER}/patched_04.marker ] ; then
-        patch -p1 < ${PATCHES_DIR}/bzip2/0004-bzip2-cygming-1.0.6.src.all.patch \
-            >> ${LOGS_DIR}/bzip2/bzip2_patch.log 2>&1 || exit 1
-        touch ${BUILD_DIR}/bzip2/src/bzip2-${BZIP2_VER}/patched_04.marker
-    fi
-    if [ ! -f ${BUILD_DIR}/bzip2/src/bzip2-${BZIP2_VER}/patched_05.marker ] ; then
-        patch -p1 < ${PATCHES_DIR}/bzip2/0005-bzip2-buildsystem.all.patch >> ${LOGS_DIR}/bzip2/bzip2_patch.log 2>&1 || exit 1
-        touch ${BUILD_DIR}/bzip2/src/bzip2-${BZIP2_VER}/patched_05.marker
-    fi
-    if [ ! -f ${BUILD_DIR}/bzip2/src/bzip2-${BZIP2_VER}/patched_06.marker ] ; then
-        patch -p1 < ${PATCHES_DIR}/bzip2/0006-bzip2-1.0.6-progress.all.patch \
-            >> ${LOGS_DIR}/bzip2/bzip2_patch.log 2>&1 || exit 1
-        touch ${BUILD_DIR}/bzip2/src/bzip2-${BZIP2_VER}/patched_06.marker
     fi
 
     autoreconf -fi > /dev/null 2>&1
@@ -91,12 +73,16 @@ function build_bzip2() {
         echo "done"
 
         printf "===> making bzip2 %s\n" $arch
-        make $MAKEFLAGS all > ${LOGS_DIR}/bzip2/bzip2_make_${arch}.log 2>&1 || exit 1
+        make $MAKEFLAGS all-dll-shared > ${LOGS_DIR}/bzip2/bzip2_make_${arch}.log 2>&1 || exit 1
         echo "done"
 
         printf "===> installing bzip2 %s\n" $arch
         rm -fr ${PREIN_DIR}/bzip2/mingw${bitval}/*
         make DESTDIR=${PREIN_DIR}/bzip2 install > ${LOGS_DIR}/bzip2/bzip2_install_${arch}.log 2>&1 || exit 1
+        # Remove unneeded file.
+        rm -f ${PREIN_DIR}/bzip2/mingw${bitval}/bin/b*
+        rm -f ${PREIN_DIR}/bzip2/mingw${bitval}/lib/libbz2.a
+        rm -fr ${PREIN_DIR}/bzip2/mingw${bitval}/share
         del_empty_dir ${PREIN_DIR}/bzip2/mingw$bitval
         remove_la_files ${PREIN_DIR}/bzip2/mingw$bitval
         strip_files ${PREIN_DIR}/bzip2/mingw$bitval

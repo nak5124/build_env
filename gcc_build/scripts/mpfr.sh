@@ -46,7 +46,7 @@ function build_mpfr() {
     download_mpfr_patch
 
     cd ${BUILD_DIR}/gcc_libs/mpfr/src/mpfr-$MPFR_VER
-    patch -p1 < ${PATCHES_DIR}/mpfr/allpatches > ${LOGS_DIR}/gcc_libs/mpfr/mpfr_patches.log 2>&1 || exit 1
+    patch -p1 -i ${PATCHES_DIR}/mpfr/allpatches > ${LOGS_DIR}/gcc_libs/mpfr/mpfr_patches.log 2>&1 || exit 1
 
     for arch in ${TARGET_ARCH[@]}
     do
@@ -81,6 +81,8 @@ function build_mpfr() {
 
         printf "===> installing MPFR %s\n" $arch
         make DESTDIR=${PREIN_DIR}/gcc_libs/mpfr install > ${LOGS_DIR}/gcc_libs/mpfr/mpfr_install_${arch}.log 2>&1 || exit 1
+        # Remove unneeded file.
+        rm -fr ${PREIN_DIR}/gcc_libs/mpfr/mingw${bitval}/share
         del_empty_dir ${PREIN_DIR}/gcc_libs/mpfr/mingw$bitval
         remove_la_files ${PREIN_DIR}/gcc_libs/mpfr/mingw$bitval
         strip_files ${PREIN_DIR}/gcc_libs/mpfr/mingw$bitval

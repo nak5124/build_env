@@ -25,7 +25,7 @@ function patch_gcc() {
     pushd ${BUILD_DIR}/gcc/src/gcc-$GCC_VER > /dev/null
 
     if [ ! -f ${BUILD_DIR}/gcc/src/gcc-${GCC_VER}/patched_00.marker ] ; then
-        patch -p1 < ${PATCHES_DIR}/gcc/0000-gcc-4_9-branch-update-to-g4f3ec92.patch \
+        patch -p1 -i ${PATCHES_DIR}/gcc/0000-gcc-4_9-branch-update-to-g483c014.patch \
             > ${LOGS_DIR}/gcc/gcc_patch.log 2>&1 || exit 1
         touch ${BUILD_DIR}/gcc/src/gcc-${GCC_VER}/patched_00.marker
     fi
@@ -40,86 +40,86 @@ function patch_gcc() {
         touch ${BUILD_DIR}/gcc/src/gcc-${GCC_VER}/patched_02.marker
     fi
     if [ ! -f ${BUILD_DIR}/gcc/src/gcc-${GCC_VER}/patched_03.marker ] ; then
-        patch -p1 < ${PATCHES_DIR}/gcc/0001-gcc-4.8-libstdc++export.patch >> ${LOGS_DIR}/gcc/gcc_patch.log 2>&1 || exit 1
+        patch -p1 -i ${PATCHES_DIR}/gcc/0001-gcc-4.8-libstdc++export.patch >> ${LOGS_DIR}/gcc/gcc_patch.log 2>&1 || exit 1
         touch ${BUILD_DIR}/gcc/src/gcc-${GCC_VER}/patched_03.marker
     fi
     if [ ! -f ${BUILD_DIR}/gcc/src/gcc-${GCC_VER}/patched_04.marker ] ; then
-        patch -p1 < ${PATCHES_DIR}/gcc/0002-gcc-4.7-stdthreads.patch >> ${LOGS_DIR}/gcc/gcc_patch.log 2>&1 || exit 1
+        patch -p1 -i ${PATCHES_DIR}/gcc/0002-gcc-4.7-stdthreads.patch >> ${LOGS_DIR}/gcc/gcc_patch.log 2>&1 || exit 1
         touch ${BUILD_DIR}/gcc/src/gcc-${GCC_VER}/patched_04.marker
     fi
     if [ ! -f ${BUILD_DIR}/gcc/src/gcc-${GCC_VER}/patched_05.marker ] ; then
         # Don't waste valuable commandline chars on double-quotes around "arguments" that don't need them.
-        patch -p1 < ${PATCHES_DIR}/gcc/0003-dont-escape-arguments-that-dont-need-it-in-pex-win32.patch \
+        patch -p1 -i ${PATCHES_DIR}/gcc/0003-dont-escape-arguments-that-dont-need-it-in-pex-win32.patch \
             >> ${LOGS_DIR}/gcc/gcc_patch.log 2>&1 || exit 1
         touch ${BUILD_DIR}/gcc/src/gcc-${GCC_VER}/patched_05.marker
     fi
     if [ ! -f ${BUILD_DIR}/gcc/src/gcc-${GCC_VER}/patched_06.marker ] ; then
         # Make Windows behave the same as Posix in the consideration of whether
         # folder "/exists/doesnt-exist/.." is a valid path.. in Posix, it isn't.
-        patch -p1 < ${PATCHES_DIR}/gcc/0004-fix-for-windows-not-minding-non-existent-parent-dirs.patch \
+        patch -p1 -i ${PATCHES_DIR}/gcc/0004-fix-for-windows-not-minding-non-existent-parent-dirs.patch \
             >> ${LOGS_DIR}/gcc/gcc_patch.log 2>&1 || exit 1
         touch ${BUILD_DIR}/gcc/src/gcc-${GCC_VER}/patched_06.marker
     fi
     if [ ! -f ${BUILD_DIR}/gcc/src/gcc-${GCC_VER}/patched_07.marker ] ; then
         # Don't make a lowercase backslashed path from argv[0] that then fail to strcmp with prefix(es) .. they're also ugly.
-        patch -p1 < ${PATCHES_DIR}/gcc/0005-windows-lrealpath-no-force-lowercase-nor-backslash.patch \
+        patch -p1 -i ${PATCHES_DIR}/gcc/0005-windows-lrealpath-no-force-lowercase-nor-backslash.patch \
             >> ${LOGS_DIR}/gcc/gcc_patch.log 2>&1 || exit 1
         touch ${BUILD_DIR}/gcc/src/gcc-${GCC_VER}/patched_07.marker
     fi
     if [ ! -f ${BUILD_DIR}/gcc/src/gcc-${GCC_VER}/patched_08.marker ] ; then
         # http://gcc.gnu.org/bugzilla/show_bug.cgi?id=57440
-        patch -p1 < ${PATCHES_DIR}/gcc/0006-PR57440.patch >> ${LOGS_DIR}/gcc/gcc_patch.log 2>&1 || exit 1
+        patch -p1 -i ${PATCHES_DIR}/gcc/0006-PR57440.patch >> ${LOGS_DIR}/gcc/gcc_patch.log 2>&1 || exit 1
         touch ${BUILD_DIR}/gcc/src/gcc-${GCC_VER}/patched_08.marker
     fi
     if [ ! -f ${BUILD_DIR}/gcc/src/gcc-${GCC_VER}/patched_09.marker ] ; then
-        patch -p0 < ${PATCHES_DIR}/gcc/0007-isl.patch >> ${LOGS_DIR}/gcc/gcc_patch.log 2>&1 || exit 1
+        patch -p0 -i ${PATCHES_DIR}/gcc/0007-isl.patch >> ${LOGS_DIR}/gcc/gcc_patch.log 2>&1 || exit 1
         touch ${BUILD_DIR}/gcc/src/gcc-${GCC_VER}/patched_09.marker
     fi
     if [ ! -f ${BUILD_DIR}/gcc/src/gcc-${GCC_VER}/patched_10.marker ] ; then
         # http://gcc.gnu.org/bugzilla/show_bug.cgi?id=57653
-        patch -p0 < ${PATCHES_DIR}/gcc/0008-PR57653.patch >> ${LOGS_DIR}/gcc/gcc_patch.log 2>&1 || exit 1
+        patch -p0 -i ${PATCHES_DIR}/gcc/0008-PR57653.patch >> ${LOGS_DIR}/gcc/gcc_patch.log 2>&1 || exit 1
         touch ${BUILD_DIR}/gcc/src/gcc-${GCC_VER}/patched_10.marker
     fi
     if [ ! -f ${BUILD_DIR}/gcc/src/gcc-${GCC_VER}/patched_11.marker ] ; then
         # Kai's libgomp fix.
-        patch -p1 < ${PATCHES_DIR}/gcc/0009-ktietz-libgomp.patch >> ${LOGS_DIR}/gcc/gcc_patch.log 2>&1 || exit 1
+        patch -p1 -i ${PATCHES_DIR}/gcc/0009-ktietz-libgomp.patch >> ${LOGS_DIR}/gcc/gcc_patch.log 2>&1 || exit 1
         touch ${BUILD_DIR}/gcc/src/gcc-${GCC_VER}/patched_11.marker
     fi
     if [ ! -f ${BUILD_DIR}/gcc/src/gcc-${GCC_VER}/patched_12.marker ] ; then
         # Enable colorizing diagnostics
-        patch -p1 < ${PATCHES_DIR}/gcc/0010-color.patch >> ${LOGS_DIR}/gcc/gcc_patch.log 2>&1 || exit 1
+        patch -p1 -i ${PATCHES_DIR}/gcc/0010-color.patch >> ${LOGS_DIR}/gcc/gcc_patch.log 2>&1 || exit 1
         touch ${BUILD_DIR}/gcc/src/gcc-${GCC_VER}/patched_12.marker
     fi
     if [ ! -f ${BUILD_DIR}/gcc/src/gcc-${GCC_VER}/patched_13.marker ] ; then
         # Don't search dirs under ${prefix} but ${build_sysroot}.
-        patch -p1 < ${PATCHES_DIR}/gcc/0011-gcc-use-build-sysroot-dir.patch >> ${LOGS_DIR}/gcc/gcc_patch.log 2>&1 || exit 1
+        patch -p1 -i ${PATCHES_DIR}/gcc/0011-gcc-use-build-sysroot-dir.patch >> ${LOGS_DIR}/gcc/gcc_patch.log 2>&1 || exit 1
         touch ${BUILD_DIR}/gcc/src/gcc-${GCC_VER}/patched_13.marker
     fi
     if [ ! -f ${BUILD_DIR}/gcc/src/gcc-${GCC_VER}/patched_14.marker ] ; then
         # Add /mingw{32,64}/local/{include,lib} to search dirs, and make relocatable perfectly.
-        patch -p1 < ${PATCHES_DIR}/gcc/0012-local_path.patch >> ${LOGS_DIR}/gcc/gcc_patch.log 2>&1 || exit 1
+        patch -p1 -i ${PATCHES_DIR}/gcc/0012-local_path.patch >> ${LOGS_DIR}/gcc/gcc_patch.log 2>&1 || exit 1
         touch ${BUILD_DIR}/gcc/src/gcc-${GCC_VER}/patched_14.marker
     fi
     if [ ! -f ${BUILD_DIR}/gcc/src/gcc-${GCC_VER}/patched_15.marker ] ; then
         # when building executables, not DLLs. Add --large-address-aware.
-        patch -p1 < ${PATCHES_DIR}/gcc/0013-LAA-default.patch >> ${LOGS_DIR}/gcc/gcc_patch.log 2>&1 || exit 1
+        patch -p1 -i ${PATCHES_DIR}/gcc/0013-LAA-default.patch >> ${LOGS_DIR}/gcc/gcc_patch.log 2>&1 || exit 1
         touch ${BUILD_DIR}/gcc/src/gcc-${GCC_VER}/patched_15.marker
     fi
     if [ ! -f ${BUILD_DIR}/gcc/src/gcc-${GCC_VER}/patched_16.marker ] ; then
-        patch -p1 < ${PATCHES_DIR}/gcc/0014-force-linking-to-dll.a.patch >> ${LOGS_DIR}/gcc/gcc_patch.log 2>&1 || exit 1
+        patch -p1 -i ${PATCHES_DIR}/gcc/0014-force-linking-to-dll.a.patch >> ${LOGS_DIR}/gcc/gcc_patch.log 2>&1 || exit 1
         touch ${BUILD_DIR}/gcc/src/gcc-${GCC_VER}/patched_16.marker
     fi
     if [ ! -f ${BUILD_DIR}/gcc/src/gcc-${GCC_VER}/patched_17.marker ] ; then
         # mintty can't handle isatty. This is an ugly hack.
-        patch -p1 < ${PATCHES_DIR}/gcc/0015-workaround-mintty.patch >> ${LOGS_DIR}/gcc/gcc_patch.log 2>&1 || exit 1
+        patch -p1 -i ${PATCHES_DIR}/gcc/0015-workaround-mintty.patch >> ${LOGS_DIR}/gcc/gcc_patch.log 2>&1 || exit 1
         touch ${BUILD_DIR}/gcc/src/gcc-${GCC_VER}/patched_17.marker
     fi
     if [ ! -f ${BUILD_DIR}/gcc/src/gcc-${GCC_VER}/patched_18.marker ] ; then
-        patch -p1 < ${PATCHES_DIR}/gcc/0016-always use-utf8.patch >> ${LOGS_DIR}/gcc/gcc_patch.log 2>&1 || exit 1
+        patch -p1 -i ${PATCHES_DIR}/gcc/0016-always-use-utf8.patch >> ${LOGS_DIR}/gcc/gcc_patch.log 2>&1 || exit 1
         touch ${BUILD_DIR}/gcc/src/gcc-${GCC_VER}/patched_18.marker
     fi
     if [ ! -f ${BUILD_DIR}/gcc/src/gcc-${GCC_VER}/patched_19.marker ] ; then
-        patch -p1 < ${PATCHES_DIR}/gcc/0017-wcswidth.patch >> ${LOGS_DIR}/gcc/gcc_patch.log 2>&1 || exit 1
+        patch -p1 -i ${PATCHES_DIR}/gcc/0017-wcswidth.patch >> ${LOGS_DIR}/gcc/gcc_patch.log 2>&1 || exit 1
         touch ${BUILD_DIR}/gcc/src/gcc-${GCC_VER}/patched_19.marker
     fi
 
@@ -146,7 +146,6 @@ function symlink_gcc() {
     ln -fsr ./g++-${GCC_VER}.exe ./${_arch}-w64-mingw32-c++-${GCC_VER}.exe
     ln -fsr ./g++-${GCC_VER}.exe ./${_arch}-w64-mingw32-c++.exe
     ln -fsr ./gcc.exe ./cc
-    ln -fsr ./cpp.exe ../lib/cpp
 
     popd > /dev/null
 
@@ -166,12 +165,13 @@ function build_gcc() {
 
     local -ra _dlllist=(
         "libgmp-*.dll"
-        "libgmpxx-*.dll"
         "libmpfr-*.dll"
         "libmpc-*.dll"
         "libisl-*.dll"
         "libcloog-isl-*.dll"
     )
+
+    local -r _pkgrev=2
 
     download_gcc_src
     patch_gcc
@@ -250,20 +250,10 @@ function build_gcc() {
             --with-libintl-prefix=${DST_DIR}/mingw$bitval                                         \
             --with-system-zlib                                                                    \
             ${_optimization}                                                                      \
+            --with-pkgversion="$GCC_VER Rev.${_pkgrev}, target: ${arch}-w64-mingw32"              \
             --with-gnu-as                                                                         \
             --with-gnu-ld                                                                         \
             --program-suffix=-$GCC_VER                                                            \
-            CPPFLAGS="${_CPPFLAGS}"                                                               \
-            CPPFLAGS_FOR_TARGET="${_CPPFLAGS}"                                                    \
-            CFLAGS="${_aof} ${_CFLAGS}"                                                           \
-            CFLAGS_FOR_TARGET="${_aof} ${_CFLAGS}"                                                \
-            BOOT_CFLAGS="${_aof} ${_CFLAGS}"                                                      \
-            CXXFLAGS="${_aof} ${_CXXFLAGS}"                                                       \
-            CXXFLAGS_FOR_TARGET="${_aof} ${_CXXFLAGS}"                                            \
-            BOOT_CXXFLAGS="${_aof} ${_CXXFLAGS}"                                                  \
-            LDFLAGS="${_LDFLAGS}"                                                                 \
-            LDFLAGS_FOR_TARGET="${_LDFLAGS}"                                                      \
-            BOOT_LDFLAGS="${_LDFLAGS}"                                                            \
             > ${LOGS_DIR}/gcc/gcc_config_${arch}.log 2>&1 || exit 1
         echo "done"
 
@@ -341,6 +331,17 @@ _EOF_
         do
             mv -f ${DST_DIR}/mingw${bitval}/bin/$_dll ${DST_DIR}/mingw${bitval}/lib/gcc/${arch}-w64-mingw32/$GCC_VER
         done
+        rm -f ${DST_DIR}/mingw${bitval}/include/gmp.h
+        rm -f ${DST_DIR}/mingw${bitval}/include/mpfr.h
+        rm -f ${DST_DIR}/mingw${bitval}/include/mpf2mpfr.h
+        rm -f ${DST_DIR}/mingw${bitval}/include/mpc.h
+        rm -fr ${DST_DIR}/mingw${bitval}/include/isl
+        rm -fr ${DST_DIR}/mingw${bitval}/include/cloog
+        rm -f ${DST_DIR}/mingw${bitval}/lib/libgmp.dll.a
+        rm -f ${DST_DIR}/mingw${bitval}/lib/libmpfr.dll.a
+        rm -f ${DST_DIR}/mingw${bitval}/lib/libmpc.dll.a
+        rm -f ${DST_DIR}/mingw${bitval}/lib/libisl.dll.a
+        rm -f ${DST_DIR}/mingw${bitval}/lib/libcloog-isl.dll.a
         echo "done"
     done
 
@@ -351,6 +352,14 @@ _EOF_
 # copy only
 function copy_gcc() {
     clear; printf "GCC %s\n" $GCC_VER
+
+    local -ra _dlllist=(
+        "libgmp-*.dll"
+        "libmpfr-*.dll"
+        "libmpc-*.dll"
+        "libisl-*.dll"
+        "libcloog-isl-*.dll"
+    )
 
     for arch in ${TARGET_ARCH[@]}
     do
@@ -399,6 +408,17 @@ _EOF_
         do
             mv -f ${DST_DIR}/mingw${bitval}/bin/$_dll ${DST_DIR}/mingw${bitval}/lib/gcc/${arch}-w64-mingw32/$GCC_VER
         done
+        rm -f ${DST_DIR}/mingw${bitval}/include/gmp.h
+        rm -f ${DST_DIR}/mingw${bitval}/include/mpfr.h
+        rm -f ${DST_DIR}/mingw${bitval}/include/mpf2mpfr.h
+        rm -f ${DST_DIR}/mingw${bitval}/include/mpc.h
+        rm -fr ${DST_DIR}/mingw${bitval}/include/isl
+        rm -fr ${DST_DIR}/mingw${bitval}/include/cloog
+        rm -f ${DST_DIR}/mingw${bitval}/lib/libgmp.dll.a
+        rm -f ${DST_DIR}/mingw${bitval}/lib/libmpfr.dll.a
+        rm -f ${DST_DIR}/mingw${bitval}/lib/libmpc.dll.a
+        rm -f ${DST_DIR}/mingw${bitval}/lib/libisl.dll.a
+        rm -f ${DST_DIR}/mingw${bitval}/lib/libcloog-isl.dll.a
         echo "done"
     done
 

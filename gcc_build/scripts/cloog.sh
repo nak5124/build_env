@@ -26,12 +26,12 @@ function patch_cloog() {
 
     if [ ! -f ${BUILD_DIR}/gcc_libs/cloog/src/cloog-${CLOOG_VER}/patched_01.marker ] ; then
         # combination of upstream commits b561f860, 2d8b7c6b and 22643c94
-        patch -p1 < ${PATCHES_DIR}/cloog/0001-cloog-0.18.1-isl-compat.patch \
+        patch -p1 -i ${PATCHES_DIR}/cloog/0001-cloog-0.18.1-isl-compat.patch \
             > ${LOGS_DIR}/gcc_libs/cloog/cloog_patch.log 2>&1 || exit 1
         touch ${BUILD_DIR}/gcc_libs/cloog/src/cloog-${CLOOG_VER}/patched_01.marker
     fi
     if [ ! -f ${BUILD_DIR}/gcc_libs/cloog/src/cloog-${CLOOG_VER}/patched_02.marker ] ; then
-        patch -p1 < ${PATCHES_DIR}/cloog/0002-cloog-0.18.1-no-undefined.patch \
+        patch -p1 -i ${PATCHES_DIR}/cloog/0002-cloog-0.18.1-no-undefined.patch \
             >> ${LOGS_DIR}/gcc_libs/cloog/cloog_patch.log 2>&1 || exit 1
         touch ${BUILD_DIR}/gcc_libs/cloog/src/cloog-${CLOOG_VER}/patched_02.marker
     fi
@@ -88,9 +88,9 @@ function build_cloog() {
 
         printf "===> installing CLooG %s\n" $arch
         make DESTDIR=${PREIN_DIR}/gcc_libs/cloog install > ${LOGS_DIR}/gcc_libs/cloog/cloog_install_${arch}.log 2>&1 || exit 1
-        sed -i "s|${DST_DIR}\/mingw${bitval}|\/mingw${bitval}|g" \
-            ${PREIN_DIR}/gcc_libs/cloog/mingw${bitval}/lib/pkgconfig/cloog-isl.pc
+        # Remove unneeded file.
         rm -f ${PREIN_DIR}/gcc_libs/cloog/mingw${bitval}/bin/*.exe
+        rm -fr ${PREIN_DIR}/gcc_libs/cloog/mingw${bitval}/lib/{cloog-isl,isl,pkgconfig}
         del_empty_dir ${PREIN_DIR}/gcc_libs/cloog/mingw$bitval
         remove_la_files ${PREIN_DIR}/gcc_libs/cloog/mingw$bitval
         strip_files ${PREIN_DIR}/gcc_libs/cloog/mingw$bitval

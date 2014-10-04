@@ -25,29 +25,24 @@ function patch_intl() {
     pushd ${BUILD_DIR}/libintl/src/gettext-$INTL_VER > /dev/null
 
     if [ ! -f ${BUILD_DIR}/libintl/src/gettext-${INTL_VER}/patched_01.marker ] ; then
-        patch -p1 < ${PATCHES_DIR}/libintl/0001-relocatex-libintl-0.18.3.1.patch \
+        patch -p1 -i ${PATCHES_DIR}/libintl/0001-relocatex-libintl-0.18.3.1.patch \
             > ${LOGS_DIR}/libintl/libintl_patch.log 2>&1 || exit 1
         touch ${BUILD_DIR}/libintl/src/gettext-${INTL_VER}/patched_01.marker
     fi
     if [ ! -f ${BUILD_DIR}/libintl/src/gettext-${INTL_VER}/patched_02.marker ] ; then
-        patch -p0 < ${PATCHES_DIR}/libintl/0002-always-use-libintl-vsnprintf.mingw.patch \
+        patch -p0 -i ${PATCHES_DIR}/libintl/0002-always-use-libintl-vsnprintf.mingw.patch \
             >> ${LOGS_DIR}/libintl/libintl_patch.log 2>&1 || exit 1
         touch ${BUILD_DIR}/libintl/src/gettext-${INTL_VER}/patched_02.marker
     fi
     if [ ! -f ${BUILD_DIR}/libintl/src/gettext-${INTL_VER}/patched_03.marker ] ; then
-        patch -p0 < ${PATCHES_DIR}/libintl/0003-fix-asprintf-conflict.mingw.patch \
+        patch -p1 -i ${PATCHES_DIR}/libintl/0003-static-locale_charset.patch \
             >> ${LOGS_DIR}/libintl/libintl_patch.log 2>&1 || exit 1
         touch ${BUILD_DIR}/libintl/src/gettext-${INTL_VER}/patched_03.marker
     fi
     if [ ! -f ${BUILD_DIR}/libintl/src/gettext-${INTL_VER}/patched_04.marker ] ; then
-        patch -p0 < ${PATCHES_DIR}/libintl/0004-static-locale_charset.patch \
+        patch -p1 -i ${PATCHES_DIR}/libintl/0004-use-GetConsoleOutputCP.patch \
             >> ${LOGS_DIR}/libintl/libintl_patch.log 2>&1 || exit 1
         touch ${BUILD_DIR}/libintl/src/gettext-${INTL_VER}/patched_04.marker
-    fi
-    if [ ! -f ${BUILD_DIR}/libintl/src/gettext-${INTL_VER}/patched_05.marker ] ; then
-        patch -p0 < ${PATCHES_DIR}/libintl/0005-use-GetConsoleOutputCP.patch \
-            >> ${LOGS_DIR}/libintl/libintl_patch.log 2>&1 || exit 1
-        touch ${BUILD_DIR}/libintl/src/gettext-${INTL_VER}/patched_05.marker
     fi
 
     popd > /dev/null
@@ -84,7 +79,7 @@ function build_intl() {
             --disable-csharp                                 \
             --enable-threads=win32                           \
             --enable-shared                                  \
-            --enable-static                                  \
+            --disable-static                                 \
             --enable-relocatable                             \
             --disable-libasprintf                            \
             --with-gnu-ld                                    \
@@ -100,6 +95,9 @@ function build_intl() {
 
         printf "===> installing libintl %s\n" $arch
         make DESTDIR=${PREIN_DIR}/libintl install > ${LOGS_DIR}/libintl/libintl_install_${arch}.log 2>&1 || exit 1
+        # Remove unneeded file.
+        rm -f ${PREIN_DIR}/libintl/mingw${bitval}/bin/{*.sh,*.exe}
+        rm -fr ${PREIN_DIR}/libintl/mingw${bitval}/share
         del_empty_dir ${PREIN_DIR}/libintl/mingw$bitval
         remove_la_files ${PREIN_DIR}/libintl/mingw$bitval
         strip_files ${PREIN_DIR}/libintl/mingw$bitval

@@ -25,42 +25,42 @@ function patch_autoconf() {
     pushd ${BUILD_DIR}/autotools/autoconf/src/autoconf-$AUTOCONF_VER > /dev/null
 
     if [ ! -f ${BUILD_DIR}/autotools/autoconf/src/autoconf-${AUTOCONF_VER}/patched_01.marker ] ; then
-        patch -p1 < ${PATCHES_DIR}/autoconf/0001-atomic.all.patch \
+        patch -p1 -i ${PATCHES_DIR}/autoconf/0001-atomic.all.patch \
             > ${LOGS_DIR}/autotools/autoconf/autoconf_patch.log 2>&1 || exit 1
         touch ${BUILD_DIR}/autotools/autoconf/src/autoconf-${AUTOCONF_VER}/patched_01.marker
     fi
     if [ ! -f ${BUILD_DIR}/autotools/autoconf/src/autoconf-${AUTOCONF_VER}/patched_02.marker ] ; then
-        patch -p1 < ${PATCHES_DIR}/autoconf/0002-stricter-versioning.all.patch \
+        patch -p1 -i ${PATCHES_DIR}/autoconf/0002-stricter-versioning.all.patch \
             >> ${LOGS_DIR}/autotools/autoconf/autoconf_patch.log 2>&1 || exit 1
         touch ${BUILD_DIR}/autotools/autoconf/src/autoconf-${AUTOCONF_VER}/patched_02.marker
     fi
     if [ ! -f ${BUILD_DIR}/autotools/autoconf/src/autoconf-${AUTOCONF_VER}/patched_03.marker ] ; then
-        patch -p1 < ${PATCHES_DIR}/autoconf/0003-m4sh.m4.all.patch \
+        patch -p1 -i ${PATCHES_DIR}/autoconf/0003-m4sh.m4.all.patch \
             >> ${LOGS_DIR}/autotools/autoconf/autoconf_patch.log 2>&1 || exit 1
         touch ${BUILD_DIR}/autotools/autoconf/src/autoconf-${AUTOCONF_VER}/patched_03.marker
     fi
     if [ ! -f ${BUILD_DIR}/autotools/autoconf/src/autoconf-${AUTOCONF_VER}/patched_04.marker ] ; then
-        patch -p1 < ${PATCHES_DIR}/autoconf/0004-autoconf2.5-2.69-1.src.all.patch \
+        patch -p1 -i ${PATCHES_DIR}/autoconf/0004-autoconf2.5-2.69-1.src.all.patch \
             >> ${LOGS_DIR}/autotools/autoconf/autoconf_patch.log 2>&1 || exit 1
         touch ${BUILD_DIR}/autotools/autoconf/src/autoconf-${AUTOCONF_VER}/patched_04.marker
     fi
     if [ ! -f ${BUILD_DIR}/autotools/autoconf/src/autoconf-${AUTOCONF_VER}/patched_05.marker ] ; then
-        patch -p1 < ${PATCHES_DIR}/autoconf/0005-autoconf-ga357718.all.patch \
+        patch -p1 -i ${PATCHES_DIR}/autoconf/0005-autoconf-ga357718.all.patch \
             >> ${LOGS_DIR}/autotools/autoconf/autoconf_patch.log 2>&1 || exit 1
         touch ${BUILD_DIR}/autotools/autoconf/src/autoconf-${AUTOCONF_VER}/patched_05.marker
     fi
     if [ ! -f ${BUILD_DIR}/autotools/autoconf/src/autoconf-${AUTOCONF_VER}/patched_06.marker ] ; then
-        patch -p1 < ${PATCHES_DIR}/autoconf/0006-allow-lns-on-msys2.all.patch \
+        patch -p1 -i ${PATCHES_DIR}/autoconf/0006-allow-lns-on-msys2.all.patch \
             >> ${LOGS_DIR}/autotools/autoconf/autoconf_patch.log 2>&1 || exit 1
         touch ${BUILD_DIR}/autotools/autoconf/src/autoconf-${AUTOCONF_VER}/patched_06.marker
     fi
     if [ ! -f ${BUILD_DIR}/autotools/autoconf/src/autoconf-${AUTOCONF_VER}/patched_07.marker ] ; then
-        patch -p1 < ${PATCHES_DIR}/autoconf/0007-fix-cr-for-awk-in-configure.all.patch \
+        patch -p1 -i ${PATCHES_DIR}/autoconf/0007-fix-cr-for-awk-in-configure.all.patch \
             >> ${LOGS_DIR}/autotools/autoconf/autoconf_patch.log 2>&1 || exit 1
         touch ${BUILD_DIR}/autotools/autoconf/src/autoconf-${AUTOCONF_VER}/patched_07.marker
     fi
     if [ ! -f ${BUILD_DIR}/autotools/autoconf/src/autoconf-${AUTOCONF_VER}/patched_08.marker ] ; then
-        patch -p1 < ${PATCHES_DIR}/autoconf/0008-fix-cr-for-awk-in-status.all.patch \
+        patch -p1 -i ${PATCHES_DIR}/autoconf/0008-fix-cr-for-awk-in-status.all.patch \
             >> ${LOGS_DIR}/autotools/autoconf/autoconf_patch.log 2>&1 || exit 1
         touch ${BUILD_DIR}/autotools/autoconf/src/autoconf-${AUTOCONF_VER}/patched_08.marker
     fi
@@ -159,7 +159,7 @@ function patch_automake() {
     pushd ${BUILD_DIR}/autotools/automake/src/automake-$AUTOMAKE_VER > /dev/null
 
     if [ ! -f ${BUILD_DIR}/autotools/automake/src/automake-${AUTOMAKE_VER}/patched_01.marker ] ; then
-        patch -p1 < ${PATCHES_DIR}/automake/0001-fix-cr-for-awk-in-configure.all.patch \
+        patch -p1 -i ${PATCHES_DIR}/automake/0001-fix-cr-for-awk-in-configure.all.patch \
             > ${LOGS_DIR}/autotools/automake/automake_patch.log 2>&1 || exit 1
         touch ${BUILD_DIR}/autotools/automake/src/automake-${AUTOMAKE_VER}/patched_01.marker
     fi
@@ -259,37 +259,37 @@ function patch_libtool() {
     pushd ${BUILD_DIR}/autotools/libtool/src/libtool-$LIBTOOL_VER > /dev/null
 
     if [ ! -f ${BUILD_DIR}/autotools/libtool/src/libtool-${LIBTOOL_VER}/patched_01.marker ] ; then
-        patch -p1 < ${PATCHES_DIR}/libtool/0001-cygwin-mingw-Create-UAC-manifest-files.mingw.patch \
+        patch -p1 -i ${PATCHES_DIR}/libtool/0001-cygwin-mingw-Create-UAC-manifest-files.mingw.patch \
             > ${LOGS_DIR}/autotools/libtool/libtool_patch.log 2>&1 || exit 1
         touch ${BUILD_DIR}/autotools/libtool/src/libtool-${LIBTOOL_VER}/patched_01.marker
     fi
     if [ ! -f ${BUILD_DIR}/autotools/libtool/src/libtool-${LIBTOOL_VER}/patched_02.marker ] ; then
-        patch -p1 < ${PATCHES_DIR}/libtool/0002-Pass-various-runtime-library-flags-to-GCC.mingw.patch \
+        patch -p1 -i ${PATCHES_DIR}/libtool/0002-Pass-various-runtime-library-flags-to-GCC.mingw.patch \
             >> ${LOGS_DIR}/autotools/libtool/libtool_patch.log 2>&1 || exit 1
         touch ${BUILD_DIR}/autotools/libtool/src/libtool-${LIBTOOL_VER}/patched_02.marker
     fi
     if [ ! -f ${BUILD_DIR}/autotools/libtool/src/libtool-${LIBTOOL_VER}/patched_03.marker ] ; then
-        patch -p1 < ${PATCHES_DIR}/libtool/0003-Fix-linking-with-fstack-protector.mingw.patch \
+        patch -p1 -i ${PATCHES_DIR}/libtool/0003-Fix-linking-with-fstack-protector.mingw.patch \
             >> ${LOGS_DIR}/autotools/libtool/libtool_patch.log 2>&1 || exit 1
         touch ${BUILD_DIR}/autotools/libtool/src/libtool-${LIBTOOL_VER}/patched_03.marker
     fi
     if [ ! -f ${BUILD_DIR}/autotools/libtool/src/libtool-${LIBTOOL_VER}/patched_04.marker ] ; then
-        patch -p1 < ${PATCHES_DIR}/libtool/0004-Fix-seems-to-be-moved.patch \
+        patch -p1 -i ${PATCHES_DIR}/libtool/0004-Fix-seems-to-be-moved.patch \
             >> ${LOGS_DIR}/autotools/libtool/libtool_patch.log 2>&1 || exit 1
         touch ${BUILD_DIR}/autotools/libtool/src/libtool-${LIBTOOL_VER}/patched_04.marker
     fi
     if [ ! -f ${BUILD_DIR}/autotools/libtool/src/libtool-${LIBTOOL_VER}/patched_05.marker ] ; then
-        patch -p1 < ${PATCHES_DIR}/libtool/0005-Fix-strict-ansi-vs-posix.patch \
+        patch -p1 -i ${PATCHES_DIR}/libtool/0005-Fix-strict-ansi-vs-posix.patch \
             >> ${LOGS_DIR}/autotools/libtool/libtool_patch.log 2>&1 || exit 1
         touch ${BUILD_DIR}/autotools/libtool/src/libtool-${LIBTOOL_VER}/patched_05.marker
     fi
     if [ ! -f ${BUILD_DIR}/autotools/libtool/src/libtool-${LIBTOOL_VER}/patched_06.marker ] ; then
-        patch -p1 < ${PATCHES_DIR}/libtool/0006-fix-cr-for-awk-in-configure.all.patch \
+        patch -p1 -i ${PATCHES_DIR}/libtool/0006-fix-cr-for-awk-in-configure.all.patch \
             >> ${LOGS_DIR}/autotools/libtool/libtool_patch.log 2>&1 || exit 1
         touch ${BUILD_DIR}/autotools/libtool/src/libtool-${LIBTOOL_VER}/patched_06.marker
     fi
     if [ ! -f ${BUILD_DIR}/autotools/libtool/src/libtool-${LIBTOOL_VER}/patched_07.marker ] ; then
-        patch -p1 < ${PATCHES_DIR}/libtool/0007-find-external-libraries.patch \
+        patch -p1 -i ${PATCHES_DIR}/libtool/0007-find-external-libraries.patch \
             >> ${LOGS_DIR}/autotools/libtool/libtool_patch.log 2>&1 || exit 1
         touch ${BUILD_DIR}/autotools/libtool/src/libtool-${LIBTOOL_VER}/patched_07.marker
     fi

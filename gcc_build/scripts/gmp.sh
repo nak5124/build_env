@@ -43,7 +43,7 @@ function build_gmp() {
             --prefix=/mingw$bitval          \
             --build=${arch}-w64-mingw32     \
             --host=${arch}-w64-mingw32      \
-            --enable-cxx                    \
+            --disable-cxx                   \
             --enable-fat                    \
             --enable-shared                 \
             --disable-static                \
@@ -62,6 +62,8 @@ function build_gmp() {
 
         printf "===> installing GMP %s\n" $arch
         make DESTDIR=${PREIN_DIR}/gcc_libs/gmp install > ${LOGS_DIR}/gcc_libs/gmp/gmp_install_${arch}.log 2>&1 || exit 1
+        # Remove unneeded file.
+        rm -fr ${PREIN_DIR}/gcc_libs/gmp/mingw${bitval}/share
         del_empty_dir ${PREIN_DIR}/gcc_libs/gmp/mingw$bitval
         remove_la_files ${PREIN_DIR}/gcc_libs/gmp/mingw$bitval
         strip_files ${PREIN_DIR}/gcc_libs/gmp/mingw$bitval

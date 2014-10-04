@@ -12,35 +12,35 @@ function prepare_binutils() {
 
     git clean -fdx > /dev/null 2>&1
     git reset --hard > /dev/null 2>&1
-    # git pull > /dev/null 2>&1 # Don't pull.
+    git pull > /dev/null 2>&1
     git_hash > ${LOGS_DIR}/binutils/binutils.hash 2>&1
     git_rev >> ${LOGS_DIR}/binutils/binutils.hash 2>&1
 
     # hack! - libiberty configure tests for header files using "$CPP $CPPFLAGS"
-    sed -i "/ac_cpp=/s/\$CPPFLAGS/\$CPPFLAGS -O2/" libiberty/configure
-    patch -p1 < ${PATCHES_DIR}/binutils/0001-check-for-unusual-file-harder.patch \
+    sed -i "/ac_cpp=/s/\$CPPFLAGS/\$CPPFLAGS -Os/" libiberty/configure
+    patch -p1 -i ${PATCHES_DIR}/binutils/0001-check-for-unusual-file-harder.patch \
         > ${LOGS_DIR}/binutils/binutils_patch.log 2>&1 || exit 1
-    patch -p1 < ${PATCHES_DIR}/binutils/0002-enable-shared-bfd.all.patch \
+    patch -p1 -i ${PATCHES_DIR}/binutils/0002-enable-shared-bfd.all.patch \
         >> ${LOGS_DIR}/binutils/binutils_patch.log 2>&1 || exit 1
-    patch -p1 < ${PATCHES_DIR}/binutils/0003-link-to-libibtl-and-libiberty.mingw.patch \
+    patch -p1 -i ${PATCHES_DIR}/binutils/0003-link-to-libibtl-and-libiberty.mingw.patch \
         >> ${LOGS_DIR}/binutils/binutils_patch.log 2>&1 || exit 1
-    patch -p1 < ${PATCHES_DIR}/binutils/0004-shared-opcodes.mingw.patch \
+    patch -p1 -i ${PATCHES_DIR}/binutils/0004-shared-opcodes.mingw.patch \
         >> ${LOGS_DIR}/binutils/binutils_patch.log 2>&1 || exit 1
-    patch -p1 < ${PATCHES_DIR}/binutils/0005-fix-libiberty-makefile.mingw.patch \
+    patch -p1 -i ${PATCHES_DIR}/binutils/0005-fix-libiberty-makefile.mingw.patch \
         >> ${LOGS_DIR}/binutils/binutils_patch.log 2>&1 || exit 1
-    patch -p1 < ${PATCHES_DIR}/binutils/0006-fix-libiberty-configure.mingw.patch \
+    patch -p1 -i ${PATCHES_DIR}/binutils/0006-fix-libiberty-configure.mingw.patch \
         >> ${LOGS_DIR}/binutils/binutils_patch.log 2>&1 || exit 1
-    patch -p1 < ${PATCHES_DIR}/binutils/0007-dont-link-gas-to-libiberty.mingw.patch \
+    patch -p1 -i ${PATCHES_DIR}/binutils/0007-dont-link-gas-to-libiberty.mingw.patch \
         >> ${LOGS_DIR}/binutils/binutils_patch.log 2>&1 || exit 1
-    patch -p1 < ${PATCHES_DIR}/binutils/0008-dont-link-binutils-to-libiberty.mingw.patch \
+    patch -p1 -i ${PATCHES_DIR}/binutils/0008-dont-link-binutils-to-libiberty.mingw.patch \
         >> ${LOGS_DIR}/binutils/binutils_patch.log 2>&1 || exit 1
-    patch -p1 < ${PATCHES_DIR}/binutils/0009-dont-link-ld-to-libiberty.mingw.patch \
+    patch -p1 -i ${PATCHES_DIR}/binutils/0009-dont-link-ld-to-libiberty.mingw.patch \
         >> ${LOGS_DIR}/binutils/binutils_patch.log 2>&1 || exit 1
-    patch -p1 < ${PATCHES_DIR}/binutils/0010-binutils-mingw-gnu-print.patch \
+    patch -p1 -i ${PATCHES_DIR}/binutils/0010-binutils-mingw-gnu-print.patch \
         >> ${LOGS_DIR}/binutils/binutils_patch.log 2>&1 || exit 1
-    patch -p1 < ${PATCHES_DIR}/binutils/0011-fix-iconv-linking.all.patch \
+    patch -p1 -i ${PATCHES_DIR}/binutils/0011-fix-iconv-linking.all.patch \
         >> ${LOGS_DIR}/binutils/binutils_patch.log 2>&1 || exit 1
-    patch -p1 < ${PATCHES_DIR}/binutils/0012-binutils-use-build-sysroot-dir.patch \
+    patch -p1 -i ${PATCHES_DIR}/binutils/0012-binutils-use-build-sysroot-dir.patch \
         >> ${LOGS_DIR}/binutils/binutils_patch.log 2>&1 || exit 1
     # A newer standards.info is installed later on in the Autoconf instructions.
     rm -fv ${BUILD_DIR}/binutils/src/binutils-${BINUTILS_VER}/etc/standards.info
@@ -118,14 +118,14 @@ function build_binutils() {
             --enable-lto                                                                                    \
             --disable-werror                                                                                \
             --enable-shared                                                                                 \
-            --enable-static                                                                                 \
+            --disable-static                                                                                \
             --enable-plugins                                                                                \
             ${_64_bit_bfd}                                                                                  \
             --enable-install-libbfd                                                                         \
             --enable-nls                                                                                    \
             --disable-rpath                                                                                 \
             --disable-multilib                                                                              \
-            --enable-install-libiberty                                                                      \
+            --disable-install-libiberty                                                                     \
             --disable-gdb                                                                                   \
             --disable-libdecnumber                                                                          \
             --disable-readline                                                                              \
@@ -152,6 +152,9 @@ function build_binutils() {
         printf "===> installing Binutils %s\n" $arch
         rm -fr ${PREIN_DIR}/binutils/mingw${bitval}/*
         make DESTDIR=${PREIN_DIR}/binutils install > ${LOGS_DIR}/binutils/binutils_install_${arch}.log 2>&1 || exit 1
+        # Remove unneeded file.
+        rm -fr ${PREIN_DIR}/binutils/mingw${bitval}/lib
+        rm -fr ${PREIN_DIR}/binutils/mingw${bitval}/include
         del_empty_dir ${PREIN_DIR}/binutils/mingw$bitval
         remove_la_files ${PREIN_DIR}/binutils/mingw$bitval
         strip_files ${PREIN_DIR}/binutils/mingw$bitval

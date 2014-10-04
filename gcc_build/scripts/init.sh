@@ -76,10 +76,6 @@ function init_dirs() {
                 if [ ! -d ${PREIN_DIR}/${target}_ld ] ; then
                     mkdir -p ${PREIN_DIR}/${target}_ld
                 fi
-            elif [ "${target}" = "gcc" ] ; then
-                if [ ! -d ${PREIN_DIR}/${target}_pre ] ; then
-                    mkdir -p ${PREIN_DIR}/${target}_pre
-                fi
             fi
         fi
     done

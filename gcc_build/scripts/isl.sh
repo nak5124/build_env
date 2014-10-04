@@ -25,7 +25,7 @@ function patch_isl() {
     pushd ${BUILD_DIR}/gcc_libs/isl/src/isl-$ISL_VER > /dev/null
 
     if [ ! -f ${BUILD_DIR}/gcc_libs/isl/src/isl-${ISL_VER}/patched_01.marker ] ; then
-        patch -p1 < ${PATCHES_DIR}/isl/0001-isl-no-undefined.patch > ${LOGS_DIR}/gcc_libs/isl/isl_patch.log 2>&1 || exit 1
+        patch -p1 -i ${PATCHES_DIR}/isl/0001-isl-no-undefined.patch > ${LOGS_DIR}/gcc_libs/isl/isl_patch.log 2>&1 || exit 1
         touch ${BUILD_DIR}/gcc_libs/isl/src/isl-${ISL_VER}/patched_01.marker
     fi
 
@@ -79,9 +79,9 @@ function build_isl() {
 
         printf "===> installing ISL %s\n" $arch
         make DESTDIR=${PREIN_DIR}/gcc_libs/isl install > ${LOGS_DIR}/gcc_libs/isl/isl_install_${arch}.log 2>&1 || exit 1
-        sed -i "s|${DST_DIR}\/mingw${bitval}|\/mingw${bitval}|g" ${PREIN_DIR}/gcc_libs/isl/mingw${bitval}/lib/pkgconfig/isl.pc
         # Remove unneeded file.
         rm -f ${PREIN_DIR}/gcc_libs/isl/mingw${bitval}/lib/*.py
+        rm -fr ${PREIN_DIR}/gcc_libs/isl/mingw${bitval}/lib/pkgconfig
         del_empty_dir ${PREIN_DIR}/gcc_libs/isl/mingw$bitval
         remove_la_files ${PREIN_DIR}/gcc_libs/isl/mingw$bitval
         strip_files ${PREIN_DIR}/gcc_libs/isl/mingw$bitval

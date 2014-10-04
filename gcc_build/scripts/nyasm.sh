@@ -62,6 +62,9 @@ function build_nasm() {
         printf "===> installing NASM %s\n" $arch
         # NASM don't use DESTDIR but INSTALLROOT.
         make INSTALLROOT=${PREIN_DIR}/nyasm/nasm install > ${LOGS_DIR}/nyasm/nasm/nasm_install_${arch}.log 2>&1 || exit 1
+        # Remove unneeded file.
+        rm -f ${PREIN_DIR}/nyasm/nasm/mingw${bitval}/bin/ndisasm.exe
+        rm -f ${PREIN_DIR}/nyasm/nasm/mingw${bitval}/share/man/man1/ndisasm.1
         del_empty_dir ${PREIN_DIR}/nyasm/nasm/mingw$bitval
         remove_la_files ${PREIN_DIR}/nyasm/nasm/mingw$bitval
         strip_files ${PREIN_DIR}/nyasm/nasm/mingw$bitval
@@ -117,28 +120,11 @@ function download_yasm_src() {
     return 0
 }
 
-# patch
-function patch_yasm() {
-    pushd ${BUILD_DIR}/nyasm/yasm/src/yasm-$YASM_VER > /dev/null
-
-    if [ ! -f ${BUILD_DIR}/nyasm/yasm/src/yasm-${YASM_VER}/patched_01.marker ] ; then
-        patch -p1 < ${PATCHES_DIR}/yasm/0001-use-a-larger-hash-table-size.patch \
-            > ${LOGS_DIR}/nyasm/yasm/yasm_patch.log 2>&1 || exit 1
-        touch ${BUILD_DIR}/nyasm/yasm/src/yasm-${YASM_VER}/patched_01.marker
-    fi
-
-    popd > /dev/null
-
-    return 0
-}
-
 # build
 function build_yasm() {
     clear; printf "Build Yasm %s\n" $YASM_VER
 
     download_yasm_src
-    # Since ver. 1.3.0, this patch was merged.
-    # patch_yasm
 
     for arch in ${TARGET_ARCH[@]}
     do
@@ -169,6 +155,11 @@ function build_yasm() {
 
         printf "===> installing Yasm %s\n" $arch
         make DESTDIR=${PREIN_DIR}/nyasm/yasm install > ${LOGS_DIR}/nyasm/yasm/yasm_install_${arch}.log 2>&1 || exit 1
+        # Remove unneeded file.
+        rm -f ${PREIN_DIR}/nyasm/yasm/mingw${bitval}/bin/{vsyasm.exe,ytasm.exe}
+        rm -fr ${PREIN_DIR}/nyasm/yasm/mingw${bitval}/lib
+        rm -fr ${PREIN_DIR}/nyasm/yasm/mingw${bitval}/include
+        rm -fr ${PREIN_DIR}/nyasm/yasm/mingw${bitval}/share/man/man7
         del_empty_dir ${PREIN_DIR}/nyasm/yasm/mingw$bitval
         remove_la_files ${PREIN_DIR}/nyasm/yasm/mingw$bitval
         strip_files ${PREIN_DIR}/nyasm/yasm/mingw$bitval
