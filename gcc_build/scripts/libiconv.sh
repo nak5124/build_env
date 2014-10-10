@@ -45,6 +45,10 @@ function patch_iconv() {
             >> ${LOGS_DIR}/libiconv/libiconv_patch.log 2>&1 || exit 1
         touch ${BUILD_DIR}/libiconv/src/libiconv-${ICONV_VER}/patched_04.marker
     fi
+    if [ ! -f ${BUILD_DIR}/libiconv/src/libiconv-${ICONV_VER}/patched_05.marker ] ; then
+        patch -p0 -i ${PATCHES_DIR}/libiconv/0005-static-libgcc.patch >> ${LOGS_DIR}/libiconv/libiconv_patch.log 2>&1 || exit 1
+        touch ${BUILD_DIR}/libiconv/src/libiconv-${ICONV_VER}/patched_05.marker
+    fi
 
     popd > /dev/null
 

@@ -73,8 +73,8 @@ function build_zlib() {
         export PATH
 
         printf "===> configuring zlib %s\n" $arch
-        CHOST=${arch}-w64-mingw32 CFLAGS="${_aof} ${_CFLAGS}" LDFLAGS="${_LDFLAGS}" \
-            ./configure --prefix=/mingw$bitval --shared                             \
+        CHOST=${arch}-w64-mingw32 CFLAGS="${_aof} ${_CFLAGS}" LDFLAGS="${_LDFLAGS} -static-libgcc" \
+            ./configure --prefix=/mingw$bitval --shared                                            \
             > ${LOGS_DIR}/zlib/libz_config_${arch}.log 2>&1 || exit 1
         echo "done"
 

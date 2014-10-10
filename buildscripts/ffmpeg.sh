@@ -228,26 +228,29 @@ function build_openjpeg2() {
     do
         if [ "${arch}" = "i686" ] ; then
             local FFPREFIX=/mingw32/local
+            local _lgcc_s="-static-libgcc"
         else
             local FFPREFIX=/mingw64/local
+            local _lgcc_s=""
         fi
 
         source cpath $arch
         printf "===> configure OpenJPEG %s\n" $arch
-        cmake -G "MSYS Makefiles"                             \
-              -DCMAKE_INSTALL_PREFIX=$FFPREFIX                \
-              -DCMAKE_BUILD_TYPE=Release                      \
-              -DBUILD_SHARED_LIBS:bool=ON                     \
-              -DBUILD_DOC:bool=OFF                            \
-              -DBUILD_MJ2:bool=ON                             \
-              -DBUILD_JPWL:bool=OFF                           \
-              -DBUILD_JPIP:bool=OFF                           \
-              -DBUILD_JPIP_SERVER:bool=OFF                    \
-              -DBUILD_JP3D:bool=OFF                           \
-              -DBUILD_JAVA:bool=OFF                           \
-              -DBUILD_TESTING:BOOL=OFF                        \
-              -DCMAKE_SYSTEM_PREFIX_PATH=$(pwd -W)            \
-              -DCMAKE_C_FLAGS_RELEASE:STRING="${BASE_CFLAGS}" \
+        cmake -G "MSYS Makefiles"                                             \
+              -DCMAKE_INSTALL_PREFIX=$FFPREFIX                                \
+              -DCMAKE_BUILD_TYPE=Release                                      \
+              -DBUILD_SHARED_LIBS:bool=ON                                     \
+              -DBUILD_DOC:bool=OFF                                            \
+              -DBUILD_MJ2:bool=ON                                             \
+              -DBUILD_JPWL:bool=OFF                                           \
+              -DBUILD_JPIP:bool=OFF                                           \
+              -DBUILD_JPIP_SERVER:bool=OFF                                    \
+              -DBUILD_JP3D:bool=OFF                                           \
+              -DBUILD_JAVA:bool=OFF                                           \
+              -DBUILD_TESTING:BOOL=OFF                                        \
+              -DCMAKE_SYSTEM_PREFIX_PATH=$(pwd -W)                            \
+              -DCMAKE_C_FLAGS_RELEASE:STRING="${BASE_CFLAGS}"                 \
+              -DCMAKE_SHARED_LINKER_FLAGS:STRING="${BASE_LDFLAGS} ${_lgcc_s}" \
             > ${LOGS_DIR}/openjpeg2_config_${arch}.log 2>&1 || exit 1
         echo "done"
 
@@ -290,25 +293,27 @@ function build_libspeex() {
     do
         if [ "${arch}" = "i686" ] ; then
             local FFPREFIX=/mingw32/local
+            local _lgcc_s="-static-libgcc"
         else
             local FFPREFIX=/mingw64/local
+            local _lgcc_s=""
         fi
 
         source cpath $arch
         printf "===> configure libspeex %s\n" $arch
-        ./configure --prefix=$FFPREFIX                \
-                    --build=${arch}-w64-mingw32       \
-                    --host=${arch}-w64-mingw32        \
-                    --disable-silent-rules            \
-                    --enable-shared                   \
-                    --disable-static                  \
-                    --enable-sse                      \
-                    --disable-binaries                \
-                    --with-gnu-ld                     \
-                    --with-ogg                        \
-                    CPPFLAGS="${BASE_CPPFLAGS}"       \
-                    CFLAGS="${BASE_CFLAGS}"           \
-                    LDFLAGS="${BASE_LDFLAGS} -lwinmm" \
+        ./configure --prefix=$FFPREFIX                           \
+                    --build=${arch}-w64-mingw32                  \
+                    --host=${arch}-w64-mingw32                   \
+                    --disable-silent-rules                       \
+                    --enable-shared                              \
+                    --disable-static                             \
+                    --enable-sse                                 \
+                    --disable-binaries                           \
+                    --with-gnu-ld                                \
+                    --with-ogg                                   \
+                    CPPFLAGS="${BASE_CPPFLAGS}"                  \
+                    CFLAGS="${BASE_CFLAGS}"                      \
+                    LDFLAGS="${BASE_LDFLAGS} -lwinmm ${_lgcc_s}" \
             > ${LOGS_DIR}/speex_config_${arch}.log 2>&1 || exit 1
         sed -i 's|-O3||g' config.status
         echo "done"
@@ -410,16 +415,18 @@ function build_libvpx() {
         if [ "${arch}" = "i686" ] ; then
             local FFPREFIX=/mingw32/local
             local _target=x86-win32-gcc
+            local _lgcc_s="-static-libgcc"
         else
             local FFPREFIX=/mingw64/local
             local _target=x86_64-win64-gcc
+            local _lgcc_s=""
         fi
 
         source cpath $arch
         printf "===> configure libvpx %s\n" $arch
         CFLAGS="${BASE_CFLAGS}"                 \
         CXXFLAGS="${BASE_CXXFLAGS}"             \
-        LDFLAGS="${BASE_LDFLAGS}"               \
+        LDFLAGS="${BASE_LDFLAGS} ${_lgcc_s}"    \
         ./configure --prefix=$FFPREFIX          \
                     --target=$_target           \
                     --disable-install-docs      \
@@ -457,7 +464,7 @@ function build_libvpx() {
 function patch_ffmpeg() {
     echo "===> patching... FFmpeg"
 
-    local _N=37
+    local _N=39
     for i in `seq 1 ${_N}`
     do
         local num=$( printf "%04d" $i )
@@ -535,10 +542,12 @@ function build_ffmpeg() {
             local _archopt="--arch=x86 --cpu=i686"
             local FFPREFIX=/mingw32/local
             local VCDIR=$VC32_DIR
+            local _lgcc_s="-static-libgcc"
         else
             local _archopt="--arch=x86_64"
             local FFPREFIX=/mingw64/local
             local VCDIR=$VC64_DIR
+            local _lgcc_s=""
         fi
 
         source cpath $arch
@@ -574,6 +583,7 @@ function build_ffmpeg() {
                     ${_archopt}                  \
                     --disable-debug              \
                     --optflags="${BASE_CFLAGS}"  \
+                    --extra-ldflags="${_lgcc_s}" \
             > ${LOGS_DIR}/ffmpeg_config_${arch}.log 2>&1 || exit 1
         sed -i '/HAVE_CLOCK_GETTIME/d' config.h
         sed -i '/HAVE_NANOSLEEP/d' config.h

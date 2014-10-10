@@ -77,9 +77,10 @@ function build_lsmash() {
         export PATH
 
         printf "===> configure L-SMASH %s\n" $arch
-        ./configure --prefix=$LSPREFIX \
-                    --disable-static   \
-                    --enable-shared    \
+        ./configure --prefix=$LSPREFIX             \
+                    --disable-static               \
+                    --enable-shared                \
+                    --extra-ldflags=-static-libgcc \
             > ${LOGS_DIR}/lsmash_config_${arch}.log 2>&1 || exit 1
         echo "done"
 

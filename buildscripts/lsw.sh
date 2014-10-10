@@ -54,7 +54,7 @@ function build_LSW_aviutl() {
     ln -fs /mingw32/bin/libbz2-1.dll /d/encode/aviutl
     ln -fs /mingw32/bin/libz-1.dll /d/encode/aviutl
     ln -fs /mingw32/bin/libiconv-2.dll /d/encode/aviutl
-    ln -fs /mingw32/local/bin/liblsmash-1.dll /d/encode/aviutl
+    ln -fs /mingw32/local/bin/liblsmash-2.dll /d/encode/aviutl
     ln -fs /mingw32/local/bin/avcodec-56.dll /d/encode/aviutl
     ln -fs /mingw32/local/bin/avformat-56.dll /d/encode/aviutl
     ln -fs /mingw32/local/bin/avresample-2.dll /d/encode/aviutl
@@ -91,7 +91,7 @@ function build_LSW_avisynth() {
     ln -fs /mingw32/bin/libbz2-1.dll /c/AviSynth+/plugins
     ln -fs /mingw32/bin/libz-1.dll /c/AviSynth+/plugins
     ln -fs /mingw32/bin/libiconv-2.dll /c/AviSynth+/plugins
-    ln -fs /mingw32/local/bin/liblsmash-1.dll /c/AviSynth+/plugins
+    ln -fs /mingw32/local/bin/liblsmash-2.dll /c/AviSynth+/plugins
     ln -fs /mingw32/local/bin/avcodec-56.dll /c/AviSynth+/plugins
     ln -fs /mingw32/local/bin/avformat-56.dll /c/AviSynth+/plugins
     ln -fs /mingw32/local/bin/avresample-2.dll /c/AviSynth+/plugins
@@ -109,7 +109,7 @@ function build_LSW_avisynth() {
     ln -fs /mingw64/bin/libbz2-1.dll /c/AviSynth+/plugins64
     ln -fs /mingw64/bin/libz-1.dll /c/AviSynth+/plugins64
     ln -fs /mingw64/bin/libiconv-2.dll /c/AviSynth+/plugins64
-    ln -fs /mingw64/local/bin/liblsmash-1.dll /c/AviSynth+/plugins64
+    ln -fs /mingw64/local/bin/liblsmash-2.dll /c/AviSynth+/plugins64
     ln -fs /mingw64/local/bin/avcodec-56.dll /c/AviSynth+/plugins64
     ln -fs /mingw64/local/bin/avformat-56.dll /c/AviSynth+/plugins64
     ln -fs /mingw64/local/bin/avresample-2.dll /c/AviSynth+/plugins64
@@ -160,7 +160,7 @@ function build_LSW_vapoursynth() {
             ln -fs /mingw32/bin/libbz2-1.dll /c/VapourSynth/plugins32
             ln -fs /mingw32/bin/libz-1.dll /c/VapourSynth/plugins32
             ln -fs /mingw32/bin/libiconv-2.dll /c/VapourSynth/plugins32
-            ln -fs /mingw32/local/bin/liblsmash-1.dll /c/VapourSynth/plugins32
+            ln -fs /mingw32/local/bin/liblsmash-2.dll /c/VapourSynth/plugins32
             ln -fs /mingw32/local/bin/avcodec-56.dll /c/VapourSynth/plugins32
             ln -fs /mingw32/local/bin/avformat-56.dll /c/VapourSynth/plugins32
             ln -fs /mingw32/local/bin/avutil-54.dll /c/VapourSynth/plugins32
@@ -179,7 +179,7 @@ function build_LSW_vapoursynth() {
             ln -fs /mingw64/bin/libbz2-1.dll /c/VapourSynth/plugins64
             ln -fs /mingw64/bin/libz-1.dll /c/VapourSynth/plugins64
             ln -fs /mingw64/bin/libiconv-2.dll /c/VapourSynth/plugins64
-            ln -fs /mingw64/local/bin/liblsmash-1.dll /c/VapourSynth/plugins64
+            ln -fs /mingw64/local/bin/liblsmash-2.dll /c/VapourSynth/plugins64
             ln -fs /mingw64/local/bin/avcodec-56.dll /c/VapourSynth/plugins64
             ln -fs /mingw64/local/bin/avformat-56.dll /c/VapourSynth/plugins64
             ln -fs /mingw64/local/bin/avutil-54.dll /c/VapourSynth/plugins64

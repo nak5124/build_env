@@ -61,14 +61,14 @@ function build_bzip2() {
         export PATH
 
         printf "===> configuring bzip2 %s\n" $arch
-        ../src/bzip2-${BZIP2_VER}/configure \
-            --prefix=/mingw$bitval          \
-            --build=${arch}-w64-mingw32     \
-            --host=${arch}-w64-mingw32      \
-            --enable-shared                 \
-            CPPFLAGS="${_CPPFLAGS}"         \
-            CFLAGS="${_aof} ${_CFLAGS}"     \
-            LDFLAGS="${_LDFLAGS}"           \
+        ../src/bzip2-${BZIP2_VER}/configure      \
+            --prefix=/mingw$bitval               \
+            --build=${arch}-w64-mingw32          \
+            --host=${arch}-w64-mingw32           \
+            --enable-shared                      \
+            CPPFLAGS="${_CPPFLAGS}"              \
+            CFLAGS="${_aof} ${_CFLAGS}"          \
+            LDFLAGS="${_LDFLAGS} -static-libgcc" \
             > ${LOGS_DIR}/bzip2/bzip2_config_${arch}.log 2>&1 || exit 1
         echo "done"
 
