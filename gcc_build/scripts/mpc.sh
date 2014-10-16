@@ -26,6 +26,9 @@ function build_mpc() {
 
     download_mpc_src
 
+    cd ${BUILD_DIR}/gcc_libs/mpc/src/mpc-$MPC_VER
+    autoreconf -fi > /dev/null 2>&1
+
     for arch in ${TARGET_ARCH[@]}
     do
         cd ${BUILD_DIR}/gcc_libs/mpc/build_$arch

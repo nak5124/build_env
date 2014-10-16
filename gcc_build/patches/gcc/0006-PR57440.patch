@@ -1,8 +1,6 @@
-Index: gcc-4.9.0/libgcc/gthr-posix.h
-===================================================================
---- a/libgcc/gthr-posix.h        (Revision 210070)
-+++ b/libgcc/gthr-posix.h        (Arbeitskopie)
-@@ -34,6 +34,10 @@ see the files COPYING3 and COPYING.RUNTIME respect
+--- gcc-4.9.2/libgcc/gthr-posix.h.old	2014-10-28 16:32:18.199771800 +0900
++++ gcc-4.9.2/libgcc/gthr-posix.h	2014-10-28 16:32:47.173429000 +0900
+@@ -34,6 +34,10 @@
  
  #include <pthread.h>
  

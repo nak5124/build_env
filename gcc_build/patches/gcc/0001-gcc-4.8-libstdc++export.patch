@@ -1,13 +1,11 @@
-diff --git a/libstdc++-v3/config/abi/pre/gnu.ver b/libstdc++-v3/config/abi/pre/gnu.ver
-index cd0be4e..759dcfb 100644
---- a/libstdc++-v3/config/abi/pre/gnu.ver
-+++ b/libstdc++-v3/config/abi/pre/gnu.ver
-@@ -1513,7 +1513,7 @@ CXXABI_1.3.6 {
-     __cxa_allocate_dependent_exception;
+--- gcc-4.9.2/libstdc++-v3/config/abi/pre/gnu.ver.old	2014-03-15 03:10:59.000000000 +0900
++++ gcc-4.9.2/libstdc++-v3/config/abi/pre/gnu.ver	2014-10-28 16:10:42.320428400 +0900
+@@ -1560,6 +1560,8 @@
      __cxa_free_dependent_exception;
      __cxa_deleted_virtual;
--
+ 
 +    _ZTC*;
++
  } CXXABI_1.3.5;
  
  CXXABI_1.3.7 {

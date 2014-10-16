@@ -298,4 +298,7 @@ fi
 # reinstall ld
 copy_ld
 
+MINTTY=$mintty_save
+export MINTTY
+
 reset; echo "Everything has been successfully completed!"

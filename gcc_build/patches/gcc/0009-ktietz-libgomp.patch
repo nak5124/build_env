@@ -1,8 +1,6 @@
-Index: gcc-4.8.2/libgomp/team.c
-===================================================================
---- gcc-4.8.2/libgomp/team.c	(Revision 206281)
-+++ gcc-4.8.2/libgomp/team.c	(Arbeitskopie)
-@@ -145,7 +145,7 @@ gomp_new_team (unsigned nthreads)
+--- gcc-4.9.2/libgomp/team.c.old	2014-01-03 07:25:54.000000000 +0900
++++ gcc-4.9.2/libgomp/team.c	2014-10-28 17:08:28.283072100 +0900
+@@ -145,7 +145,7 @@
  
    size = sizeof (*team) + nthreads * (sizeof (team->ordered_release[0])
  				      + sizeof (team->implicit_task[0]));
@@ -11,7 +9,7 @@ Index: gcc-4.8.2/libgomp/team.c
  
    team->work_share_chunk = 8;
  #ifdef HAVE_SYNC_BUILTINS
-@@ -196,7 +196,7 @@ free_team (struct gomp_team *team)
+@@ -196,7 +196,7 @@
  static struct gomp_thread_pool *gomp_new_thread_pool (void)
  {
    struct gomp_thread_pool *pool
@@ -20,7 +18,7 @@ Index: gcc-4.8.2/libgomp/team.c
    pool->threads = NULL;
    pool->threads_size = 0;
    pool->threads_used = 0;
-@@ -939,7 +939,7 @@ struct gomp_task_icv *
+@@ -939,7 +939,7 @@
  gomp_new_icv (void)
  {
    struct gomp_thread *thr = gomp_thread ();
@@ -29,11 +27,9 @@ Index: gcc-4.8.2/libgomp/team.c
    gomp_init_task (task, NULL, &gomp_global_icv);
    thr->task = task;
    pthread_setspecific (gomp_thread_destructor, thr);
-Index: gcc-4.8.2/libgomp/testsuite/config/default.exp
-===================================================================
---- gcc-4.8.2/libgomp/testsuite/config/default.exp	(Revision 206281)
-+++ gcc-4.8.2/libgomp/testsuite/config/default.exp	(Arbeitskopie)
-@@ -15,3 +15,8 @@
+--- gcc-4.9.2/libgomp/testsuite/config/default.exp.old	2014-01-03 07:25:54.000000000 +0900
++++ gcc-4.9.2/libgomp/testsuite/config/default.exp	2014-10-28 17:09:12.242586500 +0900
+@@ -15,3 +15,7 @@
  # <http://www.gnu.org/licenses/>.
  
  load_lib "standard.exp"
@@ -41,12 +37,9 @@ Index: gcc-4.8.2/libgomp/testsuite/config/default.exp
 +# Support for old dejagnu.  Must be loaded here, not in libstdc++.exp, to
 +# make sure all existing procs are loaded when their presence is tested.
 +load_file $srcdir/../../gcc/testsuite/lib/dejapatches.exp
-+
-Index: work.c
-===================================================================
---- gcc-4.8.2/libgomp/work.c	(Revision 206281)
-+++ gcc-4.8.2/libgomp/work.c	(Arbeitskopie)
-@@ -75,7 +75,7 @@ alloc_work_share (struct gomp_team *team)
+--- gcc-4.9.2/libgomp/work.c.old	2014-01-03 07:25:54.000000000 +0900
++++ gcc-4.9.2/libgomp/work.c	2014-10-28 17:10:11.633983500 +0900
+@@ -75,7 +75,7 @@
  #endif
  
    team->work_share_chunk *= 2;
@@ -55,7 +48,7 @@ Index: work.c
    ws->next_alloc = team->work_shares[0].next_alloc;
    team->work_shares[0].next_alloc = ws;
    team->work_share_list_alloc = &ws[1];
-@@ -174,7 +174,7 @@ gomp_work_share_start (bool ordered)
+@@ -174,7 +174,7 @@
    /* Work sharing constructs can be orphaned.  */
    if (team == NULL)
      {

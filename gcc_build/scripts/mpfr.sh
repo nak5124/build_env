@@ -47,6 +47,7 @@ function build_mpfr() {
 
     cd ${BUILD_DIR}/gcc_libs/mpfr/src/mpfr-$MPFR_VER
     patch -p1 -i ${PATCHES_DIR}/mpfr/allpatches > ${LOGS_DIR}/gcc_libs/mpfr/mpfr_patches.log 2>&1 || exit 1
+    autoreconf -fi > /dev/null 2>&1
 
     for arch in ${TARGET_ARCH[@]}
     do

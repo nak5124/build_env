@@ -45,10 +45,14 @@ function patch_iconv() {
             >> ${LOGS_DIR}/libiconv/libiconv_patch.log 2>&1 || exit 1
         touch ${BUILD_DIR}/libiconv/src/libiconv-${ICONV_VER}/patched_04.marker
     fi
-    if [ ! -f ${BUILD_DIR}/libiconv/src/libiconv-${ICONV_VER}/patched_05.marker ] ; then
-        patch -p0 -i ${PATCHES_DIR}/libiconv/0005-static-libgcc.patch >> ${LOGS_DIR}/libiconv/libiconv_patch.log 2>&1 || exit 1
-        touch ${BUILD_DIR}/libiconv/src/libiconv-${ICONV_VER}/patched_05.marker
-    fi
+
+    libtoolize -i > /dev/null 2>&1
+    sed -i "s/macro_version='2.4'/macro_version='2.4.2.458.26-92994'/" configure
+    sed -i "s/macro_revision='1.3293'/macro_revision='2.4.3'/" configure
+    cd ${BUILD_DIR}/libiconv/src/libiconv-${ICONV_VER}/libcharset
+    libtoolize -i > /dev/null 2>&1
+    sed -i "s/macro_version='2.4'/macro_version='2.4.2.458.26-92994'/" configure
+    sed -i "s/macro_revision='1.3293'/macro_revision='2.4.3'/" configure
 
     popd > /dev/null
 
@@ -78,7 +82,13 @@ function build_iconv() {
             local _intl="--enable-nls --with-libiconv-prefix=${DST_DIR}/mingw${bitval} \
                          --with-libintl-prefix=${DST_DIR}/mingw${bitval}"
         else
-            local _intl="--disable-nls --without-libiconv-prefix --without-libintl-prefix"
+            local _intl="--disable-nls"
+        fi
+
+        if [ "${arch}" = "i686" ] ; then
+            local _slgcc="-static-libgcc"
+        else
+            local _slgcc=""
         fi
 
         printf "===> configuring libiconv %s\n" $arch
@@ -94,7 +104,7 @@ function build_iconv() {
             ${_intl}                           \
             CPPFLAGS="${_CPPFLAGS}"            \
             CFLAGS="${_aof} ${_CFLAGS}"        \
-            LDFLAGS="${_LDFLAGS}"              \
+            LDFLAGS="${_LDFLAGS} ${_slgcc}"    \
             > ${LOGS_DIR}/libiconv/libiconv_config_${arch}.log 2>&1 || exit 1
         echo "done"
 
@@ -105,6 +115,9 @@ function build_iconv() {
         printf "===> installing libiconv %s\n" $arch
         make DESTDIR=${PREIN_DIR}/libiconv install > ${LOGS_DIR}/libiconv/libiconv_install_${arch}.log 2>&1 || exit 1
         # Remove unneeded file.
+        rm -f ${PREIN_DIR}/libiconv/mingw${bitval}/bin/libcharset-*.dll
+        rm -f ${PREIN_DIR}/libiconv/mingw${bitval}/include/libcharset.h
+        rm -f ${PREIN_DIR}/libiconv/mingw${bitval}/lib/libcharset.dll.a
         rm -f ${PREIN_DIR}/libiconv/mingw${bitval}/lib/charset.alias
         del_empty_dir ${PREIN_DIR}/libiconv/mingw$bitval
         remove_la_files ${PREIN_DIR}/libiconv/mingw$bitval

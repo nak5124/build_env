@@ -203,10 +203,14 @@ function build_automake() {
         printf "===> installing Automake %s\n" $arch
         make DESTDIR=${PREIN_DIR}/autotools/automake install \
             > ${LOGS_DIR}/autotools/automake/automake_install_${arch}.log 2>&1 || exit 1
+        pushd ${PREIN_DIR}/autotools/automake/mingw${bitval}/bin > /dev/null
+        ln -fsr ./automake-1.14 ./automake
+        ln -fsr ./aclocal-1.14 ./aclocal
+        popd > /dev/null
         echo "done"
 
         printf "===> copying Automake %s to %s/mingw%s\n" $arch $DST_DIR $bitval
-        cp -fra ${PREIN_DIR}/autotools/automake/mingw$bitval $DST_DIR
+        symcopy ${PREIN_DIR}/autotools/automake/mingw$bitval $DST_DIR
         echo "done"
     done
 
@@ -223,7 +227,7 @@ function copy_automake() {
         local bitval=$(get_arch_bit ${arch})
 
         printf "===> copying Automake %s to %s/mingw%s\n" $arch $DST_DIR $bitval
-        cp -fra ${PREIN_DIR}/autotools/automake/mingw$bitval $DST_DIR
+        symcopy ${PREIN_DIR}/autotools/automake/mingw$bitval $DST_DIR
         echo "done"
     done
 
@@ -237,8 +241,8 @@ function download_libtool_src() {
     if [ ! -f ${BUILD_DIR}/autotools/libtool/src/libtool-${LIBTOOL_VER}.tar.xz ] ; then
         printf "===> downloading  %s\n" $ISL_VER
         pushd ${BUILD_DIR}/autotools/libtool/src > /dev/null
-        # dl_files ftp ftp://ftp.gnu.org/gnu/libtool/libtool-${LIBTOOL_VER}.tar.xz
-        dl_files ftp ftp://alpha.gnu.org/gnu/libtool/libtool-${LIBTOOL_VER}.tar.xz
+        dl_files ftp ftp://ftp.gnu.org/gnu/libtool/libtool-${LIBTOOL_VER}.tar.xz
+        # dl_files ftp ftp://alpha.gnu.org/gnu/libtool/libtool-${LIBTOOL_VER}.tar.xz
         popd > /dev/null
         echo "done"
     fi
@@ -269,29 +273,19 @@ function patch_libtool() {
         touch ${BUILD_DIR}/autotools/libtool/src/libtool-${LIBTOOL_VER}/patched_02.marker
     fi
     if [ ! -f ${BUILD_DIR}/autotools/libtool/src/libtool-${LIBTOOL_VER}/patched_03.marker ] ; then
-        patch -p1 -i ${PATCHES_DIR}/libtool/0003-Fix-linking-with-fstack-protector.mingw.patch \
+        patch -p1 -i ${PATCHES_DIR}/libtool/0003-Fix-seems-to-be-moved.patch \
             >> ${LOGS_DIR}/autotools/libtool/libtool_patch.log 2>&1 || exit 1
         touch ${BUILD_DIR}/autotools/libtool/src/libtool-${LIBTOOL_VER}/patched_03.marker
     fi
     if [ ! -f ${BUILD_DIR}/autotools/libtool/src/libtool-${LIBTOOL_VER}/patched_04.marker ] ; then
-        patch -p1 -i ${PATCHES_DIR}/libtool/0004-Fix-seems-to-be-moved.patch \
+        patch -p1 -i ${PATCHES_DIR}/libtool/0004-Fix-strict-ansi-vs-posix.patch \
             >> ${LOGS_DIR}/autotools/libtool/libtool_patch.log 2>&1 || exit 1
         touch ${BUILD_DIR}/autotools/libtool/src/libtool-${LIBTOOL_VER}/patched_04.marker
     fi
     if [ ! -f ${BUILD_DIR}/autotools/libtool/src/libtool-${LIBTOOL_VER}/patched_05.marker ] ; then
-        patch -p1 -i ${PATCHES_DIR}/libtool/0005-Fix-strict-ansi-vs-posix.patch \
+        patch -p1 -i ${PATCHES_DIR}/libtool/0005-fix-cr-for-awk-in-configure.all.patch \
             >> ${LOGS_DIR}/autotools/libtool/libtool_patch.log 2>&1 || exit 1
         touch ${BUILD_DIR}/autotools/libtool/src/libtool-${LIBTOOL_VER}/patched_05.marker
-    fi
-    if [ ! -f ${BUILD_DIR}/autotools/libtool/src/libtool-${LIBTOOL_VER}/patched_06.marker ] ; then
-        patch -p1 -i ${PATCHES_DIR}/libtool/0006-fix-cr-for-awk-in-configure.all.patch \
-            >> ${LOGS_DIR}/autotools/libtool/libtool_patch.log 2>&1 || exit 1
-        touch ${BUILD_DIR}/autotools/libtool/src/libtool-${LIBTOOL_VER}/patched_06.marker
-    fi
-    if [ ! -f ${BUILD_DIR}/autotools/libtool/src/libtool-${LIBTOOL_VER}/patched_07.marker ] ; then
-        patch -p1 -i ${PATCHES_DIR}/libtool/0007-find-external-libraries.patch \
-            >> ${LOGS_DIR}/autotools/libtool/libtool_patch.log 2>&1 || exit 1
-        touch ${BUILD_DIR}/autotools/libtool/src/libtool-${LIBTOOL_VER}/patched_07.marker
     fi
 
     popd > /dev/null

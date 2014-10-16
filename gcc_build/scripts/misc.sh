@@ -8,8 +8,8 @@ function get_arch_bit() {
             echo "64"
             ;;
         * )
-            echo "64"
-            ;;
+            echo "get_arch_bit: unknown arch"
+            exit 1
     esac
 }
 
@@ -160,11 +160,8 @@ function decomp_arch() {
 # arch optimization flags
 function arch_optflags() {
     case "$1" in
-        "i686" )
-            echo "-march=i686 -mtune=generic"
-            ;;
-        "x86_64" )
-            echo "-march=x86-64 -mtune=generic"
+        "i686" | "x86_64" )
+            echo "-march=${1/_/-} -mtune=generic"
             ;;
         * )
             echo "-mtune=generic"

@@ -3,9 +3,9 @@
 @@ -134,7 +134,7 @@
  	isl_vertices_private.h \
  	isl_vertices.c
- libisl_la_LIBADD = @GMP_LIBS@
+ libisl_la_LIBADD = @MP_LIBS@
 -libisl_la_LDFLAGS = -version-info @versioninfo@ \
 +libisl_la_LDFLAGS = -version-info @versioninfo@ -no-undefined \
- 	@GMP_LDFLAGS@
+ 	@MP_LDFLAGS@
  
- isl_test_LDFLAGS = @GMP_LDFLAGS@
+ isl_test_LDFLAGS = @MP_LDFLAGS@

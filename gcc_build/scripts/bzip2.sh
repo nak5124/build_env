@@ -60,15 +60,20 @@ function build_bzip2() {
         PATH=${DST_DIR}/mingw${bitval}/bin:$PATH
         export PATH
 
+        if [ "${arch}" = "i686" ] ; then
+            local _slgssp="-static-libgcc -fstack-protector-strong --param=ssp-buffer-size=4"
+        else
+            local _slgssp="-fstack-protector-strong --param=ssp-buffer-size=4"
+        fi
+
         printf "===> configuring bzip2 %s\n" $arch
-        ../src/bzip2-${BZIP2_VER}/configure      \
-            --prefix=/mingw$bitval               \
-            --build=${arch}-w64-mingw32          \
-            --host=${arch}-w64-mingw32           \
-            --enable-shared                      \
-            CPPFLAGS="${_CPPFLAGS}"              \
-            CFLAGS="${_aof} ${_CFLAGS}"          \
-            LDFLAGS="${_LDFLAGS} -static-libgcc" \
+        ../src/bzip2-${BZIP2_VER}/configure          \
+            --prefix=/mingw$bitval                   \
+            --build=${arch}-w64-mingw32              \
+            --host=${arch}-w64-mingw32               \
+            --enable-shared                          \
+            CFLAGS="${_aof} ${_CFLAGS} ${_CPPFLAGS}" \
+            LDFLAGS="${_LDFLAGS} ${_slgssp}"         \
             > ${LOGS_DIR}/bzip2/bzip2_config_${arch}.log 2>&1 || exit 1
         echo "done"
 

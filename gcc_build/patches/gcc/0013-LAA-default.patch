@@ -1,5 +1,5 @@
---- /z/mingw32.h	2014-08-22 13:31:06.739289900 +0900
-+++ gcc-4.9.1/gcc/config/i386/mingw32.h	2014-08-22 13:34:32.155039000 +0900
+--- gcc-4.9.2/gcc/config/i386/mingw32.h.old	2014-10-28 17:36:29.731289600 +0900
++++ gcc-4.9.2/gcc/config/i386/mingw32.h	2014-10-28 17:44:41.248402700 +0900
 @@ -116,7 +116,8 @@
    %{shared: --shared} %{mdll:--dll} \
    %{static:-Bstatic} %{!static:-Bdynamic} \
@@ -10,8 +10,8 @@
  
  /* Include in the mingw32 libraries with libgcc */
  #ifdef ENABLE_SHARED_LIBGCC
---- /z/mingw-w64.h	2014-08-22 13:35:01.455714900 +0900
-+++ gcc-4.9.1/gcc/config/i386/mingw-w64.h	2014-08-22 13:35:35.938687200 +0900
+--- gcc-4.9.2/gcc/config/i386/mingw-w64.h.old	2014-01-03 07:23:26.000000000 +0900
++++ gcc-4.9.2/gcc/config/i386/mingw-w64.h	2014-10-28 17:45:15.407356500 +0900
 @@ -83,4 +83,5 @@
    %{shared: --shared} %{mdll:--dll} \
    %{static:-Bstatic} %{!static:-Bdynamic} \

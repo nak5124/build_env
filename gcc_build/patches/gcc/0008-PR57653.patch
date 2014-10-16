@@ -1,6 +1,6 @@
---- gcc/c-family/c-opts.c       (revision 200330)
-+++ gcc/c-family/c-opts.c       (working copy)
-@@ -1338,6 +1338,10 @@ c_finish_options (void)
+--- gcc-4.9.2/gcc/c-family/c-opts.c.old	2014-05-06 19:48:08.000000000 +0900
++++ gcc-4.9.2/gcc/c-family/c-opts.c	2014-10-28 17:04:55.556904900 +0900
+@@ -1363,6 +1363,10 @@
  static void
  push_command_line_include (void)
  {

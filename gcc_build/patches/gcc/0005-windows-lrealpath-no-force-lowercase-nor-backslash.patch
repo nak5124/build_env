@@ -1,6 +1,5 @@
-diff -urN gcc-4.8.2.orig/libiberty/lrealpath.c gcc-4.8.2/libiberty/lrealpath.c
---- gcc-4.8.2.orig/libiberty/lrealpath.c	2013-12-21 20:21:26.446076700 +0000
-+++ gcc-4.8.2/libiberty/lrealpath.c	2013-12-22 02:56:54.800559500 +0000
+--- gcc-4.9.2/libiberty/lrealpath.c.old	2005-05-25 05:48:25.000000000 +0900
++++ gcc-4.9.2/libiberty/lrealpath.c	2014-10-28 16:30:29.397548700 +0900
 @@ -138,15 +138,26 @@
    {
      char buf[MAX_PATH];

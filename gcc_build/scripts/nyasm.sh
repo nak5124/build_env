@@ -43,14 +43,15 @@ function build_nasm() {
         PATH=${DST_DIR}/mingw${bitval}/bin:$PATH
         export PATH
 
+        autoreconf -fi > /dev/null 2>&1
+
         printf "===> configuring NASM %s\n" $arch
-        ./configure                     \
-            --prefix=/mingw$bitval      \
-            --build=${arch}-w64-mingw32 \
-            --host=${arch}-w64-mingw32  \
-            CPPFLAGS="${_CPPFLAGS}"     \
-            CFLAGS="${_aof} ${_CFLAGS}" \
-            LDFLAGS="${_LDFLAGS}"       \
+        ./configure                                                                  \
+            --prefix=/mingw$bitval                                                   \
+            --build=${arch}-w64-mingw32                                              \
+            --host=${arch}-w64-mingw32                                               \
+            CFLAGS="${_aof} ${_CFLAGS} ${_CPPFLAGS}"                                 \
+            LDFLAGS="${_LDFLAGS} -fstack-protector-strong --param=ssp-buffer-size=4" \
             > ${LOGS_DIR}/nyasm/nasm/nasm_config_${arch}.log 2>&1 || exit 1
         echo "done"
 
@@ -126,6 +127,9 @@ function build_yasm() {
 
     download_yasm_src
 
+    cd ${BUILD_DIR}/nyasm/yasm/src/yasm-$YASM_VER
+    autoreconf -fi > /dev/null 2>&1
+
     for arch in ${TARGET_ARCH[@]}
     do
         cd ${BUILD_DIR}/nyasm/yasm/build_$arch
@@ -143,6 +147,8 @@ function build_yasm() {
             --prefix=/mingw$bitval        \
             --build=${arch}-w64-mingw32   \
             --host=${arch}-w64-mingw32    \
+            --disable-silent-rules        \
+            --with-gnu-ld                 \
             CPPFLAGS="${_CPPFLAGS}"       \
             CFLAGS="${_aof} ${_CFLAGS}"   \
             LDFLAGS="${_LDFLAGS}"         \

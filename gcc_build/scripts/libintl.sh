@@ -44,6 +44,16 @@ function patch_intl() {
             >> ${LOGS_DIR}/libintl/libintl_patch.log 2>&1 || exit 1
         touch ${BUILD_DIR}/libintl/src/gettext-${INTL_VER}/patched_04.marker
     fi
+    if [ ! -f ${BUILD_DIR}/libintl/src/gettext-${INTL_VER}/patched_05.marker ] ; then
+        patch -p1 -i ${PATCHES_DIR}/libintl/0005-dont-use-disable-auto-import.patch \
+            >> ${LOGS_DIR}/libintl/libintl_patch.log 2>&1 || exit 1
+        touch ${BUILD_DIR}/libintl/src/gettext-${INTL_VER}/patched_05.marker
+    fi
+
+    cd ${BUILD_DIR}/libintl/src/gettext-${INTL_VER}/gettext-runtime
+    libtoolize -i > /dev/null 2>&1
+    sed -i "s/macro_version='2.4.2'/macro_version='2.4.2.458.26-92994'/" configure
+    sed -i "s/macro_revision='1.3337'/macro_revision='2.4.3'/" configure
 
     popd > /dev/null
 
@@ -69,6 +79,12 @@ function build_intl() {
         PATH=${DST_DIR}/mingw${bitval}/bin:$PATH
         export PATH
 
+        if [ "${arch}" = "i686" ] ; then
+            local _slgcc="-static-libgcc"
+        else
+            local _slgcc=""
+        fi
+
         printf "===> configuring libintl %s\n" $arch
         ../src/gettext-${INTL_VER}/gettext-runtime/configure \
             --prefix=/mingw$bitval                           \
@@ -84,8 +100,10 @@ function build_intl() {
             --disable-libasprintf                            \
             --with-gnu-ld                                    \
             --with-libiconv-prefix=${DST_DIR}/mingw$bitval   \
+            CPPFLAGS="${_CPPFLAGS}"                          \
             CFLAGS="${_aof} ${_CFLAGS}"                      \
-            LDFLAGS="${_LDFLAGS}"                            \
+            CXXFLAGS="${_aof} ${_CXXFLAGS}"                  \
+            LDFLAGS="${_LDFLAGS} ${_slgcc}"                  \
             > ${LOGS_DIR}/libintl/libintl_config_${arch}.log 2>&1 || exit 1
         echo "done"
 

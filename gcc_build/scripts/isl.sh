@@ -60,9 +60,11 @@ function build_isl() {
             --prefix=/mingw$bitval                    \
             --build=${arch}-w64-mingw32               \
             --host=${arch}-w64-mingw32                \
+            --disable-silent-rules                    \
             --enable-shared                           \
             --disable-static                          \
             --with-gnu-ld                             \
+            --with-int=gmp                            \
             --with-gmp=system                         \
             --with-gmp-prefix=${DST_DIR}/mingw$bitval \
             CPPFLAGS="${_CPPFLAGS}"                   \

@@ -1,0 +1,9 @@
+--- gcc-4.9.2/gcc/config/i386/mingw-w64.h.old	2014-10-28 18:05:27.774401600 +0900
++++ gcc-4.9.2/gcc/config/i386/mingw-w64.h	2014-10-28 18:13:33.195166100 +0900
+@@ -97,4 +97,5 @@
+   %{shared|mdll: " SUB_LINK_ENTRY " %{" SPEC_64 ": --image-base 0x180000000} --disable-auto-image-base} \
+   %(shared_libgcc_undefs) \
+   %{!shared: %{!mdll: %{" SPEC_32 ": --large-address-aware} --pic-executable " SUB_PIE_ENTRY " \
+-  %{" SPEC_64 ": --image-base 0x140000000}}}"
++  %{" SPEC_64 ": --image-base 0x140000000}}} \
++  --major-os-version 6 --major-subsystem-version 6 --minor-os-version 1 --minor-subsystem-version 1"

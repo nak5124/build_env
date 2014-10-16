@@ -42,6 +42,8 @@ function prepare_binutils() {
         >> ${LOGS_DIR}/binutils/binutils_patch.log 2>&1 || exit 1
     patch -p1 -i ${PATCHES_DIR}/binutils/0012-binutils-use-build-sysroot-dir.patch \
         >> ${LOGS_DIR}/binutils/binutils_patch.log 2>&1 || exit 1
+    patch -p1 -i ${PATCHES_DIR}/binutils/0013-update-ltmain.sh.patch \
+        >> ${LOGS_DIR}/binutils/binutils_patch.log 2>&1 || exit 1
     # A newer standards.info is installed later on in the Autoconf instructions.
     rm -fv ${BUILD_DIR}/binutils/src/binutils-${BINUTILS_VER}/etc/standards.info
     sed -i.bak '/^INFO/s/standards.info //' ${BUILD_DIR}/binutils/src/binutils-${BINUTILS_VER}/etc/Makefile.in
@@ -105,42 +107,39 @@ function build_binutils() {
             local _64_bit_bfd="--enable-64-bit-bfd"
         fi
 
-        echo "int _dowildcard = -1;" > glob_enable.c
-        gcc -c -o glob_enable.o glob_enable.c
-        local _ldge=" -Wl,${BUILD_DIR}/binutils/build_${arch}/glob_enable.o"
+        local _libpath="${DST_DIR}/mingw${bitval}/lib:${DST_DIR}/mingw${bitval}/${arch}-w64-mingw32/lib"
 
         printf "===> configuring Binutils %s\n" $arch
-        ../src/binutils-${BINUTILS_VER}/configure                                                           \
-            --prefix=/mingw$bitval                                                                          \
-            --build=${arch}-w64-mingw32                                                                     \
-            --host=${arch}-w64-mingw32                                                                      \
-            --target=${arch}-w64-mingw32                                                                    \
-            --enable-lto                                                                                    \
-            --disable-werror                                                                                \
-            --enable-shared                                                                                 \
-            --disable-static                                                                                \
-            --enable-plugins                                                                                \
-            ${_64_bit_bfd}                                                                                  \
-            --enable-install-libbfd                                                                         \
-            --enable-nls                                                                                    \
-            --disable-rpath                                                                                 \
-            --disable-multilib                                                                              \
-            --disable-install-libiberty                                                                     \
-            --disable-gdb                                                                                   \
-            --disable-libdecnumber                                                                          \
-            --disable-readline                                                                              \
-            --disable-sim                                                                                   \
-            --with-build-sysroot=${DST_DIR}/mingw$bitval                                                    \
-            --with-gnu-ld                                                                                   \
-            --with-zlib=yes                                                                                 \
-            --with-libiconv-prefix=${DST_DIR}/mingw$bitval                                                  \
-            --with-libintl-prefix=${DST_DIR}/mingw$bitval                                                   \
-            --with-sysroot=/mingw$bitval                                                                    \
-            --with-lib-path=${DST_DIR}/mingw${bitval}/lib:${DST_DIR}/mingw${bitval}/${arch}-w64-mingw32/lib \
-            CPPFLAGS="${_CPPFLAGS}"                                                                         \
-            CFLAGS="${_aof} ${_CFLAGS}"                                                                     \
-            CXXFLAGS="${_aof} ${_CXXFLAGS}"                                                                 \
-            LDFLAGS="${_LDFLAGS} ${_ldge}"                                                                  \
+        ../src/binutils-${BINUTILS_VER}/configure          \
+            --prefix=/mingw$bitval                         \
+            --build=${arch}-w64-mingw32                    \
+            --host=${arch}-w64-mingw32                     \
+            --target=${arch}-w64-mingw32                   \
+            --enable-lto                                   \
+            --disable-werror                               \
+            --enable-shared                                \
+            --disable-static                               \
+            --enable-plugins                               \
+            ${_64_bit_bfd}                                 \
+            --enable-install-libbfd                        \
+            --enable-nls                                   \
+            --disable-rpath                                \
+            --disable-multilib                             \
+            --disable-install-libiberty                    \
+            --disable-gdb                                  \
+            --disable-libdecnumber                         \
+            --disable-readline                             \
+            --disable-sim                                  \
+            --with-build-sysroot=${DST_DIR}/mingw$bitval   \
+            --with-gnu-ld                                  \
+            --with-zlib=yes                                \
+            --with-libiconv-prefix=${DST_DIR}/mingw$bitval \
+            --with-libintl-prefix=${DST_DIR}/mingw$bitval  \
+            --with-sysroot=/mingw$bitval                   \
+            --with-lib-path=${_libpath}                    \
+            CFLAGS="${_aof} ${_CFLAGS} ${_CPPFLAGS}"       \
+            CXXFLAGS="${_aof} ${_CXXFLAGS} ${_CPPFLAGS}"   \
+            LDFLAGS="${_LDFLAGS}"                          \
             > ${LOGS_DIR}/binutils/binutils_config_${arch}.log 2>&1 || exit 1
         echo "done"
 
@@ -154,7 +153,8 @@ function build_binutils() {
         make DESTDIR=${PREIN_DIR}/binutils install > ${LOGS_DIR}/binutils/binutils_install_${arch}.log 2>&1 || exit 1
         # Remove unneeded file.
         rm -fr ${PREIN_DIR}/binutils/mingw${bitval}/lib
-        rm -fr ${PREIN_DIR}/binutils/mingw${bitval}/include
+        # Install only ansidecl.h, which is included by ieeefp.h.
+        rm -f ${PREIN_DIR}/binutils/mingw${bitval}/include/{bfd*,dis-asm,plugin-api,symcat}.h
         del_empty_dir ${PREIN_DIR}/binutils/mingw$bitval
         remove_la_files ${PREIN_DIR}/binutils/mingw$bitval
         strip_files ${PREIN_DIR}/binutils/mingw$bitval

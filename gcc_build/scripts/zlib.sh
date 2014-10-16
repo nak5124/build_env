@@ -61,8 +61,10 @@ function build_zlib() {
         # Use assembly code.
         if [ "${arch}" = "i686" ] ; then
             cp -fa ${BUILD_DIR}/zlib/build_${arch}/contrib/asm686/match.S ${BUILD_DIR}/zlib/build_${arch}/match.S
+            local _slgcc="-static-libgcc"
         else
             cp -fa ${BUILD_DIR}/zlib/build_${arch}/contrib/amd64/amd64-match.S ${BUILD_DIR}/zlib/build_${arch}/match.S
+            local _slgcc=""
         fi
 
         local bitval=$(get_arch_bit ${arch})
@@ -73,8 +75,10 @@ function build_zlib() {
         export PATH
 
         printf "===> configuring zlib %s\n" $arch
-        CHOST=${arch}-w64-mingw32 CFLAGS="${_aof} ${_CFLAGS}" LDFLAGS="${_LDFLAGS} -static-libgcc" \
-            ./configure --prefix=/mingw$bitval --shared                                            \
+        CHOST=${arch}-w64-mingw32                       \
+        CFLAGS="${_aof} ${_CFLAGS} ${_CPPFLAGS}"        \
+        LDFLAGS="${_LDFLAGS} ${_slgcc}"                 \
+            ./configure --prefix=/mingw$bitval --shared \
             > ${LOGS_DIR}/zlib/libz_config_${arch}.log 2>&1 || exit 1
         echo "done"
 

@@ -1,0 +1,66 @@
+--- gcc-4.9.2/ltmain.sh.old	2014-02-04 18:31:38.000000000 +0900
++++ gcc-4.9.2/ltmain.sh	2014-10-28 18:10:00.688011400 +0900
+@@ -4968,19 +4968,27 @@
+ 	arg="$func_quote_for_eval_result"
+ 	;;
+ 
+-      # -64, -mips[0-9] enable 64-bit mode on the SGI compiler
+-      # -r[0-9][0-9]* specifies the processor on the SGI compiler
+-      # -xarch=*, -xtarget=* enable 64-bit mode on the Sun compiler
+-      # +DA*, +DD* enable 64-bit mode on the HP compiler
+-      # -q* pass through compiler args for the IBM compiler
+-      # -m*, -t[45]*, -txscale* pass through architecture-specific
+-      # compiler args for GCC
+-      # -F/path gives path to uninstalled frameworks, gcc on darwin
+-      # -p, -pg, --coverage, -fprofile-* pass through profiling flag for GCC
+-      # @file GCC response files
+-      # -tp=* Portland pgcc target processor selection
++      # Flags to be passed through unchanged, with rationale:
++      # -64, -mips[0-9]      enable 64-bit mode for the SGI compiler
++      # -r[0-9][0-9]*        specify processor for the SGI compiler
++      # -xarch=*, -xtarget=* enable 64-bit mode for the Sun compiler
++      # +DA*, +DD*           enable 64-bit mode for the HP compiler
++      # -q*                  compiler args for the IBM compiler
++      # -m*, -t[45]*, -txscale* architecture-specific flags for GCC
++      # -F/path              path to uninstalled frameworks, gcc on darwin
++      # -p, -pg, --coverage, -fprofile-*  profiling flags for GCC
++      # -fstack-protector*   stack protector flags for GCC
++      # @file                GCC response files
++      # -tp=*                Portland pgcc target processor selection
++      # --sysroot=*          for sysroot support
++      # -O*, -g*, -flto*, -fwhopr*, -fuse-linker-plugin GCC link-time optimization
++      # -stdlib=*            select c++ std lib with clang
++      # -{shared,static}-libgcc, -static-{libgfortran|libstdc++}
++      #                      link against specified runtime library
+       -64|-mips[0-9]|-r[0-9][0-9]*|-xarch=*|-xtarget=*|+DA*|+DD*|-q*|-m*| \
+-      -t[45]*|-txscale*|-p|-pg|--coverage|-fprofile-*|-F*|@*|-tp=*)
++      -t[45]*|-txscale*|-p|-pg|--coverage|-fprofile-*|-F*|@*|-tp=*|--sysroot=*| \
++      -O*|-g*|-flto*|-fwhopr*|-fuse-linker-plugin|-fstack-protector*|--param=*|-fgnu-tm|-stdlib=*| \
++      -shared-libgcc|-static-libgcc|-static-libgfortran|-static-libstdc++)
+         func_quote_for_eval "$arg"
+ 	arg="$func_quote_for_eval_result"
+         func_append compile_command " $arg"
+--- gcc-4.9.2/libgcc/config/i386/t-mingw32.old	2011-11-02 19:49:46.000000000 +0900
++++ gcc-4.9.2/libgcc/config/i386/t-mingw32	2014-10-28 18:10:02.993143200 +0900
+@@ -1,2 +1,2 @@
+ # MinGW-specific parts of LIB_SPEC
+-SHLIB_LC = -lmingwthrd -lmingw32 -lmingwex -lmoldname -lmsvcrt -ladvapi32 -lshell32 -luser32 -lkernel32
++SHLIB_LC = -lmingwthrd -lmingw32 -lmingwex -lmoldname -lmsvcrt -ladvapi32 -lshell32 -luser32 -lkernel32 -lssp_nonshared -lssp
+--- gcc-4.9.2/libssp/configure.old	2013-09-20 18:47:52.000000000 +0900
++++ gcc-4.9.2/libssp/configure	2014-10-28 18:09:56.688782600 +0900
+@@ -8382,7 +8382,14 @@
+       export_symbols_cmds='$NM $libobjs $convenience | $global_symbol_pipe | $SED -e '\''/^[BCDGRS][ ]/s/.*[ ]\([^ ]*\)/\1 DATA/'\'' | $SED -e '\''/^[AITW][ ]/s/.*[ ]//'\'' | sort | uniq > $export_symbols'
+ 
+       if $LD --help 2>&1 | $GREP 'auto-import' > /dev/null; then
+-        archive_cmds='$CC -shared $libobjs $deplibs $compiler_flags -o $output_objdir/$soname ${wl}--enable-auto-image-base -Xlinker --out-implib -Xlinker $lib'
++        case $host_cpu in
++          i*86 )
++            archive_cmds='$CC -shared -static-libgcc $libobjs $deplibs $compiler_flags -o $output_objdir/$soname ${wl}--enable-auto-image-base -Xlinker --out-implib -Xlinker $lib'
++            ;;
++          * )
++            archive_cmds='$CC -shared $libobjs $deplibs $compiler_flags -o $output_objdir/$soname ${wl}--enable-auto-image-base -Xlinker --out-implib -Xlinker $lib'
++            ;;
++        esac
+ 	# If the export-symbols file already is a .def file (1st line
+ 	# is EXPORTS), use it as is; otherwise, prepend...
+ 	archive_expsym_cmds='if test "x`$SED 1q $export_symbols`" = xEXPORTS; then

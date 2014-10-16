@@ -1,6 +1,6 @@
---- a/gcc/Makefile.in
-+++ b/gcc/Makefile.in
-@@ -2532,6 +2532,7 @@
+--- gcc-4.9.2/gcc/Makefile.in.old	2014-10-28 17:30:53.616064900 +0900
++++ gcc-4.9.2/gcc/Makefile.in	2014-10-28 17:31:32.709300900 +0900
+@@ -2534,6 +2534,7 @@
    -DGPLUSPLUS_INCLUDE_DIR_ADD_SYSROOT=$(gcc_gxx_include_dir_add_sysroot) \
    -DGPLUSPLUS_TOOL_INCLUDE_DIR=\"$(gcc_gxx_include_dir)/$(target_noncanonical)\" \
    -DGPLUSPLUS_BACKWARD_INCLUDE_DIR=\"$(gcc_gxx_include_dir)/backward\" \
@@ -8,8 +8,8 @@
    -DLOCAL_INCLUDE_DIR=\"$(local_includedir)\" \
    -DCROSS_INCLUDE_DIR=\"$(CROSS_SYSTEM_HEADER_DIR)\" \
    -DTOOL_INCLUDE_DIR=\"$(gcc_tooldir)/include\" \
---- a/gcc/cppdefault.c
-+++ b/gcc/cppdefault.c
+--- gcc-4.9.2/gcc/cppdefault.c.old	2014-01-03 07:23:26.000000000 +0900
++++ gcc-4.9.2/gcc/cppdefault.c	2014-10-28 17:33:00.756336900 +0900
 @@ -59,13 +59,13 @@
      /* This is the dir for gcc's private headers.  */
      { GCC_INCLUDE_DIR, "GCC", 0, 0, 0, 0 },
@@ -42,9 +42,9 @@
      { 0, 0, 0, 0, 0, 0 }
    };
  #endif /* no INCLUDE_DEFAULTS */
---- a/gcc/gcc.c
-+++ b/gcc/gcc.c
-@@ -4050,6 +4050,8 @@
+--- gcc-4.9.2/gcc/gcc.c.old	2014-10-23 06:42:48.000000000 +0900
++++ gcc-4.9.2/gcc/gcc.c	2014-10-28 17:35:22.340435000 +0900
+@@ -4053,6 +4053,8 @@
  #endif
        add_prefix (&startfile_prefixes, standard_exec_prefix, "BINUTILS",
  		  PREFIX_PRIORITY_LAST, 1, 0);
@@ -53,7 +53,7 @@
      }
  
    gcc_assert (!IS_ABSOLUTE_PATH (tooldir_base_prefix));
-@@ -6328,6 +6328,7 @@
+@@ -6334,6 +6336,7 @@
    char **old_argv = argv;
    struct cl_decoded_option *decoded_options;
    unsigned int decoded_options_count;
@@ -61,7 +61,7 @@
  
    p = argv[0] + strlen (argv[0]);
    while (p != argv[0] && !IS_DIR_SEPARATOR (p[-1]))
-@@ -6586,6 +6587,14 @@
+@@ -6592,6 +6595,14 @@
  			      machine_suffix,
  			      standard_startfile_prefix, NULL),
  		      NULL, PREFIX_PRIORITY_LAST, 0, 1);
@@ -76,8 +76,8 @@
  	}
  
        /* Sysrooted prefixes are relocated because target_system_root is
---- a/gcc/config/i386/mingw32.h
-+++ b/gcc/config/i386/mingw32.h
+--- gcc-4.9.2/gcc/config/i386/mingw32.h.old	2014-04-23 18:46:13.000000000 +0900
++++ gcc-4.9.2/gcc/config/i386/mingw32.h	2014-10-28 17:36:29.731289600 +0900
 @@ -153,7 +153,7 @@
  
  /* Override startfile prefix defaults.  */
@@ -87,8 +87,8 @@
  #endif
  #ifndef STANDARD_STARTFILE_PREFIX_2
  #define STANDARD_STARTFILE_PREFIX_2 ""
---- a/gcc/config/i386/x-mingw32
-+++ b/gcc/config/i386/x-mingw32
+--- gcc-4.9.2/gcc/config/i386/x-mingw32.old	2014-01-03 07:23:26.000000000 +0900
++++ gcc-4.9.2/gcc/config/i386/x-mingw32	2014-10-28 17:37:33.762952000 +0900
 @@ -20,6 +20,7 @@
  # Make local_includedir relative to EXEC_PREFIX 
  #

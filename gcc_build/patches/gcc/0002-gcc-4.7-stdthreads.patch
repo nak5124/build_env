@@ -1,6 +1,6 @@
---- a/libgcc/gthr-posix.h	(revision 186092)
-+++ b/libgcc/gthr-posix.h	(working copy)
-@@ -88,7 +88,7 @@
+--- gcc-4.9.2/libgcc/gthr-posix.h.old	2014-10-28 16:14:25.340248300 +0900
++++ gcc-4.9.2/libgcc/gthr-posix.h	2014-10-28 16:15:07.806640900 +0900
+@@ -82,7 +82,7 @@
  # define __GTHREAD_COND_INIT_FUNCTION __gthread_cond_init_function
  #endif
  

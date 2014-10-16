@@ -18,6 +18,7 @@ declare -ra TARGET_ARCH=(
 )
 
 # Color
+declare -r mintty_save=$MINTTY
 unset MINTTY
 
 # LANG
@@ -36,33 +37,37 @@ declare -r BUILD_DIR=${ROOT_DIR}/build
 declare -r DST_DIR=${ROOT_DIR}/dst
 
 # flags
-declare -r _CPPFLAGS="-D__USE_MINGW_ANSI_STDIO=1"
-declare -r _CFLAGS="-pipe -Os -foptimize-strlen"
-declare -r _CXXFLAGS="-pipe -Os -foptimize-strlen"
-declare -r _LDFLAGS="-s"
+declare -r _CPPFLAGS="-D__USE_MINGW_ANSI_STDIO=1 -D_FORTIFY_SOURCE=2"
+declare -r _CFLAGS="-pipe -Os -foptimize-strlen -fstack-protector-strong --param=ssp-buffer-size=4"
+declare -r _CXXFLAGS="-pipe -Os -foptimize-strlen -fstack-protector-strong --param=ssp-buffer-size=4"
+declare -r _LDFLAGS="-Wl,-O1,--sort-common,--as-needed"
 declare -r MAKEFLAGS="-j$(($(nproc)+1)) -O"
 
 # GCC thread model
 declare -r THREAD_MODEL="posix"
 
+# GCC package revision
+declare -r GCC_PKGREV=1
+declare -r GCC_BUILT_DATE=$(date +%Y.%m.%d)
+
 # version
 declare -r GMP_VER="6.0.0"
 declare -r MPFR_VER="3.1.2"
 declare -r MPC_VER="1.0.2"
-declare -r ISL_VER="0.13"
+declare -r ISL_VER="0.14"
 declare -r CLOOG_VER="0.18.1"
 declare -r ICONV_VER="1.14"
-declare -r INTL_VER="0.19.2"
+declare -r INTL_VER="0.19.3"
 declare -r BZIP2_VER="1.0.6"
 declare -r ZLIB_VER="1.2.8"
 declare -r MINGW_VER="git"
 declare -r BINUTILS_VER="git"
-declare -r GCC_VER="4.9.1"
-declare -r NASM_VER="2.11.05"
+declare -r GCC_VER="4.9.2"
+declare -r NASM_VER="2.11.06"
 declare -r YASM_VER="1.3.0"
 declare -r AUTOCONF_VER="2.69"
 declare -r AUTOMAKE_VER="1.14.1"
-declare -r LIBTOOL_VER="2.4.2.418"
+declare -r LIBTOOL_VER="2.4.3"
 
 # rebuild
 # comment out if you don't want to rebuild

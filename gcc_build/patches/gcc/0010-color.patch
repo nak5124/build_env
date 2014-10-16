@@ -1,6 +1,6 @@
---- a/gcc/diagnostic-color.c
-+++ b/gcc/diagnostic-color.c
-@@ -263,14 +263,6 @@
+--- gcc-4.9.2/gcc/diagnostic-color.c.old	2014-01-03 07:23:26.000000000 +0900
++++ gcc-4.9.2/gcc/diagnostic-color.c	2014-10-28 17:17:20.815531200 +0900
+@@ -263,20 +263,17 @@
        return true;
  }
  
@@ -15,7 +15,18 @@
  /* Return true if we should use color when in auto mode, false otherwise. */
  static bool
  should_colorize (void)
-@@ -298,4 +290,3 @@
+ {
+   char const *t = getenv ("TERM");
++#ifdef __MINGW32__
++  char const *mintty = getenv ("MINTTY");
++  return t && strcmp (t, "dumb") != 0 && (_isatty (STDERR_FILENO) || (mintty && strcmp (mintty, "NO_FILE") == 0));
++#else
+   return t && strcmp (t, "dumb") != 0 && isatty (STDERR_FILENO);
++#endif
+ }
+ 
+ 
+@@ -298,4 +295,3 @@
        gcc_unreachable ();
      }
  }

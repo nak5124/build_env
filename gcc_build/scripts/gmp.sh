@@ -26,6 +26,9 @@ function build_gmp() {
 
     download_gmp_src
 
+    cd ${BUILD_DIR}/gcc_libs/gmp/src/gmp-$GMP_VER
+    autoreconf -fi > /dev/null 2>&1
+
     for arch in ${TARGET_ARCH[@]}
     do
         cd ${BUILD_DIR}/gcc_libs/gmp/build_$arch
