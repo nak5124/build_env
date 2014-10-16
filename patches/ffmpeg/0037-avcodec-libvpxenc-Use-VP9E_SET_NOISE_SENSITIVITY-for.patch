@@ -1,0 +1,44 @@
+From 6338ef8b014a2e78df33b5c0a9ccf986326ccc41 Mon Sep 17 00:00:00 2001
+From: Yuta NAKAI <nak5124@live.jp>
+Date: Thu, 16 Oct 2014 22:07:58 +0900
+Subject: [PATCH] avcodec/libvpxenc: Use VP9E_SET_NOISE_SENSITIVITY for vp9
+ noise_reduction.
+
+See http://git.chromium.org/gitweb/?p=webm/libvpx.git;a=commit;h=bb1a23656c63097a4b250ac484b14051f09df9b5
+---
+ libavcodec/libvpxenc.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/libavcodec/libvpxenc.c b/libavcodec/libvpxenc.c
+index 163d12a..0d89c85 100644
+--- a/libavcodec/libvpxenc.c
++++ b/libavcodec/libvpxenc.c
+@@ -125,6 +125,7 @@ static const char *const ctlidstr[] = {
+     [VP9E_SET_TILE_ROWS]               = "VP9E_SET_TILE_ROWS",
+     [VP9E_SET_FRAME_PARALLEL_DECODING] = "VP9E_SET_FRAME_PARALLEL_DECODING",
+     [VP9E_SET_AQ_MODE]                 = "VP9E_SET_AQ_MODE",
++    [VP9E_SET_NOISE_SENSITIVITY]       = "VP9E_SET_NOISE_SENSITIVITY",
+ #endif
+ };
+ 
+@@ -440,7 +441,8 @@ static av_cold int vpx_init(AVCodecContext *avctx,
+         codecctl_int(avctx, VP8E_SET_ARNR_STRENGTH,    ctx->arnr_strength);
+     if (ctx->arnr_type >= 0)
+         codecctl_int(avctx, VP8E_SET_ARNR_TYPE,        ctx->arnr_type);
+-    codecctl_int(avctx, VP8E_SET_NOISE_SENSITIVITY, avctx->noise_reduction);
++    if (avctx->codec_id == AV_CODEC_ID_VP8)
++        codecctl_int(avctx, VP8E_SET_NOISE_SENSITIVITY, avctx->noise_reduction);
+     if (avctx->codec_id == AV_CODEC_ID_VP8)
+         codecctl_int(avctx, VP8E_SET_TOKEN_PARTITIONS,  av_log2(avctx->slices));
+     codecctl_int(avctx, VP8E_SET_STATIC_THRESHOLD,  avctx->mb_threshold);
+@@ -451,6 +453,7 @@ static av_cold int vpx_init(AVCodecContext *avctx,
+ 
+ #if CONFIG_LIBVPX_VP9_ENCODER
+     if (avctx->codec_id == AV_CODEC_ID_VP9) {
++        codecctl_int(avctx, VP9E_SET_NOISE_SENSITIVITY, avctx->noise_reduction);
+         if (ctx->lossless >= 0)
+             codecctl_int(avctx, VP9E_SET_LOSSLESS, ctx->lossless);
+         if (ctx->tile_columns >= 0)
+-- 
+2.1.2
+

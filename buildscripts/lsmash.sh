@@ -57,19 +57,19 @@ function build_lsmash() {
         > ${LOGS_DIR}/lsmash_patch.log 2>&1 || exit 1
     patch -p1 -i ${PATCHES_DIR}/0002-configure-Add-api-version-to-mingw-shared-library-na.patch \
         >> ${LOGS_DIR}/lsmash_patch.log 2>&1 || exit 1
-    patch -p1 -i ${PATCHES_DIR}/0003-build-Use-lib.exe-when-it-is-available-on-mingw.patch \
+    patch -p1 -i ${PATCHES_DIR}/0003-build-Use-lib.exe-or-dlltool-when-available-on-mingw.patch \
         >> ${LOGS_DIR}/lsmash_patch.log 2>&1 || exit 1
 
     for arch in ${target_arch[@]}
     do
         if [ "${arch}" = "i686" ] ; then
             local LSPREFIX=/mingw32/local
-            local LIBTARGET=i386
             local VCDIR=$VC32_DIR
+            local _slgssp="-static-libgcc -fstack-protector-strong --param=ssp-buffer-size=4"
         else
             local LSPREFIX=/mingw64/local
-            local LIBTARGET=x64
             local VCDIR=$VC64_DIR
+            local _slgssp="-fstack-protector-strong --param=ssp-buffer-size=4"
         fi
 
         source cpath $arch
@@ -77,10 +77,11 @@ function build_lsmash() {
         export PATH
 
         printf "===> configure L-SMASH %s\n" $arch
-        ./configure --prefix=$LSPREFIX             \
-                    --disable-static               \
-                    --enable-shared                \
-                    --extra-ldflags=-static-libgcc \
+        ./configure --prefix=$LSPREFIX                               \
+                    --disable-static                                 \
+                    --enable-shared                                  \
+                    --extra-cflags="${BASE_CFLAGS} ${BASE_CPPFLAGS}" \
+                    --extra-ldflags="${BASE_LDFLAGS} ${_slgssp}"     \
             > ${LOGS_DIR}/lsmash_config_${arch}.log 2>&1 || exit 1
         echo "done"
 
@@ -105,8 +106,8 @@ function build_lsmash() {
     return 0
 }
 
-unset MINTTY
 declare -r mintty_save=$MINTTY
+unset MINTTY
 
 build_lsmash
 

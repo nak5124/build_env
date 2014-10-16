@@ -1,12 +1,12 @@
-From 6b0265d803b50161448b4cec09bfa0e172dcc99b Mon Sep 17 00:00:00 2001
+From 5ae633486a72fb6d4e682c90dc1021ae01351a95 Mon Sep 17 00:00:00 2001
 From: Yuta NAKAI <nak5124@live.jp>
-Date: Sun, 28 Sep 2014 15:26:19 +0900
-Subject: [PATCH 3/3] build: Use lib.exe when it is available on mingw.
+Date: Mon, 27 Oct 2014 16:01:04 +0900
+Subject: [PATCH 3/3] build: Use lib.exe or dlltool when available on mingw.
 
 ---
  .gitignore |  1 +
- Makefile   |  9 ++++++++-
- configure  | 26 ++++++++++++++++++++++++++
+ Makefile   |  8 ++++++++
+ configure  | 27 ++++++++++++++++++++++++++-
  3 files changed, 35 insertions(+), 1 deletion(-)
 
 diff --git a/.gitignore b/.gitignore
@@ -22,7 +22,7 @@ index a20f4c2..9ae81bd 100644
  *.o
  *.orig
 diff --git a/Makefile b/Makefile
-index 4f7a7a5..8b1f8f7 100644
+index bfd2ccc..b7ba5bf 100644
 --- a/Makefile
 +++ b/Makefile
 @@ -28,6 +28,9 @@ $(STATICLIBNAME): $(OBJS)
@@ -44,22 +44,21 @@ index 4f7a7a5..8b1f8f7 100644
 +	install -m 644 lsmash.lib $(DESTDIR)$(bindir)
 +endif
  ifeq ($(SHAREDLIB), liblsmash-$(MAJVER).dll)
- 	ln -s $(DESTDIR)$(bindir)/$(SHAREDLIB) $(DESTDIR)$(bindir)/liblsmash.dll
+ 	ln -fs $(DESTDIR)$(bindir)/$(SHAREDLIB) $(DESTDIR)$(bindir)/liblsmash.dll
  endif
-@@ -77,7 +84,7 @@ uninstall:
- 	$(RM) $(addprefix $(DESTDIR)$(bindir)/, $(TOOLS_ALL) $(TOOLS_ALL:%=%.exe) liblsmash.dll cyglsmash.dll)
+@@ -78,6 +85,7 @@ uninstall:
  
  clean:
--	$(RM) */*.o *.a *.so* *.dll *.dylib $(addprefix cli/, *.exe $(TOOLS_ALL)) .depend
+ 	$(RM) */*.o *.a *.so* *.dll *.dylib $(addprefix cli/, *.exe $(TOOLS_ALL)) .depend
 +	$(RM) */*.o *.a *.so* *.def *.exp *.lib *.dll *.dylib $(addprefix cli/, *.exe $(TOOLS_ALL)) .depend
  
  distclean: clean
  	$(RM) config.* *.pc
 diff --git a/configure b/configure
-index 36e0d41..b196d72 100755
+index 74036b9..bbdea4e 100755
 --- a/configure
 +++ b/configure
-@@ -56,6 +56,14 @@ cc_check()
+@@ -56,6 +56,15 @@ cc_check()
      return $ret
  }
  
@@ -71,32 +70,35 @@ index 36e0d41..b196d72 100755
 +    rm -f conftest*
 +    return $ret
 +}
++
  #-----------------------------------------------------------------------------
  
  rm -f config.* .depend conftest* liblsmash.pc
-@@ -244,6 +252,21 @@ test -z "$STATICLIB" -a -z "$SHAREDLIB" && \
-     error_exit "--disable-static requires --enable-shared were specified"
- test -z "$SHAREDLIB" && SO_LDFLAGS=""
- 
-+case "$TARGET_OS" in
-+    *mingw*)
-+        if lib.exe --list > /dev/null 2>&1 \
-+        && type gendef > /dev/null 2>&1 ; then
+@@ -206,9 +215,22 @@ case "$TARGET_OS" in
+         EXT=".exe"
+         SHARED_NAME="liblsmash-$MAJVER"
+         SHARED_EXT=".dll"
++        DEFNAME="lsmash-$MAJVER.def"
+         IMPLIB="liblsmash.dll.a"
+-        SO_LDFLAGS="-shared -Wl,--out-implib,$IMPLIB"
++        SO_LDFLAGS="-shared -Wl,--output-def,$DEFNAME -Wl,--out-implib,$IMPLIB"
+         CFLAGS="$CFLAGS -D__USE_MINGW_ANSI_STDIO=1"
++        LIBARCH=i386
++        if lib.exe --list > /dev/null 2>&1 ; then
 +            if is_64bit ; then
 +                LIBARCH=x64
-+            else
-+                LIBARCH=i386
 +            fi
-+            DEFNAME="lsmash-$MAJVER.def"
-+            SLIB_CMD='gendef - $(SHAREDLIB) > $(DEFNAME) 2>/dev/null; lib.exe -machine:$(LIBARCH) -def:$(DEFNAME) -out:lsmash.lib'
++            SLIB_CMD='sed -i "s/ @[^ ]*//" $(DEFNAME); lib.exe -machine:$(LIBARCH) -def:$(DEFNAME) -out:lsmash.lib'
++        elif ${CROSS}dlltool --version > /dev/null 2>&1 ; then
++            if is_64bit ; then
++                LIBARCH="i386:x86-64"
++            fi
++            SLIB_CMD="sed -i \"s/ @[^ ]*//\" \$(DEFNAME); ${CROSS}dlltool -m \$(LIBARCH) -d \$(DEFNAME) -l lsmash.lib -D \$(SHAREDLIBNAME)"
 +        fi
-+        ;;
-+esac
-+
- 
- CFLAGS="$CFLAGS $XCFLAGS"
- LDFLAGS="$LDFLAGS $XLDFLAGS"
-@@ -357,6 +380,9 @@ CFLAGS = $CFLAGS
+         ;;
+     *cygwin*)
+         EXT=".exe"
+@@ -371,6 +393,9 @@ CFLAGS = $CFLAGS
  LDFLAGS = $LDFLAGS
  SO_LDFLAGS = $SO_LDFLAGS
  LIBS = $LIBS
@@ -107,5 +109,5 @@ index 36e0d41..b196d72 100755
  
  cat config.mak
 -- 
-2.1.1
+2.1.2
 

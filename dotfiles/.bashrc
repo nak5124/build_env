@@ -249,7 +249,7 @@ export GCC_COLORS
 BASE_CFLAGS="-pipe -Os -foptimize-strlen -mfpmath=sse -msse4 -fexcess-precision=fast -fstack-protector-strong --param=ssp-buffer-size=4"
 BASE_CPPFLAGS="-D__USE_MINGW_ANSI_STDIO=1 -D_FORTIFY_SOURCE=2"
 BASE_CXXFLAGS="${BASE_CFLAGS}"
-BASE_LDFLAGS="-s -Wl,-O1 -Wl,--as-needed -Wl,--nxcompat -Wl,--dynamicbase"
+BASE_LDFLAGS="-Wl,-s,-O1,--sort-common,--as-needed"
 export BASE_CFLAGS BASE_CPPFLAGS BASE_CXXFLAGS BASE_LDFLAGS
 
 # proxy
