@@ -61,6 +61,9 @@ ln -fsr ./g++.exe ./c++.exe
 ln -fsr ./g++.exe ./x86_64-pc-msys-g++.exe
 ln -fsr ./c++.exe ./x86_64-pc-msys-c++.exe
 
+# gcc-libs
+rm -f ./msys-gfortran-*.dll
+
 # git
 ln -fsr ../lib/git-core/git.exe ../lib/git-core/git-bisect--helper.exe
 ln -fsr ../lib/git-core/git.exe ../lib/git-core/git-apply.exe
@@ -226,10 +229,17 @@ ln -fsr ../../opt/bin/x86_64-w64-mingw32-ranlib.exe ../../opt/x86_64-w64-mingw32
 ln -fsr ../../opt/bin/x86_64-w64-mingw32-strip.exe ../../opt/x86_64-w64-mingw32/bin/strip.exe
 
 # mingw-w64-cross-gcc
-ln -fsr ../../opt/bin/x86_64-w64-mingw32-gcc.exe ../../opt/bin/x86_64-w64-mingw32-gcc-4.8.2.exe
+rm -f /opt/bin/i686-w64-mingw32-*.exe
+rm -fr /opt/i686-w64-mingw32
+rm -fr /opt/lib/gcc/i686-w64-mingw32
+rm -f /opt/bin/x86_64-w64-mingw32-gfortran.exe
+rm -f /opt/lib/gcc/x86_64-w64-mingw32/4.9.1/{f951.exe,libgfortran.a,libgfortran.dll.a,libgfortran-3.dll,libcaf_single.a,libgfortranbegin.a,libstdc++.dll.a-gdb.py,libgfortran.spec}
+rm -fr /opt/lib/gcc/x86_64-w64-mingw32/4.9.1/finclude
+ln -fsr ../../opt/bin/x86_64-w64-mingw32-gcc.exe ../../opt/bin/x86_64-w64-mingw32-gcc-4.9.1.exe
 ln -fsr ../../opt/bin/x86_64-w64-mingw32-g++.exe ../../opt/bin/x86_64-w64-mingw32-c++.exe
 
 # msys2-runtime-devel
+rm -f ./msys-2.0.dbg
 ln -fsr ../lib/libmsys-2.0.a ../lib/libg.a
 
 # ncurses-devel
@@ -289,8 +299,8 @@ ln -fsr ./makeinfo ./texi2any
 ln -fsr ./texi2pdf ./pdftexi2dvi
 
 # tzcode
-rm -fr /usr/share/zoneinfo/posix
-ln -fsr ../share/zoneinfo/zoneinfo ../share/zoneinfo/posix
+# rm -fr /usr/share/zoneinfo/posix
+# ln -fsr ../share/zoneinfo/zoneinfo ../share/zoneinfo/posix
 
 # unzip
 ln -fsr ./unzip.exe ./zipinfo.exe

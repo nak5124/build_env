@@ -4,7 +4,7 @@ export LANG
 
 # pacman
 pacman -Syu
-reset
+/usr/bin/reset -Q
 
 # show date
 /usr/local/bin/showdate

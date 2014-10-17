@@ -1,9 +1,17 @@
 #!/usr/bin/env bash
-echo '
-CALL chcp 65001 > nul
-taskkill -IM '${1}*'
-exit
-' | cmd > /dev/null
+if [ "${1}" = "-9" ] ; then
+    echo '
+    CALL chcp 65001 > nul
+    taskkill -F -IM '${2}*'
+    exit
+    ' | cmd > /dev/null
+else
+    echo '
+    CALL chcp 65001 > nul
+    taskkill -IM '${1}*'
+    exit
+    ' | cmd > /dev/null
+fi
 
 if [ -f /tmp/win32applist ] ; then
     sed -i "s/${1}//gi" /tmp/win32applist

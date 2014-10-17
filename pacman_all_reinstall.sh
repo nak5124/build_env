@@ -1,10 +1,21 @@
-#/usr/bin/env bash
+#!/usr/bin/env bash
 
 
-shdir=$(cd $(dirname $0);pwd)
-plist=${shdir}/pacman_list
+for opt in "$@"
+do
+    case "${opt}" in
+        --list=* | -l=* )
+            plist="${opt#*=}"
+            ;;
+    esac
+done
 
-if [ ! -f $plist ] ; then
+if [ -z "${plist}" ] ; then
+    shdir=$(cd $(dirname $0);pwd)
+    plist=${shdir}/pacman_list
+fi
+
+if [ ! -f "${plist}" ] ; then
     echo "pacman_list can not be found..."
     exit 1
 fi
@@ -27,4 +38,3 @@ else
     local opt=""
 fi
 pacman -S ${pl_array[@]} --force --noconfirm ${opt}
-
