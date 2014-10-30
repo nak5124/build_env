@@ -53,7 +53,7 @@ ln -fsr ./gawk.exe ./awk.exe
 ln -fsr ./cpp.exe ../lib/cpp.exe
 ln -fsr ./gcc.exe ./cc.exe
 ln -fsr ./gcc.exe ./x86_64-pc-msys-gcc.exe
-ln -fsr ./gcc.exe ./x86_64-pc-msys-gcc-4.9.1.exe
+ln -fsr ./gcc.exe ./x86_64-pc-msys-gcc-4.9.2.exe
 ln -fsr ./gcc-ar.exe ./x86_64-pc-msys-gcc-ar.exe
 ln -fsr ./gcc-nm.exe ./x86_64-pc-msys-gcc-nm.exe
 ln -fsr ./gcc-ranlib.exe ./x86_64-pc-msys-gcc-ranlib.exe
