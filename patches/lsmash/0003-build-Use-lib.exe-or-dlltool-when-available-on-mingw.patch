@@ -78,7 +78,7 @@ index 74036b9..bbdea4e 100755
          EXT=".exe"
          SHARED_NAME="liblsmash-$MAJVER"
          SHARED_EXT=".dll"
-+        DEFNAME="lsmash-$MAJVER.def"
++        DEFNAME="${SHARED_NAME}.def"
          IMPLIB="liblsmash.dll.a"
 -        SO_LDFLAGS="-shared -Wl,--out-implib,$IMPLIB"
 +        SO_LDFLAGS="-shared -Wl,--output-def,$DEFNAME -Wl,--out-implib,$IMPLIB"
