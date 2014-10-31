@@ -476,7 +476,7 @@ function build_libvpx() {
 function patch_ffmpeg() {
     echo "===> patching... FFmpeg"
 
-    local _N=37
+    local _N=38
     for i in `seq 1 ${_N}`
     do
         local num=$( printf "%04d" $i )
@@ -582,8 +582,7 @@ function build_ffmpeg() {
                     --enable-libopenjpeg                         \
                     --disable-decoder=jpeg2000                   \
                     --enable-libopus                             \
-                    --disable-decoder=opus                       \
-                    --disable-parser=opus                        \
+                    --disable-decoder=libopus                    \
                     --enable-libspeex                            \
                     --enable-libvorbis                           \
                     --disable-encoder=vorbis                     \

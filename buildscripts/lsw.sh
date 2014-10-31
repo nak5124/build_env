@@ -174,6 +174,7 @@ function build_LSW_vapoursynth() {
             ln -fs /mingw32/local/bin/liblsmash-2.dll /c/VapourSynth/plugins32
             ln -fs /mingw32/local/bin/avcodec-56.dll /c/VapourSynth/plugins32
             ln -fs /mingw32/local/bin/avformat-56.dll /c/VapourSynth/plugins32
+            ln -fs /mingw32/local/bin/avresample-2.dll /c/VapourSynth/plugins32
             ln -fs /mingw32/local/bin/avutil-54.dll /c/VapourSynth/plugins32
             ln -fs /mingw32/local/bin/swscale-3.dll /c/VapourSynth/plugins32
             ln -fs /mingw32/local/bin/libopencore-amrnb-0.dll /c/VapourSynth/plugins32
@@ -194,6 +195,7 @@ function build_LSW_vapoursynth() {
             ln -fs /mingw64/local/bin/liblsmash-2.dll /c/VapourSynth/plugins64
             ln -fs /mingw64/local/bin/avcodec-56.dll /c/VapourSynth/plugins64
             ln -fs /mingw64/local/bin/avformat-56.dll /c/VapourSynth/plugins64
+            ln -fs /mingw64/local/bin/avresample-2.dll /c/VapourSynth/plugins64
             ln -fs /mingw64/local/bin/avutil-54.dll /c/VapourSynth/plugins64
             ln -fs /mingw64/local/bin/swscale-3.dll /c/VapourSynth/plugins64
             ln -fs /mingw64/local/bin/libopencore-amrnb-0.dll /c/VapourSynth/plugins64
