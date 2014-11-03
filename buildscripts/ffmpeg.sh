@@ -465,6 +465,8 @@ function build_libvpx() {
 
     patch -p1 -i ${PATCHES_DIR}/libvpx/0001-enable-shared-mingw.patch > ${LOGS_DIR}/vpx_patch.log 2>&1 || exit 1
     patch -p1 -i ${PATCHES_DIR}/libvpx/0002-fix-exports.mingw.patch >> ${LOGS_DIR}/vpx_patch.log 2>&1 || exit 1
+    patch -p1 -i ${PATCHES_DIR}/libvpx/0003-give-preference-win32api-over-pthread.patch \
+        >> ${LOGS_DIR}/vpx_patch.log 2>&1 || exit 1
 
     local _arch
     for _arch in ${target_arch[@]}
@@ -482,42 +484,39 @@ function build_libvpx() {
         fi
 
         printf "===> Configuring libvpx %s...\n" $_arch
-        CFLAGS="${BASE_CFLAGS}"                 \
-        LDFLAGS="${BASE_LDFLAGS} ${_slgssp}"    \
-        CXXFLAGS="${BASE_CXXFLAGS}"             \
-        ./configure --prefix=$_FFPREFIX         \
-                    --target=$_target           \
-                    --disable-werror            \
-                    --enable-optimizations      \
-                    --disable-debug             \
-                    --disable-install-docs      \
-                    --disable-install-bins      \
-                    --enable-install-libs       \
-                    --disable-install-srcs      \
-                    --enable-libs               \
-                    --disable-examples          \
-                    --disable-docs              \
-                    --disable-unit-tests        \
-                    --as=yasm                   \
-                    --disable-codec-srcs        \
-                    --disable-debug-libs        \
-                    --disable-vp8-decoder       \
-                    --disable-vp9-decoder       \
-                    --disable-postproc          \
-                    --disable-vp9-postproc      \
-                    --enable-multithread        \
-                    --enable-spatial-resampling \
-                    --enable-runtime-cpu-detect \
-                    --enable-shared             \
-                    --disable-static            \
-                    --enable-multi-res-encoding \
-                    --disable-webm-io           \
-                    --disable-libyuv            \
+        CFLAGS="${BASE_CFLAGS} ${BASE_CPPFLAGS}" \
+        LDFLAGS="${BASE_LDFLAGS} ${_slgssp}"     \
+        CXXFLAGS="${BASE_CXXFLAGS}"              \
+        ./configure --prefix=$_FFPREFIX          \
+                    --target=$_target            \
+                    --disable-werror             \
+                    --enable-optimizations       \
+                    --disable-debug              \
+                    --disable-install-docs       \
+                    --disable-install-bins       \
+                    --enable-install-libs        \
+                    --disable-install-srcs       \
+                    --enable-libs                \
+                    --disable-examples           \
+                    --disable-docs               \
+                    --disable-unit-tests         \
+                    --as=yasm                    \
+                    --disable-codec-srcs         \
+                    --disable-debug-libs         \
+                    --disable-vp8-decoder        \
+                    --disable-vp9-decoder        \
+                    --disable-postproc           \
+                    --disable-vp9-postproc       \
+                    --enable-multithread         \
+                    --enable-spatial-resampling  \
+                    --enable-runtime-cpu-detect  \
+                    --enable-shared              \
+                    --disable-static             \
+                    --enable-multi-res-encoding  \
+                    --disable-webm-io            \
+                    --disable-libyuv             \
             > ${LOGS_DIR}/vpx_config_${_arch}.log 2>&1 || exit 1
         sed -i 's|-O3||g' libs-${_target}.mk
-        sed -i '/extralibs/d' libs-${_target}.mk
-        sed -i 's/HAVE_PTHREAD_H=yes/HAVE_PTHREAD_H=no/' libs-${_target}.mk
-        sed -i 's/#define HAVE_PTHREAD_H 1/#define HAVE_PTHREAD_H 0/' vpx_config.h
         echo "done"
 
         make clean > /dev/null 2>&1
@@ -527,6 +526,7 @@ function build_libvpx() {
 
         printf "===> Installing libvpx %s...\n" $_arch
         make install > ${LOGS_DIR}/vpx_install_${_arch}.log 2>&1 || exit 1
+        sed -i "s|-lpthread||g" ${_FFPREFIX}/lib/pkgconfig/vpx.pc
         echo "done"
         make distclean > /dev/null 2>&1
     done
@@ -662,8 +662,9 @@ function build_ffmpeg() {
                     --optflags="${BASE_CFLAGS} ${BASE_CPPFLAGS}" \
                     --extra-ldflags="${_slgssp}"                 \
             > ${LOGS_DIR}/ffmpeg_config_${_arch}.log 2>&1 || exit 1
-        sed -i '/HAVE_CLOCK_GETTIME/d' config.h
-        sed -i '/HAVE_NANOSLEEP/d' config.h
+        # if linking with MSVC statically, uncomment the following lines
+        # sed -i '/HAVE_CLOCK_GETTIME/d' config.h
+        # sed -i '/HAVE_NANOSLEEP/d' config.h
         echo "done"
 
         make clean > /dev/null 2>&1
@@ -679,6 +680,7 @@ function build_ffmpeg() {
             do
                 ln -fs ${_FFPREFIX}/bin/$_bin /d/encode/tools
             done
+            ln -fs /mingw64/bin/libwinpthread-1.dll /d/encode/tools
             ln -fs /mingw64/bin/libssp-0.dll /d/encode/tools
             ln -fs /mingw64/bin/libiconv-2.dll /d/encode/tools
             ln -fs /mingw64/bin/libz-1.dll /d/encode/tools

@@ -55,6 +55,7 @@ function build_LSW_aviutl() {
 
     echo "===> Copying LSW AviUtl..."
     cp -fa ./*.aui ./*.auf ./*.auc /d/encode/aviutl/Plugins
+    ln -fs /mingw32/bin/libwinpthread-1.dll /d/encode/aviutl
     ln -fs /mingw32/bin/libssp-0.dll /d/encode/aviutl
     ln -fs /mingw32/bin/libbz2-1.dll /d/encode/aviutl
     ln -fs /mingw32/bin/libz-1.dll /d/encode/aviutl
@@ -93,6 +94,7 @@ function build_LSW_avisynth() {
     echo "===> Copying LSW AviSynth..."
     cp -fa ./Release/LSMASHSource.dll /c/AviSynth+/plugins
     cp -fa ./x64/Release/LSMASHSource.dll /c/AviSynth+/plugins64
+    ln -fs /mingw32/bin/libwinpthread-1.dll /c/AviSynth+/plugins
     ln -fs /mingw32/bin/libssp-0.dll /c/AviSynth+/plugins
     ln -fs /mingw32/bin/libbz2-1.dll /c/AviSynth+/plugins
     ln -fs /mingw32/bin/libz-1.dll /c/AviSynth+/plugins
@@ -112,6 +114,7 @@ function build_LSW_avisynth() {
     ln -fs /mingw32/local/bin/libvorbisenc-2.dll /c/AviSynth+/plugins
     ln -fs /mingw32/local/bin/libogg-0.dll /c/AviSynth+/plugins
     ln -fs /mingw32/local/bin/libvpx-1.dll /c/AviSynth+/plugins
+    ln -fs /mingw64/bin/libwinpthread-1.dll /c/AviSynth+/plugins64
     ln -fs /mingw64/bin/libssp-0.dll /c/AviSynth+/plugins64
     ln -fs /mingw64/bin/libbz2-1.dll /c/AviSynth+/plugins64
     ln -fs /mingw64/bin/libz-1.dll /c/AviSynth+/plugins64
@@ -169,6 +172,7 @@ function build_LSW_vapoursynth() {
         printf "===> Copying LSW VapourSynth %s...\n" $_arch
         if [ "${_arch}" = "i686" ]; then
             cp -fa ./vslsmashsource.dll /c/VapourSynth/plugins32
+            ln -fs /mingw32/bin/libwinpthread-1.dll /c/VapourSynth/plugins32
             ln -fs /mingw32/bin/libssp-0.dll /c/VapourSynth/plugins32
             ln -fs /mingw32/bin/libbz2-1.dll /c/VapourSynth/plugins32
             ln -fs /mingw32/bin/libz-1.dll /c/VapourSynth/plugins32
@@ -190,6 +194,7 @@ function build_LSW_vapoursynth() {
             ln -fs /mingw32/local/bin/libvpx-1.dll /c/VapourSynth/plugins32
         else
             cp -fa ./vslsmashsource.dll  /c/VapourSynth/plugins64
+            ln -fs /mingw64/bin/libwinpthread-1.dll /c/VapourSynth/plugins64
             ln -fs /mingw64/bin/libssp-0.dll /c/VapourSynth/plugins64
             ln -fs /mingw64/bin/libbz2-1.dll /c/VapourSynth/plugins64
             ln -fs /mingw64/bin/libz-1.dll /c/VapourSynth/plugins64
