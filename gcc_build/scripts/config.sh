@@ -1,4 +1,4 @@
-# target
+# Target
 declare -ra BUILD_TARGETS=(
     "gcc_libs gmp mpfr mpc isl cloog"
     "libiconv"
@@ -36,12 +36,12 @@ declare -r PREIN_DIR=${ROOT_DIR}/prein
 declare -r BUILD_DIR=${ROOT_DIR}/build
 declare -r DST_DIR=${ROOT_DIR}/dst
 
-# flags
-declare -r _CPPFLAGS="-D__USE_MINGW_ANSI_STDIO=1 -D_FORTIFY_SOURCE=2"
-declare -r _CFLAGS="-pipe -Os -foptimize-strlen -fstack-protector-strong --param=ssp-buffer-size=4"
-declare -r _CXXFLAGS="-pipe -Os -foptimize-strlen -fstack-protector-strong --param=ssp-buffer-size=4"
-declare -r _LDFLAGS="-Wl,-O1,--sort-common,--as-needed"
-declare -r MAKEFLAGS="-j$(($(nproc)+1)) -O"
+# FLAGS
+declare -r CPPFLAGS_="-D__USE_MINGW_ANSI_STDIO=1 -D_FORTIFY_SOURCE=2"
+declare -r CFLAGS_="-mtune=generic -pipe -Os -foptimize-strlen -fstack-protector-strong --param=ssp-buffer-size=4"
+declare -r CXXFLAGS_="${CFLAGS_}"
+declare -r LDFLAGS_="-Wl,-O1,--sort-common,--as-needed"
+declare -r MAKEFLAGS_="-j$(($(nproc)+1)) -O"
 
 # GCC thread model
 declare -r THREAD_MODEL="posix"
@@ -50,7 +50,7 @@ declare -r THREAD_MODEL="posix"
 declare -r GCC_PKGREV=1
 declare -r GCC_BUILT_DATE=$(date +%Y.%m.%d)
 
-# version
+# Version
 declare -r GMP_VER="6.0.0"
 declare -r MPFR_VER="3.1.2"
 declare -r MPC_VER="1.0.2"
@@ -69,53 +69,40 @@ declare -r AUTOCONF_VER="2.69"
 declare -r AUTOMAKE_VER="1.14.1"
 declare -r LIBTOOL_VER="2.4.3"
 
-# rebuild
-# comment out if you don't want to rebuild
+# Comment out if you don't want to rebuild.
 # prerequisites for GCC
-define_rov GMP_REBUILD
-define_rov MPFR_REBUILD
-define_rov MPC_REBUILD
-define_rov ISL_REBUILD
-define_rov CLOOG_REBUILD
-if is_defined GMP_REBUILD   > /dev/null \
-|| is_defined MPFR_REBUILD  > /dev/null \
-|| is_defined MPC_REBUILD   > /dev/null \
-|| is_defined ISL_REBUILD   > /dev/null \
-|| is_defined CLOOG_REBUILD > /dev/null ; then
-    define_rov GCC_LIBS_REBUILD
-fi
+declare gmp_rebuild=true
+declare mpfr_rebuild=true
+declare mpc_rebuild=true
+declare isl_rebuild=true
+declare cloog_rebuild=true
 
-# mingw-w64 toolchain
-define_rov ICONV_REBUILD
-define_rov INTL_REBUILD
-define_rov ICONV2ND_REBUILD
-define_rov BZIP2_REBUILD
-define_rov ZLIB_REBUILD
-define_rov HEADERS_REBUILD
-define_rov WINPTHREADS_REBUILD
-define_rov CRT_REBUILD
-define_rov BINUTILS_REBUILD
-define_rov GCC_REBUILD
-if is_defined HEADERS_REBUILD     > /dev/null \
-|| is_defined WINPTHREADS_REBUILD > /dev/null \
-|| is_defined CRT_REBUILD         > /dev/null ; then
-    define_rov MINGW_REBUILD
-fi
+# MinGW-w64 toolchain
+declare iconv_rebuild=true
+declare intl_rebuild=true
+declare iconv_2nd_rebuild=true
+declare bzip2_rebuild=true
+declare zlib_rebuild=true
+declare headers_rebuild=true
+declare threads_rebuild=true
+declare crt_rebuild=true
+declare binutils_rebuild=true
+declare gcc_rebuild=true
 
-# rebuild with newer GCC
-define_rov BINUTILS2ND_REBUILD
-define_rov CRT2ND_REBUILD
-define_rov WINPTHREADS2ND_REBUILD
+# Rebuild with newer GCC.
+declare binutils_2nd_rebuild=true
+declare crt_2nd_rebuild=true
+declare threads_2nd_rebuild=true
 
-# mingw-w64 additional packages
-define_rov MANGLE_REBUILD
-define_rov TOOLS_REBUILD
+# MinGW-w64 additional packages
+declare mangle_rebuild=true
+declare tools_rebuild=true
 
 # nyasm
-define_rov NASM_REBUILD
-define_rov YASM_REBUILD
+declare nasm_rebuild=true
+declare yasm_rebuild=true
 
 # autotools
-define_rov AUTOCONF_REBUILD
-define_rov AUTOMAKE_REBUILD
-define_rov LIBTOOL_REBUILD
+declare autoconf_rebuild=true
+declare automake_rebuild=true
+declare libtool_rebuild=true

@@ -1,16 +1,18 @@
 # GMP: A free library for arbitrary precision arithmetic
-# download src
+# Download the src and decompress it.
 function download_gmp_src() {
-    if [ ! -f ${BUILD_DIR}/gcc_libs/gmp/src/gmp-${GMP_VER}a.tar.lz ] ; then
-        printf "===> downloading GMP %s\n" $GMP_VER
+    # Download the src.
+    if [ ! -f ${BUILD_DIR}/gcc_libs/gmp/src/gmp-${GMP_VER}a.tar.lz ]; then
+        printf "===> Downloading GMP %s...\n" $GMP_VER
         pushd ${BUILD_DIR}/gcc_libs/gmp/src > /dev/null
         dl_files ftp ftp://ftp.gmplib.org/pub/gmp/gmp-${GMP_VER}a.tar.lz
         popd > /dev/null
         echo "done"
     fi
 
-    if [ ! -d ${BUILD_DIR}/gcc_libs/gmp/src/gmp-$GMP_VER ] ; then
-        printf "===> extracting GMP %s\n" $GMP_VER
+    # Decompress the src archive.
+    if [ ! -d ${BUILD_DIR}/gcc_libs/gmp/src/gmp-$GMP_VER ]; then
+        printf "===> Extracting GMP %s...\n" $GMP_VER
         pushd ${BUILD_DIR}/gcc_libs/gmp/src > /dev/null
         decomp_arch ${BUILD_DIR}/gcc_libs/gmp/src/gmp-${GMP_VER}a.tar.lz
         popd > /dev/null
@@ -20,77 +22,103 @@ function download_gmp_src() {
     return 0
 }
 
-# build
-function build_gmp() {
-    clear; printf "Build GMP %s\n" $GMP_VER
-
-    download_gmp_src
-
-    cd ${BUILD_DIR}/gcc_libs/gmp/src/gmp-$GMP_VER
+# Autoreconf.
+function prepare_gmp() {
+    # Autoreconf.
+    printf "===> Autoreconfing GMP %s...\n" $GMP_VER
+    pushd ${BUILD_DIR}/gcc_libs/gmp/src/gmp-$GMP_VER > /dev/null
     autoreconf -fi > /dev/null 2>&1
+    popd > /dev/null
+    echo "done"
 
-    for arch in ${TARGET_ARCH[@]}
-    do
-        cd ${BUILD_DIR}/gcc_libs/gmp/build_$arch
-        rm -fr ${BUILD_DIR}/gcc_libs/gmp/build_${arch}/{.*,*} > /dev/null 2>&1
-
-        local bitval=$(get_arch_bit ${arch})
-        local _aof=$(arch_optflags ${arch})
-
-        source cpath $arch
-        PATH=${DST_DIR}/mingw${bitval}/bin:$PATH
-        export PATH
-
-        printf "===> configuring GMP %s\n" $arch
-        ../src/gmp-${GMP_VER}/configure     \
-            --prefix=/mingw$bitval          \
-            --build=${arch}-w64-mingw32     \
-            --host=${arch}-w64-mingw32      \
-            --disable-cxx                   \
-            --enable-fat                    \
-            --enable-shared                 \
-            --disable-static                \
-            --with-gnu-ld                   \
-            CPPFLAGS="${_CPPFLAGS}"         \
-            CFLAGS="${_aof} ${_CFLAGS}"     \
-            CXXFLAGS="${_aof} ${_CXXFLAGS}" \
-            LDFLAGS="${_LDFLAGS}"           \
-            > ${LOGS_DIR}/gcc_libs/gmp/gmp_config_${arch}.log 2>&1 || exit 1
-        echo "done"
-
-        printf "===> making GMP %s\n" $arch
-        # Setting -j$(($(nproc)+1)) sometimes makes error.
-        make > ${LOGS_DIR}/gcc_libs/gmp/gmp_make_${arch}.log 2>&1 || exit 1
-        echo "done"
-
-        printf "===> installing GMP %s\n" $arch
-        make DESTDIR=${PREIN_DIR}/gcc_libs/gmp install > ${LOGS_DIR}/gcc_libs/gmp/gmp_install_${arch}.log 2>&1 || exit 1
-        # Remove unneeded file.
-        rm -fr ${PREIN_DIR}/gcc_libs/gmp/mingw${bitval}/share
-        del_empty_dir ${PREIN_DIR}/gcc_libs/gmp/mingw$bitval
-        remove_la_files ${PREIN_DIR}/gcc_libs/gmp/mingw$bitval
-        strip_files ${PREIN_DIR}/gcc_libs/gmp/mingw$bitval
-        echo "done"
-
-        printf "===> copying GMP %s to %s/mingw%s\n" $arch $DST_DIR $bitval
-        cp -fra ${PREIN_DIR}/gcc_libs/gmp/mingw$bitval $DST_DIR
-        echo "done"
-    done
-
-    cd $ROOT_DIR
     return 0
 }
 
-# copy only
-function copy_gmp() {
-    clear; printf "GMP %s\n" $GMP_VER
+# Build and install.
+function build_gmp() {
+    clear; printf "Build GMP %s\n" $GMP_VER
 
-    for arch in ${TARGET_ARCH[@]}
+    # Option handling.
+    local _rebuild=true
+
+    local _opt
+    for _opt in "${@}"
     do
-        local bitval=$(get_arch_bit ${arch})
+        case "${_opt}" in
+            --rebuild=* )
+                _rebuild="${_opt#*=}"
+                ;;
+            * )
+                printf "build_gmp, Unknown Option: '%s'\n" $_opt
+                echo "...exit"
+                exit 1
+                ;;
+        esac
+    done
 
-        printf "===> copying GMP %s to %s/mingw%s\n" $arch $DST_DIR $bitval
-        cp -fra ${PREIN_DIR}/gcc_libs/gmp/mingw$bitval $DST_DIR
+    # Setup.
+    if ${_rebuild}; then
+        download_gmp_src
+        prepare_gmp
+    fi
+
+    local _arch
+    for _arch in ${TARGET_ARCH[@]}
+    do
+        local _bitval=$(get_arch_bit ${_arch})
+
+        if ${_rebuild}; then
+            cd ${BUILD_DIR}/gcc_libs/gmp/build_$_arch
+            # Cleanup the build dir.
+            rm -fr ${BUILD_DIR}/gcc_libs/gmp/build_${_arch}/{.*,*} > /dev/null 2>&1
+
+            # PATH exporting.
+            source cpath $_arch
+            PATH=${DST_DIR}/mingw${_bitval}/bin:$PATH
+            export PATH
+
+            # Configure.
+            printf "===> Configuring GMP %s...\n" $_arch
+            ../src/gmp-${GMP_VER}/configure                 \
+                --prefix=/mingw$_bitval                     \
+                --build=${_arch}-w64-mingw32                \
+                --host=${_arch}-w64-mingw32                 \
+                --disable-silent-rules                      \
+                --disable-cxx                               \
+                --enable-assembly                           \
+                --enable-fft                                \
+                --enable-fat                                \
+                --enable-shared                             \
+                --disable-static                            \
+                --enable-fast-install                       \
+                --with-gnu-ld                               \
+                CFLAGS="-march=${_arch/_/-} ${CFLAGS_}"     \
+                LDFLAGS="${LDFLAGS_}"                       \
+                CPPFLAGS="${CPPFLAGS_}"                     \
+                CXXFLAGS="-march=${_arch/_/-} ${CXXFLAGS_}" \
+                > ${LOGS_DIR}/gcc_libs/gmp/gmp_config_${_arch}.log 2>&1 || exit 1
+            echo "done"
+
+            # Make.
+            printf "===> Making GMP %s...\n" $_arch
+            make $MAKEFLAGS_ > ${LOGS_DIR}/gcc_libs/gmp/gmp_make_${_arch}.log 2>&1 || exit 1
+            echo "done"
+
+            # Install.
+            printf "===> Installing GMP %s...\n" $_arch
+            make DESTDIR=${PREIN_DIR}/gcc_libs/gmp install > ${LOGS_DIR}/gcc_libs/gmp/gmp_install_${_arch}.log 2>&1 || exit 1
+            # Remove unneeded files.
+            rm -fr ${PREIN_DIR}/gcc_libs/gmp/mingw${_bitval}/share
+            remove_empty_dirs ${PREIN_DIR}/gcc_libs/gmp/mingw$_bitval
+            remove_la_files   ${PREIN_DIR}/gcc_libs/gmp/mingw$_bitval
+            # Strip files.
+            strip_files ${PREIN_DIR}/gcc_libs/gmp/mingw$_bitval
+            echo "done"
+        fi
+
+        # Copy to DST_DIR.
+        printf "===> Copying GMP %s to %s/mingw%s...\n" $_arch $DST_DIR $_bitval
+        cp -fra ${PREIN_DIR}/gcc_libs/gmp/mingw$_bitval $DST_DIR
         echo "done"
     done
 

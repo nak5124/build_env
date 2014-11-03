@@ -1,136 +1,114 @@
 #!/usr/bin/env bash
 
 
-# load settings
-ROOT_DIR=$(cd $(dirname $0);pwd)
-SCRIPTS_DIR=${ROOT_DIR}/scripts
-# order is important
+# Load settings.
+declare -r ROOT_DIR=$(cd $(dirname $BASH_SOURCE); pwd)
+declare -r SCRIPTS_DIR=${ROOT_DIR}/scripts
+# The order is important.
 source ${SCRIPTS_DIR}/misc.sh
 source ${SCRIPTS_DIR}/config.sh
 source ${SCRIPTS_DIR}/init.sh
 
-# options
-for opt in "$@"
+# Handling options.
+declare no_gcc_libs=false
+declare no_toolchain=false
+declare no_2nd_rebuild=false
+declare no_map=false
+declare no_nyasm=false
+declare no_autotools=false
+declare opt
+for opt in "${@}"
 do
     case "${opt}" in
         all )
-            unset NO_GCC_LIBS
-            unset NO_TOOLCHAIN
-            unset NO_2ND_BUILD
-            unset NO_MAP
-            unset NO_NYASM
-            unset NO_AUTOTOOLS
+            no_gcc_libs=false
+            no_toolchain=false
+            no_2nd_rebuild=false
+            no_map=false
+            no_nyasm=false
+            no_autotools=false
             ;;
         noall )
-            define_nrov NO_GCC_LIBS
-            define_nrov NO_TOOLCHAIN
-            define_nrov NO_2ND_BUILD
-            define_nrov NO_MAP
-            define_nrov NO_NYASM
-            define_nrov NO_AUTOTOOLS
+            no_gcc_libs=true
+            no_toolchain=true
+            no_2nd_rebuild=true
+            no_map=true
+            no_nyasm=true
+            no_autotools=true
             ;;
         nolibs )
-            define_nrov NO_GCC_LIBS
+            no_gcc_libs=true
             ;;
         libs )
-            unset NO_GCC_LIBS
+            no_gcc_libs=false
             ;;
         notc )
-            define_nrov NO_TOOLCHAIN
+            no_toolchain=true
             ;;
         tc )
-            unset NO_TOOLCHAIN
+            no_toolchain=false
             ;;
         no2nd )
-            define_nrov NO_2ND_BUILD
+            no_2nd_rebuild=true
             ;;
         2nd )
-            unset NO_2ND_BUILD
+            no_2nd_rebuild=false
             ;;
         nomap )
-            define_nrov NO_MAP
+            no_map=true
             ;;
         map )
-            unset NO_MAP
+            no_map=false
             ;;
         noasm )
-            define_nrov NO_NYASM
+            no_nyasm=true
             ;;
         asm )
-            unset NO_NYASM
+            no_nyasm=false
             ;;
         noat )
-            define_nrov NO_AUTOTOOLS
+            no_autotools=true
             ;;
         at )
-            unset NO_AUTOTOOLS
+            no_autotools=false
             ;;
         * )
-            printf "Unknown option %s\n" $opt
+            printf "%s, Unknown Option: '%s'\n" $(basename $BASH_SOURCE) $opt
+            echo "...exit"
             exit 1
+            ;;
     esac
 done
-if is_defined NO_TOOLCHAIN > /dev/null ; then
-    define_nrov NO_2ND_BUILD
-    if is_defined NO_GCC_LIBS  > /dev/null \
-    && is_defined NO_MAP       > /dev/null \
-    && is_defined NO_NYASM     > /dev/null \
-    && is_defined NO_AUTOTOOLS > /dev/null ; then
-        echo "Nothing is run!"
-        exit 1
-    fi
+if ${no_toolchain}; then
+    no_2nd_rebuild=true
 fi
 
-# init
+# Initialize.
+check_cpath
 init_dirs
 
 # prerequisites for GCC
-# http://gcc.gnu.org/install/prerequisites.html
+# See http://gcc.gnu.org/install/prerequisites.html.
 source ${SCRIPTS_DIR}/gmp.sh
 source ${SCRIPTS_DIR}/mpfr.sh
 source ${SCRIPTS_DIR}/mpc.sh
 source ${SCRIPTS_DIR}/isl.sh
 source ${SCRIPTS_DIR}/cloog.sh
-if ! is_defined NO_GCC_LIBS > /dev/null ; then
-    # GMP
-    if is_defined GMP_REBUILD > /dev/null ; then
-        build_gmp
-    else
-        copy_gmp
-    fi
-    # MPFR
-    if is_defined MPFR_REBUILD > /dev/null ; then
-        build_mpfr
-    else
-        copy_mpfr
-    fi
-    # MPC
-    if is_defined MPC_REBUILD > /dev/null ; then
-        build_mpc
-    else
-        copy_mpc
-    fi
-    # ISL
-    if is_defined ISL_REBUILD > /dev/null ; then
-        build_isl
-    else
-        copy_isl
-    fi
-    # CLooG
-    if is_defined CLOOG_REBUILD > /dev/null ; then
-        build_cloog
-    else
-        copy_cloog
-    fi
+if ! ${no_gcc_libs}; then
+    build_gmp   --rebuild="${gmp_rebuild:-false}"
+    build_mpfr  --rebuild="${mpfr_rebuild:-false}"
+    build_mpc   --rebuild="${mpc_rebuild:-false}"
+    build_isl   --rebuild="${isl_rebuild:-false}"
+    build_cloog --rebuild="${cloog_rebuild:-false}"
 else
-    copy_gmp
-    copy_mpfr
-    copy_mpc
-    copy_isl
-    copy_cloog
+    build_gmp   --rebuild=false
+    build_mpfr  --rebuild=false
+    build_mpc   --rebuild=false
+    build_isl   --rebuild=false
+    build_cloog --rebuild=false
 fi
 
-# build mingw-w64 toolchain
+# Build mingw-w64 toolchain.
 source ${SCRIPTS_DIR}/libiconv.sh
 source ${SCRIPTS_DIR}/libintl.sh
 source ${SCRIPTS_DIR}/bzip2.sh
@@ -138,167 +116,99 @@ source ${SCRIPTS_DIR}/zlib.sh
 source ${SCRIPTS_DIR}/mingw-w64.sh
 source ${SCRIPTS_DIR}/binutils.sh
 source ${SCRIPTS_DIR}/gcc.sh
-if ! is_defined NO_TOOLCHAIN > /dev/null ; then
-    # libiconv
-    if is_defined ICONV_REBUILD > /dev/null ; then
-        build_iconv
-    else
-        copy_iconv
+
+if ${iconv_rebuild:-false} && ! ${iconv_2nd_rebuild:-false}; then
+    iconv_2nd_rebuild=true
+fi
+
+declare update_mingw=false
+if ( ! ${no_toolchain} && ( ${headers_rebuild:-false} || ${threads_rebuild:-false} || ${crt_rebuild:-false} ) ) \
+|| ( ! ${no_map}       && ( ${mangle_rebuild:-false}  || ${tools_rebuild:-false}                            ) ); then
+    update_mingw=true
+fi
+
+if ! ${no_toolchain}; then
+    build_iconv --rebuild="${iconv_rebuild:-false}"
+    build_intl  --rebuild="${intl_rebuild:-false}"
+    if ${iconv_2nd_rebuild:-false}; then
+        build_iconv --rebuild="${iconv_2nd_rebuild:-false}" --2nd
     fi
-    # libintl
-    if is_defined INTL_REBUILD > /dev/null ; then
-        build_intl
-    else
-        copy_intl
+    build_bzip2 --rebuild="${bzip2_rebuild:-false}"
+    build_zlib  --rebuild="${zlib_rebuild:-false}"
+    if ${update_mingw}; then
+        prepare_mingw_w64
+        update_mingw=false
     fi
-    # libiconv
-    if is_defined ICONV2ND_REBUILD > /dev/null ; then
-        build_iconv -2nd
+    build_headers  --rebuild="${headers_rebuild:-false}"
+    build_threads  --rebuild="${threads_rebuild:-false}"
+    build_crt      --rebuild="${crt_rebuild:-false}"
+    build_binutils --rebuild="${binutils_rebuild:-false}"
+    build_gcc      --rebuild="${gcc_rebuild:-false}"
+else
+    build_iconv    --rebuild=false
+    build_intl     --rebuild=false
+    build_bzip2    --rebuild=false
+    build_zlib     --rebuild=false
+    build_headers  --rebuild=false
+    build_threads  --rebuild=false
+    build_crt      --rebuild=false
+    build_binutils --rebuild=false
+    build_gcc      --rebuild=false
+fi
+
+# Rebuild with newer GCC.
+if ! ${no_2nd_rebuild}; then
+    if ${binutils_2nd_rebuild:-false}; then
+        build_binutils --rebuild="${binutils_2nd_rebuild:-false}" --2nd
     fi
-    # bzip2
-    if is_defined BZIP2_REBUILD > /dev/null ; then
-        build_bzip2
-    else
-        copy_bzip2
+    if ${crt_2nd_rebuild:-false}; then
+        build_crt --rebuild="${crt_2nd_rebuild:-false}" --2nd
     fi
-    # zlib
-    if is_defined ZLIB_REBUILD > /dev/null ; then
-        build_zlib
-    else
-        copy_zlib
+    if ${threads_2nd_rebuild:-false}; then
+        build_threads --rebuild="${threads_2nd_rebuild:-false}" --2nd
     fi
-    # MinGW-w64 common
-    if is_defined MINGW_REBUILD > /dev/null ; then
+fi
+
+# MinGW-w64 additional packages
+if ! ${no_map}; then
+    if ${update_mingw}; then
         prepare_mingw_w64
     fi
-    # headers
-    if is_defined HEADERS_REBUILD > /dev/null ; then
-        build_headers
-    else
-        copy_headers
-    fi
-    # winpthreads
-    if is_defined WINPTHREADS_REBUILD > /dev/null ; then
-        build_threads
-    else
-        copy_threads
-    fi
-    # crt
-    if is_defined CRT_REBUILD > /dev/null ; then
-        build_crt
-    else
-        copy_crt
-    fi
-    # Binutils
-    if is_defined BINUTILS_REBUILD > /dev/null ; then
-        build_binutils
-    else
-        copy_binutils
-    fi
-    # GCC
-    if is_defined GCC_REBUILD > /dev/null ; then
-        build_gcc
-    else
-        copy_gcc
-    fi
+    build_mangle --rebuild="${mangle_rebuild:-false}"
+    build_tools  --rebuild="${tools_rebuild:-false}"
 else
-    copy_iconv
-    copy_intl
-    copy_bzip2
-    copy_zlib
-    copy_headers
-    copy_threads
-    copy_crt
-    copy_binutils
-    copy_gcc
-fi
-
-# rebuild with newer GCC
-if ! is_defined NO_2ND_BUILD > /dev/null ; then
-    # Binutils
-    if is_defined BINUTILS2ND_REBUILD > /dev/null ; then
-        build_binutils
-    fi
-    # winpthreads
-    if is_defined WINPTHREADS2ND_REBUILD > /dev/null ; then
-        build_threads
-    fi
-    # crt
-    if is_defined CRT2ND_REBUILD > /dev/null ; then
-        build_crt
-    fi
-fi
-
-# mingw-w64 additional packages
-if ! is_defined NO_MAP > /dev/null ; then
-    # libmangle
-    if is_defined MANGLE_REBUILD > /dev/null ; then
-        build_mangle
-    else
-        copy_mangle
-    fi
-    # tools
-    if is_defined TOOLS_REBUILD > /dev/null ; then
-        build_tools
-    else
-        copy_tools
-    fi
-else
-    copy_mangle
-    copy_tools
+    build_mangle --rebuild=false
+    build_tools  --rebuild=false
 fi
 
 # nyasm
 source ${SCRIPTS_DIR}/nyasm.sh
-if ! is_defined NO_NYASM > /dev/null ; then
-    # NASM
-    if is_defined NASM_REBUILD > /dev/null ; then
-        build_nasm
-    else
-        copy_nasm
-    fi
-    # Yasm
-    if is_defined YASM_REBUILD > /dev/null ; then
-        build_yasm
-    else
-        copy_yasm
-    fi
+if ! ${no_nyasm}; then
+    build_nasm --rebuild="${nasm_rebuild:-false}"
+    build_yasm --rebuild="${yasm_rebuild:-false}"
 else
-    copy_nasm
-    copy_yasm
+    build_nasm --rebuild=false
+    build_yasm --rebuild=false
 fi
 
 # autotools
 source ${SCRIPTS_DIR}/autotools.sh
-if ! is_defined NO_AUTOTOOLS > /dev/null ; then
-    # Autoconf
-    if is_defined AUTOCONF_REBUILD > /dev/null ; then
-        build_autoconf
-    else
-        copy_autoconf
-    fi
-    # Automake
-    if is_defined AUTOMAKE_REBUILD > /dev/null ; then
-        build_automake
-    else
-        copy_automake
-    fi
-    # Libtool
-    if is_defined LIBTOOL_REBUILD > /dev/null ; then
-        build_libtool
-    else
-        copy_libtool
-    fi
+if ! ${no_autotools}; then
+    build_autoconf --rebuild="${autoconf_rebuild:-false}"
+    build_automake --rebuild="${automake_rebuild:-false}"
+    build_libtool  --rebuild="${libtool_rebuild:-false}"
 else
-    copy_autoconf
-    copy_automake
-    copy_libtool
+    build_autoconf --rebuild=false
+    build_automake --rebuild=false
+    build_libtool  --rebuild=false
 fi
 
-# reinstall ld
+# Reinstall ld.
 copy_ld
 
 MINTTY=$mintty_save
 export MINTTY
+LC_ALL=
+export LC_ALL
 
 reset; echo "Everything has been successfully completed!"

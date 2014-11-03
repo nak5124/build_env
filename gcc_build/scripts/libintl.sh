@@ -1,16 +1,18 @@
 # libintl: GNU Internationalization runtime library
-# download src
+# Download the src and decompress it.
 function download_intl_src() {
-    if [ ! -f ${BUILD_DIR}/libintl/src/gettext-${INTL_VER}.tar.xz ] ; then
-        printf "===> downloading libintl %s\n" $INTL_VER
+    # Download the src.
+    if [ ! -f ${BUILD_DIR}/libintl/src/gettext-${INTL_VER}.tar.xz ]; then
+        printf "===> Downloading libintl %s...\n" $INTL_VER
         pushd ${BUILD_DIR}/libintl/src > /dev/null
         dl_files http http://ftp.gnu.org/pub/gnu/gettext/gettext-${INTL_VER}.tar.xz
         popd > /dev/null
         echo "done"
     fi
 
-    if [ ! -d ${BUILD_DIR}/libintl/src/gettext-$INTL_VER ] ; then
-        printf "===> extracting libintl %s\n" $INTL_VER
+    # Decompress the src archive.
+    if [ ! -d ${BUILD_DIR}/libintl/src/gettext-$INTL_VER ]; then
+        printf "===> Extracting libintl %s...\n" $INTL_VER
         pushd ${BUILD_DIR}/libintl/src > /dev/null
         decomp_arch ${BUILD_DIR}/libintl/src/gettext-${INTL_VER}.tar.xz
         popd > /dev/null
@@ -20,126 +22,152 @@ function download_intl_src() {
     return 0
 }
 
-# patch
-function patch_intl() {
+# Apply patches and libtoolize.
+function prepare_intl() {
+    # Apply patches.
+    printf "===> Applying patches to libintl %s...\n" $INTL_VER
     pushd ${BUILD_DIR}/libintl/src/gettext-$INTL_VER > /dev/null
-
-    if [ ! -f ${BUILD_DIR}/libintl/src/gettext-${INTL_VER}/patched_01.marker ] ; then
+    if [ ! -f ${BUILD_DIR}/libintl/src/gettext-${INTL_VER}/patched_01.marker ]; then
+        # For --enable-relocatable.
         patch -p1 -i ${PATCHES_DIR}/libintl/0001-relocatex-libintl-0.18.3.1.patch \
             > ${LOGS_DIR}/libintl/libintl_patch.log 2>&1 || exit 1
         touch ${BUILD_DIR}/libintl/src/gettext-${INTL_VER}/patched_01.marker
     fi
-    if [ ! -f ${BUILD_DIR}/libintl/src/gettext-${INTL_VER}/patched_02.marker ] ; then
+    if [ ! -f ${BUILD_DIR}/libintl/src/gettext-${INTL_VER}/patched_02.marker ]; then
         patch -p0 -i ${PATCHES_DIR}/libintl/0002-always-use-libintl-vsnprintf.mingw.patch \
             >> ${LOGS_DIR}/libintl/libintl_patch.log 2>&1 || exit 1
         touch ${BUILD_DIR}/libintl/src/gettext-${INTL_VER}/patched_02.marker
     fi
-    if [ ! -f ${BUILD_DIR}/libintl/src/gettext-${INTL_VER}/patched_03.marker ] ; then
+    if [ ! -f ${BUILD_DIR}/libintl/src/gettext-${INTL_VER}/patched_03.marker ]; then
+        # Fix linking to gcc dynamically.
         patch -p1 -i ${PATCHES_DIR}/libintl/0003-static-locale_charset.patch \
             >> ${LOGS_DIR}/libintl/libintl_patch.log 2>&1 || exit 1
         touch ${BUILD_DIR}/libintl/src/gettext-${INTL_VER}/patched_03.marker
     fi
-    if [ ! -f ${BUILD_DIR}/libintl/src/gettext-${INTL_VER}/patched_04.marker ] ; then
+    if [ ! -f ${BUILD_DIR}/libintl/src/gettext-${INTL_VER}/patched_04.marker ]; then
         patch -p1 -i ${PATCHES_DIR}/libintl/0004-use-GetConsoleOutputCP.patch \
             >> ${LOGS_DIR}/libintl/libintl_patch.log 2>&1 || exit 1
         touch ${BUILD_DIR}/libintl/src/gettext-${INTL_VER}/patched_04.marker
     fi
-    if [ ! -f ${BUILD_DIR}/libintl/src/gettext-${INTL_VER}/patched_05.marker ] ; then
+    if [ ! -f ${BUILD_DIR}/libintl/src/gettext-${INTL_VER}/patched_05.marker ]; then
+        # Fix linking to gcc with -fstack-protector*.
         patch -p1 -i ${PATCHES_DIR}/libintl/0005-dont-use-disable-auto-import.patch \
             >> ${LOGS_DIR}/libintl/libintl_patch.log 2>&1 || exit 1
         touch ${BUILD_DIR}/libintl/src/gettext-${INTL_VER}/patched_05.marker
     fi
+    echo "done"
 
+    # Libtoolize
+    printf "===> Libtoolizing libintl %s...\n" $INTL_VER
+    # For building with -fstack-protector*.
     cd ${BUILD_DIR}/libintl/src/gettext-${INTL_VER}/gettext-runtime
     libtoolize -i > /dev/null 2>&1
     sed -i "s/macro_version='2.4.2'/macro_version='2.4.2.458.26-92994'/" configure
     sed -i "s/macro_revision='1.3337'/macro_revision='2.4.3'/" configure
-
     popd > /dev/null
+    echo "done"
 
     return 0
 }
 
-# build
+# Build and install.
 function build_intl() {
     clear; printf "Build libintl %s\n" $INTL_VER
 
-    download_intl_src
-    patch_intl
+    # Option handling.
+    local _rebuild=true
 
-    for arch in ${TARGET_ARCH[@]}
+    local _opt
+    for _opt in "${@}"
     do
-        cd ${BUILD_DIR}/libintl/build_$arch
-        rm -fr ${BUILD_DIR}/libintl/build_${arch}/*
-
-        local bitval=$(get_arch_bit ${arch})
-        local _aof=$(arch_optflags ${arch})
-
-        source cpath $arch
-        PATH=${DST_DIR}/mingw${bitval}/bin:$PATH
-        export PATH
-
-        if [ "${arch}" = "i686" ] ; then
-            local _slgcc="-static-libgcc"
-        else
-            local _slgcc=""
-        fi
-
-        printf "===> configuring libintl %s\n" $arch
-        ../src/gettext-${INTL_VER}/gettext-runtime/configure \
-            --prefix=/mingw$bitval                           \
-            --build=${arch}-w64-mingw32                      \
-            --host=${arch}-w64-mingw32                       \
-            --disable-java                                   \
-            --disable-native-java                            \
-            --disable-csharp                                 \
-            --enable-threads=win32                           \
-            --enable-shared                                  \
-            --disable-static                                 \
-            --enable-relocatable                             \
-            --disable-libasprintf                            \
-            --with-gnu-ld                                    \
-            --with-libiconv-prefix=${DST_DIR}/mingw$bitval   \
-            CPPFLAGS="${_CPPFLAGS}"                          \
-            CFLAGS="${_aof} ${_CFLAGS}"                      \
-            CXXFLAGS="${_aof} ${_CXXFLAGS}"                  \
-            LDFLAGS="${_LDFLAGS} ${_slgcc}"                  \
-            > ${LOGS_DIR}/libintl/libintl_config_${arch}.log 2>&1 || exit 1
-        echo "done"
-
-        printf "===> making libintl %s\n" $arch
-        make $MAKEFLAGS > ${LOGS_DIR}/libintl/libintl_make_${arch}.log 2>&1 || exit 1
-        echo "done"
-
-        printf "===> installing libintl %s\n" $arch
-        make DESTDIR=${PREIN_DIR}/libintl install > ${LOGS_DIR}/libintl/libintl_install_${arch}.log 2>&1 || exit 1
-        # Remove unneeded file.
-        rm -f ${PREIN_DIR}/libintl/mingw${bitval}/bin/{*.sh,*.exe}
-        rm -fr ${PREIN_DIR}/libintl/mingw${bitval}/share
-        del_empty_dir ${PREIN_DIR}/libintl/mingw$bitval
-        remove_la_files ${PREIN_DIR}/libintl/mingw$bitval
-        strip_files ${PREIN_DIR}/libintl/mingw$bitval
-        echo "done"
-
-        printf "===> copying libintl %s to %s/mingw%s\n" $arch $DST_DIR $bitval
-        cp -fra ${PREIN_DIR}/libintl/mingw$bitval $DST_DIR
-        echo "done"
+        case "${_opt}" in
+            --rebuild=* )
+                _rebuild="${_opt#*=}"
+                ;;
+            * )
+                printf "build_intl: Unknown Option: '%s'\n" $_opt
+                echo "...exit"
+                exit 1
+                ;;
+        esac
     done
 
-    cd $ROOT_DIR
-    return 0
-}
+    # Setup.
+    if ${_rebuild}; then
+        download_intl_src
+        prepare_intl
+    fi
 
-# copy only
-function copy_intl() {
-    clear; printf "libintl %s\n" $INTL_VER
-
-    for arch in ${TARGET_ARCH[@]}
+    local _arch
+    for _arch in ${TARGET_ARCH[@]}
     do
-        local bitval=$(get_arch_bit ${arch})
+        local _bitval=$(get_arch_bit ${_arch})
 
-        printf "===> copying libintl %s to %s/mingw%s\n" $arch $DST_DIR $bitval
-        cp -fra ${PREIN_DIR}/libintl/mingw$bitval $DST_DIR
+        if ${_rebuild}; then
+            cd ${BUILD_DIR}/libintl/build_$_arch
+            # Cleanup the build dir.
+            rm -fr ${BUILD_DIR}/libintl/build_${_arch}/*
+
+            # PATH exporting.
+            source cpath $_arch
+            PATH=${DST_DIR}/mingw${_bitval}/bin:$PATH
+            export PATH
+
+            # For eh of i686 bins, which are built with MSVC.
+            if [ "${_arch}" = "i686" ]; then
+                local _slgcc="-static-libgcc"
+            else
+                local _slgcc=""
+            fi
+
+            # Configure.
+            printf "===> Configuring libintl %s...\n" $_arch
+            ../src/gettext-${INTL_VER}/gettext-runtime/configure \
+                --prefix=/mingw$_bitval                          \
+                --build=${_arch}-w64-mingw32                     \
+                --host=${_arch}-w64-mingw32                      \
+                --disable-silent-rules                           \
+                --disable-java                                   \
+                --disable-native-java                            \
+                --disable-csharp                                 \
+                --enable-threads=windows                         \
+                --enable-shared                                  \
+                --disable-static                                 \
+                --enable-fast-install                            \
+                --disable-rpath                                  \
+                --disable-c++                                    \
+                --enable-relocatable                             \
+                --disable-libasprintf                            \
+                --with-gnu-ld                                    \
+                --with-libiconv-prefix=${DST_DIR}/mingw$_bitval  \
+                CFLAGS="-march=${_arch/_/-} ${CFLAGS_}"          \
+                LDFLAGS="${LDFLAGS_} ${_slgcc}"                  \
+                CPPFLAGS="${CPPFLAGS_}"                          \
+                CXXFLAGS="-march=${_arch/_/-} ${CXXFLAGS_}"      \
+                > ${LOGS_DIR}/libintl/libintl_config_${_arch}.log 2>&1 || exit 1
+            echo "done"
+
+            # Make.
+            printf "===> Making libintl %s...\n" $_arch
+            make $MAKEFLAGS_ > ${LOGS_DIR}/libintl/libintl_make_${_arch}.log 2>&1 || exit 1
+            echo "done"
+
+            # Install.
+            printf "===> Installing libintl %s...\n" $_arch
+            make DESTDIR=${PREIN_DIR}/libintl install > ${LOGS_DIR}/libintl/libintl_install_${_arch}.log 2>&1 || exit 1
+            # Remove unneeded files.
+            rm -f  ${PREIN_DIR}/libintl/mingw${_bitval}/bin/{*.sh,*.exe}
+            rm -fr ${PREIN_DIR}/libintl/mingw${_bitval}/share
+            remove_empty_dirs ${PREIN_DIR}/libintl/mingw$_bitval
+            remove_la_files   ${PREIN_DIR}/libintl/mingw$_bitval
+            # Strip files.
+            strip_files ${PREIN_DIR}/libintl/mingw$_bitval
+            echo "done"
+        fi
+
+        # Copy to DST_DIR.
+        printf "===> Copying libintl %s to %s/mingw%s...\n" $_arch $DST_DIR $_bitval
+        cp -fra ${PREIN_DIR}/libintl/mingw$_bitval $DST_DIR
         echo "done"
     done
 

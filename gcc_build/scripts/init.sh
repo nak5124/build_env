@@ -2,92 +2,98 @@
 function init_dirs() {
     clear; echo "init directories"
 
+    local -i _i
+    local -i _j
+    local -a _target
+    local    _arch
+
     # BUILD_DIR
-    for (( i = 0; i < ${#BUILD_TARGETS[@]}; i++ ))
+    for(( _i = 0; _i < ${#BUILD_TARGETS[@]}; _i++ ))
     do
-        local -a target=(${BUILD_TARGETS[${i}]})
-        if [ ${#target[*]} -gt 1 ] ; then
-            for (( j = 1; j < ${#target[*]}; j++ ))
+        _target=(${BUILD_TARGETS[${_i}]})
+        if [ ${#_target[*]} -gt 1 ]; then
+            for(( _j = 1; _j < ${#_target[*]}; _j++ ))
             do
-                for arch in ${TARGET_ARCH[@]}
+                for _arch in ${TARGET_ARCH[@]}
                 do
-                    if [ ! -d ${BUILD_DIR}/${target[0]}/${target[${j}]}/build_$arch ] ; then
-                        mkdir -p ${BUILD_DIR}/${target[0]}/${target[${j}]}/build_$arch
+                    if [ ! -d ${BUILD_DIR}/${_target[0]}/${_target[${_j}]}/build_$_arch ]; then
+                        mkdir -p ${BUILD_DIR}/${_target[0]}/${_target[${_j}]}/build_$_arch
                     fi
                 done
-                if [ "${target}" != "mingw-w64" ] ; then
-                    if [ ! -d ${BUILD_DIR}/${target[0]}/${target[${j}]}/src ] ; then
-                        mkdir -p ${BUILD_DIR}/${target[0]}/${target[${j}]}/src
+                if [ "${_target}" != "mingw-w64" ]; then
+                    if [ ! -d ${BUILD_DIR}/${_target[0]}/${_target[${_j}]}/src ]; then
+                        mkdir -p ${BUILD_DIR}/${_target[0]}/${_target[${_j}]}/src
                     fi
                 fi
             done
-            if [ "${target}" = "mingw-w64" ] ; then
-                if [ ! -d ${BUILD_DIR}/${target}/src ] ; then
-                    mkdir -p ${BUILD_DIR}/${target}/src
+            if [ "${_target}" = "mingw-w64" ]; then
+                if [ ! -d ${BUILD_DIR}/${_target}/src ]; then
+                    mkdir -p ${BUILD_DIR}/${_target}/src
                 fi
             fi
         else
-            for arch in ${TARGET_ARCH[@]}
+            for _arch in ${TARGET_ARCH[@]}
             do
-                if [ ! -d ${BUILD_DIR}/${target}/build_$arch ] ; then
-                    mkdir -p ${BUILD_DIR}/${target}/build_$arch
+                if [ ! -d ${BUILD_DIR}/${_target}/build_$_arch ]; then
+                    mkdir -p ${BUILD_DIR}/${_target}/build_$_arch
                 fi
             done
-            if [ ! -d ${BUILD_DIR}/${target}/src ] ; then
-                mkdir -p ${BUILD_DIR}/${target}/src
+            if [ ! -d ${BUILD_DIR}/${_target}/src ]; then
+                mkdir -p ${BUILD_DIR}/${_target}/src
             fi
         fi
     done
 
     # LOGS_DIR
-    for (( i = 0; i < ${#BUILD_TARGETS[@]}; i++ ))
+    for(( _i = 0; _i < ${#BUILD_TARGETS[@]}; _i++ ))
     do
-        local -a target=(${BUILD_TARGETS[${i}]})
-        if [ ${#target[*]} -gt 1 ] ; then
-            for (( j = 1; j < ${#target[*]}; j++ ))
+        _target=(${BUILD_TARGETS[${_i}]})
+        if [ ${#_target[*]} -gt 1 ]; then
+            for(( _j = 1; _j < ${#_target[*]}; _j++ ))
             do
-                if [ ! -d ${LOGS_DIR}/${target[0]}/${target[${j}]} ] ; then
-                    mkdir -p ${LOGS_DIR}/${target[0]}/${target[${j}]}
+                if [ ! -d ${LOGS_DIR}/${_target[0]}/${_target[${_j}]} ]; then
+                    mkdir -p ${LOGS_DIR}/${_target[0]}/${_target[${_j}]}
                 fi
             done
         else
-            if [ ! -d ${LOGS_DIR}/$target ] ; then
-                mkdir -p ${LOGS_DIR}/$target
+            if [ ! -d ${LOGS_DIR}/$_target ]; then
+                mkdir -p ${LOGS_DIR}/$_target
             fi
         fi
     done
 
     # PREIN_DIR
-    for (( i = 0; i < ${#BUILD_TARGETS[@]}; i++ ))
+    for(( _i = 0; _i < ${#BUILD_TARGETS[@]}; _i++ ))
     do
-        local -a target=(${BUILD_TARGETS[${i}]})
-        if [ ${#target[*]} -gt 1 ] ; then
-            for (( j = 1; j < ${#target[*]}; j++ ))
+        _target=(${BUILD_TARGETS[${_i}]})
+        if [ ${#_target[*]} -gt 1 ]; then
+            for(( _j = 1; _j < ${#_target[*]}; _j++ ))
             do
-                if [ ! -d ${PREIN_DIR}/${target[0]}/${target[${j}]} ] ; then
-                    mkdir -p ${PREIN_DIR}/${target[0]}/${target[${j}]}
+                if [ ! -d ${PREIN_DIR}/${_target[0]}/${_target[${_j}]} ]; then
+                    mkdir -p ${PREIN_DIR}/${_target[0]}/${_target[${_j}]}
                 fi
             done
         else
-            if [ ! -d ${PREIN_DIR}/$target ] ; then
-                mkdir -p ${PREIN_DIR}/$target
+            if [ ! -d ${PREIN_DIR}/$_target ]; then
+                mkdir -p ${PREIN_DIR}/$_target
             fi
-            if [ "${target}" = "binutils" ] ; then
-                if [ ! -d ${PREIN_DIR}/${target}_ld ] ; then
-                    mkdir -p ${PREIN_DIR}/${target}_ld
+            if [ "${_target}" = "binutils" ]; then
+                if [ ! -d ${PREIN_DIR}/${_target}_ld ]; then
+                    mkdir -p ${PREIN_DIR}/${_target}_ld
                 fi
             fi
         fi
     done
 
     # DST_DIR
-    for arch in ${TARGET_ARCH[@]}
+    local _bitval
+    for _arch in ${TARGET_ARCH[@]}
     do
-        local bitval=$(get_arch_bit $arch)
-        if [ -d ${DST_DIR}/mingw$bitval ] ; then
-            rm -fr ${DST_DIR}/mingw$bitval
+        _bitval=$(get_arch_bit ${_arch})
+        if [ -d ${DST_DIR}/mingw$_bitval ]; then
+            rm -fr ${DST_DIR}/mingw$_bitval
         fi
-        mkdir -p ${DST_DIR}/mingw$bitval
+        mkdir -p ${DST_DIR}/mingw$_bitval
     done
 
     cd $ROOT_DIR

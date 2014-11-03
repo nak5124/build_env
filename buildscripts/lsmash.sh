@@ -6,7 +6,7 @@ declare -a target_arch=(
     "i686"
 )
 
-for opt in "$@"
+for opt in "${@}"
 do
     case "${opt}" in
         arch=* )
@@ -14,25 +14,31 @@ do
             target_arch=( $(echo $optarg | tr -s ',' ' ' ) )
             for arch in ${target_arch[@]}
             do
-                if [ "${arch}" != "i686" -a "${arch}" != "x86_64" ] ; then
-                    echo "${arch} is an unknown arch"
+                if [ "${arch}" != "i686" -a "${arch}" != "x86_64" ]; then
+                    printf "%s, Unknown arch: '%s'\n" $(basename $BASH_SOURCE) $arch
+                    echo "...exit"
                     exit 1
                 fi
             done
+            ;;
+        * )
+            printf "%s, Unknown option: %s\n" $(basename $BASH_SOURCE) $opt
+            echo "...exit"
+            exit 1
             ;;
     esac
 done
 
 declare -r PATCHES_DIR=${HOME}/patches/lsmash
 declare -r LOGS_DIR=${HOME}/logs/lsmash
-if [ ! -d $LOGS_DIR ] ; then
+if [ ! -d $LOGS_DIR ]; then
     mkdir -p $LOGS_DIR
 fi
 
 function build_lsmash() {
     clear; echo "Build L-SMASH git-master"
 
-    if [ ! -d ${HOME}/OSS/l-smash ] ; then
+    if [ ! -d ${HOME}/OSS/l-smash ]; then
         cd ${HOME}/OSS
         git clone https://github.com/l-smash/l-smash.git
     fi
@@ -44,13 +50,13 @@ function build_lsmash() {
     git_hash > ${LOGS_DIR}/lsmash.hash
     git_rev >> ${LOGS_DIR}/lsmash.hash
 
-    local -r LSMASH_API_VER=$(echo $(cat lsmash.h | grep "#define LSMASH_VERSION_MAJOR" | awk '{print $3}'))
-    local -ra bin_list=(
+    local -r _LSMASH_API_VER=$(cat lsmash.h | grep "#define LSMASH_VERSION_MAJOR" | awk '{print $3}')
+    local -ra _bin_list=(
         "muxer.exe"
         "remuxer.exe"
         "timelineeditor.exe"
         "boxdumper.exe"
-        "liblsmash-${LSMASH_API_VER}.dll"
+        "liblsmash-${_LSMASH_API_VER}.dll"
     )
 
     patch -p1 -i ${PATCHES_DIR}/0001-configure-Check-whether-SRCDIR-is-git-repo-or-not.patch \
@@ -60,43 +66,44 @@ function build_lsmash() {
     patch -p1 -i ${PATCHES_DIR}/0003-build-Use-lib.exe-or-dlltool-when-available-on-mingw.patch \
         >> ${LOGS_DIR}/lsmash_patch.log 2>&1 || exit 1
 
-    for arch in ${target_arch[@]}
+    local _arch
+    for _arch in ${target_arch[@]}
     do
-        if [ "${arch}" = "i686" ] ; then
-            local LSPREFIX=/mingw32/local
-            local VCDIR=$VC32_DIR
+        if [ "${_arch}" = "i686" ]; then
+            local _LSPREFIX=/mingw32/local
+            local _VCDIR=$VC32_DIR
             local _slgssp="-static-libgcc -fstack-protector-strong --param=ssp-buffer-size=4"
         else
-            local LSPREFIX=/mingw64/local
-            local VCDIR=$VC64_DIR
+            local _LSPREFIX=/mingw64/local
+            local _VCDIR=$VC64_DIR
             local _slgssp="-fstack-protector-strong --param=ssp-buffer-size=4"
         fi
 
-        source cpath $arch
-        PATH=${PATH}:$VCDIR
+        source cpath $_arch
+        PATH=${PATH}:$_VCDIR
         export PATH
 
-        printf "===> configure L-SMASH %s\n" $arch
-        ./configure --prefix=$LSPREFIX                               \
+        printf "===> Configuring L-SMASH %s...\n" $_arch
+        ./configure --prefix=$_LSPREFIX                              \
                     --disable-static                                 \
                     --enable-shared                                  \
                     --extra-cflags="${BASE_CFLAGS} ${BASE_CPPFLAGS}" \
                     --extra-ldflags="${BASE_LDFLAGS} ${_slgssp}"     \
-            > ${LOGS_DIR}/lsmash_config_${arch}.log 2>&1 || exit 1
+            > ${LOGS_DIR}/lsmash_config_${_arch}.log 2>&1 || exit 1
         echo "done"
 
         make clean > /dev/null 2>&1
-        printf "===> making L-SMASH %s\n" $arch
-        make -j9 -O > ${LOGS_DIR}/lsmash_make_${arch}.log 2>&1 || exit 1
-        dos2unix lsmash-1.def > /dev/null 2>&1
+        printf "===> Making L-SMASH %s...\n" $_arch
+        make -j9 -O > ${LOGS_DIR}/lsmash_make_${_arch}.log 2>&1 || exit 1
         echo "done"
 
-        printf "===> installing L-SMASH %s\n" $arch
-        make install > ${LOGS_DIR}/lsmash_install_${arch}.log 2>&1 || exit 1
-        if [ "${arch}" = "x86_64" ] ; then
-            for bin in ${bin_list[@]}
+        printf "===> Installing L-SMASH %s...\n" $_arch
+        make install > ${LOGS_DIR}/lsmash_install_${_arch}.log 2>&1 || exit 1
+        if [ "${_arch}" = "x86_64" ]; then
+            local _bin
+            for _bin in ${_bin_list[@]}
             do
-                ln -fs ${LSPREFIX}/bin/$bin /d/encode/tools
+                ln -fs ${_LSPREFIX}/bin/$_bin /d/encode/tools
             done
         fi
         echo "done"

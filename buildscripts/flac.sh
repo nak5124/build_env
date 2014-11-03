@@ -7,7 +7,7 @@ declare -a target_arch=(
     "i686"
 )
 
-for opt in "$@"
+for opt in "${@}"
 do
     case "${opt}" in
         all )
@@ -18,18 +18,24 @@ do
             target_arch=( $(echo $optarg | tr -s ',' ' ' ) )
             for arch in ${target_arch[@]}
             do
-                if [ "${arch}" != "i686" -a "${arch}" != "x86_64" ] ; then
-                    echo "${arch} is an unknown arch"
+                if [ "${arch}" != "i686" -a "${arch}" != "x86_64" ]; then
+                    printf "%s, Unknown arch: '%s'\n" $(basename $BASH_SOURCE) $arch
+                    echo "...exit"
                     exit 1
                 fi
             done
+            ;;
+        * )
+            printf "%s, Unknown option: %s\n" $(basename $BASH_SOURCE) $opt
+            echo "...exit"
+            exit 1
             ;;
     esac
 done
 
 declare -r PATCHES_DIR=${HOME}/patches/flac
 declare -r LOGS_DIR=${HOME}/logs/flac
-if [ ! -d $LOGS_DIR ] ; then
+if [ ! -d $LOGS_DIR ]; then
     mkdir -p $LOGS_DIR
 fi
 
@@ -37,7 +43,7 @@ fi
 function build_libogg() {
     clear; echo "Build libogg svn-trunk"
 
-    if [ ! -d ${HOME}/OSS/xiph/ogg ] ; then
+    if [ ! -d ${HOME}/OSS/xiph/ogg ]; then
         cd ${HOME}/OSS/xiph
         # git clone git://git.xiph.org/mirrors/ogg.git
         svn co http://svn.xiph.org/trunk/ogg
@@ -56,36 +62,39 @@ function build_libogg() {
 
     autoreconf -fi > /dev/null 2>&1
 
-    for arch in ${target_arch[@]}
+    local _arch
+    for _arch in ${target_arch[@]}
     do
-        if [ "${arch}" = "i686" ] ; then
-            local FLPREFIX=/mingw32/local
+        source cpath $_arch
+
+        if [ "${_arch}" = "i686" ]; then
+            local _FLPREFIX=/mingw32/local
         else
-            local FLPREFIX=/mingw64/local
+            local _FLPREFIX=/mingw64/local
         fi
 
-        source cpath $arch
-        printf "===> configure libogg %s\n" $arch
-        ./configure --prefix=$FLPREFIX          \
-                    --build=${arch}-w64-mingw32 \
-                    --host=${arch}-w64-mingw32  \
-                    --disable-silent-rules      \
-                    --enable-shared             \
-                    --disable-static            \
-                    --with-gnu-ld               \
-                    CPPFLAGS="${BASE_CPPFLAGS}" \
-                    CFLAGS="${BASE_CFLAGS}"     \
-                    LDFLAGS="${BASE_LDFLAGS}"   \
-            > ${LOGS_DIR}/ogg_config_${arch}.log 2>&1 || exit 1
+        printf "===> Configuring libogg %s...\n" $_arch
+        ./configure --prefix=$_FLPREFIX          \
+                    --build=${_arch}-w64-mingw32 \
+                    --host=${_arch}-w64-mingw32  \
+                    --disable-silent-rules       \
+                    --enable-shared              \
+                    --disable-static             \
+                    --enable-fast-install        \
+                    --with-gnu-ld                \
+                    CFLAGS="${BASE_CFLAGS}"      \
+                    LDFLAGS="${BASE_LDFLAGS}"    \
+                    CPPFLAGS="${BASE_CPPFLAGS}"  \
+            > ${LOGS_DIR}/ogg_config_${_arch}.log 2>&1 || exit 1
         echo "done"
 
         make clean > /dev/null 2>&1
-        printf "===> making libogg %s\n" $arch
-        make -j9 -O > ${LOGS_DIR}/ogg_make_${arch}.log 2>&1 || exit 1
+        printf "===> Making libogg %s...\n" $_arch
+        make -j9 -O > ${LOGS_DIR}/ogg_make_${_arch}.log 2>&1 || exit 1
         echo "done"
 
-        printf "===> installing libogg %s\n" $arch
-        make install-strip > ${LOGS_DIR}/ogg_install_${arch}.log 2>&1 || exit 1
+        printf "===> Installing libogg %s...\n" $_arch
+        make install-strip > ${LOGS_DIR}/ogg_install_${_arch}.log 2>&1 || exit 1
         echo "done"
         make distclean > /dev/null 2>&1
     done
@@ -97,7 +106,7 @@ function build_libogg() {
 function build_flac() {
     clear; echo "Build flac git-master"
 
-    if [ ! -d ${HOME}/OSS/xiph/flac ] ; then
+    if [ ! -d ${HOME}/OSS/xiph/flac ]; then
         cd ${HOME}/OSS/xiph
         git clone git://git.xiph.org/flac.git
     fi
@@ -109,7 +118,7 @@ function build_flac() {
     git_hash > ${LOGS_DIR}/flac.hash
     git_rev >> ${LOGS_DIR}/flac.hash
 
-    local -ra bin_list=(
+    local -ra _bin_list=(
         "flac.exe"
         "metaflac.exe"
         "libFLAC-8.dll"
@@ -119,49 +128,53 @@ function build_flac() {
     touch config.rpath
     autoreconf -fi > /dev/null 2>&1
 
-    for arch in ${target_arch[@]}
+    local _arch
+    for _arch in ${target_arch[@]}
     do
-        if [ "${arch}" = "i686" ] ; then
-            local FLPREFIX=/mingw32/local
-            local MINGW_PREFIX=/mingw32
+        source cpath $_arch
+
+        if [ "${_arch}" = "i686" ]; then
+            local _FLPREFIX=/mingw32/local
+            local _MINGW_PREFIX=/mingw32
         else
-            local FLPREFIX=/mingw64/local
-            local MINGW_PREFIX=/mingw64
+            local _FLPREFIX=/mingw64/local
+            local _MINGW_PREFIX=/mingw64
         fi
 
-        source cpath $arch
-        printf "===> configure flac %s\n" $arch
-        ./configure --prefix=$FLPREFIX                   \
-                    --build=${arch}-w64-mingw32          \
-                    --host=${arch}-w64-mingw32           \
-                    --disable-silent-rules               \
-                    --enable-shared                      \
-                    --disable-static                     \
-                    --disable-doxygen-docs               \
-                    --disable-xmms-plugin                \
-                    --disable-cpplibs                    \
-                    --disable-rpath                      \
-                    --with-gnu-ld                        \
-                    --with-ogg=$FLPREFIX                 \
-                    --with-libiconv-prefix=$MINGW_PREFIX \
-                    CPPFLAGS="${BASE_CPPFLAGS}"          \
-                    CFLAGS="${BASE_CFLAGS}"              \
-                    CXXFLAGS="${BASE_CXXFLAGS}"          \
-                    LDFLAGS="${BASE_LDFLAGS}"            \
-            > ${LOGS_DIR}/flac_config_${arch}.log 2>&1 || exit 1
+        printf "===> Configuring flac %s...\n" $_arch
+        ./configure --prefix=$_FLPREFIX                   \
+                    --build=${_arch}-w64-mingw32          \
+                    --host=${_arch}-w64-mingw32           \
+                    --disable-silent-rules                \
+                    --disable-static                      \
+                    --enable-shared                       \
+                    --enable-fast-install                 \
+                    --disable-doxygen-docs                \
+                    --disable-xmms-plugin                 \
+                    --disable-cpplibs                     \
+                    --disable-rpath                       \
+                    --with-gnu-ld                         \
+                    --with-ogg=$_FLPREFIX                 \
+                    --with-libiconv-prefix=$_MINGW_PREFIX \
+                    CFLAGS="${BASE_CFLAGS}"               \
+                    LDFLAGS="${BASE_LDFLAGS}"             \
+                    CPPFLAGS="${BASE_CPPFLAGS}"           \
+                    CXXFLAGS="${BASE_CXXFLAGS}"           \
+            > ${LOGS_DIR}/flac_config_${_arch}.log 2>&1 || exit 1
         echo "done"
 
         make clean > /dev/null 2>&1
-        printf "===> making flac %s\n" $arch
-        make -j9 -O > ${LOGS_DIR}/flac_make_${arch}.log 2>&1 || exit 1
+        printf "===> Making flac %s...\n" $_arch
+        make -j9 -O > ${LOGS_DIR}/flac_make_${_arch}.log 2>&1 || exit 1
         echo "done"
 
-        printf "===> installing flac %s\n" $arch
-        make install-strip > ${LOGS_DIR}/flac_install_${arch}.log 2>&1 || exit 1
-        if [ "${arch}" = "x86_64" ] ; then
-            for bin in ${bin_list[@]}
+        printf "===> Installing flac %s...\n" $_arch
+        make install-strip > ${LOGS_DIR}/flac_install_${_arch}.log 2>&1 || exit 1
+        if [ "${_arch}" = "x86_64" ]; then
+            local _bin
+            for _bin in ${_bin_list[@]}
             do
-                ln -fs ${FLPREFIX}/bin/$bin /d/encode/tools
+                ln -fs ${_FLPREFIX}/bin/$_bin /d/encode/tools
             done
         fi
         echo "done"
@@ -171,17 +184,10 @@ function build_flac() {
     return 0
 }
 
-function symlink_flac() {
-    ln -fs /mingw64/local/bin/flac.exe /d/encode/tools
-    ln -fs /mingw64/local/bin/metaflac.exe /d/encode/tools
-
-    return 0
-}
-
 declare -r mintty_save=$MINTTY
 unset MINTTY
 
-if $all_build ; then
+if ${all_build}; then
     build_libogg
 fi
 build_flac

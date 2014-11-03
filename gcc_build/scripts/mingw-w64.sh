@@ -1,89 +1,104 @@
 # MinGW-w64 common
+# Clone git repo, git pull and autoreconf.
 function prepare_mingw_w64() {
     clear; printf "Prepare MinGW-w64 %s\n" $MINGW_VER
 
-    if [ ! -d ${BUILD_DIR}/mingw-w64/src/mingw-w64-$MINGW_VER ] ; then
-        cd ${BUILD_DIR}/mingw-w64/src
-        printf "===> cloning MinGW-w64 %s\n" $MINGW_VER
+    # Git clone.
+    if [ ! -d ${BUILD_DIR}/mingw-w64/src/mingw-w64-$MINGW_VER ]; then
+        echo "===> Cloning MinGW-w64 git repo..."
+        pushd ${BUILD_DIR}/mingw-w64/src > /dev/null
         dl_files git http://git.code.sf.net/p/mingw-w64/mingw-w64 mingw-w64-$MINGW_VER
+        popd > /dev/null
         echo "done"
     fi
-    cd ${BUILD_DIR}/mingw-w64/src/mingw-w64-$MINGW_VER
 
+    # Git pull.
+    echo "===> Updating MinGW-w64 git-repo..."
+    pushd ${BUILD_DIR}/mingw-w64/src/mingw-w64-$MINGW_VER > /dev/null
     git clean -fdx > /dev/null 2>&1
     git reset --hard > /dev/null 2>&1
     git pull > /dev/null 2>&1
     git_hash > ${LOGS_DIR}/mingw-w64/mingw-w64.hash 2>&1
     git_rev >> ${LOGS_DIR}/mingw-w64/mingw-w64.hash 2>&1
+    echo "done"
 
+    # Autoreconf.
+    printf "===> Autoreconfing MinGW-w64 %s...\n" $MINGW_VER
     cd ${BUILD_DIR}/mingw-w64/src/mingw-w64-${MINGW_VER}/mingw-w64-libraries/winpthreads
     autoreconf -fi > /dev/null 2>&1
-
     cd ${BUILD_DIR}/mingw-w64/src/mingw-w64-${MINGW_VER}/mingw-w64-libraries/libmangle
     autoreconf -fi > /dev/null 2>&1
-
     cd ${BUILD_DIR}/mingw-w64/src/mingw-w64-${MINGW_VER}/mingw-w64-tools/gendef
     autoreconf -fi > /dev/null 2>&1
-
     cd ${BUILD_DIR}/mingw-w64/src/mingw-w64-${MINGW_VER}/mingw-w64-tools/genpeimg
     autoreconf -fi > /dev/null 2>&1
+    popd > /dev/null
+    echo "done"
 
-    cd $ROOT_DIR
     return 0
 }
 
 # headers: MinGW-w64 headers for Windows
-# build
+# Build and install.
 function build_headers() {
     clear; printf "Build MinGW-w64 headers %s\n" $MINGW_VER
 
-    for arch in ${TARGET_ARCH[@]}
+    # Option handling.
+    local _rebuild=true
+
+    local _opt
+    for _opt in "${@}"
     do
-        cd ${BUILD_DIR}/mingw-w64/headers/build_$arch
-        rm -fr ${BUILD_DIR}/mingw-w64/headers/build_${arch}/*
-
-        local bitval=$(get_arch_bit ${arch})
-
-        source cpath $arch
-        PATH=${DST_DIR}/mingw${bitval}/bin:$PATH
-        export PATH
-
-        printf "===> configuring MinGW-w64 headers %s\n" $arch
-        ../../src/mingw-w64-${MINGW_VER}/mingw-w64-headers/configure \
-            --prefix=/mingw${bitval}/${arch}-w64-mingw32             \
-            --build=${arch}-w64-mingw32                              \
-            --host=${arch}-w64-mingw32                               \
-            --enable-sdk=all                                         \
-            --enable-secure-api                                      \
-            > ${LOGS_DIR}/mingw-w64/headers/headers_config_${arch}.log 2>&1 || exit 1
-        echo "done"
-
-        printf "===> installing MinGW-w64 headers %s\n" $arch
-        make DESTDIR=${PREIN_DIR}/mingw-w64/headers install \
-            > ${LOGS_DIR}/mingw-w64/headers/headers_install_${arch}.log 2>&1 || exit 1
-        # These headers are replaced by winpthreads.
-        rm -f ${PREIN_DIR}/mingw-w64/headers/mingw${bitval}/${arch}-w64-mingw32/include/pthread*.h
-        echo "done"
-
-        printf "===> copying MinGW-w64 headers %s to %s/mingw%s\n" $arch $DST_DIR $bitval
-        cp -fra ${PREIN_DIR}/mingw-w64/headers/mingw$bitval $DST_DIR
-        echo "done"
+        case "${_opt}" in
+            --rebuild=* )
+                _rebuild="${_opt#*=}"
+                ;;
+            * )
+                printf "build_headers: Unknown Option: '%s'\n" $_opt
+                echo "...exit"
+                exit 1
+                ;;
+        esac
     done
 
-    cd $ROOT_DIR
-    return 0
-}
-
-# copy only
-function copy_headers() {
-    clear; printf "MinGW-w64 headers %s\n" $MINGW_VER
-
-    for arch in ${TARGET_ARCH[@]}
+    local _arch
+    for _arch in ${TARGET_ARCH[@]}
     do
-        local bitval=$(get_arch_bit ${arch})
+        local _bitval=$(get_arch_bit ${_arch})
 
-        printf "===> copying MinGW-w64 headers %s to %s/mingw%s\n" $arch $DST_DIR $bitval
-        cp -fra ${PREIN_DIR}/mingw-w64/headers/mingw$bitval $DST_DIR
+        if ${_rebuild}; then
+            cd ${BUILD_DIR}/mingw-w64/headers/build_$_arch
+            # Cleanup the build dir.
+            rm -fr ${BUILD_DIR}/mingw-w64/headers/build_${_arch}/*
+
+            # PATH exporting.
+            source cpath $_arch
+            PATH=${DST_DIR}/mingw${_bitval}/bin:$PATH
+            export PATH
+
+            # Configure.
+            printf "===> Configuring MinGW-w64 headers %s...\n" $_arch
+            ../../src/mingw-w64-${MINGW_VER}/mingw-w64-headers/configure \
+                --prefix=/mingw${_bitval}/${_arch}-w64-mingw32           \
+                --build=${_arch}-w64-mingw32                             \
+                --host=${_arch}-w64-mingw32                              \
+                --enable-sdk=all                                         \
+                --enable-secure-api                                      \
+                > ${LOGS_DIR}/mingw-w64/headers/headers_config_${_arch}.log 2>&1 || exit 1
+            echo "done"
+
+            # Install.
+            printf "===> Installing MinGW-w64 headers %s...\n" $_arch
+            make DESTDIR=${PREIN_DIR}/mingw-w64/headers install \
+                > ${LOGS_DIR}/mingw-w64/headers/headers_install_${_arch}.log 2>&1 || exit 1
+            # These headers are replaced by winpthreads.
+            rm -f ${PREIN_DIR}/mingw-w64/headers/mingw${_bitval}/${_arch}-w64-mingw32/include/pthread*.h
+            echo "done"
+        fi
+
+        # Copy to DST_DIR.
+        printf "===> Copying MinGW-w64 headers %s to %s/mingw%s...\n" $_arch $DST_DIR $_bitval
+        cp -fra ${PREIN_DIR}/mingw-w64/headers/mingw$_bitval $DST_DIR
         echo "done"
     done
 
@@ -92,75 +107,93 @@ function copy_headers() {
 }
 
 # winpthreads: MinGW-w64 winpthreads library
-# build
+# Build and install.
 function build_threads() {
     clear; printf "Build MinGW-w64 winpthreads %s\n" $MINGW_VER
 
-    for arch in ${TARGET_ARCH[@]}
+    # Option handling.
+    local _rebuild=true
+    local _2nd_build=false
+
+    local _opt
+    for _opt in "${@}"
     do
-        cd ${BUILD_DIR}/mingw-w64/winpthreads/build_$arch
-        rm -fr ${BUILD_DIR}/mingw-w64/winpthreads/build_${arch}/{.*,*} > /dev/null 2>&1
-
-        local bitval=$(get_arch_bit ${arch})
-        local _aof=$(arch_optflags ${arch})
-
-        source cpath $arch
-        PATH=${DST_DIR}/mingw${bitval}/bin:$PATH
-        export PATH
-
-        local __cflags="${_CFLAGS/-fstack-protector-strong --param=ssp-buffer-size=4/}"
-
-        printf "===> configuring MinGW-w64 winpthreads %s\n" $arch
-        ../../src/mingw-w64-${MINGW_VER}/mingw-w64-libraries/winpthreads/configure \
-            --prefix=/mingw${bitval}/${arch}-w64-mingw32                           \
-            --build=${arch}-w64-mingw32                                            \
-            --host=${arch}-w64-mingw32                                             \
-            --disable-silent-rules                                                 \
-            --enable-shared                                                        \
-            --enable-static                                                        \
-            --with-gnu-ld                                                          \
-            CFLAGS="${_aof} ${__cflags}"                                           \
-            LDFLAGS="${_LDFLAGS}"                                                  \
-            > ${LOGS_DIR}/mingw-w64/winpthreads/winpthreads_config_${arch}.log 2>&1 || exit 1
-        echo "done"
-
-        printf "===> making MinGW-w64 winpthreads %s\n" $arch
-        # Setting -j$(($(nproc)+1)) sometimes makes error.
-        make > ${LOGS_DIR}/mingw-w64/winpthreads/winpthreads_make_${arch}.log 2>&1 || exit 1
-        echo "done"
-
-        printf "===> installing MinGW-w64 winpthreads %s\n" $arch
-        make DESTDIR=${PREIN_DIR}/mingw-w64/winpthreads install \
-            > ${LOGS_DIR}/mingw-w64/winpthreads/winpthreads_install_${arch}.log 2>&1 || exit 1
-        # Move DLL for GCC.
-        mkdir -p ${PREIN_DIR}/mingw-w64/winpthreads/mingw${bitval}/bin
-        mv -f ${PREIN_DIR}/mingw-w64/winpthreads/mingw${bitval}/${arch}-w64-mingw32/bin/*.dll \
-            ${PREIN_DIR}/mingw-w64/winpthreads/mingw${bitval}/bin
-        del_empty_dir ${PREIN_DIR}/mingw-w64/winpthreads/mingw$bitval
-        remove_la_files ${PREIN_DIR}/mingw-w64/winpthreads/mingw$bitval
-        strip_files ${PREIN_DIR}/mingw-w64/winpthreads/mingw$bitval
-        echo "done"
-
-        printf "===> copying MinGW-w64 winpthreads %s to %s/mingw%s\n" $arch $DST_DIR $bitval
-        cp -fra ${PREIN_DIR}/mingw-w64/winpthreads/mingw$bitval $DST_DIR
-        echo "done"
+        case "${_opt}" in
+            --rebuild=* )
+                _rebuild="${_opt#*=}"
+                ;;
+            --2nd )
+                _2nd_build=true
+                ;;
+            * )
+                printf "build_threads: Unknown Option: '%s'... exit\n" $_opt
+                exit 1
+                ;;
+        esac
     done
 
-    cd $ROOT_DIR
-    return 0
-}
-
-# copy only
-function copy_threads() {
-    clear; printf "MinGW-w64 winpthreads %s\n" $MINGW_VER
-
-    for arch in ${TARGET_ARCH[@]}
+    local _arch
+    for _arch in ${TARGET_ARCH[@]}
     do
-        local bitval=$(get_arch_bit ${arch})
+        local _bitval=$(get_arch_bit ${_arch})
 
-        printf "===> copying MinGW-w64 winpthreads %s to %s/mingw%s\n" $arch $DST_DIR $bitval
-        cp -fra ${PREIN_DIR}/mingw-w64/winpthreads/mingw$bitval $DST_DIR
-        echo "done"
+        if ${_rebuild}; then
+            cd ${BUILD_DIR}/mingw-w64/winpthreads/build_$_arch
+            # Cleanup the build dir.
+            rm -fr ${BUILD_DIR}/mingw-w64/winpthreads/build_${_arch}/{.*,*} > /dev/null 2>&1
+
+            # PATH exporting.
+            source cpath $_arch
+            PATH=${DST_DIR}/mingw${_bitval}/bin:$PATH
+            export PATH
+
+            # Don't pass -fstack-protector* to CFLAGS.
+            local _cflags="-march=${_arch/_/-} ${CFLAGS_/-fstack-protector-strong --param=ssp-buffer-size=4/}"
+
+            # Configure.
+            printf "===> Configuring MinGW-w64 winpthreads %s...\n" $_arch
+            ../../src/mingw-w64-${MINGW_VER}/mingw-w64-libraries/winpthreads/configure \
+                --prefix=/mingw${_bitval}/${_arch}-w64-mingw32                         \
+                --build=${_arch}-w64-mingw32                                           \
+                --host=${_arch}-w64-mingw32                                            \
+                --disable-silent-rules                                                 \
+                --enable-shared                                                        \
+                --enable-static                                                        \
+                --enable-fast-install                                                  \
+                --with-gnu-ld                                                          \
+                --with-sysroot=${DST_DIR}/mingw${_bitval}/${_arch}-w64-mingw32         \
+                CFLAGS="${_cflags}"                                                    \
+                LDFLAGS="${LDFLAGS_}"                                                  \
+                > ${LOGS_DIR}/mingw-w64/winpthreads/winpthreads_config_${_arch}.log 2>&1 || exit 1
+            echo "done"
+
+            # Make.
+            printf "===> Making MinGW-w64 winpthreads %s...\n" $_arch
+            make $MAKEFLAGS_ > ${LOGS_DIR}/mingw-w64/winpthreads/winpthreads_make_${_arch}.log 2>&1 || exit 1
+            echo "done"
+
+            # Install.
+            printf "===> Installing MinGW-w64 winpthreads %s...\n" $_arch
+            make DESTDIR=${PREIN_DIR}/mingw-w64/winpthreads install \
+                > ${LOGS_DIR}/mingw-w64/winpthreads/winpthreads_install_${_arch}.log 2>&1 || exit 1
+            # Relocate DLL.
+            mkdir -p ${PREIN_DIR}/mingw-w64/winpthreads/mingw${_bitval}/bin
+            mv -f ${PREIN_DIR}/mingw-w64/winpthreads/mingw${_bitval}/${_arch}-w64-mingw32/bin/*.dll \
+                ${PREIN_DIR}/mingw-w64/winpthreads/mingw${_bitval}/bin
+            # Remove unneeded files.
+            remove_empty_dirs ${PREIN_DIR}/mingw-w64/winpthreads/mingw$_bitval
+            remove_la_files   ${PREIN_DIR}/mingw-w64/winpthreads/mingw$_bitval
+            # Strip files.
+            strip_files ${PREIN_DIR}/mingw-w64/winpthreads/mingw$_bitval
+            echo "done"
+        fi
+
+        if ! ( ! ${_rebuild} && ${_2nd_build} ); then
+            # Copy to DST_DIR.
+            printf "===> Copying MinGW-w64 winpthreads %s to %s/mingw%s...\n" $_arch $DST_DIR $_bitval
+            cp -fra ${PREIN_DIR}/mingw-w64/winpthreads/mingw$_bitval $DST_DIR
+            echo "done"
+        fi
     done
 
     cd $ROOT_DIR
@@ -168,64 +201,93 @@ function copy_threads() {
 }
 
 # crt: MinGW-w64 CRT for Windows
-# build
+# Build and install.
 function build_crt() {
     clear; printf "Build MinGW-w64 crt %s\n" $MINGW_VER
 
-    for arch in ${TARGET_ARCH[@]}
+    # Option handling.
+    local _rebuild=true
+    local _2nd_build=false
+
+    local _opt
+    for _opt in "${@}"
     do
-        cd ${BUILD_DIR}/mingw-w64/crt/build_$arch
-        rm -fr ${BUILD_DIR}/mingw-w64/crt/build_${arch}/{.*,*} > /dev/null 2>&1
+        case "${_opt}" in
+            --rebuild=* )
+                _rebuild="${_opt#*=}"
+                ;;
+            --2nd )
+                _2nd_build=true
+                ;;
+            * )
+                printf "build_crt: Unknown Option: '%s'... exit\n" $_opt
+                exit 1
+                ;;
+        esac
+    done
 
-        local bitval=$(get_arch_bit ${arch})
-        local _aof=$(arch_optflags ${arch})
+    local _arch
+    for _arch in ${TARGET_ARCH[@]}
+    do
+        local _bitval=$(get_arch_bit ${_arch})
 
-        source cpath $arch
-        PATH=${DST_DIR}/mingw${bitval}/bin:$PATH
-        export PATH
+        if ${_rebuild}; then
+            cd ${BUILD_DIR}/mingw-w64/crt/build_$_arch
+            # Cleanup the build dir.
+            rm -fr ${BUILD_DIR}/mingw-w64/crt/build_${_arch}/{.*,*} > /dev/null 2>&1
 
-        if [ "${arch}" = "i686" ] ; then
-            local _libs_conf="--enable-lib32 --disable-lib64"
-            local _windres_cmd="windres -F pe-i386"
-        else
-            local _libs_conf="--disable-lib32 --enable-lib64"
-            local _windres_cmd="windres -F pe-x86-64"
-        fi
-        local __cflags="${_CFLAGS/-fstack-protector-strong --param=ssp-buffer-size=4/}"
-        local __cxxflags="${_CXXFLAGS/-fstack-protector-strong --param=ssp-buffer-size=4/}"
+            # PATH exporting.
+            source cpath $_arch
+            PATH=${DST_DIR}/mingw${_bitval}/bin:$PATH
+            export PATH
 
-        printf "===> configuring MinGW-w64 crt %s\n" $arch
-        ../../src/mingw-w64-${MINGW_VER}/mingw-w64-crt/configure         \
-            --prefix=/mingw${bitval}/${arch}-w64-mingw32                 \
-            --build=${arch}-w64-mingw32                                  \
-            --host=${arch}-w64-mingw32                                   \
-            --disable-silent-rules                                       \
-            ${_libs_conf}                                                \
-            --disable-libarm32                                           \
-            --enable-wildcard                                            \
-            --enable-warnings=3                                          \
-            --with-sysroot=${DST_DIR}/mingw${bitval}/${arch}-w64-mingw32 \
-            CFLAGS="${_aof} ${__cflags}"                                 \
-            CXXFLAGS="${_aof} ${__cxxflags}"                             \
-            LDFLAGS="${_LDFLAGS}"                                        \
-            > ${LOGS_DIR}/mingw-w64/crt/crt_config_${arch}.log 2>&1 || exit 1
-        echo "done"
+            # Arch specific config option.
+            if [ "${_arch}" = "i686" ]; then
+                local _libs_conf="--enable-lib32 --disable-lib64"
+                local _windres_cmd="windres -F pe-i386"
+            else
+                local _libs_conf="--disable-lib32 --enable-lib64"
+                local _windres_cmd="windres -F pe-x86-64"
+            fi
+            # Don't pass -fstack-protector* to CFLAGS/CXXFLAGS.
+            local _cflags="-march=${_arch/_/-} ${CFLAGS_/-fstack-protector-strong --param=ssp-buffer-size=4/}"
+            local _cxxflags="-march=${_arch/_/-} ${CXXFLAGS_/-fstack-protector-strong --param=ssp-buffer-size=4/}"
 
-        printf "===> making MinGW-w64 crt %s\n" $arch
-        # Setting -j$(($(nproc)+1)) sometimes makes error.
-        make > ${LOGS_DIR}/mingw-w64/crt/crt_make_${arch}.log 2>&1 || exit 1
-        echo "done"
+            # Configure.
+            printf "===> Configuring MinGW-w64 crt %s...\n" $_arch
+            ../../src/mingw-w64-${MINGW_VER}/mingw-w64-crt/configure           \
+                --prefix=/mingw${_bitval}/${_arch}-w64-mingw32                 \
+                --build=${_arch}-w64-mingw32                                   \
+                --host=${_arch}-w64-mingw32                                    \
+                --disable-silent-rules                                         \
+                ${_libs_conf}                                                  \
+                --disable-libarm32                                             \
+                --enable-wildcard                                              \
+                --enable-warnings=3                                            \
+                --with-sysroot=${DST_DIR}/mingw${_bitval}/${_arch}-w64-mingw32 \
+                CFLAGS="${_cflags}"                                            \
+                LDFLAGS="${LDFLAGS_}"                                          \
+                CXXFLAGS="${_cxxflags}"                                        \
+                > ${LOGS_DIR}/mingw-w64/crt/crt_config_${_arch}.log 2>&1 || exit 1
+            echo "done"
 
-        printf "===> installing MinGW-w64 crt %s\n" $arch
-        # MinGW-w64 crt has many files, so not using strip_files but install-strip.
-        make DESTDIR=${PREIN_DIR}/mingw-w64/crt install-strip \
-            > ${LOGS_DIR}/mingw-w64/crt/crt_install_${arch}.log 2>&1 || exit 1
-        echo "done"
+            printf "===> Making MinGW-w64 crt %s...\n" $_arch
+            # Setting -j$(($(nproc)+1)) sometimes makes error.
+            make > ${LOGS_DIR}/mingw-w64/crt/crt_make_${_arch}.log 2>&1 || exit 1
+            echo "done"
 
-        printf "===> making windows-default-manifest %s\n" $arch
-        mkdir -p ${BUILD_DIR}/mingw-w64/crt/build_${arch}/build_manifest
-        cd ${BUILD_DIR}/mingw-w64/crt/build_${arch}/build_manifest
-        cat > ${BUILD_DIR}/mingw-w64/crt/build_${arch}/build_manifest/default-manifest.rc <<"_EOF_"
+            # Make.
+            printf "===> Installing MinGW-w64 crt %s...\n" $_arch
+            # MinGW-w64 crt has many files, so not using strip_files but install-strip.
+            make DESTDIR=${PREIN_DIR}/mingw-w64/crt install-strip \
+                > ${LOGS_DIR}/mingw-w64/crt/crt_install_${_arch}.log 2>&1 || exit 1
+            echo "done"
+
+            # Make default-manifest.o.
+            printf "===> Making windows-default-manifest %s...\n" $_arch
+            mkdir -p ${BUILD_DIR}/mingw-w64/crt/build_${_arch}/build_manifest
+            cd ${BUILD_DIR}/mingw-w64/crt/build_${_arch}/build_manifest
+            cat > ${BUILD_DIR}/mingw-w64/crt/build_${_arch}/build_manifest/default-manifest.rc << "__EOF__"
 LANGUAGE 0, 0
 
 /* CREATEPROCESS_MANIFEST_RESOURCE_ID RT_MANIFEST MOVEABLE PURE DISCARDABLE */
@@ -255,35 +317,23 @@ BEGIN
   "</assembly>\n"
 END
 
-_EOF_
-        ${_windres_cmd} default-manifest.rc -o default-manifest.o
-        echo "done"
+__EOF__
+            ${_windres_cmd} default-manifest.rc -o default-manifest.o
+            echo "done"
 
-        printf "===> installing windows-default-manifest %s\n" $arch
-        /usr/bin/install -c -m 644 default-manifest.o \
-            ${PREIN_DIR}/mingw-w64/crt/mingw${bitval}/${arch}-w64-mingw32/lib/default-manifest.o
-        echo "done"
+            # Install default-manifest.o.
+            printf "===> Installing windows-default-manifest %s...\n" $_arch
+            /usr/bin/install -c -m 644 default-manifest.o \
+                ${PREIN_DIR}/mingw-w64/crt/mingw${_bitval}/${_arch}-w64-mingw32/lib/default-manifest.o
+            echo "done"
+        fi
 
-        printf "===> copying MinGW-w64 crt %s to %s/mingw%s\n" $arch $DST_DIR $bitval
-        cp -fra ${PREIN_DIR}/mingw-w64/crt/mingw$bitval $DST_DIR
-        echo "done"
-    done
-
-    cd $ROOT_DIR
-    return 0
-}
-
-# copy only
-function copy_crt() {
-    clear; printf "MinGW-w64 crt %s\n" $MINGW_VER
-
-    for arch in ${TARGET_ARCH[@]}
-    do
-        local bitval=$(get_arch_bit ${arch})
-
-        printf "===> copying MinGW-w64 crt %s to %s/mingw%s\n" $arch $DST_DIR $bitval
-        cp -fra ${PREIN_DIR}/mingw-w64/crt/mingw$bitval $DST_DIR
-        echo "done"
+        if ! ( ! ${_rebuild} && ${_2nd_build} ); then
+            # Copy to DST_DIR.
+            printf "===> Copying MinGW-w64 crt %s to %s/mingw%s...\n" $_arch $DST_DIR $_bitval
+            cp -fra ${PREIN_DIR}/mingw-w64/crt/mingw$_bitval $DST_DIR
+            echo "done"
+        fi
     done
 
     cd $ROOT_DIR
@@ -291,66 +341,77 @@ function copy_crt() {
 }
 
 # libmangle: MinGW-w64 libmangle
-# build
+# Build and install.
 function build_mangle() {
     clear; printf "Build MinGW-w64 libmangle %s\n" $MINGW_VER
 
-    for arch in ${TARGET_ARCH[@]}
+    # Option handling.
+    local _rebuild=true
+
+    local _opt
+    for _opt in "${@}"
     do
-        cd ${BUILD_DIR}/mingw-w64/libmangle/build_$arch
-        rm -fr ${BUILD_DIR}/mingw-w64/libmangle/build_${arch}/*
-
-        local bitval=$(get_arch_bit ${arch})
-        local _aof=$(arch_optflags ${arch})
-
-        source cpath $arch
-        PATH=${DST_DIR}/mingw${bitval}/bin:$PATH
-        export PATH
-
-        local __cflags="${_CFLAGS/-fstack-protector-strong --param=ssp-buffer-size=4/}"
-
-        printf "===> configuring MinGW-w64 libmangle %s\n" $arch
-        ../../src/mingw-w64-${MINGW_VER}/mingw-w64-libraries/libmangle/configure \
-            --prefix=/mingw${bitval}/${arch}-w64-mingw32                         \
-            --build=${arch}-w64-mingw32                                          \
-            --host=${arch}-w64-mingw32                                           \
-            --disable-silent-rules                                               \
-            CFLAGS="${_aof} ${__cflags}"                                         \
-            LDFLAGS="${_LDFLAGS}"                                                \
-            > ${LOGS_DIR}/mingw-w64/libmangle/libmangle_config_${arch}.log 2>&1 || exit 1
-        echo "done"
-
-        printf "===> making MinGW-w64 libmangle %s\n" $arch
-        make $MAKEFLAGS > ${LOGS_DIR}/mingw-w64/libmangle/libmangle_make_${arch}.log 2>&1 || exit 1
-        echo "done"
-
-        printf "===> installing MinGW-w64 libmangle %s\n" $arch
-        make DESTDIR=${PREIN_DIR}/mingw-w64/libmangle install \
-            > ${LOGS_DIR}/mingw-w64/libmangle/libmangle_install_${arch}.log 2>&1 || exit 1
-        del_empty_dir ${PREIN_DIR}/mingw-w64/libmangle/mingw$bitval
-        remove_la_files ${PREIN_DIR}/mingw-w64/libmangle/mingw$bitval
-        strip_files ${PREIN_DIR}/mingw-w64/libmangle/mingw$bitval
-        echo "done"
-
-        printf "===> copying MinGW-w64 libmangle %s to %s/mingw%s\n" $arch $DST_DIR $bitval
-        cp -fra ${PREIN_DIR}/mingw-w64/libmangle/mingw$bitval $DST_DIR
-        echo "done"
+        case "${_opt}" in
+            --rebuild=* )
+                _rebuild="${_opt#*=}"
+                ;;
+            * )
+                printf "build_mangle: Unknown Option: '%s'... exit\n" $_opt
+                exit 1
+                ;;
+        esac
     done
 
-    cd $ROOT_DIR
-    return 0
-}
-
-# copy only
-function copy_mangle() {
-    clear; printf "MinGW-w64 libmangle %s\n" $MINGW_VER
-
-    for arch in ${TARGET_ARCH[@]}
+    local _arch
+    for _arch in ${TARGET_ARCH[@]}
     do
-        local bitval=$(get_arch_bit ${arch})
+        local _bitval=$(get_arch_bit ${_arch})
 
-        printf "===> copying MinGW-w64 libmangle %s to %s/mingw%s\n" $arch $DST_DIR $bitval
-        cp -fra ${PREIN_DIR}/mingw-w64/libmangle/mingw$bitval $DST_DIR
+        if ${_rebuild}; then
+            cd ${BUILD_DIR}/mingw-w64/libmangle/build_$_arch
+            # Cleanup the build dir.
+            rm -fr ${BUILD_DIR}/mingw-w64/libmangle/build_${_arch}/*
+
+            # PATH exporting.
+            source cpath $_arch
+            PATH=${DST_DIR}/mingw${_bitval}/bin:$PATH
+            export PATH
+
+            # Don't pass -fstack-protector* to CFLAGS.
+            local _cflags="-march=${_arch/_/-} ${CFLAGS_/-fstack-protector-strong --param=ssp-buffer-size=4/}"
+
+            # Configure.
+            printf "===> Configuring MinGW-w64 libmangle %s...\n" $_arch
+            ../../src/mingw-w64-${MINGW_VER}/mingw-w64-libraries/libmangle/configure \
+                --prefix=/mingw${_bitval}/${_arch}-w64-mingw32                       \
+                --build=${_arch}-w64-mingw32                                         \
+                --host=${_arch}-w64-mingw32                                          \
+                --disable-silent-rules                                               \
+                CFLAGS="${_cflags}"                                                  \
+                LDFLAGS="${LDFLAGS_}"                                                \
+                > ${LOGS_DIR}/mingw-w64/libmangle/libmangle_config_${_arch}.log 2>&1 || exit 1
+            echo "done"
+
+            # Make.
+            printf "===> Making MinGW-w64 libmangle %s...\n" $_arch
+            make $MAKEFLAGS_ > ${LOGS_DIR}/mingw-w64/libmangle/libmangle_make_${_arch}.log 2>&1 || exit 1
+            echo "done"
+
+            # Install.
+            printf "===> Installing MinGW-w64 libmangle %s...\n" $_arch
+            make DESTDIR=${PREIN_DIR}/mingw-w64/libmangle install \
+                > ${LOGS_DIR}/mingw-w64/libmangle/libmangle_install_${_arch}.log 2>&1 || exit 1
+            # Remove unneeded files.
+            remove_empty_dirs ${PREIN_DIR}/mingw-w64/libmangle/mingw$_bitval
+            remove_la_files   ${PREIN_DIR}/mingw-w64/libmangle/mingw$_bitval
+            # Strip files.
+            strip_files ${PREIN_DIR}/mingw-w64/libmangle/mingw$_bitval
+            echo "done"
+        fi
+
+        # Copy to DST_DIR.
+        printf "===> Copying MinGW-w64 libmangle %s to %s/mingw%s...\n" $_arch $DST_DIR $_bitval
+        cp -fra ${PREIN_DIR}/mingw-w64/libmangle/mingw$_bitval $DST_DIR
         echo "done"
     done
 
@@ -359,82 +420,94 @@ function copy_mangle() {
 }
 
 # tools: MinGW-w64 tools
-# build
+# Build and install.
 function build_tools() {
     clear; printf "Build MinGW-w64 tools %s\n" $MINGW_VER
 
+    # Option handling.
+    local _rebuild=true
+
+    local _opt
+    for _opt in "${@}"
+    do
+        case "${_opt}" in
+            --rebuild=* )
+                _rebuild="${_opt#*=}"
+                ;;
+            * )
+                printf "build_tools: Unknown Option: '%s'... exit\n" $_opt
+                exit 1
+                ;;
+        esac
+    done
+
+    # List of tools.
     local -ra _tools=(
         "gendef"
         "genpeimg"
     )
 
-    for arch in ${TARGET_ARCH[@]}
+    local _arch
+    for _arch in ${TARGET_ARCH[@]}
     do
-        cd ${BUILD_DIR}/mingw-w64/tools/build_$arch
-        rm -fr ${BUILD_DIR}/mingw-w64/tools/build_${arch}/*
+        local _bitval=$(get_arch_bit ${_arch})
 
-        local bitval=$(get_arch_bit ${arch})
-        local _aof=$(arch_optflags ${arch})
+        if ${_rebuild}; then
+            cd ${BUILD_DIR}/mingw-w64/tools/build_$_arch
+            # Cleanup the build dir.
+            rm -fr ${BUILD_DIR}/mingw-w64/tools/build_${_arch}/*
 
-        source cpath $arch
-        PATH=${DST_DIR}/mingw${bitval}/bin:$PATH
-        export PATH
+            # PATH exporting.
+            source cpath $_arch
+            PATH=${DST_DIR}/mingw${_bitval}/bin:$PATH
+            export PATH
 
-        for _tool in ${_tools[@]}
-        do
-            mkdir -p ${BUILD_DIR}/mingw-w64/tools/build_${arch}/$_tool
-            cd ${BUILD_DIR}/mingw-w64/tools/build_${arch}/$_tool
+            local _tool
+            for _tool in ${_tools[@]}
+            do
+                mkdir -p ${BUILD_DIR}/mingw-w64/tools/build_${_arch}/$_tool
+                cd ${BUILD_DIR}/mingw-w64/tools/build_${_arch}/$_tool
 
-            if [ "${_tool}" = "gendef" ] ; then
-                local _mangle="--with-mangle=${DESTDIR}/mingw${bitval}/${arch}-w64-mingw32"
-            else
-                local _mangle=""
-            fi
+                # gendef specific config option.
+                if [ "${_tool}" = "gendef" ]; then
+                    local _mangle="--with-mangle=${DESTDIR}/mingw${_bitval}/${_arch}-w64-mingw32"
+                else
+                    local _mangle=""
+                fi
 
-            printf "===> configuring MinGW-w64 tools [%s] %s\n" $_tool $arch
-            ../../../src/mingw-w64-${MINGW_VER}/mingw-w64-tools/${_tool}/configure \
-                --prefix=/mingw$bitval                                             \
-                --build=${arch}-w64-mingw32                                        \
-                --host=${arch}-w64-mingw32                                         \
-                --disable-silent-rules                                             \
-                ${_mangle}                                                         \
-                CPPFLAGS="${_CPPFLAGS}"                                            \
-                CFLAGS="${_aof} ${_CFLAGS}"                                        \
-                LDFLAGS="${_LDFLAGS}"                                              \
-                > ${LOGS_DIR}/mingw-w64/tools/${_tool}_config_${arch}.log 2>&1 || exit 1
-            echo "done"
+                # Configure.
+                printf "===> Configuring MinGW-w64 tools [%s] %s...\n" $_tool $_arch
+                ../../../src/mingw-w64-${MINGW_VER}/mingw-w64-tools/${_tool}/configure \
+                    --prefix=/mingw$_bitval                                            \
+                    --build=${_arch}-w64-mingw32                                       \
+                    --host=${_arch}-w64-mingw32                                        \
+                    --disable-silent-rules                                             \
+                    ${_mangle}                                                         \
+                    CFLAGS="-march=${_arch/_/-} ${CFLAGS_}"                            \
+                    LDFLAGS="${LDFLAGS_}"                                              \
+                    CPPFLAGS="${CPPFLAGS_}"                                            \
+                    > ${LOGS_DIR}/mingw-w64/tools/${_tool}_config_${_arch}.log 2>&1 || exit 1
+                echo "done"
 
-            printf "===> making MinGW-w64 tools [%s] %s\n" $_tool $arch
-            make $MAKEFLAGS > ${LOGS_DIR}/mingw-w64/tools/${_tool}_make_${arch}.log 2>&1 || exit 1
-            echo "done"
+                # Make.
+                printf "===> Making MinGW-w64 tools [%s] %s...\n" $_tool $_arch
+                make $MAKEFLAGS_ > ${LOGS_DIR}/mingw-w64/tools/${_tool}_make_${_arch}.log 2>&1 || exit 1
+                echo "done"
 
-            printf "===> installing MinGW-w64 tools [%s] %s\n" $_tool $arch
-            make DESTDIR=${PREIN_DIR}/mingw-w64/tools install \
-                > ${LOGS_DIR}/mingw-w64/tools/${_tool}_install_${arch}.log 2>&1 || exit 1
-            echo "done"
-        done
+                # Install.
+                printf "===> Installing MinGW-w64 tools [%s] %s...\n" $_tool $_arch
+                make DESTDIR=${PREIN_DIR}/mingw-w64/tools install \
+                    > ${LOGS_DIR}/mingw-w64/tools/${_tool}_install_${_arch}.log 2>&1 || exit 1
+                echo "done"
+            done
 
-        strip_files ${PREIN_DIR}/mingw-w64/tools/mingw$bitval
+            # Strip files.
+            strip_files ${PREIN_DIR}/mingw-w64/tools/mingw$_bitval
+        fi
 
-        printf "===> copying MinGW-w64 tools %s to %s/mingw%s\n" $arch $DST_DIR $bitval
-        cp -fra ${PREIN_DIR}/mingw-w64/tools/mingw$bitval $DST_DIR
-        echo "done"
-    done
-
-    cd $ROOT_DIR
-    return 0
-}
-
-# copy only
-function copy_tools() {
-    clear; printf "MinGW-w64 tools %s\n" $MINGW_VER
-
-    for arch in ${TARGET_ARCH[@]}
-    do
-        local bitval=$(get_arch_bit ${arch})
-
-        printf "===> copying MinGW-w64 tools %s to %s/mingw%s\n" $arch $DST_DIR $bitval
-        cp -fra ${PREIN_DIR}/mingw-w64/tools/mingw$bitval $DST_DIR
+        # Copy to DST_DIR.
+        printf "===> Copying MinGW-w64 tools %s to %s/mingw%s...\n" $_arch $DST_DIR $_bitval
+        cp -fra ${PREIN_DIR}/mingw-w64/tools/mingw$_bitval $DST_DIR
         echo "done"
     done
 

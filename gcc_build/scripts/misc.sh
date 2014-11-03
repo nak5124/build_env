@@ -1,175 +1,158 @@
-# get arch bit value
+# Get arch bit value.
 function get_arch_bit() {
-    case "$1" in
-        "i686" )
-            echo "32"
+    # $1: arch
+    # _ret: bit nums of arch
+
+    local _ret
+    case "${1}" in
+        i686 )
+            _ret=32
             ;;
-        "x86_64" )
-            echo "64"
+        x86_64 )
+            _ret=64
             ;;
         * )
-            echo "get_arch_bit: unknown arch"
+            printf "get_arch_bit, Unknown Arch: '%s'\n" ${1}
+            echo "...exit"
             exit 1
+            ;;
     esac
+
+    echo "${_ret}"
 }
 
-# delete *.la files
-function remove_la_files() {
-    find "$1" -name "*.la" | xargs -rl1 rm -f
-}
+# Remove empty dirs.
+function remove_empty_dirs() {
+    # $1: target dir
 
-# strip files
-function strip_files() {
-    find "$1" -name "*.exe"              | xargs -rl1 strip --preserve-dates --strip-all
-    find "$1" -name "*.dll"              | xargs -rl1 strip --preserve-dates --strip-unneeded
-    find "$1" -name "*.a" -o -name "*.o" | xargs -rl1 strip --preserve-dates --strip-debug
-}
-
-# define readonly variable
-function define_rov() {
-    if [ "${1:-undefined}" = "undefined" -a "${1}" != "undefined" ] ; then
-        cat << _EOT_ 1>&2
-define_rov:
-The 1st argument should be defined.
-In addition, the 1st argument cannot be null character or a blank string.
-_EOT_
-        exit 1
-    else
-        eval readonly ${1}=${2}
-    fi
-}
-
-function define_nrov() {
-    if [ "${1:-undefined}" = "undefined" -a "${1}" != "undefined" ] ; then
-        cat << _EOT_ 1>&2
-define_nrov:
-The 1st argument should be defined.
-In addition, the 1st argument cannot be null character or a blank string.
-_EOT_
-        exit 1
-    else
-        eval export ${1}=${2}
-    fi
-}
-
-# check wheter a variable is defined
-function is_defined() {
-    eval local tmp=$(echo '${'${1}'-undefined}')
-    eval local tmp2=$(echo '${'${1}'}')
-    if [ "${tmp}" = "undefined" -a "${tmp2}" != "undefined" ] ; then
-        return 1
-    else
-        return 0
-    fi
-}
-
-# delete empty dir
-function del_empty_dir() {
     find "${1}" -type d -empty | xargs rmdir > /dev/null 2>&1
 }
 
-# download files
-function dl_files() {
-    local is_curl=false
+# Remove *.la files.
+function remove_la_files() {
+    # $1: target dir
 
-    local -r prtcl=${1}
-    local -r url=${2}
-    local -r oname=${3}
-    if [ -z "${prtcl}" -o -z "${url}" ] ; then
+    find "${1}" -name "*.la" | xargs -rl1 rm -f
+}
+
+# Strip files.
+function strip_files() {
+    # $1: target dir
+
+    find "${1}" -name "*.exe"              | xargs -rl1 strip --preserve-dates --strip-all
+    find "${1}" -name "*.dll"              | xargs -rl1 strip --preserve-dates --strip-unneeded
+    find "${1}" -name "*.a" -o -name "*.o" | xargs -rl1 strip --preserve-dates --strip-debug
+}
+
+# Download files.
+function dl_files() {
+    # $1: protocol
+    # $2: url
+    # $3: output dir/file name
+
+    local -r _prtcl=${1}
+    local -r _url=${2}
+    local -r _oname=${3}
+
+    local _is_curl=false
+
+    if [ -z "${_prtcl}" -o -z "${_url}" ]; then
         echo 'dl_files: ${1} and ${2} should be specified!'
+        echo "...exit"
         exit 1
     fi
 
-    case "${prtcl}" in
+    case "${_prtcl}" in
         ftp )
-            local curl_opt="--fail --continue-at - --ftp-pasv --retry 10 --retry-delay 5 --speed-limit 1 --speed-time 30"
-            is_curl=true
+            local _curl_opt="--fail --continue-at - --ftp-pasv --retry 10 --retry-delay 5 --speed-limit 1 --speed-time 30"
+            _is_curl=true
             ;;
         http | https )
-            local curl_opt="--fail --location --max-redirs 2 --continue-at - --retry 10 --retry-delay 5 \
+            local _curl_opt="--fail --location --max-redirs 2 --continue-at - --retry 10 --retry-delay 5 \
                             --speed-limit 1 --speed-time 30"
-            is_curl=true
+            _is_curl=true
             ;;
         git )
-            git clone $url $oname
+            git clone $_url $_oname
             ;;
         * )
-            printf "dl_files: %s is unknown protocol\n" $prtcl
+            printf "dl_files, Unknown Protocol: '%s'\n" $_prtcl
+            echo "...exit"
             exit 1
+            ;;
     esac
 
-    if $is_curl ; then
-        if [ ! -z "${oname}" ] ; then
-            curl $curl_opt -o $oname $url
+    if ${_is_curl}; then
+        if [ ! -z "${_oname}" ]; then
+            curl $_curl_opt -o $_oname $_url
         else
-            curl $curl_opt --remote-name $url
+            curl $_curl_opt --remote-name $_url
         fi
     fi
 
     return 0
 }
 
-# decompress archive
+# Decompress an archive.
 function decomp_arch() {
-    local fname=${1}
-    if [ -z "${fname}" ] ; then
+    # $1: PATH of the target archive
+
+    local -r _fname=${1}
+
+    if [ -z "${_fname}" ]; then
         echo 'decomp_arch: ${1} should be specified!'
+        echo "...exit"
         exit 1
     fi
-    local ext='.'${fname##*.}
-    local fname_noext=${fname%${ext}}
-    local is_ok=false
-    case "${ext}" in
+
+    local -r _ext='.'${_fname##*.}
+    local -r _fname_noext=${_fname%${_ext}}
+    local _is_ok=false
+
+    case "${_ext}" in
         .gz )
-            if [ "${fname_noext##*.}" = "tar" ] ; then
-                tar xzf $fname
-                is_ok=true
+            if [ "${_fname_noext##*.}" = "tar" ]; then
+                tar xzf $_fname && _is_ok=true
             fi
             ;;
         .bz2 )
-            if [ "${fname_noext##*.}" = "tar" ] ; then
-                tar xjf $fname
-                is_ok=true
+            if [ "${_fname_noext##*.}" = "tar" ]; then
+                tar xjf $_fname && _is_ok=true
             fi
             ;;
         .lz | .lzma )
-            if [ "${fname_noext##*.}" = "tar" ] ; then
-                tar xf $fname
-                is_ok=true
+            if [ "${_fname_noext##*.}" = "tar" ]; then
+                tar xf $_fname && _is_ok=true
             fi
             ;;
         .xz )
-            if [ "${fname_noext##*.}" = "tar" ] ; then
-                tar Jxf $fname
-                is_ok=true
+            if [ "${_fname_noext##*.}" = "tar" ]; then
+                tar Jxf $_fname && _is_ok=true
             fi
             ;;
         * )
-            printf "decomp_arch: %s is an unknown format.\n" $fname
+            printf "decomp_arch, Unknown Format: '%s'\n" $_fname
+            echo "...exit"
             exit 1
+            ;;
     esac
 
-    if $is_ok ; then
+    if ${_is_ok}; then
         return 0
     else
-        printf "decomp_arch: %s is not a tar archive.\n" $fname
+        printf "decomp_arch, '%s' is not a tar archive\n" $_fname
+        echo "...exit"
         exit 1
     fi
 }
 
-# arch optimization flags
-function arch_optflags() {
-    case "$1" in
-        "i686" | "x86_64" )
-            echo "-march=${1/_/-} -mtune=generic"
-            ;;
-        * )
-            echo "-mtune=generic"
-            ;;
-    esac
-}
-
-# add large-address-aware flag
-function add_laa() {
-    find "$1" -name "*.exe" | xargs -rl1 genpeimg -p +l
+# Check wheter cpath exists.
+function check_cpath() {
+    if type -P cpath > /dev/null 2>&1; then
+        return 0
+    else
+        echo "cpath cannot be found in PATH"
+        echo "...exit"
+        exit 1
+    fi
 }

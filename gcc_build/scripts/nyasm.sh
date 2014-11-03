@@ -1,16 +1,18 @@
 # NASM: An 80x86 assembler designed for portability and modularity
-# download src
+# Download the src and decompress it.
 function download_nasm_src() {
-    if [ ! -f ${BUILD_DIR}/nyasm/nasm/src/nasm-${NASM_VER}.tar.xz ] ; then
-        printf "===> downloading NASM %s\n" $NASM_VER
+    # Download the src.
+    if [ ! -f ${BUILD_DIR}/nyasm/nasm/src/nasm-${NASM_VER}.tar.xz ]; then
+        printf "===> Downloading NASM %s...\n" $NASM_VER
         pushd ${BUILD_DIR}/nyasm/nasm/src > /dev/null
         dl_files http http://www.nasm.us/pub/nasm/releasebuilds/${NASM_VER}/nasm-${NASM_VER}.tar.xz
         popd > /dev/null
         echo "done"
     fi
 
-    if [ ! -d ${BUILD_DIR}/nyasm/nasm/src/nasm-$NASM_VER ] ; then
-        printf "===> extracting NASM %s\n" $NASM_VER
+    # Decompress the src archive.
+    if [ ! -d ${BUILD_DIR}/nyasm/nasm/src/nasm-$NASM_VER ]; then
+        printf "===> Extracting NASM %s...\n" $NASM_VER
         pushd ${BUILD_DIR}/nyasm/nasm/src > /dev/null
         decomp_arch ${BUILD_DIR}/nyasm/nasm/src/nasm-${NASM_VER}.tar.xz
         popd > /dev/null
@@ -20,78 +22,90 @@ function download_nasm_src() {
     return 0
 }
 
-# build
+# Build and install.
 function build_nasm() {
     clear; printf "Build NASM %s\n" $NASM_VER
 
-    download_nasm_src
+    # Option handling.
+    local _rebuild=true
 
-    MSYS2_ARG_CONV_EXCL="-//OASIS"
-    export MSYS2_ARG_CONV_EXCL
-
-    for arch in ${TARGET_ARCH[@]}
+    local _opt
+    for _opt in "${@}"
     do
-        cd ${BUILD_DIR}/nyasm/nasm/build_$arch
-        rm -fr ${BUILD_DIR}/nyasm/nasm/build_${arch}/*
-        # NASM cannot be built out of tree.
-        cp -fra ${BUILD_DIR}/nyasm/nasm/src/nasm-${NASM_VER}/* ${BUILD_DIR}/nyasm/nasm/build_$arch
-
-        local bitval=$(get_arch_bit ${arch})
-        local _aof=$(arch_optflags ${arch})
-
-        source cpath $arch
-        PATH=${DST_DIR}/mingw${bitval}/bin:$PATH
-        export PATH
-
-        autoreconf -fi > /dev/null 2>&1
-
-        printf "===> configuring NASM %s\n" $arch
-        ./configure                                                                  \
-            --prefix=/mingw$bitval                                                   \
-            --build=${arch}-w64-mingw32                                              \
-            --host=${arch}-w64-mingw32                                               \
-            CFLAGS="${_aof} ${_CFLAGS} ${_CPPFLAGS}"                                 \
-            LDFLAGS="${_LDFLAGS} -fstack-protector-strong --param=ssp-buffer-size=4" \
-            > ${LOGS_DIR}/nyasm/nasm/nasm_config_${arch}.log 2>&1 || exit 1
-        echo "done"
-
-        printf "===> making NASM %s\n" $arch
-        # Setting -j$(($(nproc)+1)) sometimes makes error.
-        make > ${LOGS_DIR}/nyasm/nasm/nasm_make_${arch}.log 2>&1 || exit 1
-        echo "done"
-
-        printf "===> installing NASM %s\n" $arch
-        # NASM don't use DESTDIR but INSTALLROOT.
-        make INSTALLROOT=${PREIN_DIR}/nyasm/nasm install > ${LOGS_DIR}/nyasm/nasm/nasm_install_${arch}.log 2>&1 || exit 1
-        # Remove unneeded file.
-        rm -f ${PREIN_DIR}/nyasm/nasm/mingw${bitval}/bin/ndisasm.exe
-        rm -f ${PREIN_DIR}/nyasm/nasm/mingw${bitval}/share/man/man1/ndisasm.1
-        del_empty_dir ${PREIN_DIR}/nyasm/nasm/mingw$bitval
-        remove_la_files ${PREIN_DIR}/nyasm/nasm/mingw$bitval
-        strip_files ${PREIN_DIR}/nyasm/nasm/mingw$bitval
-        echo "done"
-
-        printf "===> copying NASM %s to %s/mingw%s\n" $arch $DST_DIR $bitval
-        cp -fra ${PREIN_DIR}/nyasm/nasm/mingw$bitval $DST_DIR
-        echo "done"
+        case "${_opt}" in
+            --rebuild=* )
+                _rebuild="${_opt#*=}"
+                ;;
+            * )
+                printf "build_nasm: Unknown Option: '%s'\n" $_opt
+                echo "...exit"
+                exit 1
+                ;;
+        esac
     done
 
-    unset MSYS2_ARG_CONV_EXCL
+    # Setup.
+    if ${_rebuild}; then
+        download_nasm_src
+    fi
 
-    cd $ROOT_DIR
-    return 0
-}
-
-# copy only
-function copy_nasm() {
-    clear; printf "NASM %s\n" $NASM_VER
-
-    for arch in ${TARGET_ARCH[@]}
+    local _arch
+    for _arch in ${TARGET_ARCH[@]}
     do
-        local bitval=$(get_arch_bit ${arch})
+        local _bitval=$(get_arch_bit ${_arch})
 
-        printf "===> copying NASM %s to %s/mingw%s\n" $arch $DST_DIR $bitval
-        cp -fra ${PREIN_DIR}/nyasm/nasm/mingw$bitval $DST_DIR
+        if ${_rebuild}; then
+            cd ${BUILD_DIR}/nyasm/nasm/build_$_arch
+            # Cleanup the build dir.
+            rm -fr ${BUILD_DIR}/nyasm/nasm/build_${_arch}/*
+            # NASM cannot be built out of tree.
+            cp -fra ${BUILD_DIR}/nyasm/nasm/src/nasm-${NASM_VER}/* ${BUILD_DIR}/nyasm/nasm/build_$_arch
+
+            # PATH exporting.
+            source cpath $_arch
+            PATH=${DST_DIR}/mingw${_bitval}/bin:$PATH
+            export PATH
+
+            # Autoreconf.
+            autoreconf -fi > /dev/null 2>&1
+
+            # For building with -fstack-protector*.
+            local _ssp="-fstack-protector-strong --param=ssp-buffer-size=4"
+
+            # Configure.
+            printf "===> Configuring NASM %s...\n" $_arch
+            ./configure                                              \
+                --prefix=/mingw$_bitval                              \
+                --build=${_arch}-w64-mingw32                         \
+                --host=${_arch}-w64-mingw32                          \
+                CFLAGS="-march=${_arch/_/-} ${CFLAGS_} ${CPPFLAGS_}" \
+                LDFLAGS="${LDFLAGS_} ${_ssp}"                        \
+                > ${LOGS_DIR}/nyasm/nasm/nasm_config_${_arch}.log 2>&1 || exit 1
+            echo "done"
+
+            # Make.
+            printf "===> Making NASM %s...\n" $_arch
+            # Setting -j$(($(nproc)+1)) sometimes makes error.
+            make > ${LOGS_DIR}/nyasm/nasm/nasm_make_${_arch}.log 2>&1 || exit 1
+            echo "done"
+
+            # Install.
+            printf "===> Installing NASM %s...\n" $_arch
+            # NASM doesn't use DESTDIR but INSTALLROOT.
+            make INSTALLROOT=${PREIN_DIR}/nyasm/nasm install > ${LOGS_DIR}/nyasm/nasm/nasm_install_${_arch}.log 2>&1 || exit 1
+            # Remove unneeded files.
+            rm -f ${PREIN_DIR}/nyasm/nasm/mingw${_bitval}/bin/ndisasm.exe
+            rm -f ${PREIN_DIR}/nyasm/nasm/mingw${_bitval}/share/man/man1/ndisasm.1
+            remove_empty_dirs ${PREIN_DIR}/nyasm/nasm/mingw$_bitval
+            remove_la_files   ${PREIN_DIR}/nyasm/nasm/mingw$_bitval
+            # Strip files.
+            strip_files ${PREIN_DIR}/nyasm/nasm/mingw$_bitval
+            echo "done"
+        fi
+
+        # Copy to DST_DIR.
+        printf "===> Copying NASM %s to %s/mingw%s...\n" $_arch $DST_DIR $_bitval
+        cp -fra ${PREIN_DIR}/nyasm/nasm/mingw$_bitval $DST_DIR
         echo "done"
     done
 
@@ -100,18 +114,20 @@ function copy_nasm() {
 }
 
 # Yasm: A rewrite of NASM to allow for multiple syntax supported (NASM, TASM, GAS, etc.)
-# download src
+# Download the src and decompress it.
 function download_yasm_src() {
-    if [ ! -f ${BUILD_DIR}/nyasm/yasm/src/yasm-${YASM_VER}.tar.gz ] ; then
-        printf "===> downloading Yasm %s\n" $YASM_VER
+    # Download the src.
+    if [ ! -f ${BUILD_DIR}/nyasm/yasm/src/yasm-${YASM_VER}.tar.gz ]; then
+        printf "===> Downloading Yasm %s...\n" $YASM_VER
         pushd ${BUILD_DIR}/nyasm/yasm/src > /dev/null
         dl_files http http://www.tortall.net/projects/yasm/releases/yasm-${YASM_VER}.tar.gz
         popd > /dev/null
         echo "done"
     fi
 
-    if [ ! -d ${BUILD_DIR}/nyasm/yasm/src/yasm-$YASM_VER ] ; then
-        printf "===> extracting Yasm %s\n" $YASM_VER
+    # Decompress the src archive.
+    if [ ! -d ${BUILD_DIR}/nyasm/yasm/src/yasm-$YASM_VER ]; then
+        printf "===> Extracting Yasm %s...\n" $YASM_VER
         pushd ${BUILD_DIR}/nyasm/yasm/src > /dev/null
         decomp_arch ${BUILD_DIR}/nyasm/yasm/src/yasm-${YASM_VER}.tar.gz
         popd > /dev/null
@@ -121,75 +137,98 @@ function download_yasm_src() {
     return 0
 }
 
-# build
-function build_yasm() {
-    clear; printf "Build Yasm %s\n" $YASM_VER
-
-    download_yasm_src
-
-    cd ${BUILD_DIR}/nyasm/yasm/src/yasm-$YASM_VER
+# Autoreconf.
+function prepare_yasm() {
+    # Autoreconf.
+    printf "===> Autoreconfing Yasm %s...\n" $YASM_VER
+    pushd ${BUILD_DIR}/nyasm/yasm/src/yasm-$YASM_VER > /dev/null
     autoreconf -fi > /dev/null 2>&1
+    popd > /dev/null
+    echo "done"
 
-    for arch in ${TARGET_ARCH[@]}
-    do
-        cd ${BUILD_DIR}/nyasm/yasm/build_$arch
-        rm -fr ${BUILD_DIR}/nyasm/yasm/build_${arch}/*
-
-        local bitval=$(get_arch_bit ${arch})
-        local _aof=$(arch_optflags ${arch})
-
-        source cpath $arch
-        PATH=${DST_DIR}/mingw${bitval}/bin:$PATH
-        export PATH
-
-        printf "===> configuring Yasm %s\n" $arch
-        ../src/yasm-${YASM_VER}/configure \
-            --prefix=/mingw$bitval        \
-            --build=${arch}-w64-mingw32   \
-            --host=${arch}-w64-mingw32    \
-            --disable-silent-rules        \
-            --with-gnu-ld                 \
-            CPPFLAGS="${_CPPFLAGS}"       \
-            CFLAGS="${_aof} ${_CFLAGS}"   \
-            LDFLAGS="${_LDFLAGS}"         \
-            > ${LOGS_DIR}/nyasm/yasm/yasm_config_${arch}.log 2>&1 || exit 1
-        echo "done"
-
-        printf "===> making Yasm %s\n" $arch
-        make $MAKEFLAGS > ${LOGS_DIR}/nyasm/yasm/yasm_make_${arch}.log 2>&1 || exit 1
-        echo "done"
-
-        printf "===> installing Yasm %s\n" $arch
-        make DESTDIR=${PREIN_DIR}/nyasm/yasm install > ${LOGS_DIR}/nyasm/yasm/yasm_install_${arch}.log 2>&1 || exit 1
-        # Remove unneeded file.
-        rm -f ${PREIN_DIR}/nyasm/yasm/mingw${bitval}/bin/{vsyasm.exe,ytasm.exe}
-        rm -fr ${PREIN_DIR}/nyasm/yasm/mingw${bitval}/lib
-        rm -fr ${PREIN_DIR}/nyasm/yasm/mingw${bitval}/include
-        rm -fr ${PREIN_DIR}/nyasm/yasm/mingw${bitval}/share/man/man7
-        del_empty_dir ${PREIN_DIR}/nyasm/yasm/mingw$bitval
-        remove_la_files ${PREIN_DIR}/nyasm/yasm/mingw$bitval
-        strip_files ${PREIN_DIR}/nyasm/yasm/mingw$bitval
-        echo "done"
-
-        printf "===> copying Yasm %s to %s/mingw%s\n" $arch $DST_DIR $bitval
-        cp -fra ${PREIN_DIR}/nyasm/yasm/mingw$bitval $DST_DIR
-        echo "done"
-    done
-
-    cd $ROOT_DIR
     return 0
 }
 
-# copy only
-function copy_yasm() {
-    clear; printf "Yasm %s\n" $YASM_VER
+# Build and install.
+function build_yasm() {
+    clear; printf "Build Yasm %s\n" $YASM_VER
 
-    for arch in ${TARGET_ARCH[@]}
+    # Option handling.
+    local _rebuild=true
+
+    local _opt
+    for _opt in "${@}"
     do
-        local bitval=$(get_arch_bit ${arch})
+        case "${_opt}" in
+            --rebuild=* )
+                _rebuild="${_opt#*=}"
+                ;;
+            * )
+                printf "build_yasm: Unknown Option: '%s'\n" $_opt
+                echo "...exit"
+                exit 1
+                ;;
+        esac
+    done
 
-        printf "===> copying Yasm %s to %s/mingw%s\n" $arch $DST_DIR $bitval
-        cp -fra ${PREIN_DIR}/nyasm/yasm/mingw$bitval $DST_DIR
+    # Setup.
+    if ${_rebuild}; then
+        download_yasm_src
+        prepare_yasm
+    fi
+
+    local _arch
+    for _arch in ${TARGET_ARCH[@]}
+    do
+        local _bitval=$(get_arch_bit ${_arch})
+
+        if ${_rebuild}; then
+            cd ${BUILD_DIR}/nyasm/yasm/build_$_arch
+            # Cleanup the build dir.
+            rm -fr ${BUILD_DIR}/nyasm/yasm/build_${_arch}/*
+
+            # PATH exporting.
+            source cpath $_arch
+            PATH=${DST_DIR}/mingw${_bitval}/bin:$PATH
+            export PATH
+
+            # Configure.
+            printf "===> Configuring Yasm %s...\n" $_arch
+            ../src/yasm-${YASM_VER}/configure           \
+                --prefix=/mingw$_bitval                 \
+                --build=${_arch}-w64-mingw32            \
+                --host=${_arch}-w64-mingw32             \
+                --disable-silent-rules                  \
+                --with-gnu-ld                           \
+                CFLAGS="-march=${_arch/_/-} ${CFLAGS_}" \
+                LDFLAGS="${LDFLAGS_}"                   \
+                CPPFLAGS="${CPPFLAGS_}"                 \
+                > ${LOGS_DIR}/nyasm/yasm/yasm_config_${_arch}.log 2>&1 || exit 1
+            echo "done"
+
+            # Make.
+            printf "===> Making Yasm %s...\n" $_arch
+            make $MAKEFLAGS_ > ${LOGS_DIR}/nyasm/yasm/yasm_make_${_arch}.log 2>&1 || exit 1
+            echo "done"
+
+            # Install.
+            printf "===> Installing Yasm %s...\n" $_arch
+            make DESTDIR=${PREIN_DIR}/nyasm/yasm install > ${LOGS_DIR}/nyasm/yasm/yasm_install_${_arch}.log 2>&1 || exit 1
+            # Remove unneeded files.
+            rm -f  ${PREIN_DIR}/nyasm/yasm/mingw${_bitval}/bin/{vsyasm.exe,ytasm.exe}
+            rm -fr ${PREIN_DIR}/nyasm/yasm/mingw${_bitval}/lib
+            rm -fr ${PREIN_DIR}/nyasm/yasm/mingw${_bitval}/include
+            rm -fr ${PREIN_DIR}/nyasm/yasm/mingw${_bitval}/share/man/man7
+            remove_empty_dirs ${PREIN_DIR}/nyasm/yasm/mingw$_bitval
+            remove_la_files   ${PREIN_DIR}/nyasm/yasm/mingw$_bitval
+            # Strip files.
+            strip_files ${PREIN_DIR}/nyasm/yasm/mingw$_bitval
+            echo "done"
+        fi
+
+        # Copy to DST_DIR.
+        printf "===> Copying Yasm %s to %s/mingw%s...\n" $_arch $DST_DIR $_bitval
+        cp -fra ${PREIN_DIR}/nyasm/yasm/mingw$_bitval $DST_DIR
         echo "done"
     done
 
