@@ -125,7 +125,6 @@ function prepare_gcc() {
     fi
     if [ ! -f ${BUILD_DIR}/gcc/src/gcc-${GCC_VER}/patched_19.marker ]; then
         # For building with -fstack-protector*.
-        # Link libgcc to libssp statically.
         patch -p1 -i ${PATCHES_DIR}/gcc/0017-for-fstack-protector.patch >> ${LOGS_DIR}/gcc/gcc_patch.log 2>&1 || exit 1
         touch ${BUILD_DIR}/gcc/src/gcc-${GCC_VER}/patched_19.marker
     fi
@@ -134,6 +133,12 @@ function prepare_gcc() {
         patch -p1 -i ${PATCHES_DIR}/gcc/0018-gcc-windows7-or-later-default.patch \
             >> ${LOGS_DIR}/gcc/gcc_patch.log 2>&1 || exit 1
         touch ${BUILD_DIR}/gcc/src/gcc-${GCC_VER}/patched_20.marker
+    fi
+    if [ ! -f ${BUILD_DIR}/gcc/src/gcc-${GCC_VER}/patched_21.marker ]; then
+        # Fix dw2 eh bug.
+        patch -p1 -i ${PATCHES_DIR}/gcc/0019-apply-hack-so-gcc_s-isnt-stripped.patch \
+            >> ${LOGS_DIR}/gcc/gcc_patch.log 2>&1 || exit 1
+        touch ${BUILD_DIR}/gcc/src/gcc-${GCC_VER}/patched_21.marker
     fi
     popd > /dev/null
     echo "done"

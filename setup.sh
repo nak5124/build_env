@@ -4,7 +4,7 @@
 shdir=$(cd $(dirname $0);pwd)
 
 dot_files=( .bashrc .gitconfig .hgrc .minttyrc .bash_profile .vimrc .bash_logout .tigrc .tmux.conf )
-mg_patches=( mpfr isl cloog libiconv libintl bzip2 zlib binutils gcc yasm autoconf automake libtool )
+mg_patches=( mpfr isl cloog libiconv libintl bzip2 zlib binutils gcc autoconf automake libtool winpthreads )
 
 # bat
 cp -f ${shdir}/bat/* /

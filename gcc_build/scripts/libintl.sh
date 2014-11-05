@@ -113,13 +113,6 @@ function build_intl() {
             PATH=${DST_DIR}/mingw${_bitval}/bin:$PATH
             export PATH
 
-            # For eh of i686 bins, which are built with MSVC.
-            if [ "${_arch}" = "i686" ]; then
-                local _slgcc="-static-libgcc"
-            else
-                local _slgcc=""
-            fi
-
             # Configure.
             printf "===> Configuring libintl %s...\n" $_arch
             ../src/gettext-${INTL_VER}/gettext-runtime/configure \
@@ -141,7 +134,7 @@ function build_intl() {
                 --with-gnu-ld                                    \
                 --with-libiconv-prefix=${DST_DIR}/mingw$_bitval  \
                 CFLAGS="-march=${_arch/_/-} ${CFLAGS_}"          \
-                LDFLAGS="${LDFLAGS_} ${_slgcc}"                  \
+                LDFLAGS="${LDFLAGS_}"                            \
                 CPPFLAGS="${CPPFLAGS_}"                          \
                 CXXFLAGS="-march=${_arch/_/-} ${CXXFLAGS_}"      \
                 > ${LOGS_DIR}/libintl/libintl_config_${_arch}.log 2>&1 || exit 1

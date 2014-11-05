@@ -46,21 +46,3 @@
  # MinGW-specific parts of LIB_SPEC
 -SHLIB_LC = -lmingwthrd -lmingw32 -lmingwex -lmoldname -lmsvcrt -ladvapi32 -lshell32 -luser32 -lkernel32
 +SHLIB_LC = -lmingwthrd -lmingw32 -lmingwex -lmoldname -lmsvcrt -ladvapi32 -lshell32 -luser32 -lkernel32 -lssp_nonshared -lssp
---- gcc-4.9.2/libssp/configure.old	2013-09-20 18:47:52.000000000 +0900
-+++ gcc-4.9.2/libssp/configure	2014-10-28 18:09:56.688782600 +0900
-@@ -8382,7 +8382,14 @@
-       export_symbols_cmds='$NM $libobjs $convenience | $global_symbol_pipe | $SED -e '\''/^[BCDGRS][ ]/s/.*[ ]\([^ ]*\)/\1 DATA/'\'' | $SED -e '\''/^[AITW][ ]/s/.*[ ]//'\'' | sort | uniq > $export_symbols'
- 
-       if $LD --help 2>&1 | $GREP 'auto-import' > /dev/null; then
--        archive_cmds='$CC -shared $libobjs $deplibs $compiler_flags -o $output_objdir/$soname ${wl}--enable-auto-image-base -Xlinker --out-implib -Xlinker $lib'
-+        case $host_cpu in
-+          i*86 )
-+            archive_cmds='$CC -shared -static-libgcc $libobjs $deplibs $compiler_flags -o $output_objdir/$soname ${wl}--enable-auto-image-base -Xlinker --out-implib -Xlinker $lib'
-+            ;;
-+          * )
-+            archive_cmds='$CC -shared $libobjs $deplibs $compiler_flags -o $output_objdir/$soname ${wl}--enable-auto-image-base -Xlinker --out-implib -Xlinker $lib'
-+            ;;
-+        esac
- 	# If the export-symbols file already is a .def file (1st line
- 	# is EXPORTS), use it as is; otherwise, prepend...
- 	archive_expsym_cmds='if test "x`$SED 1q $export_symbols`" = xEXPORTS; then

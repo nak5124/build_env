@@ -176,6 +176,7 @@ function build_binutils() {
                 --with-lib{iconv,intl}-prefix=${DST_DIR}/mingw$_bitval   \
                 --with-sysroot=/mingw$_bitval                            \
                 --with-lib-path=${_libpath}                              \
+                --with-stage1-ldflags=no                                 \
                 CFLAGS="-march=${_arch/_/-} ${CFLAGS_} ${CPPFLAGS_}"     \
                 LDFLAGS="${LDFLAGS_}"                                    \
                 CXXFLAGS="-march=${_arch/_/-} ${CXXFLAGS_} ${CPPFLAGS_}" \

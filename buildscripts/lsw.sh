@@ -37,14 +37,14 @@ function build_LSW_common() {
 function build_LSW_aviutl() {
     cd ${HOME}/OSS/lsw/AviUtl
 
-    local _slgssp="-static-libgcc -fstack-protector-strong --param=ssp-buffer-size=4"
+    local _ssp="-fstack-protector-strong --param=ssp-buffer-size=4"
 
     source cpath i686
 
     echo "===> Configuring LSW AviUtl..."
     ./configure --prefix=/mingw32/local                          \
                 --extra-cflags="${BASE_CFLAGS} ${BASE_CPPFLAGS}" \
-                --extra-ldflags="${BASE_LDFLAGS} ${_slgssp}"     \
+                --extra-ldflags="${BASE_LDFLAGS} ${_ssp}"        \
     > ${LOGS_DIR}/lsw_config_aviutl.log 2>&1 || exit 1
     echo "done"
 
@@ -55,6 +55,7 @@ function build_LSW_aviutl() {
 
     echo "===> Copying LSW AviUtl..."
     cp -fa ./*.aui ./*.auf ./*.auc /d/encode/aviutl/Plugins
+    ln -fs /mingw32/bin/libgcc_s_dw2-1.dll /d/encode/aviutl
     ln -fs /mingw32/bin/libwinpthread-1.dll /d/encode/aviutl
     ln -fs /mingw32/bin/libssp-0.dll /d/encode/aviutl
     ln -fs /mingw32/bin/libbz2-1.dll /d/encode/aviutl
@@ -94,6 +95,7 @@ function build_LSW_avisynth() {
     echo "===> Copying LSW AviSynth..."
     cp -fa ./Release/LSMASHSource.dll /c/AviSynth+/plugins
     cp -fa ./x64/Release/LSMASHSource.dll /c/AviSynth+/plugins64
+    ln -fs /mingw32/bin/libgcc_s_dw2-1.dll /c/AviSynth+/plugins
     ln -fs /mingw32/bin/libwinpthread-1.dll /c/AviSynth+/plugins
     ln -fs /mingw32/bin/libssp-0.dll /c/AviSynth+/plugins
     ln -fs /mingw32/bin/libbz2-1.dll /c/AviSynth+/plugins
@@ -150,17 +152,17 @@ function build_LSW_vapoursynth() {
 
         if [ "${_arch}" = "i686" ]; then
             local _LSWPREFIX=/mingw32/local
-            local _slgssp="-static-libgcc -fstack-protector-strong --param=ssp-buffer-size=4"
         else
             local _LSWPREFIX=/mingw64/local
-            local _slgssp="-fstack-protector-strong --param=ssp-buffer-size=4"
         fi
+
+        local _ssp="-fstack-protector-strong --param=ssp-buffer-size=4"
 
         printf "===> Configuring LSW VapourSynth %s\n" $_arch
         ./configure --prefix=$_LSWPREFIX                             \
                     --target-os=mingw32                              \
                     --extra-cflags="${BASE_CFLAGS} ${BASE_CPPFLAGS}" \
-                    --extra-ldflags="${BASE_LDFLAGS} ${_slgssp}"     \
+                    --extra-ldflags="${BASE_LDFLAGS} ${_ssp}"        \
         > ${LOGS_DIR}/lsw_config_VS_${_arch}.log 2>&1 || exit 1
         echo "done"
 
@@ -172,6 +174,7 @@ function build_LSW_vapoursynth() {
         printf "===> Copying LSW VapourSynth %s...\n" $_arch
         if [ "${_arch}" = "i686" ]; then
             cp -fa ./vslsmashsource.dll /c/VapourSynth/plugins32
+            ln -fs /mingw32/bin/libgcc_s_dw2-1.dll /c/VapourSynth/plugins32
             ln -fs /mingw32/bin/libwinpthread-1.dll /c/VapourSynth/plugins32
             ln -fs /mingw32/bin/libssp-0.dll /c/VapourSynth/plugins32
             ln -fs /mingw32/bin/libbz2-1.dll /c/VapourSynth/plugins32

@@ -91,13 +91,8 @@ function build_bzip2() {
             PATH=${DST_DIR}/mingw${_bitval}/bin:$PATH
             export PATH
 
-            # For eh of i686 bins, which are built with MSVC.
-            # And for building with -fstack-protector*.
-            if [ "${_arch}" = "i686" ]; then
-                local _slgssp="-static-libgcc -fstack-protector-strong --param=ssp-buffer-size=4"
-            else
-                local _slgssp="-fstack-protector-strong --param=ssp-buffer-size=4"
-            fi
+            # For building with -fstack-protector*.
+            local _ssp="-fstack-protector-strong --param=ssp-buffer-size=4"
 
             # Configure.
             printf "===> Configuring bzip2 %s...\n" $_arch
@@ -107,7 +102,7 @@ function build_bzip2() {
                 --host=${_arch}-w64-mingw32                          \
                 --enable-shared                                      \
                 CFLAGS="-march=${_arch/_/-} ${CFLAGS_} ${CPPFLAGS_}" \
-                LDFLAGS="${LDFLAGS_} ${_slgssp}"                     \
+                LDFLAGS="${LDFLAGS_} ${_ssp}"                        \
                 > ${LOGS_DIR}/bzip2/bzip2_config_${_arch}.log 2>&1 || exit 1
             echo "done"
 

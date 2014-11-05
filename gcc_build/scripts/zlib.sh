@@ -93,19 +93,16 @@ function build_zlib() {
             export PATH
 
             # Use an assembly code.
-            # And for eh of i686 bins, which are built with MSVC.
             if [ "${_arch}" = "i686" ]; then
                 cp -fa ${BUILD_DIR}/zlib/build_${_arch}/contrib/asm686/match.S      ${BUILD_DIR}/zlib/build_${_arch}/match.S
-                local _slgcc="-static-libgcc"
             else
                 cp -fa ${BUILD_DIR}/zlib/build_${_arch}/contrib/amd64/amd64-match.S ${BUILD_DIR}/zlib/build_${_arch}/match.S
-                local _slgcc=""
             fi
 
             # Configure.
             printf "===> Configuring zlib %s...\n" $_arch
             CFLAGS="-march=${_arch/_/-} ${CFLAGS_} ${CPPFLAGS_}" \
-            LDFLAGS="${LDFLAGS_} ${_slgcc}"                      \
+            LDFLAGS="${LDFLAGS_}"                                \
             ./configure                                          \
                 --prefix=/mingw$_bitval                          \
                 --shared                                         \

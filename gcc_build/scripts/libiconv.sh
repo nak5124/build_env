@@ -122,13 +122,6 @@ function build_iconv() {
                 local _intl="--disable-nls"
             fi
 
-            # For eh of i686 bins, which are built with MSVC.
-            if [ "${_arch}" = "i686" ]; then
-                local _slgcc="-static-libgcc"
-            else
-                local _slgcc=""
-            fi
-
             # Configure.
             printf "===> Configuring libiconv %s...\n" $_arch
             ../src/libiconv-${ICONV_VER}/configure      \
@@ -144,7 +137,7 @@ function build_iconv() {
                 ${_intl}                                \
                 --with-gnu-ld                           \
                 CFLAGS="-march=${_arch/_/-} ${CFLAGS_}" \
-                LDFLAGS="${LDFLAGS_} ${_slgcc}"         \
+                LDFLAGS="${LDFLAGS_}"                   \
                 CPPFLAGS="${CPPFLAGS_}"                 \
                 > ${LOGS_DIR}/libiconv/libiconv_config_${_arch}.log 2>&1 || exit 1
             echo "done"

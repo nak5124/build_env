@@ -69,43 +69,43 @@ function build_sdl() {
 
         if [ "${_arch}" = "i686" ]; then
             local _FFPREFIX=/mingw32/local
-            local _slgssp="-static-libgcc -fstack-protector-strong --param=ssp-buffer-size=4"
         else
             local _FFPREFIX=/mingw64/local
-            local _slgssp="-fstack-protector-strong --param=ssp-buffer-size=4"
         fi
 
+        local _ssp="-fstack-protector-strong --param=ssp-buffer-size=4"
+
         printf "===> Configuring SDL %s...\n" $_arch
-        ./configure --prefix=$_FFPREFIX                  \
-                    --build=${_arch}-w64-mingw32         \
-                    --host=${_arch}-w64-mingw32          \
-                    --enable-shared                      \
-                    --disable-static                     \
-                    --enable-fast-install                \
-                    --enable-libc                        \
-                    --enable-audio                       \
-                    --enable-video                       \
-                    --enable-events                      \
-                    --enable-joystick                    \
-                    --enable-cdrom                       \
-                    --enable-threads                     \
-                    --enable-timers                      \
-                    --enable-file                        \
-                    --enable-loadso                      \
-                    --enable-cpuinfo                     \
-                    --enable-assembly                    \
-                    --enable-diskaudio                   \
-                    --enable-dummyaudio                  \
-                    --enable-nasm                        \
-                    --enable-video-dummy                 \
-                    --enable-video-opengl                \
-                    --enable-stdio-redirect              \
-                    --enable-directx                     \
-                    --with-gnu-ld                        \
-                    CFLAGS="${BASE_CFLAGS}"              \
-                    LDFLAGS="${BASE_LDFLAGS} ${_slgssp}" \
-                    CPPFLAGS="${BASE_CPPFLAGS}"          \
-                    CXXFLAGS="${BASE_CXXFLAGS}"          \
+        ./configure --prefix=$_FFPREFIX               \
+                    --build=${_arch}-w64-mingw32      \
+                    --host=${_arch}-w64-mingw32       \
+                    --enable-shared                   \
+                    --disable-static                  \
+                    --enable-fast-install             \
+                    --enable-libc                     \
+                    --enable-audio                    \
+                    --enable-video                    \
+                    --enable-events                   \
+                    --enable-joystick                 \
+                    --enable-cdrom                    \
+                    --enable-threads                  \
+                    --enable-timers                   \
+                    --enable-file                     \
+                    --enable-loadso                   \
+                    --enable-cpuinfo                  \
+                    --enable-assembly                 \
+                    --enable-diskaudio                \
+                    --enable-dummyaudio               \
+                    --enable-nasm                     \
+                    --enable-video-dummy              \
+                    --enable-video-opengl             \
+                    --enable-stdio-redirect           \
+                    --enable-directx                  \
+                    --with-gnu-ld                     \
+                    CFLAGS="${BASE_CFLAGS}"           \
+                    LDFLAGS="${BASE_LDFLAGS} ${_ssp}" \
+                    CPPFLAGS="${BASE_CPPFLAGS}"       \
+                    CXXFLAGS="${BASE_CXXFLAGS}"       \
             > ${LOGS_DIR}/sdl_config_${_arch}.log 2>&1 || exit 1
         echo "done"
 
@@ -276,11 +276,11 @@ function build_openjpeg2() {
 
         if [ "${_arch}" = "i686" ]; then
             local _FFPREFIX=/mingw32/local
-            local _slgssp="-static-libgcc -fstack-protector-strong --param=ssp-buffer-size=4"
         else
             local _FFPREFIX=/mingw64/local
-            local _slgssp="-fstack-protector-strong --param=ssp-buffer-size=4"
         fi
+
+        local _ssp="-fstack-protector-strong --param=ssp-buffer-size=4"
 
         printf "===> Configuring OpenJPEG %s...\n" $_arch
         cmake -G "MSYS Makefiles"                                              \
@@ -297,7 +297,7 @@ function build_openjpeg2() {
               -DBUILD_TESTING:BOOL=OFF                                         \
               -DCMAKE_SYSTEM_PREFIX_PATH=$(pwd -W)                             \
               -DCMAKE_C_FLAGS_RELEASE:STRING="${BASE_CFLAGS} ${BASE_CPPFLAGS}" \
-              -DCMAKE_SHARED_LINKER_FLAGS:STRING="${BASE_LDFLAGS} ${_slgssp}"  \
+              -DCMAKE_SHARED_LINKER_FLAGS:STRING="${BASE_LDFLAGS} ${_ssp}"     \
               -DCMAKE_VERBOSE_MAKEFILE:bool=ON                                 \
             > ${LOGS_DIR}/openjpeg2_config_${_arch}.log 2>&1 || exit 1
         echo "done"
@@ -344,28 +344,26 @@ function build_libspeex() {
 
         if [ "${_arch}" = "i686" ]; then
             local _FFPREFIX=/mingw32/local
-            local _lgcc_s="-static-libgcc"
         else
             local _FFPREFIX=/mingw64/local
-            local _lgcc_s=""
         fi
 
         printf "===> Configuring libspeex %s...\n" $_arch
-        ./configure --prefix=$_FFPREFIX                  \
-                    --build=${_arch}-w64-mingw32         \
-                    --host=${_arch}-w64-mingw32          \
-                    --disable-silent-rules               \
-                    --enable-shared                      \
-                    --disable-static                     \
-                    --enable-fast-install                \
-                    --enable-sse                         \
-                    --disable-binaries                   \
-                    --enable-vorbis-psy                  \
-                    --with-gnu-ld                        \
-                    CFLAGS="${BASE_CFLAGS}"              \
-                    LDFLAGS="${BASE_LDFLAGS} ${_lgcc_s}" \
-                    LIBS="-lwinmm"                       \
-                    CPPFLAGS="${BASE_CPPFLAGS}"          \
+        ./configure --prefix=$_FFPREFIX          \
+                    --build=${_arch}-w64-mingw32 \
+                    --host=${_arch}-w64-mingw32  \
+                    --disable-silent-rules       \
+                    --enable-shared              \
+                    --disable-static             \
+                    --enable-fast-install        \
+                    --enable-sse                 \
+                    --disable-binaries           \
+                    --enable-vorbis-psy          \
+                    --with-gnu-ld                \
+                    CFLAGS="${BASE_CFLAGS}"      \
+                    LDFLAGS="${BASE_LDFLAGS}"    \
+                    LIBS="-lwinmm"               \
+                    CPPFLAGS="${BASE_CPPFLAGS}"  \
             > ${LOGS_DIR}/speex_config_${_arch}.log 2>&1 || exit 1
         sed -i 's|-O3||g' config.status
         echo "done"
@@ -476,16 +474,16 @@ function build_libvpx() {
         if [ "${_arch}" = "i686" ]; then
             local _FFPREFIX=/mingw32/local
             local _target=x86-win32-gcc
-            local _slgssp="-static-libgcc -fstack-protector-strong --param=ssp-buffer-size=4"
         else
             local _FFPREFIX=/mingw64/local
             local _target=x86_64-win64-gcc
-            local _slgssp="-fstack-protector-strong --param=ssp-buffer-size=4"
         fi
+
+        local _ssp="-fstack-protector-strong --param=ssp-buffer-size=4"
 
         printf "===> Configuring libvpx %s...\n" $_arch
         CFLAGS="${BASE_CFLAGS} ${BASE_CPPFLAGS}" \
-        LDFLAGS="${BASE_LDFLAGS} ${_slgssp}"     \
+        LDFLAGS="${BASE_LDFLAGS} ${_ssp}"        \
         CXXFLAGS="${BASE_CXXFLAGS}"              \
         ./configure --prefix=$_FFPREFIX          \
                     --target=$_target            \
@@ -619,13 +617,13 @@ function build_ffmpeg() {
             local _archopt="--arch=x86 --cpu=i686"
             local _FFPREFIX=/mingw32/local
             local _VCDIR=$VC32_DIR
-            local _slgssp="-static-libgcc -fstack-protector-strong --param=ssp-buffer-size=4"
         else
             local _archopt="--arch=x86_64"
             local _FFPREFIX=/mingw64/local
             local _VCDIR=$VC64_DIR
-            local _slgssp="-fstack-protector-strong --param=ssp-buffer-size=4"
         fi
+
+        local _ssp="-fstack-protector-strong --param=ssp-buffer-size=4"
 
         source cpath $_arch
         PATH=${PATH}:$_VCDIR
@@ -647,7 +645,6 @@ function build_ffmpeg() {
                     --disable-decoder=libvpx_vp8                 \
                     --disable-decoder=libvpx_vp9                 \
                     --disable-decoder=vorbis                     \
-                    --disable-outdev=sdl                         \
                     --enable-avisynth                            \
                     --enable-libopencore-amrnb                   \
                     --enable-libopencore-amrwb                   \
@@ -660,7 +657,7 @@ function build_ffmpeg() {
                     ${_archopt}                                  \
                     --disable-debug                              \
                     --optflags="${BASE_CFLAGS} ${BASE_CPPFLAGS}" \
-                    --extra-ldflags="${_slgssp}"                 \
+                    --extra-ldflags="${_ssp}"                    \
             > ${LOGS_DIR}/ffmpeg_config_${_arch}.log 2>&1 || exit 1
         # if linking with MSVC statically, uncomment the following lines
         # sed -i '/HAVE_CLOCK_GETTIME/d' config.h

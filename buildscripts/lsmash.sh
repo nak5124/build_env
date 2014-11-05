@@ -72,12 +72,12 @@ function build_lsmash() {
         if [ "${_arch}" = "i686" ]; then
             local _LSPREFIX=/mingw32/local
             local _VCDIR=$VC32_DIR
-            local _slgssp="-static-libgcc -fstack-protector-strong --param=ssp-buffer-size=4"
         else
             local _LSPREFIX=/mingw64/local
             local _VCDIR=$VC64_DIR
-            local _slgssp="-fstack-protector-strong --param=ssp-buffer-size=4"
         fi
+
+        local _ssp="-fstack-protector-strong --param=ssp-buffer-size=4"
 
         source cpath $_arch
         PATH=${PATH}:$_VCDIR
@@ -88,7 +88,7 @@ function build_lsmash() {
                     --disable-static                                 \
                     --enable-shared                                  \
                     --extra-cflags="${BASE_CFLAGS} ${BASE_CPPFLAGS}" \
-                    --extra-ldflags="${BASE_LDFLAGS} ${_slgssp}"     \
+                    --extra-ldflags="${BASE_LDFLAGS} ${_ssp}"        \
             > ${LOGS_DIR}/lsmash_config_${_arch}.log 2>&1 || exit 1
         echo "done"
 
