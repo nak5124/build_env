@@ -233,9 +233,9 @@ rm -f /opt/bin/i686-w64-mingw32-*.exe
 rm -fr /opt/i686-w64-mingw32
 rm -fr /opt/lib/gcc/i686-w64-mingw32
 rm -f /opt/bin/x86_64-w64-mingw32-gfortran.exe
-rm -f /opt/lib/gcc/x86_64-w64-mingw32/4.9.1/{f951.exe,libgfortran.a,libgfortran.dll.a,libgfortran-3.dll,libcaf_single.a,libgfortranbegin.a,libstdc++.dll.a-gdb.py,libgfortran.spec}
-rm -fr /opt/lib/gcc/x86_64-w64-mingw32/4.9.1/finclude
-ln -fsr ../../opt/bin/x86_64-w64-mingw32-gcc.exe ../../opt/bin/x86_64-w64-mingw32-gcc-4.9.1.exe
+rm -f /opt/lib/gcc/x86_64-w64-mingw32/4.9.2/{f951.exe,libgfortran.a,libgfortran.dll.a,libgfortran-3.dll,libcaf_single.a,libgfortranbegin.a,libstdc++.dll.a-gdb.py,libgfortran.spec}
+rm -fr /opt/lib/gcc/x86_64-w64-mingw32/4.9.2/finclude
+ln -fsr ../../opt/bin/x86_64-w64-mingw32-gcc.exe ../../opt/bin/x86_64-w64-mingw32-gcc-4.9.2.exe
 ln -fsr ../../opt/bin/x86_64-w64-mingw32-g++.exe ../../opt/bin/x86_64-w64-mingw32-c++.exe
 
 # msys2-runtime-devel
