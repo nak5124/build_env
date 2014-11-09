@@ -1,7 +1,7 @@
-From 9bc6940648118d595f89c7bda44cd66822cc520e Mon Sep 17 00:00:00 2001
+From 253fd2850f3c363d4c7b3580adfc0fe94be228bb Mon Sep 17 00:00:00 2001
 From: Yuta NAKAI <nak5124@live.jp>
 Date: Sun, 28 Sep 2014 04:10:10 +0900
-Subject: [PATCH 2/3] configure: Add api version to mingw shared library name.
+Subject: [PATCH 2/5] configure: Add api version to mingw shared library name.
 
 ---
  Makefile  | 6 ++++++
@@ -45,5 +45,5 @@ index 363552c..74036b9 100755
          IMPLIB="liblsmash.dll.a"
          SO_LDFLAGS="-shared -Wl,--out-implib,$IMPLIB"
 -- 
-2.1.2
+2.1.3
 

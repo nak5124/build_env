@@ -65,6 +65,10 @@ function build_lsmash() {
         >> ${LOGS_DIR}/lsmash_patch.log 2>&1 || exit 1
     patch -p1 -i ${PATCHES_DIR}/0003-build-Use-lib.exe-or-dlltool-when-available-on-mingw.patch \
         >> ${LOGS_DIR}/lsmash_patch.log 2>&1 || exit 1
+    patch -p1 -i ${PATCHES_DIR}/0004-configure-If-shared-is-enabled-put-LIBS-on-Libs.priv.patch \
+        >> ${LOGS_DIR}/lsmash_patch.log 2>&1 || exit 1
+    patch -p1 -i ${PATCHES_DIR}/0005-build-Add-symbol-versioning-for-shared-libraries.patch \
+        >> ${LOGS_DIR}/lsmash_patch.log 2>&1 || exit 1
 
     local _arch
     for _arch in ${target_arch[@]}

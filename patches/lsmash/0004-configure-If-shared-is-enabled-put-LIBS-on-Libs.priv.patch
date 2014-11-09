@@ -1,0 +1,28 @@
+From 537fdc2b28cd86af1649dcdaea4b0b8f1478f185 Mon Sep 17 00:00:00 2001
+From: Yuta NAKAI <nak5124@live.jp>
+Date: Sun, 9 Nov 2014 15:47:24 +0900
+Subject: [PATCH 4/5] configure: If shared is enabled, put $LIBS on
+ Libs.private.
+
+---
+ configure | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/configure b/configure
+index f8d3586..12e12ac 100755
+--- a/configure
++++ b/configure
+@@ -365,8 +365,8 @@ Description: Loyal to Spec of MPEG4, and Ad-hock Simple Hackwork
+ Version: $VER_STRING
+ Requires:
+ URL: https://github.com/l-smash/l-smash
+-Libs: -L${libdir} -llsmash $LIBS
+-Libs.private:
++Libs: -L${libdir} -llsmash $(test -z "$SHAREDLIB" && echo $LIBS)
++Libs.private: $(test -n "$SHAREDLIB" && echo $LIBS)
+ Cflags: -I${includedir}
+ EOF
+ 
+-- 
+2.1.3
+
