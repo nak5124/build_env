@@ -246,7 +246,7 @@ shopt -s lithist
 # GCC
 GCC_COLORS='error=01;31;255:warning=01;35;255:note=01;36;255:caret=01;32;255:locus=01:quote=01'
 export GCC_COLORS
-BASE_CFLAGS="-pipe -Os -foptimize-strlen -mfpmath=sse -msse4 -fexcess-precision=fast -fstack-protector-strong --param=ssp-buffer-size=4"
+BASE_CFLAGS="-pipe -Os -foptimize-strlen -mfpmath=sse -msse4 -fexcess-precision=fast -fstack-protector-strong --param=ssp-buffer-size=4 -fno-fast-math -fno-tree-vectorize"
 BASE_CPPFLAGS="-D__USE_MINGW_ANSI_STDIO=1 -D_FORTIFY_SOURCE=2"
 BASE_CXXFLAGS="${BASE_CFLAGS}"
 BASE_LDFLAGS="-Wl,-s,-O1,--sort-common,--as-needed"

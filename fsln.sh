@@ -203,6 +203,12 @@ ln -fsr ../lib/libiculx51.dll.a ../lib/libiculx.dll.a
 ln -fsr ../lib/libicutest51.dll.a ../lib/libicutest.dll.a
 ln -fsr ../lib/libicuio51.dll.a ../lib/libicuio.dll.a
 
+# libdb-devel
+ln -fsr ../lib/libdb-5.3.a ../lib/libdb.a
+ln -fsr ../lib/libdb-5.3.dll.a ../lib/libdb.dll.a
+ln -fsr ../lib/libdb_cxx-5.3.a ../lib/libdb_cxx.a
+ln -fsr ../lib/libdb_cxx-5.3.dll.a ../lib/libdb_cxx.dll.a
+
 # libtool
 rm -fr /usr/share/libtool/config
 ln -fsr ../share/libtool/build-aux ../share/libtool/config
@@ -245,6 +251,7 @@ ln -fsr ../lib/libmsys-2.0.a ../lib/libg.a
 # ncurses-devel
 ln -fsr ./tic.exe ./captoinfo.exe
 ln -fsr ./tic.exe ./infotocap.exe
+ln -fsr ../lib/libncursesw.a ../lib/libncurses.a
 ln -fsr ../lib/libncursesw.dll.a ../lib/libncurses.dll.a
 rm -fr /usr/include/ncurses
 ln -fsr ../include/ncursesw ../include/ncurses
