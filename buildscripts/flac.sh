@@ -95,6 +95,7 @@ function build_libogg() {
 
         printf "===> Installing libogg %s...\n" $_arch
         make install-strip > ${LOGS_DIR}/ogg_install_${_arch}.log 2>&1 || exit 1
+        rm -f ${_FLPREFIX}/lib/libogg.la
         echo "done"
         make distclean > /dev/null 2>&1
     done
@@ -170,6 +171,7 @@ function build_flac() {
 
         printf "===> Installing flac %s...\n" $_arch
         make install-strip > ${LOGS_DIR}/flac_install_${_arch}.log 2>&1 || exit 1
+        rm -f ${_FLPREFIX}/lib/libFLAC.la
         if [ "${_arch}" = "x86_64" ]; then
             local _bin
             for _bin in ${_bin_list[@]}

@@ -117,6 +117,7 @@ function build_sdl() {
         printf "===> Installing SDL %s...\n" $_arch
         make install > ${LOGS_DIR}/sdl_install_${_arch}.log 2>&1 || exit 1
         sed -i "s|-mwindows||g" ${_FFPREFIX}/lib/pkgconfig/sdl.pc
+        rm -f ${_FFPREFIX}/lib/libSDL*.la
         echo "done"
         make distclean > /dev/null 2>&1
     done
@@ -180,6 +181,7 @@ function build_libopencore_amr() {
 
         printf "===> Installing libopencore-amr %s...\n" $_arch
         make install-strip > ${LOGS_DIR}/opencore-amr_install_${_arch}.log 2>&1 || exit 1
+        rm -f ${_FFPREFIX}/lib/libopencore*.la
         echo "done"
         make distclean > /dev/null 2>&1
     done
@@ -375,6 +377,7 @@ function build_libspeex() {
 
         printf "===> Installing libspeex %s...\n" $_arch
         make install-strip > ${LOGS_DIR}/speex_install_${_arch}.log 2>&1 || exit 1
+        rm -f ${_FFPREFIX}/lib/libspeex.la
         echo "done"
         make distclean > /dev/null 2>&1
     done
@@ -436,8 +439,9 @@ function build_libvorbis() {
         make install-strip > ${LOGS_DIR}/vorbis_install_${_arch}.log 2>&1 || exit 1
         rm -f ${_FFPREFIX}/bin/libvorbisfile-*.dll
         rm -f ${_FFPREFIX}/include/vorbis/vorbisfile.h
-        rm -f ${_FFPREFIX}/lib/libvorbisfile.{dll.a,la}
+        rm -f ${_FFPREFIX}/lib/libvorbisfile.dll.a
         rm -f ${_FFPREFIX}/lib/pkgconfig/vorbisfile.pc
+        rm -f ${_FFPREFIX}/lib/libvorbis*.la
         echo "done"
         make distclean > /dev/null 2>&1
     done
@@ -536,12 +540,12 @@ function build_libvpx() {
 function patch_ffmpeg() {
     echo "===> Applying patches to FFmpeg..."
 
-    local -i _N=42
+    local -i _N=45
     local -i _i
-    for _i in `seq 1 ${_N}`
+    for _i in `seq 0 ${_N}`
     do
         local _num=$( printf "%04d" ${_i} )
-        if [ "${_i}" = 1 ]; then
+        if [ $_i -eq 0 ]; then
             patch -p1 < ${PATCHES_DIR}/${_num}*.patch > ${LOGS_DIR}/ffmpeg_patches.log 2>&1 || exit 1
         else
             patch -p1 < ${PATCHES_DIR}/${_num}*.patch >> ${LOGS_DIR}/ffmpeg_patches.log 2>&1 || exit 1
@@ -549,7 +553,7 @@ function patch_ffmpeg() {
     done
 
 : << "#__CO__"
-    local -i _M=41
+    local -i _M=42
     local -i _j
     for _j in `seq 1 ${_M}`
     do

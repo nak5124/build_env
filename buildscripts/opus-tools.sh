@@ -95,6 +95,7 @@ function build_libopus() {
 
         printf "===> Installing libopus %s...\n" $_arch
         make install-strip > ${LOGS_DIR}/opus_install_${_arch}.log 2>&1 || exit 1
+        rm -f ${_OPPREFIX}/lib/libopus.la
         echo "done"
         make distclean > /dev/null 2>&1
     done
