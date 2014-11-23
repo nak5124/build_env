@@ -81,8 +81,6 @@ function build_lsmash() {
             local _VCDIR=$VC64_DIR
         fi
 
-        local _ssp="-fstack-protector-strong --param=ssp-buffer-size=4"
-
         source cpath $_arch
         PATH=${PATH}:$_VCDIR
         export PATH
@@ -92,7 +90,7 @@ function build_lsmash() {
                     --disable-static                                 \
                     --enable-shared                                  \
                     --extra-cflags="${BASE_CFLAGS} ${BASE_CPPFLAGS}" \
-                    --extra-ldflags="${BASE_LDFLAGS} ${_ssp}"        \
+                    --extra-ldflags="${BASE_CFLAGS} ${BASE_LDFLAGS}" \
             > ${LOGS_DIR}/lsmash_config_${_arch}.log 2>&1 || exit 1
         echo "done"
 

@@ -73,39 +73,37 @@ function build_sdl() {
             local _FFPREFIX=/mingw64/local
         fi
 
-        local _ssp="-fstack-protector-strong --param=ssp-buffer-size=4"
-
         printf "===> Configuring SDL %s...\n" $_arch
-        ./configure --prefix=$_FFPREFIX               \
-                    --build=${_arch}-w64-mingw32      \
-                    --host=${_arch}-w64-mingw32       \
-                    --enable-shared                   \
-                    --disable-static                  \
-                    --enable-fast-install             \
-                    --enable-libc                     \
-                    --enable-audio                    \
-                    --enable-video                    \
-                    --enable-events                   \
-                    --enable-joystick                 \
-                    --enable-cdrom                    \
-                    --enable-threads                  \
-                    --enable-timers                   \
-                    --enable-file                     \
-                    --enable-loadso                   \
-                    --enable-cpuinfo                  \
-                    --enable-assembly                 \
-                    --enable-diskaudio                \
-                    --enable-dummyaudio               \
-                    --enable-nasm                     \
-                    --enable-video-dummy              \
-                    --enable-video-opengl             \
-                    --enable-stdio-redirect           \
-                    --enable-directx                  \
-                    --with-gnu-ld                     \
-                    CFLAGS="${BASE_CFLAGS}"           \
-                    LDFLAGS="${BASE_LDFLAGS} ${_ssp}" \
-                    CPPFLAGS="${BASE_CPPFLAGS}"       \
-                    CXXFLAGS="${BASE_CXXFLAGS}"       \
+        ./configure --prefix=$_FFPREFIX                      \
+                    --build=${_arch}-w64-mingw32             \
+                    --host=${_arch}-w64-mingw32              \
+                    --enable-shared                          \
+                    --disable-static                         \
+                    --enable-fast-install                    \
+                    --enable-libc                            \
+                    --enable-audio                           \
+                    --enable-video                           \
+                    --enable-events                          \
+                    --enable-joystick                        \
+                    --enable-cdrom                           \
+                    --enable-threads                         \
+                    --enable-timers                          \
+                    --enable-file                            \
+                    --enable-loadso                          \
+                    --enable-cpuinfo                         \
+                    --enable-assembly                        \
+                    --enable-diskaudio                       \
+                    --enable-dummyaudio                      \
+                    --enable-nasm                            \
+                    --enable-video-dummy                     \
+                    --enable-video-opengl                    \
+                    --enable-stdio-redirect                  \
+                    --enable-directx                         \
+                    --with-gnu-ld                            \
+                    CFLAGS="${BASE_CFLAGS}"                  \
+                    LDFLAGS="${BASE_CFLAGS} ${BASE_LDFLAGS}" \
+                    CPPFLAGS="${BASE_CPPFLAGS}"              \
+                    CXXFLAGS="${BASE_CXXFLAGS}"              \
             > ${LOGS_DIR}/sdl_config_${_arch}.log 2>&1 || exit 1
         echo "done"
 
@@ -282,25 +280,23 @@ function build_openjpeg2() {
             local _FFPREFIX=/mingw64/local
         fi
 
-        local _ssp="-fstack-protector-strong --param=ssp-buffer-size=4"
-
         printf "===> Configuring OpenJPEG %s...\n" $_arch
-        cmake -G "MSYS Makefiles"                                              \
-              -DCMAKE_INSTALL_PREFIX=$_FFPREFIX                                \
-              -DCMAKE_BUILD_TYPE=Release                                       \
-              -DBUILD_SHARED_LIBS:bool=ON                                      \
-              -DBUILD_DOC:bool=OFF                                             \
-              -DBUILD_MJ2:bool=ON                                              \
-              -DBUILD_JPWL:bool=OFF                                            \
-              -DBUILD_JPIP:bool=OFF                                            \
-              -DBUILD_JPIP_SERVER:bool=OFF                                     \
-              -DBUILD_JP3D:bool=OFF                                            \
-              -DBUILD_JAVA:bool=OFF                                            \
-              -DBUILD_TESTING:BOOL=OFF                                         \
-              -DCMAKE_SYSTEM_PREFIX_PATH=$(pwd -W)                             \
-              -DCMAKE_C_FLAGS_RELEASE:STRING="${BASE_CFLAGS} ${BASE_CPPFLAGS}" \
-              -DCMAKE_SHARED_LINKER_FLAGS:STRING="${BASE_LDFLAGS} ${_ssp}"     \
-              -DCMAKE_VERBOSE_MAKEFILE:bool=ON                                 \
+        cmake -G "MSYS Makefiles"                                                 \
+              -DCMAKE_INSTALL_PREFIX=$_FFPREFIX                                   \
+              -DCMAKE_BUILD_TYPE=Release                                          \
+              -DBUILD_SHARED_LIBS:bool=ON                                         \
+              -DBUILD_DOC:bool=OFF                                                \
+              -DBUILD_MJ2:bool=ON                                                 \
+              -DBUILD_JPWL:bool=OFF                                               \
+              -DBUILD_JPIP:bool=OFF                                               \
+              -DBUILD_JPIP_SERVER:bool=OFF                                        \
+              -DBUILD_JP3D:bool=OFF                                               \
+              -DBUILD_JAVA:bool=OFF                                               \
+              -DBUILD_TESTING:BOOL=OFF                                            \
+              -DCMAKE_SYSTEM_PREFIX_PATH=$(pwd -W)                                \
+              -DCMAKE_C_FLAGS_RELEASE:STRING="${BASE_CFLAGS} ${BASE_CPPFLAGS}"    \
+              -DCMAKE_SHARED_LINKER_FLAGS:STRING="${BASE_CFLAGS} ${BASE_LDFLAGS}" \
+              -DCMAKE_VERBOSE_MAKEFILE:bool=ON                                    \
             > ${LOGS_DIR}/openjpeg2_config_${_arch}.log 2>&1 || exit 1
         echo "done"
 
@@ -483,11 +479,9 @@ function build_libvpx() {
             local _target=x86_64-win64-gcc
         fi
 
-        local _ssp="-fstack-protector-strong --param=ssp-buffer-size=4"
-
         printf "===> Configuring libvpx %s...\n" $_arch
         CFLAGS="${BASE_CFLAGS} ${BASE_CPPFLAGS}" \
-        LDFLAGS="${BASE_LDFLAGS} ${_ssp}"        \
+        LDFLAGS="${BASE_CFLAGS} ${BASE_LDFLAGS}" \
         CXXFLAGS="${BASE_CXXFLAGS}"              \
         ./configure --prefix=$_FFPREFIX          \
                     --target=$_target            \
@@ -536,16 +530,87 @@ function build_libvpx() {
     return 0
 }
 
+# liblzma
+function build_lzma() {
+    clear; echo "Build liblzma git-master"
+
+    if [ ! -d ${HOME}/OSS/xz ]; then
+        cd ${HOME}/OSS
+        git clone http://git.tukaani.org/xz.git
+    fi
+    cd ${HOME}/OSS/xz
+
+    git clean -fdx > /dev/null 2>&1
+    git reset --hard > /dev/null 2>&1
+    git pull > /dev/null 2>&1
+    git_hash > ${LOGS_DIR}/lzma.hash
+    git_rev >> ${LOGS_DIR}/lzma.hash
+
+    ./autogen.sh > /dev/null 2>&1
+
+    local _arch
+    for _arch in ${target_arch[@]}
+    do
+        source cpath $_arch
+
+        if [ "${_arch}" = "i686" ]; then
+            local _FFPREFIX=/mingw32/local
+        else
+            local _FFPREFIX=/mingw64/local
+        fi
+
+        printf "===> Configuring liblzma %s...\n" $_arch
+        ./configure --prefix=$_FFPREFIX          \
+                    --build=${_arch}-w64-mingw32 \
+                    --host=${_arch}-w64-mingw32  \
+                    --enable-threads=vista       \
+                    --enable-assume-ram=16384    \
+                    --disable-xz                 \
+                    --disable-xzdec              \
+                    --disable-lzmadec            \
+                    --disable-lzmainfo           \
+                    --disable-lzma-links         \
+                    --disable-scripts            \
+                    --disable-doc                \
+                    --disable-silent-rules       \
+                    --enable-shared              \
+                    --disable-static             \
+                    --enable-fast-install        \
+                    --disable-nls                \
+                    --disable-rpath              \
+                    --enable-unaligned-access    \
+                    --with-gnu-ld                \
+                    CFLAGS="${BASE_CFLAGS}"      \
+                    LDFLAGS="${BASE_LDFLAGS}"    \
+                    CPPFLAGS="${BASE_CPPFLAGS}"  \
+            > ${LOGS_DIR}/lzma_config_${_arch}.log 2>&1 || exit 1
+        echo "done"
+
+        make clean > /dev/null 2>&1
+        printf "===> Making liblzma %s...\n" $_arch
+        make -j9 -O > ${LOGS_DIR}/lzma_make_${_arch}.log 2>&1 || exit 1
+        echo "done"
+
+        printf "===> Installing liblzma %s...\n" $_arch
+        make install-strip > ${LOGS_DIR}/lzma_install_${_arch}.log 2>&1 || exit 1
+        rm -f ${_FFPREFIX}/lib/liblzma.la
+        echo "done"
+        make distclean > /dev/null 2>&1
+    done
+
+    return 0
+}
+
 # FFmpeg
 function patch_ffmpeg() {
     echo "===> Applying patches to FFmpeg..."
 
-    local -i _N=45
+    local -i _N=54
     local -i _i
-    for _i in `seq 0 ${_N}`
+    for _i in `seq 1 ${_N}`
     do
         local _num=$( printf "%04d" ${_i} )
-        if [ $_i -eq 0 ]; then
+        if [ $_i -eq 1 ]; then
             patch -p1 < ${PATCHES_DIR}/${_num}*.patch > ${LOGS_DIR}/ffmpeg_patches.log 2>&1 || exit 1
         else
             patch -p1 < ${PATCHES_DIR}/${_num}*.patch >> ${LOGS_DIR}/ffmpeg_patches.log 2>&1 || exit 1
@@ -610,6 +675,7 @@ function build_ffmpeg() {
         "libvorbis-0.dll"
         "libvorbisenc-2.dll"
         "libvpx-1.dll"
+        "liblzma-5.dll"
     )
 
     patch_ffmpeg
@@ -618,54 +684,53 @@ function build_ffmpeg() {
     for _arch in ${target_arch[@]}
     do
         if [ "${_arch}" = "i686" ]; then
-            local _archopt="--arch=x86 --cpu=i686"
             local _FFPREFIX=/mingw32/local
             local _VCDIR=$VC32_DIR
         else
-            local _archopt="--arch=x86_64"
             local _FFPREFIX=/mingw64/local
             local _VCDIR=$VC64_DIR
         fi
-
-        local _ssp="-fstack-protector-strong --param=ssp-buffer-size=4"
 
         source cpath $_arch
         PATH=${PATH}:$_VCDIR
         export PATH
 
         printf "===> Configuring FFmpeg %s...\n" $_arch
-        ./configure --prefix=$_FFPREFIX                          \
-                    --enable-version3                            \
-                    --disable-static                             \
-                    --enable-shared                              \
-                    --disable-doc                                \
-                    --enable-avresample                          \
-                    --disable-pthreads                           \
-                    --disable-encoder=vorbis                     \
-                    --disable-decoder=amrnb                      \
-                    --disable-decoder=amrwb                      \
-                    --disable-decoder=jpeg2000                   \
-                    --disable-decoder=libopus                    \
-                    --disable-decoder=libvpx_vp8                 \
-                    --disable-decoder=libvpx_vp9                 \
-                    --disable-decoder=vorbis                     \
-                    --enable-avisynth                            \
-                    --enable-libopencore-amrnb                   \
-                    --enable-libopencore-amrwb                   \
-                    --enable-libopenjpeg                         \
-                    --enable-libopus                             \
-                    --enable-libspeex                            \
-                    --enable-libvorbis                           \
-                    --enable-libvpx                              \
-                    --enable-opengl                              \
-                    ${_archopt}                                  \
-                    --disable-debug                              \
-                    --optflags="${BASE_CFLAGS} ${BASE_CPPFLAGS}" \
-                    --extra-ldflags="${_ssp}"                    \
+        ./configure --prefix=$_FFPREFIX                              \
+                    --enable-version3                                \
+                    --disable-static                                 \
+                    --enable-shared                                  \
+                    --disable-doc                                    \
+                    --enable-avresample                              \
+                    --disable-pthreads                               \
+                    --disable-encoder=vorbis                         \
+                    --disable-decoder=amrnb                          \
+                    --disable-decoder=amrwb                          \
+                    --disable-decoder=jpeg2000                       \
+                    --disable-decoder=libopus                        \
+                    --disable-decoder=libvpx_vp8                     \
+                    --disable-decoder=libvpx_vp9                     \
+                    --disable-decoder=vorbis                         \
+                    --enable-avisynth                                \
+                    --enable-libopencore-amrnb                       \
+                    --enable-libopencore-amrwb                       \
+                    --enable-libopenjpeg                             \
+                    --enable-libopus                                 \
+                    --enable-libspeex                                \
+                    --enable-libvorbis                               \
+                    --enable-libvpx                                  \
+                    --enable-opengl                                  \
+                    --arch=${_arch/i6/x}                             \
+                    --cpu=sandybridge                                \
+                    --disable-debug                                  \
+                    --extra-ldflags="${BASE_CFLAGS} ${BASE_LDFLAGS}" \
+                    --optflags="${BASE_CFLAGS} ${BASE_CPPFLAGS}"     \
             > ${LOGS_DIR}/ffmpeg_config_${_arch}.log 2>&1 || exit 1
         # if linking with MSVC statically, uncomment the following lines
         # sed -i '/HAVE_CLOCK_GETTIME/d' config.h
         # sed -i '/HAVE_NANOSLEEP/d' config.h
+        printf "\nconfigh\n" >> ${LOGS_DIR}/ffmpeg_config_${_arch}.log
+        cat config.h >> ${LOGS_DIR}/ffmpeg_config_${_arch}.log
         echo "done"
 
         make clean > /dev/null 2>&1
@@ -705,6 +770,7 @@ if ${all_build}; then
     build_libspeex
     build_libvorbis
     build_libvpx
+    build_lzma
 fi
 build_ffmpeg
 

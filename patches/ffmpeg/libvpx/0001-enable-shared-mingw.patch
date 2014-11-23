@@ -25,33 +25,33 @@ index 56e9f44..176f2cc 100644
 --- a/build/make/configure.sh
 +++ b/build/make/configure.sh
 @@ -569,11 +569,14 @@ process_common_cmdline() {
-         --libdir=*)
+       --libdir=*)
          libdir="${optval}"
          ;;
-+        --bindir=*)
++      --bindir=*)
 +        bindir="${optval}"
 +        ;;
-         --sdk-path=*)
+       --sdk-path=*)
          [ -d "${optval}" ] || die "Not a directory: ${optval}"
          sdk_path="${optval}"
          ;;
--        --libc|--as|--prefix|--libdir|--sdk-path)
-+        --libc|--as|--prefix|--libdir|--bindir|--sdk-path)
+-      --libc|--as|--prefix|--libdir|--sdk-path)
++      --libc|--as|--prefix|--libdir|--bindir|--sdk-path)
          die "Option ${opt} requires argument"
          ;;
-         --help|-h) show_help
+       --help|-h) show_help
 @@ -600,9 +603,14 @@ post_process_common_cmdline() {
-     prefix="${prefix%/}"
-     libdir="${libdir:-${prefix}/lib}"
-     libdir="${libdir%/}"
-+    bindir="${bindir:-${prefix}/bin}"
-+    bindir="${bindir%/}"
-     if [ "${libdir#${prefix}}" = "${libdir}" ]; then
-         die "Libdir ${libdir} must be a subdirectory of ${prefix}"
-     fi
-+    if [ "${bindir#${prefix}}" = "${bindir}" ]; then
-+        die "Bindir ${bindir} must be a subdirectory of ${prefix}"
-+    fi
+   prefix="${prefix%/}"
+   libdir="${libdir:-${prefix}/lib}"
+   libdir="${libdir%/}"
++  bindir="${bindir:-${prefix}/bin}"
++  bindir="${bindir%/}"
+   if [ "${libdir#${prefix}}" = "${libdir}" ]; then
+     die "Libdir ${libdir} must be a subdirectory of ${prefix}"
+   fi
++  if [ "${bindir#${prefix}}" = "${bindir}" ]; then
++    die "Bindir ${bindir} must be a subdirectory of ${prefix}"
++  fi
  }
  
  

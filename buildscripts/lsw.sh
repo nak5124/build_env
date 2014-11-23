@@ -37,14 +37,12 @@ function build_LSW_common() {
 function build_LSW_aviutl() {
     cd ${HOME}/OSS/lsw/AviUtl
 
-    local _ssp="-fstack-protector-strong --param=ssp-buffer-size=4"
-
     source cpath i686
 
     echo "===> Configuring LSW AviUtl..."
     ./configure --prefix=/mingw32/local                          \
                 --extra-cflags="${BASE_CFLAGS} ${BASE_CPPFLAGS}" \
-                --extra-ldflags="${BASE_LDFLAGS} ${_ssp}"        \
+                --extra-ldflags="${BASE_CFLAGS} ${BASE_LDFLAGS}" \
     > ${LOGS_DIR}/lsw_config_aviutl.log 2>&1 || exit 1
     echo "done"
 
@@ -76,6 +74,7 @@ function build_LSW_aviutl() {
     ln -fs /mingw32/local/bin/libvorbisenc-2.dll /d/encode/aviutl
     ln -fs /mingw32/local/bin/libogg-0.dll /d/encode/aviutl
     ln -fs /mingw32/local/bin/libvpx-1.dll /d/encode/aviutl
+    ln -fs /mingw32/local/bin/liblzma-5.dll /d/encode/aviutl
     echo "done"
 
     return 0
@@ -116,6 +115,7 @@ function build_LSW_avisynth() {
     ln -fs /mingw32/local/bin/libvorbisenc-2.dll /c/AviSynth+/plugins
     ln -fs /mingw32/local/bin/libogg-0.dll /c/AviSynth+/plugins
     ln -fs /mingw32/local/bin/libvpx-1.dll /c/AviSynth+/plugins
+    ln -fs /mingw32/local/bin/liblzma-5.dll /c/AviSynth+/plugins
     ln -fs /mingw64/bin/libwinpthread-1.dll /c/AviSynth+/plugins64
     ln -fs /mingw64/bin/libssp-0.dll /c/AviSynth+/plugins64
     ln -fs /mingw64/bin/libbz2-1.dll /c/AviSynth+/plugins64
@@ -136,6 +136,7 @@ function build_LSW_avisynth() {
     ln -fs /mingw64/local/bin/libvorbisenc-2.dll /c/AviSynth+/plugins64
     ln -fs /mingw64/local/bin/libogg-0.dll /c/AviSynth+/plugins64
     ln -fs /mingw64/local/bin/libvpx-1.dll /c/AviSynth+/plugins64
+    ln -fs /mingw64/local/bin/liblzma-5.dll /c/AviSynth+/plugins64
     echo "done"
 
     return 0
@@ -156,13 +157,11 @@ function build_LSW_vapoursynth() {
             local _LSWPREFIX=/mingw64/local
         fi
 
-        local _ssp="-fstack-protector-strong --param=ssp-buffer-size=4"
-
         printf "===> Configuring LSW VapourSynth %s\n" $_arch
         ./configure --prefix=$_LSWPREFIX                             \
                     --target-os=mingw32                              \
                     --extra-cflags="${BASE_CFLAGS} ${BASE_CPPFLAGS}" \
-                    --extra-ldflags="${BASE_LDFLAGS} ${_ssp}"        \
+                    --extra-ldflags="${BASE_CFLAGS} ${BASE_LDFLAGS}" \
         > ${LOGS_DIR}/lsw_config_VS_${_arch}.log 2>&1 || exit 1
         echo "done"
 
@@ -195,6 +194,7 @@ function build_LSW_vapoursynth() {
             ln -fs /mingw32/local/bin/libvorbisenc-2.dll /c/VapourSynth/plugins32
             ln -fs /mingw32/local/bin/libogg-0.dll /c/VapourSynth/plugins32
             ln -fs /mingw32/local/bin/libvpx-1.dll /c/VapourSynth/plugins32
+            ln -fs /mingw32/local/bin/liblzma-5.dll /c/VapourSynth/plugins32
         else
             cp -fa ./vslsmashsource.dll  /c/VapourSynth/plugins64
             ln -fs /mingw64/bin/libwinpthread-1.dll /c/VapourSynth/plugins64
@@ -217,6 +217,7 @@ function build_LSW_vapoursynth() {
             ln -fs /mingw64/local/bin/libvorbisenc-2.dll /c/VapourSynth/plugins64
             ln -fs /mingw64/local/bin/libogg-0.dll /c/VapourSynth/plugins64
             ln -fs /mingw64/local/bin/libvpx-1.dll /c/VapourSynth/plugins64
+            ln -fs /mingw64/local/bin/liblzma-5.dll /c/VapourSynth/plugins64
         fi
         echo "done"
 

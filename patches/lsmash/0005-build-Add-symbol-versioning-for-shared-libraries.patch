@@ -1,15 +1,29 @@
-From b9704d38795e61645f5ad8aa18afce392b7fd9a2 Mon Sep 17 00:00:00 2001
+From f74e91fe127b9564c80b1bb95e2ea6fb4bfeda4f Mon Sep 17 00:00:00 2001
 From: Yuta NAKAI <nak5124@live.jp>
 Date: Sun, 9 Nov 2014 18:47:53 +0900
 Subject: [PATCH 5/5] build: Add symbol versioning for shared libraries.
 
 ---
+ .gitignore  |  2 ++
  Makefile    | 10 +++++++---
  configure   |  4 ++--
  liblsmash.v | 44 ++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 53 insertions(+), 5 deletions(-)
+ 4 files changed, 55 insertions(+), 5 deletions(-)
  create mode 100644 liblsmash.v
 
+diff --git a/.gitignore b/.gitignore
+index 9ae81bd..4ff6717 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -15,6 +15,8 @@
+ *.rej
+ *.so*
+ *.swp
++*.v
++*.ver
+ .depend
+ .DS_Store
+ config.*
 diff --git a/Makefile b/Makefile
 index 9fad5ae..a1d93f9 100644
 --- a/Makefile
