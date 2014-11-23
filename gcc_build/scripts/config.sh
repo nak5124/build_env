@@ -39,7 +39,7 @@ declare -r DST_DIR=${ROOT_DIR}/dst
 # FLAGS
 declare -r CPPFLAGS_="-D__USE_MINGW_ANSI_STDIO=1 -D_FORTIFY_SOURCE=2"
 declare -r CFLAGS_="-mtune=generic -pipe -Os -foptimize-strlen -fstack-protector-strong --param=ssp-buffer-size=4"
-declare -r CXXFLAGS_="${CFLAGS_}"
+declare -r CXXFLAGS_="${CFLAGS_} -fno-exceptions -fno-rtti"
 declare -r LDFLAGS_="-Wl,-O1,--sort-common,--as-needed"
 declare -r MAKEFLAGS_="-j$(($(nproc)+1)) -O"
 
@@ -47,7 +47,7 @@ declare -r MAKEFLAGS_="-j$(($(nproc)+1)) -O"
 declare -r THREAD_MODEL="posix"
 
 # GCC package revision
-declare -r GCC_PKGREV=1
+declare -r GCC_PKGREV=2
 declare -r GCC_BUILT_DATE=$(date +%Y.%m.%d)
 
 # Version

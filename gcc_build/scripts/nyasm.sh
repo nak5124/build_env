@@ -22,6 +22,21 @@ function download_nasm_src() {
     return 0
 }
 
+# Apply patches.
+function prepare_nasm() {
+    # Apply patches.
+    printf "===> Applying patches to NASM %s...\n" $NASM_VER
+    pushd ${BUILD_DIR}/nyasm/nasm/src/nasm-$NASM_VER > /dev/null
+    if [ ! -f ${BUILD_DIR}/nyasm/nasm/src/nasm-${NASM_VER}/patched_01.marker ]; then
+        patch -p1 -i ${PATCHES_DIR}/nasm/0001-mingw-printf.patch > ${LOGS_DIR}/nyasm/nasm/nasm_patch.log 2>&1 || exit 1
+        touch ${BUILD_DIR}/nyasm/nasm/src/nasm-${NASM_VER}/patched_01.marker
+    fi
+    popd > /dev/null
+    echo "done"
+
+    return 0
+}
+
 # Build and install.
 function build_nasm() {
     clear; printf "Build NASM %s\n" $NASM_VER
@@ -47,6 +62,7 @@ function build_nasm() {
     # Setup.
     if ${_rebuild}; then
         download_nasm_src
+        prepare_nasm
     fi
 
     local _arch
@@ -69,9 +85,6 @@ function build_nasm() {
             # Autoreconf.
             autoreconf -fi > /dev/null 2>&1
 
-            # For building with -fstack-protector*.
-            local _ssp="-fstack-protector-strong --param=ssp-buffer-size=4"
-
             # Configure.
             printf "===> Configuring NASM %s...\n" $_arch
             ./configure                                              \
@@ -79,7 +92,7 @@ function build_nasm() {
                 --build=${_arch}-w64-mingw32                         \
                 --host=${_arch}-w64-mingw32                          \
                 CFLAGS="-march=${_arch/_/-} ${CFLAGS_} ${CPPFLAGS_}" \
-                LDFLAGS="${LDFLAGS_} ${_ssp}"                        \
+                LDFLAGS="${CFLAGS_} ${LDFLAGS_}"                     \
                 > ${LOGS_DIR}/nyasm/nasm/nasm_config_${_arch}.log 2>&1 || exit 1
             echo "done"
 

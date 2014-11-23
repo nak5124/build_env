@@ -1,0 +1,102 @@
+--- gcc-4.9.2/include/ansidecl.h.old    2014-11-16 04:41:56.370956300 +0900
++++ gcc-4.9.2/include/ansidecl.h        2014-11-16 04:44:51.595204600 +0900
+@@ -197,12 +197,16 @@
+    before GCC 3.3, but as of 3.3 we need to add the `nonnull'
+    attribute to retain this behavior.  */
+ #ifndef ATTRIBUTE_PRINTF
+-#define ATTRIBUTE_PRINTF(m, n) __attribute__ ((__format__ (__printf__, m, n))) ATTRIBUTE_NONNULL(m)
+-#define ATTRIBUTE_PRINTF_1 ATTRIBUTE_PRINTF(1, 2)
+-#define ATTRIBUTE_PRINTF_2 ATTRIBUTE_PRINTF(2, 3)
+-#define ATTRIBUTE_PRINTF_3 ATTRIBUTE_PRINTF(3, 4)
+-#define ATTRIBUTE_PRINTF_4 ATTRIBUTE_PRINTF(4, 5)
+-#define ATTRIBUTE_PRINTF_5 ATTRIBUTE_PRINTF(5, 6)
++# ifdef __MINGW32__
++#  define ATTRIBUTE_PRINTF(m, n) __attribute__ ((__format__ (__MINGW_PRINTF_FORMAT, m, n))) ATTRIBUTE_NONNULL(m)
++# else
++#  define ATTRIBUTE_PRINTF(m, n) __attribute__ ((__format__ (__printf__, m, n))) ATTRIBUTE_NONNULL(m)
++# endif /* __MINGW32__ */
++# define ATTRIBUTE_PRINTF_1 ATTRIBUTE_PRINTF(1, 2)
++# define ATTRIBUTE_PRINTF_2 ATTRIBUTE_PRINTF(2, 3)
++# define ATTRIBUTE_PRINTF_3 ATTRIBUTE_PRINTF(3, 4)
++# define ATTRIBUTE_PRINTF_4 ATTRIBUTE_PRINTF(4, 5)
++# define ATTRIBUTE_PRINTF_5 ATTRIBUTE_PRINTF(5, 6)
+ #endif /* ATTRIBUTE_PRINTF */
+ 
+ /* Use ATTRIBUTE_FPTR_PRINTF when the format attribute is to be set on
+@@ -225,7 +229,11 @@
+    NULL format specifier was allowed as of gcc 3.3.  */
+ #ifndef ATTRIBUTE_NULL_PRINTF
+ # if (GCC_VERSION >= 3003)
+-#  define ATTRIBUTE_NULL_PRINTF(m, n) __attribute__ ((__format__ (__printf__, m, n)))
++#  ifdef __MINGW32__
++#   define ATTRIBUTE_NULL_PRINTF(m, n) __attribute__ ((__format__ (__MINGW_PRINTF_FORMAT, m, n)))
++#  else
++#   define ATTRIBUTE_NULL_PRINTF(m, n) __attribute__ ((__format__ (__printf__, m, n)))
++#  endif /* __MINGW32__ */
+ # else
+ #  define ATTRIBUTE_NULL_PRINTF(m, n)
+ # endif /* GNUC >= 3.3 */
+--- gcc-4.9.2/gcc/lto-wrapper.c.old     2014-11-16 03:59:17.688589000 +0900
++++ gcc-4.9.2/gcc/lto-wrapper.c 2014-11-16 04:01:03.737654600 +0900
+@@ -119,7 +119,11 @@
+ 
+ /* Just die. CMSGID is the error message. */
+ 
++#ifdef __MINGW32__
++static void __attribute__ ((format (__MINGW_PRINTF_FORMAT, 1, 2)))
++#else
+ static void __attribute__ ((format (printf, 1, 2)))
++#endif
+ fatal (const char * cmsgid, ...)
+ {
+   va_list ap;
+@@ -137,7 +141,11 @@
+ 
+ /* Die when sys call fails. CMSGID is the error message.  */
+ 
++#ifdef __MINGW32__
++static void __attribute__ ((format (__MINGW_PRINTF_FORMAT, 1, 2)))
++#else
+ static void __attribute__ ((format (printf, 1, 2)))
++#endif
+ fatal_perror (const char *cmsgid, ...)
+ {
+   int e = errno;
+ 
+--- gcc-4.9.2/libgcc/config/libbid/bid_functions.h.old	2014-11-15 13:12:19.458440200 +0900
++++ gcc-4.9.2/libgcc/config/libbid/bid_functions.h	2014-11-15 13:15:50.023483800 +0900
+@@ -124,7 +124,7 @@
+ #define DENORMAL_MODE           0x00000100
+ #define INVALID_MODE            0x00000080
+ 
+-#if defined LINUX || defined __GLIBC__ || defined SUNOS
++#if defined LINUX || defined __GLIBC__ || defined SUNOS || (defined(__MINGW32__) && defined(__USE_MINGW_ANSI_STDIO) && ((__USE_MINGW_ANSI_STDIO + 0) != 0))
+ #define LX16  "%016llx"
+ #define LX    "%llx"
+ #define LD4   "%4llu"
+--- gcc-4.9.2/libgcc/libgcov-driver-system.c.old        2014-11-16 04:36:02.626456900 +0900
++++ gcc-4.9.2/libgcc/libgcov-driver-system.c    2014-11-16 04:36:39.290508500 +0900
+@@ -25,7 +25,11 @@
+ 
+ /* A utility function for outputing errors.  */
+ 
+-static int __attribute__((format(printf, 1, 2)))
++#ifdef __MINGW32__
++static int __attribute__ ((format (__MINGW_PRINTF_FORMAT, 1, 2)))
++#else
++static int __attribute__ ((format (printf, 1, 2)))
++#endif
+ gcov_error (const char *fmt, ...)
+ {
+   int ret;
+--- gcc-4.9.2/lto-plugin/lto-plugin.c.old	2014-11-15 13:25:01.821961000 +0900
++++ gcc-4.9.2/lto-plugin/lto-plugin.c	2014-11-15 13:25:05.705183100 +0900
+@@ -65,7 +65,7 @@
+ 
+ /* We need to use I64 instead of ll width-specifier on native Windows.
+    The reason for this is that older MS-runtimes don't support the ll.  */
+-#ifdef __MINGW32__
++#if defined(__MINGW32__) && (!defined(__USE_MINGW_ANSI_STDIO) || __USE_MINGW_ANSI_STDIO == 0)
+ #define PRI_LL "I64"
+ #else
+ #define PRI_LL "ll"

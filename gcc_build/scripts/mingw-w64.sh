@@ -23,12 +23,17 @@ function prepare_mingw_w64() {
     echo "done"
 
     # Apply a patch
-    printf "===> Applying patches to MinGW-w64 ..."
-    patch -p1 -i ${PATCHES_DIR}/winpthreads/0001-winpthreads-dont-use-fakelibs.patch || exit 1
+    printf "===> Applying patches to MinGW-w64 %s...\n" $MINGW_VER
+    patch -p1 -i ${PATCHES_DIR}/winpthreads/0001-winpthreads-dont-use-fakelibs.patch \
+        > ${LOGS_DIR}/mingw-w64/mingw-w64_patch.log 2>&1 || exit 1
     echo "done"
 
     # Autoreconf.
     printf "===> Autoreconfing MinGW-w64 %s...\n" $MINGW_VER
+    cd ${BUILD_DIR}/mingw-w64/src/mingw-w64-${MINGW_VER}/mingw-w64-headers
+    autoreconf -fi > /dev/null 2>&1
+    cd ${BUILD_DIR}/mingw-w64/src/mingw-w64-${MINGW_VER}/mingw-w64-crt
+    autoreconf -fi > /dev/null 2>&1
     cd ${BUILD_DIR}/mingw-w64/src/mingw-w64-${MINGW_VER}/mingw-w64-libraries/winpthreads
     autoreconf -fi > /dev/null 2>&1
     cd ${BUILD_DIR}/mingw-w64/src/mingw-w64-${MINGW_VER}/mingw-w64-libraries/libmangle
@@ -268,7 +273,7 @@ function build_crt() {
                 ${_libs_conf}                                                  \
                 --disable-libarm32                                             \
                 --enable-wildcard                                              \
-                --enable-warnings=3                                            \
+                --enable-warnings=2                                            \
                 --with-sysroot=${DST_DIR}/mingw${_bitval}/${_arch}-w64-mingw32 \
                 CFLAGS="${_cflags}"                                            \
                 LDFLAGS="${LDFLAGS_}"                                          \

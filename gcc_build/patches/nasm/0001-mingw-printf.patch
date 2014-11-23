@@ -1,0 +1,14 @@
+--- nasm-2.11.06/nasmlib.h.old	2014-11-16 05:03:23.861238200 +0900
++++ nasm-2.11.06/nasmlib.h	2014-11-16 05:04:48.322357600 +0900
+@@ -76,7 +76,11 @@
+ typedef void (*efunc) (int severity, const char *fmt, ...);
+ typedef void (*vefunc) (int severity, const char *fmt, va_list ap);
+ #ifdef __GNUC__
++#ifdef __MINGW32__
++void nasm_error(int severity, const char *fmt, ...) __attribute__((format(__MINGW_PRINTF_FORMAT, 2, 3)));
++#else
+ void nasm_error(int severity, const char *fmt, ...) __attribute__((format(printf, 2, 3)));
++#endif
+ #else
+ void nasm_error(int severity, const char *fmt, ...);
+ #endif

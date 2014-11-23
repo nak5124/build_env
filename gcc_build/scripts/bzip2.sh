@@ -91,9 +91,6 @@ function build_bzip2() {
             PATH=${DST_DIR}/mingw${_bitval}/bin:$PATH
             export PATH
 
-            # For building with -fstack-protector*.
-            local _ssp="-fstack-protector-strong --param=ssp-buffer-size=4"
-
             # Configure.
             printf "===> Configuring bzip2 %s...\n" $_arch
             ../src/bzip2-${BZIP2_VER}/configure                      \
@@ -102,7 +99,7 @@ function build_bzip2() {
                 --host=${_arch}-w64-mingw32                          \
                 --enable-shared                                      \
                 CFLAGS="-march=${_arch/_/-} ${CFLAGS_} ${CPPFLAGS_}" \
-                LDFLAGS="${LDFLAGS_} ${_ssp}"                        \
+                LDFLAGS="${CFLAGS_} ${LDFLAGS_}"                     \
                 > ${LOGS_DIR}/bzip2/bzip2_config_${_arch}.log 2>&1 || exit 1
             echo "done"
 
