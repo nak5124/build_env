@@ -248,7 +248,7 @@ GCC_COLORS='error=01;31;255:warning=01;35;255:note=01;36;255:caret=01;32;255:loc
 export GCC_COLORS
 BASE_CFLAGS="-pipe -march=sandybridge -mtune=generic -Os -foptimize-strlen -fomit-frame-pointer -momit-leaf-frame-pointer -mfpmath=sse -msse4 -fexcess-precision=fast -fno-fast-math -fno-math-errno -fno-signed-zeros -fno-tree-vectorize -fstack-protector-strong --param=ssp-buffer-size=4"
 BASE_CPPFLAGS="-D__USE_MINGW_ANSI_STDIO=1 -D_FORTIFY_SOURCE=2"
-BASE_CXXFLAGS="${BASE_CFLAGS} -fno-exceptions -fno-rtti"
+BASE_CXXFLAGS="${BASE_CFLAGS}"
 BASE_LDFLAGS="-Wl,-s,-O1,--sort-common,--as-needed"
 export BASE_CFLAGS BASE_CPPFLAGS BASE_CXXFLAGS BASE_LDFLAGS
 

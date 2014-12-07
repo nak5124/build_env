@@ -138,6 +138,19 @@ index 0000000..2146145
 +                vc1_update_au_property;
 +        local:  *;
 +};
+diff --git a/cli/muxer.c b/cli/muxer.c
+index d64aa7b..60944d8 100644
+--- a/cli/muxer.c
++++ b/cli/muxer.c
+@@ -21,6 +21,7 @@
+ 
+ /* This file is available under an ISC license. */
+ 
++#define LSMASH_INITIALIZE_CODEC_ID_HERE
+ #include "cli.h"
+ 
+ #include <stdio.h>
+ 
 -- 
 2.1.3
 

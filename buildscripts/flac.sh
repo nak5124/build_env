@@ -74,17 +74,18 @@ function build_libogg() {
         fi
 
         printf "===> Configuring libogg %s...\n" $_arch
-        ./configure --prefix=$_FLPREFIX          \
-                    --build=${_arch}-w64-mingw32 \
-                    --host=${_arch}-w64-mingw32  \
-                    --disable-silent-rules       \
-                    --enable-shared              \
-                    --disable-static             \
-                    --enable-fast-install        \
-                    --with-gnu-ld                \
-                    CFLAGS="${BASE_CFLAGS}"      \
-                    LDFLAGS="${BASE_LDFLAGS}"    \
-                    CPPFLAGS="${BASE_CPPFLAGS}"  \
+        ./configure                      \
+            --prefix=$_FLPREFIX          \
+            --build=${_arch}-w64-mingw32 \
+            --host=${_arch}-w64-mingw32  \
+            --disable-silent-rules       \
+            --enable-shared              \
+            --disable-static             \
+            --enable-fast-install        \
+            --with-gnu-ld                \
+            CFLAGS="${BASE_CFLAGS}"      \
+            LDFLAGS="${BASE_LDFLAGS}"    \
+            CPPFLAGS="${BASE_CPPFLAGS}"  \
             > ${LOGS_DIR}/ogg_config_${_arch}.log 2>&1 || exit 1
         echo "done"
 
@@ -143,24 +144,25 @@ function build_flac() {
         fi
 
         printf "===> Configuring flac %s...\n" $_arch
-        ./configure --prefix=$_FLPREFIX                   \
-                    --build=${_arch}-w64-mingw32          \
-                    --host=${_arch}-w64-mingw32           \
-                    --disable-silent-rules                \
-                    --disable-static                      \
-                    --enable-shared                       \
-                    --enable-fast-install                 \
-                    --disable-doxygen-docs                \
-                    --disable-xmms-plugin                 \
-                    --disable-cpplibs                     \
-                    --disable-rpath                       \
-                    --with-gnu-ld                         \
-                    --with-ogg=$_FLPREFIX                 \
-                    --with-libiconv-prefix=$_MINGW_PREFIX \
-                    CFLAGS="${BASE_CFLAGS}"               \
-                    LDFLAGS="${BASE_LDFLAGS}"             \
-                    CPPFLAGS="${BASE_CPPFLAGS}"           \
-                    CXXFLAGS="${BASE_CXXFLAGS}"           \
+        ./configure                               \
+            --prefix=$_FLPREFIX                   \
+            --build=${_arch}-w64-mingw32          \
+            --host=${_arch}-w64-mingw32           \
+            --disable-silent-rules                \
+            --disable-static                      \
+            --enable-shared                       \
+            --enable-fast-install                 \
+            --disable-doxygen-docs                \
+            --disable-xmms-plugin                 \
+            --disable-cpplibs                     \
+            --disable-rpath                       \
+            --with-gnu-ld                         \
+            --with-ogg=$_FLPREFIX                 \
+            --with-libiconv-prefix=$_MINGW_PREFIX \
+            CFLAGS="${BASE_CFLAGS}"               \
+            LDFLAGS="${BASE_LDFLAGS}"             \
+            CPPFLAGS="${BASE_CPPFLAGS}"           \
+            CXXFLAGS="${BASE_CXXFLAGS}"           \
             > ${LOGS_DIR}/flac_config_${_arch}.log 2>&1 || exit 1
         echo "done"
 

@@ -1,0 +1,12 @@
+diff --git a/common/libavsmash.c b/common/libavsmash.c
+index d5d7836..3141cc4 100644
+--- a/common/libavsmash.c
++++ b/common/libavsmash.c
+@@ -30,6 +30,7 @@ extern "C"
+ {
+ #endif  /* __cplusplus */
+ #define LSMASH_DEMUXER_ENABLED
++#define LSMASH_INITIALIZE_CODEC_ID_HERE
+ #include <lsmash.h>
+ #include <libavformat/avformat.h>
+ #include <libavcodec/avcodec.h>

@@ -86,11 +86,12 @@ function build_lsmash() {
         export PATH
 
         printf "===> Configuring L-SMASH %s...\n" $_arch
-        ./configure --prefix=$_LSPREFIX                              \
-                    --disable-static                                 \
-                    --enable-shared                                  \
-                    --extra-cflags="${BASE_CFLAGS} ${BASE_CPPFLAGS}" \
-                    --extra-ldflags="${BASE_CFLAGS} ${BASE_LDFLAGS}" \
+        ./configure                                          \
+            --prefix=$_LSPREFIX                              \
+            --disable-static                                 \
+            --enable-shared                                  \
+            --extra-cflags="${BASE_CFLAGS} ${BASE_CPPFLAGS}" \
+            --extra-ldflags="${BASE_CFLAGS} ${BASE_LDFLAGS}" \
             > ${LOGS_DIR}/lsmash_config_${_arch}.log 2>&1 || exit 1
         echo "done"
 

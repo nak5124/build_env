@@ -23,9 +23,10 @@ function build_LSW_common() {
     git_hash > ${LOGS_DIR}/lsw.hash
     git_rev >> ${LOGS_DIR}/lsw.hash
 
-    patch -p1 < ${PATCHES_DIR}/0001-vslsmashsource-Don-t-print-any-info-from-libav-ffmpe.patch \
+    patch -p1 -i ${PATCHES_DIR}/0001-vslsmashsource-Don-t-print-any-info-from-libav-ffmpe.patch \
         > ${LOGS_DIR}/lsw_patches.log 2>&1 || exit 1
-    patch -p1 < ${PATCHES_DIR}/0002-lsmashsource.diff >> ${LOGS_DIR}/lsw_patches.log 2>&1 || exit 1
+    patch -p1 -i ${PATCHES_DIR}/0002-lsmashsource.diff >> ${LOGS_DIR}/lsw_patches.log 2>&1 || exit 1
+    patch -p1 -i ${PATCHES_DIR}/0003-lsmash-initialize-codec-id-here.patch >> ${LOGS_DIR}/lsw_patches.log 2>&1 || exit 1
 
     cp -fa ${PATCHES_DIR}/build_2013.bat ./AviSynth
     cp -fa ${PATCHES_DIR}/build_2013_x64.bat ./AviSynth
@@ -40,9 +41,11 @@ function build_LSW_aviutl() {
     source cpath i686
 
     echo "===> Configuring LSW AviUtl..."
-    ./configure --prefix=/mingw32/local                          \
-                --extra-cflags="${BASE_CFLAGS} ${BASE_CPPFLAGS}" \
-                --extra-ldflags="${BASE_CFLAGS} ${BASE_LDFLAGS}" \
+    ./configure                                          \
+        --libdir=/mingw32/local/lib                      \
+        --includedir=/mingw32/local/include              \
+        --extra-cflags="${BASE_CFLAGS} ${BASE_CPPFLAGS}" \
+        --extra-ldflags="${BASE_CFLAGS} ${BASE_LDFLAGS}" \
     > ${LOGS_DIR}/lsw_config_aviutl.log 2>&1 || exit 1
     echo "done"
 
@@ -158,10 +161,12 @@ function build_LSW_vapoursynth() {
         fi
 
         printf "===> Configuring LSW VapourSynth %s\n" $_arch
-        ./configure --prefix=$_LSWPREFIX                             \
-                    --target-os=mingw32                              \
-                    --extra-cflags="${BASE_CFLAGS} ${BASE_CPPFLAGS}" \
-                    --extra-ldflags="${BASE_CFLAGS} ${BASE_LDFLAGS}" \
+        ./configure                                          \
+            --libdir=${_LSWPREFIX}/lib                       \
+            --includedir=${_LSWPREFIX}/include               \
+            --target-os=mingw32                              \
+            --extra-cflags="${BASE_CFLAGS} ${BASE_CPPFLAGS}" \
+            --extra-ldflags="${BASE_CFLAGS} ${BASE_LDFLAGS}" \
         > ${LOGS_DIR}/lsw_config_VS_${_arch}.log 2>&1 || exit 1
         echo "done"
 

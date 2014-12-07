@@ -72,19 +72,20 @@ function build_libopus() {
         fi
 
         printf "===> Configuring libopus %s...\n" $_arch
-        ./configure --prefix=$_OPPREFIX          \
-                    --build=${_arch}-w64-mingw32 \
-                    --host=${_arch}-w64-mingw32  \
-                    --disable-silent-rules       \
-                    --enable-shared              \
-                    --disable-static             \
-                    --enable-fast-install        \
-                    --disable-doc                \
-                    --disable-extra-programs     \
-                    --with-gnu-ld                \
-                    CFLAGS="${BASE_CFLAGS}"      \
-                    LDFLAGS="${BASE_LDFLAGS}"    \
-                    CPPFLAGS="${BASE_CPPFLAGS}"  \
+        ./configure                      \
+            --prefix=$_OPPREFIX          \
+            --build=${_arch}-w64-mingw32 \
+            --host=${_arch}-w64-mingw32  \
+            --disable-silent-rules       \
+            --enable-shared              \
+            --disable-static             \
+            --enable-fast-install        \
+            --disable-doc                \
+            --disable-extra-programs     \
+            --with-gnu-ld                \
+            CFLAGS="${BASE_CFLAGS}"      \
+            LDFLAGS="${BASE_LDFLAGS}"    \
+            CPPFLAGS="${BASE_CPPFLAGS}"  \
             > ${LOGS_DIR}/opus_config_${_arch}.log 2>&1 || exit 1
         echo "done"
 
@@ -142,14 +143,15 @@ function build_tools() {
         fi
 
         printf "===> Configuring opus-tools %s...\n" $_arch
-        ./configure --prefix=$_OPPREFIX          \
-                    --build=${_arch}-w64-mingw32 \
-                    --host=${_arch}-w64-mingw32  \
-                    --disable-silent-rules       \
-                    --enable-sse                 \
-                    CFLAGS="${BASE_CFLAGS}"      \
-                    LDFLAGS="${BASE_LDFLAGS}"    \
-                    CPPFLAGS="${BASE_CPPFLAGS}"  \
+        ./configure                      \
+            --prefix=$_OPPREFIX          \
+            --build=${_arch}-w64-mingw32 \
+            --host=${_arch}-w64-mingw32  \
+            --disable-silent-rules       \
+            --enable-sse                 \
+            CFLAGS="${BASE_CFLAGS}"      \
+            LDFLAGS="${BASE_LDFLAGS}"    \
+            CPPFLAGS="${BASE_CPPFLAGS}"  \
             > ${LOGS_DIR}/tools_config_${_arch}.log 2>&1 || exit 1
         echo "done"
 
