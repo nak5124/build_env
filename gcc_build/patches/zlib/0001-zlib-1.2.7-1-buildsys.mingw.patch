@@ -205,7 +205,7 @@
  OBJC='$(OBJZ) $(OBJG)'
  PIC_OBJC='$(PIC_OBJZ) $(PIC_OBJG)'
  
-@@ -191,14 +191,24 @@
+@@ -191,14 +191,25 @@
          LDSHARED=${LDSHARED-"$cc -shared -Wl,-soname,libz.so.1,--version-script,zlib.map"}
          LDCONFIG="ldconfig -m" ;;
    CYGWIN* | Cygwin* | cygwin* | OS/2*)
@@ -225,12 +225,13 @@
 -        leave 1
 -        LDSHARED=${LDSHARED-"$cc -shared"}
 -        LDSHAREDLIBC=""
++       CFLAGS="${CFLAGS} -D_FILE_OFFSET_BITS=64"
 +       SFLAGS="${CFLAGS}"
 +       LDFLAGS="-L. ${old_ldflags}"
 +       shared_ext=".dll"
 +       SHAREDLIB=libz-$VER1$shared_ext
 +		IMPORTLIB='libz.dll.a'
-+		LDSHARED=${LDSHARED-"$cc -shared -Wl,-export-all -Wl,--enable-auto-image-base -Wl,--out-implib=${IMPORTLIB}"}
++		LDSHARED=${LDSHARED-"$cc -shared -Wl,-export-all -Wl,--disable-auto-image-base -Wl,--out-implib=${IMPORTLIB}"}
 +		LDSHAREDLIBC=''
          EXE='.exe' ;;
    QNX*)  # This is for QNX6. I suppose that the QNX rule below is for QNX2,QNX4

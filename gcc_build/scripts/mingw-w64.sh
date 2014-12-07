@@ -26,6 +26,10 @@ function prepare_mingw_w64() {
     printf "===> Applying patches to MinGW-w64 %s...\n" $MINGW_VER
     patch -p1 -i ${PATCHES_DIR}/winpthreads/0001-winpthreads-dont-use-fakelibs.patch \
         > ${LOGS_DIR}/mingw-w64/mingw-w64_patch.log 2>&1 || exit 1
+    patch -p1 -i ${PATCHES_DIR}/headers/0001-Revert-time.h-Restore-POSIX-guards-around-_r-functio.patch \
+        >> ${LOGS_DIR}/mingw-w64/mingw-w64_patch.log 2>&1 || exit 1
+    patch -p1 -i ${PATCHES_DIR}/headers/0002-Add-strerror_r.patch >> ${LOGS_DIR}/mingw-w64/mingw-w64_patch.log 2>&1 || exit 1
+    patch -p1 -i ${PATCHES_DIR}/crt/0001-Add-libmsvcr120.patch >> ${LOGS_DIR}/mingw-w64/mingw-w64_patch.log 2>&1 || exit 1
     echo "done"
 
     # Autoreconf.
@@ -158,7 +162,7 @@ function build_threads() {
             export PATH
 
             # Don't pass -fstack-protector* to CFLAGS.
-            local _cflags="-march=${_arch/_/-} ${CFLAGS_/-fstack-protector-strong --param=ssp-buffer-size=4/}"
+            local _cflags="${CFLAGS_/-fstack-protector-strong --param=ssp-buffer-size=4/}"
 
             # Configure.
             printf "===> Configuring MinGW-w64 winpthreads %s...\n" $_arch
@@ -254,14 +258,12 @@ function build_crt() {
             # Arch specific config option.
             if [ "${_arch}" = "i686" ]; then
                 local _libs_conf="--enable-lib32 --disable-lib64"
-                local _windres_cmd="windres -F pe-i386"
             else
                 local _libs_conf="--disable-lib32 --enable-lib64"
-                local _windres_cmd="windres -F pe-x86-64"
             fi
             # Don't pass -fstack-protector* to CFLAGS/CXXFLAGS.
-            local _cflags="-march=${_arch/_/-} ${CFLAGS_/-fstack-protector-strong --param=ssp-buffer-size=4/}"
-            local _cxxflags="-march=${_arch/_/-} ${CXXFLAGS_/-fstack-protector-strong --param=ssp-buffer-size=4/}"
+            local _cflags="${CFLAGS_/-fstack-protector-strong --param=ssp-buffer-size=4/}"
+            local _cxxflags="${CXXFLAGS_/-fstack-protector-strong --param=ssp-buffer-size=4/}"
 
             # Configure.
             printf "===> Configuring MinGW-w64 crt %s...\n" $_arch
@@ -281,60 +283,17 @@ function build_crt() {
                 > ${LOGS_DIR}/mingw-w64/crt/crt_config_${_arch}.log 2>&1 || exit 1
             echo "done"
 
+            # Make.
             printf "===> Making MinGW-w64 crt %s...\n" $_arch
             # Setting -j$(($(nproc)+1)) sometimes makes error.
             make > ${LOGS_DIR}/mingw-w64/crt/crt_make_${_arch}.log 2>&1 || exit 1
             echo "done"
 
-            # Make.
+            # Install.
             printf "===> Installing MinGW-w64 crt %s...\n" $_arch
             # MinGW-w64 crt has many files, so not using strip_files but install-strip.
             make DESTDIR=${PREIN_DIR}/mingw-w64/crt install-strip \
                 > ${LOGS_DIR}/mingw-w64/crt/crt_install_${_arch}.log 2>&1 || exit 1
-            echo "done"
-
-            # Make default-manifest.o.
-            printf "===> Making windows-default-manifest %s...\n" $_arch
-            mkdir -p ${BUILD_DIR}/mingw-w64/crt/build_${_arch}/build_manifest
-            cd ${BUILD_DIR}/mingw-w64/crt/build_${_arch}/build_manifest
-            cat > ${BUILD_DIR}/mingw-w64/crt/build_${_arch}/build_manifest/default-manifest.rc << "__EOF__"
-LANGUAGE 0, 0
-
-/* CREATEPROCESS_MANIFEST_RESOURCE_ID RT_MANIFEST MOVEABLE PURE DISCARDABLE */
-1 24 MOVEABLE PURE DISCARDABLE
-BEGIN
-  "<?xml version=""1.0"" encoding=""UTF-8"" standalone=""yes""?>\n"
-  "<assembly xmlns=""urn:schemas-microsoft-com:asm.v1"" manifestVersion=""1.0"">\n"
-  "  <trustInfo xmlns=""urn:schemas-microsoft-com:asm.v3"">\n"
-  "    <security>\n"
-  "      <requestedPrivileges>\n"
-  "        <requestedExecutionLevel level=""asInvoker""/>\n"
-  "      </requestedPrivileges>\n"
-  "    </security>\n"
-  "  </trustInfo>\n"
-  "  <compatibility xmlns=""urn:schemas-microsoft-com:compatibility.v1"">\n"
-  "    <application>\n"
-  "      <!--The ID below indicates application support for Windows 7 -->\n"
-  "      <supportedOS Id=""{35138b9a-5d96-4fbd-8e2d-a2440225f93a}""/>\n"
-  "      <!--The ID below indicates application support for Windows 8 -->\n"
-  "      <supportedOS Id=""{4a2f28e3-53b9-4441-ba9c-d69d4a4a6e38}""/>\n"
-  "      <!--The ID below indicates application support for Windows 8.1 -->\n"
-  "      <supportedOS Id=""{1f676c76-80e1-4239-95bb-83d0f6d0da78}""/> \n"
-  "      <!--The ID below indicates application support for Windows 10 -->\n"
-  "      <supportedOS Id=""{8e0f7a12-bfb3-4fe8-b9a5-48fd50a15a9a}""/> \n"
-  "    </application>\n"
-  "  </compatibility>\n"
-  "</assembly>\n"
-END
-
-__EOF__
-            ${_windres_cmd} default-manifest.rc -o default-manifest.o
-            echo "done"
-
-            # Install default-manifest.o.
-            printf "===> Installing windows-default-manifest %s...\n" $_arch
-            /usr/bin/install -c -m 644 default-manifest.o \
-                ${PREIN_DIR}/mingw-w64/crt/mingw${_bitval}/${_arch}-w64-mingw32/lib/default-manifest.o
             echo "done"
         fi
 
@@ -388,7 +347,7 @@ function build_mangle() {
             export PATH
 
             # Don't pass -fstack-protector* to CFLAGS.
-            local _cflags="-march=${_arch/_/-} ${CFLAGS_/-fstack-protector-strong --param=ssp-buffer-size=4/}"
+            local _cflags="${CFLAGS_/-fstack-protector-strong --param=ssp-buffer-size=4/}"
 
             # Configure.
             printf "===> Configuring MinGW-w64 libmangle %s...\n" $_arch
@@ -493,7 +452,7 @@ function build_tools() {
                     --host=${_arch}-w64-mingw32                                        \
                     --disable-silent-rules                                             \
                     ${_mangle}                                                         \
-                    CFLAGS="-march=${_arch/_/-} ${CFLAGS_}"                            \
+                    CFLAGS="${CFLAGS_}"                                                \
                     LDFLAGS="${LDFLAGS_}"                                              \
                     CPPFLAGS="${CPPFLAGS_}"                                            \
                     > ${LOGS_DIR}/mingw-w64/tools/${_tool}_config_${_arch}.log 2>&1 || exit 1

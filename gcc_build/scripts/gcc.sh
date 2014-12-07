@@ -144,6 +144,14 @@ function prepare_gcc() {
         patch -p1 -i ${PATCHES_DIR}/gcc/0020-mingw-print.patch >> ${LOGS_DIR}/gcc/gcc_patch.log 2>&1 || exit 1
         touch ${BUILD_DIR}/gcc/src/gcc-${GCC_VER}/patched_22.marker
     fi
+    if [ ! -f ${BUILD_DIR}/gcc/src/gcc-${GCC_VER}/patched_23.marker ]; then
+        patch -p1 -i ${PATCHES_DIR}/gcc/0021-add-prefix-bindir-to-exec_prefix.patch \
+            >> ${LOGS_DIR}/gcc/gcc_patch.log 2>&1 || exit 1
+        touch ${BUILD_DIR}/gcc/src/gcc-${GCC_VER}/patched_23.marker
+    fi
+    # Disable automatic image base calculation.
+    sed -i 's/enable-auto-image-base/disable-auto-image-base/g' {gcc,libbacktrace,libssp,libstdc++-v3,lto-plugin}/configure
+    perl -pi -e 's/_stat\n/_stat64\n/g' ltmain.sh
     popd > /dev/null
     echo "done"
 
@@ -332,6 +340,7 @@ function build_gcc() {
             mkdir -p ${BUILD_DIR}/gcc/build_${_arch}/include/../lib
             ln -fs ${DST_DIR}/mingw${_bitval}/{include,${_arch}-w64-mingw32/include}/* ${BUILD_DIR}/gcc/build_${_arch}/include
             ln -fs ${DST_DIR}/mingw${_bitval}/{lib,${_arch}-w64-mingw32/lib}/* ${BUILD_DIR}/gcc/build_${_arch}/lib
+            ln -fs /mingw${_bitval}/lib/default-manifest.o ${BUILD_DIR}/gcc/build_${_arch}/lib
 
             # For building with -fstack-protector*
             local _old_gcc_ver=$(gcc -dumpversion)
@@ -341,8 +350,10 @@ function build_gcc() {
             # Arch specific config option.
             if [ "${_arch}" = "i686" ]; then
                 local _ehconf="--disable-sjlj-exceptions --with-dwarf2"
+                local _windres_cmd="windres -F pe-i386"
             else
                 local _ehconf=""
+                local _windres_cmd="windres -F pe-x86-64"
             fi
 
             # Don't search build toolchain include dir.
@@ -354,72 +365,93 @@ function build_gcc() {
             # Don't use win native symlink during building GCC.
             unset MSYS
 
+            # Force to use built-in specs
+            if [ -f /mingw${_bitval}/lib/gcc/${_arch}-w64-mingw32/${_old_gcc_ver}/specs ]; then
+                mv -f /mingw${_bitval}/lib/gcc/${_arch}-w64-mingw32/${_old_gcc_ver}/specs \
+                    /mingw${_bitval}/lib/gcc/${_arch}-w64-mingw32/${_old_gcc_ver}/specs.bak
+            fi
+
             # Configure.
             printf "===> Configuring GCC %s...\n" $_arch
             ../src/gcc-${GCC_VER}/configure                                       \
                 --prefix=/mingw$_bitval                                           \
-                --with-local-prefix=/mingw${_bitval}/local                        \
-                --with-build-sysroot=${DST_DIR}/mingw$_bitval                     \
-                --with-native-system-header-dir=${_nshdir}                        \
-                --with-gxx-include-dir=/mingw${_bitval}/include/c++/${GCC_VER/-*} \
                 --libexecdir=/mingw${_bitval}/lib                                 \
+                --program-suffix=-${GCC_VER/-*}                                   \
                 --build=${_arch}-w64-mingw32                                      \
                 --host=${_arch}-w64-mingw32                                       \
                 --target=${_arch}-w64-mingw32                                     \
-                --enable-shared                                                   \
-                --enable-static                                                   \
-                --disable-multilib                                                \
-                --enable-languages=c,c++,lto                                      \
-                --enable-threads=$THREAD_MODEL                                    \
-                --enable-libstdcxx-time=yes                                       \
-                ${_ehconf}                                                        \
-                --enable-lto                                                      \
-                --enable-checking=release                                         \
-                --enable-version-specific-runtime-libs                            \
-                --enable-fully-dynamic-string                                     \
+                --enable-ld=default                                               \
+                --disable-libquadmath                                             \
                 --disable-libgomp                                                 \
                 --enable-libssp                                                   \
-                --disable-libquadmath                                             \
                 --enable-bootstrap                                                \
-                --disable-win32-registry                                          \
-                --enable-nls                                                      \
-                --disable-rpath                                                   \
-                --disable-werror                                                  \
-                --disable-symvers                                                 \
-                --disable-libstdcxx-pch                                           \
-                --disable-libstdcxx-debug                                         \
-                --with-{gmp,mpfr,mpc,isl,cloog}=${DST_DIR}/mingw$_bitval          \
                 --disable-isl-version-check                                       \
                 --disable-cloog-version-check                                     \
-                --enable-cloog-backend=isl                                        \
-                --enable-graphite                                                 \
-                --with-lib{iconv,intl}-prefix=${DST_DIR}/mingw$_bitval            \
-                --with-system-zlib                                                \
-                --with-arch=${_arch/_/-}                                          \
-                --with-tune=generic                                               \
-                --with-pkgversion="${_pkgver}"                                    \
-                --with-gnu-as                                                     \
-                --with-gnu-ld                                                     \
-                --program-suffix=-${GCC_VER/-*}                                   \
+                --enable-lto                                                      \
+                --enable-stage1-checking=yes                                      \
+                --disable-werror                                                  \
+                --disable-multilib                                                \
+                --enable-shared                                                   \
+                --enable-static                                                   \
+                --enable-fast-install                                             \
+                --disable-build-format-warnings                                   \
+                --enable-checking=release                                         \
+                --enable-decimal-float=bid                                        \
+                --enable-threads=$THREAD_MODEL                                    \
+                --enable-languages=c,c++,lto                                      \
+                --disable-rpath                                                   \
+                --disable-win32-registry                                          \
+                --enable-version-specific-runtime-libs                            \
+                --enable-nls                                                      \
+                --disable-symvers                                                 \
+                --disable-libstdcxx-pch                                           \
+                --enable-cstdio=stdio                                             \
+                --enable-clocale=generic                                          \
+                --enable-libstdcxx-allocator=new                                  \
+                --enable-cheaders=c_global                                        \
+                --enable-long-long                                                \
+                --enable-wchar_t                                                  \
+                --enable-c99                                                      \
+                --disable-libstdcxx-debug                                         \
+                --enable-fully-dynamic-string                                     \
+                --enable-extern-template                                          \
+                --enable-libstdcxx-time=yes                                       \
+                --enable-libstdcxx-threads                                        \
+                --with-{mpc,mpfr,gmp,cloog,isl}=${DST_DIR}/mingw$_bitval          \
                 --with-stage1-ldflags="${_stage1_ldflags}"                        \
+                --with-build-sysroot=${DST_DIR}/mingw$_bitval                     \
+                --with-gnu-ld                                                     \
+                --with-local-prefix=/mingw${_bitval}/local                        \
+                --with-gxx-include-dir=/mingw${_bitval}/include/c++/${GCC_VER/-*} \
+                --with-gnu-as                                                     \
+                ${_ehconf}                                                        \
+                --with-native-system-header-dir=${_nshdir}                        \
+                --with-pkgversion="${_pkgver}"                                    \
+                --with-lib{iconv,intl}-prefix=${DST_DIR}/mingw$_bitval            \
+                --with-plugin-ld=ld.bfd                                           \
+                --with-system-zlib                                                \
+                --with-diagnostics-color=auto-if-env                              \
+                --with-arch=x86-64                                                \
+                --with-tune=generic                                               \
+                --with-fpmath=sse                                                 \
                 > ${LOGS_DIR}/gcc/gcc_config_${_arch}.log 2>&1 || exit 1
             echo "done"
 
             # Make.
             printf "===> Making GCC %s...\n" $_arch
             # Setting -j$(($(nproc)+1)) sometimes makes error.
-            make                                                                    \
-                CPPFLAGS="${CPPFLAGS_}"                                             \
-                CPPFLAGS_FOR_TARGET="${CPPFLAGS_}"                                  \
-                CFLAGS="-march=${_arch/_/-} ${CFLAGS_} ${CPPFLAGS_}"                \
-                CFLAGS_FOR_TARGET="-march=${_arch/_/-} ${CFLAGS_} ${CPPFLAGS_}"     \
-                BOOT_CFLAGS="-march=${_arch/_/-} ${CFLAGS_} ${CPPFLAGS_}"           \
-                CXXFLAGS="-march=${_arch/_/-} ${CXXFLAGS_} ${CPPFLAGS_}"            \
-                CXXFLAGS_FOR_TARGET="-march=${_arch/_/-} ${CXXFLAGS_} ${CPPFLAGS_}" \
-                BOOT_CXXFLAGS="-march=${_arch/_/-} ${CXXFLAGS_} ${CPPFLAGS_}"       \
-                LDFLAGS="${LDFLAGS_}"                                               \
-                LDFLAGS_FOR_TARGET="${LDFLAGS_}"                                    \
-                BOOT_LDFLAGS="${LDFLAGS_}"                                          \
+            make                                                \
+                CPPFLAGS="${CPPFLAGS_}"                         \
+                CPPFLAGS_FOR_TARGET="${CPPFLAGS_}"              \
+                CFLAGS="${CFLAGS_} ${CPPFLAGS_}"                \
+                CFLAGS_FOR_TARGET="${CFLAGS_} ${CPPFLAGS_}"     \
+                BOOT_CFLAGS="${CFLAGS_} ${CPPFLAGS_}"           \
+                CXXFLAGS="${CXXFLAGS_} ${CPPFLAGS_}"            \
+                CXXFLAGS_FOR_TARGET="${CXXFLAGS_} ${CPPFLAGS_}" \
+                BOOT_CXXFLAGS="${CXXFLAGS_} ${CPPFLAGS_}"       \
+                LDFLAGS="${LDFLAGS_}"                           \
+                LDFLAGS_FOR_TARGET="${LDFLAGS_}"                \
+                BOOT_LDFLAGS="${LDFLAGS_}"                      \
                 bootstrap > ${LOGS_DIR}/gcc/gcc_make_${_arch}.log 2>&1 || exit 1
             echo "done"
 
@@ -437,11 +469,63 @@ function build_gcc() {
             remove_la_files   ${PREIN_DIR}/gcc/mingw$_bitval
             # Strip files.
             strip_files ${PREIN_DIR}/gcc/mingw$_bitval
+            # Modify hard coded file PATH.
+            sed -i "s|${DST_DIR//\//\\/}||g" \
+                ${PREIN_DIR}/gcc/mingw${_bitval}/lib/gcc/${_arch}-w64-mingw32/${GCC_VER/-*}/install-tools/mkheaders.conf
+            echo "done"
+
+            # Make default-manifest.o.
+            printf "===> Making windows-default-manifest %s...\n" $_arch
+            mkdir -p ${BUILD_DIR}/gcc/build_${_arch}/build_manifest
+            cd ${BUILD_DIR}/gcc/build_${_arch}/build_manifest
+            cat > ${BUILD_DIR}/gcc/build_${_arch}/build_manifest/default-manifest.rc << "__EOF__"
+LANGUAGE 0, 0
+
+/* CREATEPROCESS_MANIFEST_RESOURCE_ID RT_MANIFEST MOVEABLE PURE DISCARDABLE */
+1 24 MOVEABLE PURE DISCARDABLE
+BEGIN
+  "<?xml version=""1.0"" encoding=""UTF-8"" standalone=""yes""?>\n"
+  "<assembly xmlns=""urn:schemas-microsoft-com:asm.v1"" manifestVersion=""1.0"">\n"
+  "  <trustInfo xmlns=""urn:schemas-microsoft-com:asm.v3"">\n"
+  "    <security>\n"
+  "      <requestedPrivileges>\n"
+  "        <requestedExecutionLevel level=""asInvoker""/>\n"
+  "      </requestedPrivileges>\n"
+  "    </security>\n"
+  "  </trustInfo>\n"
+  "  <compatibility xmlns=""urn:schemas-microsoft-com:compatibility.v1"">\n"
+  "    <application>\n"
+  "      <!--The ID below indicates application support for Windows 7 -->\n"
+  "      <supportedOS Id=""{35138b9a-5d96-4fbd-8e2d-a2440225f93a}""/>\n"
+  "      <!--The ID below indicates application support for Windows 8 -->\n"
+  "      <supportedOS Id=""{4a2f28e3-53b9-4441-ba9c-d69d4a4a6e38}""/>\n"
+  "      <!--The ID below indicates application support for Windows 8.1 -->\n"
+  "      <supportedOS Id=""{1f676c76-80e1-4239-95bb-83d0f6d0da78}""/> \n"
+  "      <!--The ID below indicates application support for Windows 10 -->\n"
+  "      <supportedOS Id=""{8e0f7a12-bfb3-4fe8-b9a5-48fd50a15a9a}""/> \n"
+  "    </application>\n"
+  "  </compatibility>\n"
+  "</assembly>\n"
+END
+
+__EOF__
+            ${_windres_cmd} default-manifest.rc -o default-manifest.o
+            echo "done"
+
+            # Install default-manifest.o.
+            printf "===> Installing windows-default-manifest %s...\n" $_arch
+            /usr/bin/install -c -m 644 default-manifest.o ${PREIN_DIR}/gcc/mingw${_bitval}/lib/default-manifest.o
             echo "done"
 
             # Enable win native symlink.
             MSYS=winsymlinks:nativestrict
             export MSYS
+
+            # Restore specs.
+            if [ -f /mingw${_bitval}/lib/gcc/${_arch}-w64-mingw32/${_old_gcc_ver}/specs.bak ]; then
+                mv -f /mingw${_bitval}/lib/gcc/${_arch}-w64-mingw32/${_old_gcc_ver}/specs.bak \
+                    /mingw${_bitval}/lib/gcc/${_arch}-w64-mingw32/${_old_gcc_ver}/specs
+            fi
 
             # Create symlinks.
             printf "===> Creating symlinks %s...\n" $_arch

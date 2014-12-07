@@ -1,0 +1,46 @@
+--- libiconv-1.14/build-aux/ltmain.sh.old	2014-12-02 16:47:21.397184900 +0900
++++ libiconv-1.14/build-aux/ltmain.sh	2014-12-02 16:47:59.430238300 +0900
+@@ -5834,13 +5834,18 @@
+       # -m*, -t[45]*, -txscale* architecture-specific flags for GCC
+       # -F/path              path to uninstalled frameworks, gcc on darwin
+       # -p, -pg, --coverage, -fprofile-*  profiling flags for GCC
++      # -fstack-protector*   stack protector flags for GCC
+       # @file                GCC response files
+       # -tp=*                Portland pgcc target processor selection
+       # --sysroot=*          for sysroot support
+-      # -O*, -flto*, -fwhopr*, -fuse-linker-plugin GCC link-time optimization
++      # -O*, -g*, -flto*, -fwhopr*, -fuse-linker-plugin GCC link-time optimization
++      # -stdlib=*            select c++ std lib with clang
++      # -{shared,static}-libgcc, -static-{libgfortran|libstdc++}
++      #                      link against specified runtime library
+       -64|-mips[0-9]|-r[0-9][0-9]*|-xarch=*|-xtarget=*|+DA*|+DD*|-q*|-m*| \
+       -t[45]*|-txscale*|-p|-pg|--coverage|-fprofile-*|-F*|@*|-tp=*|--sysroot=*| \
+-      -O*|-flto*|-fwhopr*|-fuse-linker-plugin)
++      -O*|-g*|-flto*|-fwhopr*|-fuse-linker-plugin|-fstack-protector*|--param=*|-fgnu-tm|-stdlib=*| \
++      -shared-libgcc|-static-libgcc|-static-libgfortran|-static-libstdc++)
+         func_quote_for_eval "$arg"
+ 	arg="$func_quote_for_eval_result"
+         func_append compile_command " $arg"
+--- libiconv-1.14/libcharset/build-aux/ltmain.sh.old	2014-12-02 16:49:34.678372100 +0900
++++ libiconv-1.14/libcharset/build-aux/ltmain.sh	2014-12-02 16:51:44.338554200 +0900
+@@ -5834,13 +5834,18 @@
+       # -m*, -t[45]*, -txscale* architecture-specific flags for GCC
+       # -F/path              path to uninstalled frameworks, gcc on darwin
+       # -p, -pg, --coverage, -fprofile-*  profiling flags for GCC
++      # -fstack-protector*   stack protector flags for GCC
+       # @file                GCC response files
+       # -tp=*                Portland pgcc target processor selection
+       # --sysroot=*          for sysroot support
+-      # -O*, -flto*, -fwhopr*, -fuse-linker-plugin GCC link-time optimization
++      # -O*, -g*, -flto*, -fwhopr*, -fuse-linker-plugin GCC link-time optimization
++      # -stdlib=*            select c++ std lib with clang
++      # -{shared,static}-libgcc, -static-{libgfortran|libstdc++}
++      #                      link against specified runtime library
+       -64|-mips[0-9]|-r[0-9][0-9]*|-xarch=*|-xtarget=*|+DA*|+DD*|-q*|-m*| \
+       -t[45]*|-txscale*|-p|-pg|--coverage|-fprofile-*|-F*|@*|-tp=*|--sysroot=*| \
+-      -O*|-flto*|-fwhopr*|-fuse-linker-plugin)
++      -O*|-g*|-flto*|-fwhopr*|-fuse-linker-plugin|-fstack-protector*|--param=*|-fgnu-tm|-stdlib=*| \
++      -shared-libgcc|-static-libgcc|-static-libgfortran|-static-libstdc++)
+         func_quote_for_eval "$arg"
+ 	arg="$func_quote_for_eval_result"
+         func_append compile_command " $arg"

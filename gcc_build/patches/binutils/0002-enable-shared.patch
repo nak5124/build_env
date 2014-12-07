@@ -1,0 +1,609 @@
+diff --git a/bfd/Makefile.am b/bfd/Makefile.am
+index 6f64f06..55f88e7 100644
+--- a/bfd/Makefile.am
++++ b/bfd/Makefile.am
+@@ -27,7 +27,7 @@ SUBDIRS = doc po
+ 
+ bfddocdir = doc
+ 
+-libbfd_la_LDFLAGS =
++libbfd_la_LDFLAGS = -no-undefined
+ if INSTALL_LIBBFD
+ bfdlibdir = @bfdlibdir@
+ bfdincludedir = @bfdincludedir@
+@@ -823,6 +823,8 @@ stamp-ofiles: Makefile
+ 
+ ofiles: stamp-ofiles ; @true
+ 
++LIBIBERTY = ../libiberty/libiberty.a
++
+ # Since BFD64_LIBS is optional and we can't have substitution in
+ # libbfd_la_SOURCES, we put BFD64_LIBS in OFILES instead.
+ # However, list all sources in EXTRA_libbfd_la_SOURCES so the
+@@ -831,7 +833,8 @@ libbfd_la_SOURCES = $(BFD32_LIBS_CFILES)
+ EXTRA_libbfd_la_SOURCES = $(CFILES)
+ libbfd_la_DEPENDENCIES = $(OFILES) ofiles
+ libbfd_la_LIBADD = `cat ofiles` @SHARED_LIBADD@ $(LIBDL)
+-libbfd_la_LDFLAGS += -release `cat libtool-soversion` @SHARED_LDFLAGS@
++comma := ,
++libbfd_la_LDFLAGS += -release `cat libtool-soversion` @SHARED_LDFLAGS@ -Wl,--whole-archive -Wl,$(LIBIBERTY) $(addprefix -Wl$(comma),$(LIBINTL)) -Wl,--no-whole-archive
+ 
+ # libtool will build .libs/libbfd.a.  We create libbfd.a in the build
+ # directory so that we don't have to convert all the programs that use
+diff --git a/bfd/Makefile.in b/bfd/Makefile.in
+index 2c385d5..18e6866 100644
+--- a/bfd/Makefile.in
++++ b/bfd/Makefile.in
+@@ -341,8 +341,9 @@ INCDIR = $(srcdir)/../include
+ CSEARCH = -I. -I$(srcdir) -I$(INCDIR)
+ SUBDIRS = doc po
+ bfddocdir = doc
++comma := ,
+ libbfd_la_LDFLAGS = $(am__append_1) -release `cat libtool-soversion` \
+-	@SHARED_LDFLAGS@ $(am__empty)
++	@SHARED_LDFLAGS@ $(am__empty) -no-undefined -Wl,--whole-archive -Wl,$(LIBIBERTY) $(addprefix -Wl$(comma),$(LIBINTL)) -Wl,--no-whole-archive
+ @INSTALL_LIBBFD_TRUE@bfdlib_LTLIBRARIES = libbfd.la
+ @INSTALL_LIBBFD_FALSE@bfdinclude_HEADERS = $(am__append_2)
+ @INSTALL_LIBBFD_TRUE@bfdinclude_HEADERS = $(BFD_H) \
+@@ -1097,6 +1098,8 @@ BLD_POTFILES = $(BUILD_CFILES) $(BUILD_HFILES)
+ # bfd64_libs	Routines for 64bit support
+ OFILES = $(BFD_BACKENDS) $(BFD_MACHINES) @COREFILE@ @bfd64_libs@
+ 
++LIBIBERTY = ../libiberty/libiberty.a
++
+ # Since BFD64_LIBS is optional and we can't have substitution in
+ # libbfd_la_SOURCES, we put BFD64_LIBS in OFILES instead.
+ # However, list all sources in EXTRA_libbfd_la_SOURCES so the
+diff --git a/binutils/Makefile.am b/binutils/Makefile.am
+index 7f5f0c4..5b06f7c 100644
+--- a/binutils/Makefile.am
++++ b/binutils/Makefile.am
+@@ -198,30 +198,30 @@ installcheck-local:
+ # There's no global DEPENDENCIES.  So, we must explicitly list everything
+ # which depends on libintl, since we don't know whether LIBINTL_DEP will be
+ # non-empty until configure time.  Ugh!
+-size_DEPENDENCIES =      $(LIBINTL_DEP) $(LIBIBERTY) $(BFDLIB)
+-objdump_DEPENDENCIES =   $(LIBINTL_DEP) $(LIBIBERTY) $(BFDLIB) $(OPCODES) $(OBJDUMP_PRIVATE_OFILES)
+-nm_new_DEPENDENCIES =    $(LIBINTL_DEP) $(LIBIBERTY) $(BFDLIB)
+-ar_DEPENDENCIES =        $(LIBINTL_DEP) $(LIBIBERTY) $(BFDLIB)
+-strings_DEPENDENCIES =   $(LIBINTL_DEP) $(LIBIBERTY) $(BFDLIB)
+-strip_new_DEPENDENCIES = $(LIBINTL_DEP) $(LIBIBERTY) $(BFDLIB)
+-ranlib_DEPENDENCIES =    $(LIBINTL_DEP) $(LIBIBERTY) $(BFDLIB)
+-cxxfilt_DEPENDENCIES =   $(LIBINTL_DEP) $(LIBIBERTY) $(BFDLIB)
+-objcopy_DEPENDENCIES =   $(LIBINTL_DEP) $(LIBIBERTY) $(BFDLIB)
+-nlmconv_DEPENDENCIES =   $(LIBINTL_DEP) $(LIBIBERTY) $(BFDLIB)
+-srconv_DEPENDENCIES =    $(LIBINTL_DEP) $(LIBIBERTY) $(BFDLIB)
+-sysdump_DEPENDENCIES =   $(LIBINTL_DEP) $(LIBIBERTY) $(BFDLIB)
+-coffdump_DEPENDENCIES =  $(LIBINTL_DEP) $(LIBIBERTY) $(BFDLIB)
+-dlltool_DEPENDENCIES =   $(LIBINTL_DEP) $(LIBIBERTY) $(BFDLIB)
+-windres_DEPENDENCIES =   $(LIBINTL_DEP) $(LIBIBERTY) $(BFDLIB)
+-windmc_DEPENDENCIES =    $(LIBINTL_DEP) $(LIBIBERTY) $(BFDLIB)
+-addr2line_DEPENDENCIES = $(LIBINTL_DEP) $(LIBIBERTY) $(BFDLIB)
++size_DEPENDENCIES =      $(LIBINTL_DEP) $(BFDLIB)
++objdump_DEPENDENCIES =   $(LIBINTL_DEP) $(BFDLIB) $(OPCODES) $(OBJDUMP_PRIVATE_OFILES)
++nm_new_DEPENDENCIES =    $(LIBINTL_DEP) $(BFDLIB)
++ar_DEPENDENCIES =        $(LIBINTL_DEP) $(BFDLIB)
++strings_DEPENDENCIES =   $(LIBINTL_DEP) $(BFDLIB)
++strip_new_DEPENDENCIES = $(LIBINTL_DEP) $(BFDLIB)
++ranlib_DEPENDENCIES =    $(LIBINTL_DEP) $(BFDLIB)
++cxxfilt_DEPENDENCIES =   $(LIBINTL_DEP) $(BFDLIB)
++objcopy_DEPENDENCIES =   $(LIBINTL_DEP) $(BFDLIB)
++nlmconv_DEPENDENCIES =   $(LIBINTL_DEP) $(BFDLIB)
++srconv_DEPENDENCIES =    $(LIBINTL_DEP) $(BFDLIB)
++sysdump_DEPENDENCIES =   $(LIBINTL_DEP) $(BFDLIB)
++coffdump_DEPENDENCIES =  $(LIBINTL_DEP) $(BFDLIB)
++dlltool_DEPENDENCIES =   $(LIBINTL_DEP) $(BFDLIB)
++windres_DEPENDENCIES =   $(LIBINTL_DEP) $(BFDLIB)
++windmc_DEPENDENCIES =    $(LIBINTL_DEP) $(BFDLIB)
++addr2line_DEPENDENCIES = $(LIBINTL_DEP) $(BFDLIB)
+ readelf_DEPENDENCIES =   $(LIBINTL_DEP) $(LIBIBERTY)
+ elfedit_DEPENDENCIES = $(LIBINTL_DEP) $(LIBIBERTY)
+ dllwrap_DEPENDENCIES =   $(LIBINTL_DEP) $(LIBIBERTY)
+-bfdtest1_DEPENDENCIES =  $(LIBINTL_DEP) $(LIBIBERTY) $(BFDLIB)
+-bfdtest2_DEPENDENCIES =  $(LIBINTL_DEP) $(LIBIBERTY) $(BFDLIB)
++bfdtest1_DEPENDENCIES =  $(LIBINTL_DEP) $(BFDLIB)
++bfdtest2_DEPENDENCIES =  $(LIBINTL_DEP) $(BFDLIB)
+ 
+-LDADD = $(BFDLIB) $(LIBIBERTY) $(LIBINTL)
++LDADD = $(BFDLIB) $(LIBINTL)
+ 
+ size_SOURCES = size.c $(BULIBS)
+ 
+diff --git a/binutils/Makefile.in b/binutils/Makefile.in
+index c6e0003..18c0d17 100644
+--- a/binutils/Makefile.in
++++ b/binutils/Makefile.in
+@@ -548,29 +548,29 @@ CC_FOR_TARGET = ` \
+ # There's no global DEPENDENCIES.  So, we must explicitly list everything
+ # which depends on libintl, since we don't know whether LIBINTL_DEP will be
+ # non-empty until configure time.  Ugh!
+-size_DEPENDENCIES = $(LIBINTL_DEP) $(LIBIBERTY) $(BFDLIB)
+-objdump_DEPENDENCIES = $(LIBINTL_DEP) $(LIBIBERTY) $(BFDLIB) $(OPCODES) $(OBJDUMP_PRIVATE_OFILES)
+-nm_new_DEPENDENCIES = $(LIBINTL_DEP) $(LIBIBERTY) $(BFDLIB)
+-ar_DEPENDENCIES = $(LIBINTL_DEP) $(LIBIBERTY) $(BFDLIB)
+-strings_DEPENDENCIES = $(LIBINTL_DEP) $(LIBIBERTY) $(BFDLIB)
+-strip_new_DEPENDENCIES = $(LIBINTL_DEP) $(LIBIBERTY) $(BFDLIB)
+-ranlib_DEPENDENCIES = $(LIBINTL_DEP) $(LIBIBERTY) $(BFDLIB)
+-cxxfilt_DEPENDENCIES = $(LIBINTL_DEP) $(LIBIBERTY) $(BFDLIB)
+-objcopy_DEPENDENCIES = $(LIBINTL_DEP) $(LIBIBERTY) $(BFDLIB)
+-nlmconv_DEPENDENCIES = $(LIBINTL_DEP) $(LIBIBERTY) $(BFDLIB)
+-srconv_DEPENDENCIES = $(LIBINTL_DEP) $(LIBIBERTY) $(BFDLIB)
+-sysdump_DEPENDENCIES = $(LIBINTL_DEP) $(LIBIBERTY) $(BFDLIB)
+-coffdump_DEPENDENCIES = $(LIBINTL_DEP) $(LIBIBERTY) $(BFDLIB)
+-dlltool_DEPENDENCIES = $(LIBINTL_DEP) $(LIBIBERTY) $(BFDLIB)
+-windres_DEPENDENCIES = $(LIBINTL_DEP) $(LIBIBERTY) $(BFDLIB)
+-windmc_DEPENDENCIES = $(LIBINTL_DEP) $(LIBIBERTY) $(BFDLIB)
+-addr2line_DEPENDENCIES = $(LIBINTL_DEP) $(LIBIBERTY) $(BFDLIB)
++size_DEPENDENCIES = $(LIBINTL_DEP) $(BFDLIB)
++objdump_DEPENDENCIES = $(LIBINTL_DEP) $(BFDLIB) $(OPCODES) $(OBJDUMP_PRIVATE_OFILES)
++nm_new_DEPENDENCIES = $(LIBINTL_DEP) $(BFDLIB)
++ar_DEPENDENCIES = $(LIBINTL_DEP) $(BFDLIB)
++strings_DEPENDENCIES = $(LIBINTL_DEP) $(BFDLIB)
++strip_new_DEPENDENCIES = $(LIBINTL_DEP) $(BFDLIB)
++ranlib_DEPENDENCIES = $(LIBINTL_DEP) $(BFDLIB)
++cxxfilt_DEPENDENCIES = $(LIBINTL_DEP) $(BFDLIB)
++objcopy_DEPENDENCIES = $(LIBINTL_DEP) $(BFDLIB)
++nlmconv_DEPENDENCIES = $(LIBINTL_DEP) $(BFDLIB)
++srconv_DEPENDENCIES = $(LIBINTL_DEP) $(BFDLIB)
++sysdump_DEPENDENCIES = $(LIBINTL_DEP) $(BFDLIB)
++coffdump_DEPENDENCIES = $(LIBINTL_DEP) $(BFDLIB)
++dlltool_DEPENDENCIES = $(LIBINTL_DEP) $(BFDLIB)
++windres_DEPENDENCIES = $(LIBINTL_DEP) $(BFDLIB)
++windmc_DEPENDENCIES = $(LIBINTL_DEP) $(BFDLIB)
++addr2line_DEPENDENCIES = $(LIBINTL_DEP) $(BFDLIB)
+ readelf_DEPENDENCIES = $(LIBINTL_DEP) $(LIBIBERTY)
+ elfedit_DEPENDENCIES = $(LIBINTL_DEP) $(LIBIBERTY)
+ dllwrap_DEPENDENCIES = $(LIBINTL_DEP) $(LIBIBERTY)
+-bfdtest1_DEPENDENCIES = $(LIBINTL_DEP) $(LIBIBERTY) $(BFDLIB)
+-bfdtest2_DEPENDENCIES = $(LIBINTL_DEP) $(LIBIBERTY) $(BFDLIB)
+-LDADD = $(BFDLIB) $(LIBIBERTY) $(LIBINTL)
++bfdtest1_DEPENDENCIES = $(LIBINTL_DEP) $(BFDLIB)
++bfdtest2_DEPENDENCIES = $(LIBINTL_DEP) $(BFDLIB)
++LDADD = $(BFDLIB) $(LIBINTL)
+ size_SOURCES = size.c $(BULIBS)
+ objcopy_SOURCES = objcopy.c not-strip.c rename.c $(WRITE_DEBUG_SRCS) $(BULIBS)
+ strings_SOURCES = strings.c $(BULIBS)
+diff --git a/binutils/configure b/binutils/configure
+index 39b8254..b1a098d 100755
+--- a/binutils/configure
++++ b/binutils/configure
+@@ -13593,9 +13593,9 @@ fi
+                 found_la="$additional_libdir/lib$name.la"
+               fi
+             else
+-              if test -f "$additional_libdir/lib$name.$libext"; then
++              if test -f "$additional_libdir/lib$name.dll.a"; then
+                 found_dir="$additional_libdir"
+-                found_a="$additional_libdir/lib$name.$libext"
++                found_a="$additional_libdir/lib$name.dll.a"
+                 if test -f "$additional_libdir/lib$name.la"; then
+                   found_la="$additional_libdir/lib$name.la"
+                 fi
+@@ -13623,9 +13623,9 @@ fi
+                       found_la="$dir/lib$name.la"
+                     fi
+                   else
+-                    if test -f "$dir/lib$name.$libext"; then
++                    if test -f "$dir/lib$name.dll.a"; then
+                       found_dir="$dir"
+-                      found_a="$dir/lib$name.$libext"
++                      found_a="$dir/lib$name.dll.a"
+                       if test -f "$dir/lib$name.la"; then
+                         found_la="$dir/lib$name.la"
+                       fi
+diff --git a/gas/Makefile.am b/gas/Makefile.am
+index 55c86b2..924d242 100644
+--- a/gas/Makefile.am
++++ b/gas/Makefile.am
+@@ -388,7 +388,7 @@ AM_CPPFLAGS = -I. -I$(srcdir) -I../bfd -I$(srcdir)/config \
+ # How to link with both our special library facilities
+ # and the system's installed libraries.
+ 
+-GASLIBS = @OPCODES_LIB@ ../bfd/libbfd.la ../libiberty/libiberty.a
++GASLIBS = @OPCODES_LIB@ ../bfd/libbfd.la
+ 
+ # Files to be copied away after each stage in building.
+ STAGESTUFF = *.@OBJEXT@ $(noinst_PROGRAMS)
+diff --git a/gas/Makefile.in b/gas/Makefile.in
+index 5dc250f..8b3dd68 100644
+--- a/gas/Makefile.in
++++ b/gas/Makefile.in
+@@ -104,7 +104,8 @@ am__objects_1 = app.$(OBJEXT) as.$(OBJEXT) atof-generic.$(OBJEXT) \
+ am_as_new_OBJECTS = $(am__objects_1)
+ as_new_OBJECTS = $(am_as_new_OBJECTS)
+ am__DEPENDENCIES_1 =
+-am__DEPENDENCIES_2 = ../bfd/libbfd.la ../libiberty/libiberty.a
++am__DEPENDENCIES_2 = ../bfd/libbfd.la
++# ../libiberty/libiberty.a
+ am_itbl_test_OBJECTS = itbl-parse.$(OBJEXT) itbl-lex.$(OBJEXT)
+ itbl_test_OBJECTS = $(am_itbl_test_OBJECTS)
+ itbl_test_DEPENDENCIES = itbl-tops.@OBJEXT@ itbl-test.@OBJEXT@ \
+@@ -647,7 +648,7 @@ AM_CPPFLAGS = -I. -I$(srcdir) -I../bfd -I$(srcdir)/config \
+ 
+ # How to link with both our special library facilities
+ # and the system's installed libraries.
+-GASLIBS = @OPCODES_LIB@ ../bfd/libbfd.la ../libiberty/libiberty.a
++GASLIBS = @OPCODES_LIB@ ../bfd/libbfd.la
+ 
+ # Files to be copied away after each stage in building.
+ STAGESTUFF = *.@OBJEXT@ $(noinst_PROGRAMS)
+diff --git a/intl/configure b/intl/configure
+index 34da38b..4578bdb 100755
+--- a/intl/configure
++++ b/intl/configure
+@@ -5097,9 +5097,9 @@ fi
+                 found_la="$additional_libdir/lib$name.la"
+               fi
+             else
+-              if test -f "$additional_libdir/lib$name.$libext"; then
++              if test -f "$additional_libdir/lib$name.dll.a"; then
+                 found_dir="$additional_libdir"
+-                found_a="$additional_libdir/lib$name.$libext"
++                found_a="$additional_libdir/lib$name.dll.a"
+                 if test -f "$additional_libdir/lib$name.la"; then
+                   found_la="$additional_libdir/lib$name.la"
+                 fi
+@@ -5127,9 +5127,9 @@ fi
+                       found_la="$dir/lib$name.la"
+                     fi
+                   else
+-                    if test -f "$dir/lib$name.$libext"; then
++                    if test -f "$dir/lib$name.dll.a"; then
+                       found_dir="$dir"
+-                      found_a="$dir/lib$name.$libext"
++                      found_a="$dir/lib$name.dll.a"
+                       if test -f "$dir/lib$name.la"; then
+                         found_la="$dir/lib$name.la"
+                       fi
+@@ -5889,9 +5889,9 @@ fi
+                 found_la="$additional_libdir/lib$name.la"
+               fi
+             else
+-              if test -f "$additional_libdir/lib$name.$libext"; then
++              if test -f "$additional_libdir/lib$name.dll.a"; then
+                 found_dir="$additional_libdir"
+-                found_a="$additional_libdir/lib$name.$libext"
++                found_a="$additional_libdir/lib$name.dll.a"
+                 if test -f "$additional_libdir/lib$name.la"; then
+                   found_la="$additional_libdir/lib$name.la"
+                 fi
+@@ -5919,9 +5919,9 @@ fi
+                       found_la="$dir/lib$name.la"
+                     fi
+                   else
+-                    if test -f "$dir/lib$name.$libext"; then
++                    if test -f "$dir/lib$name.dll.a"; then
+                       found_dir="$dir"
+-                      found_a="$dir/lib$name.$libext"
++                      found_a="$dir/lib$name.dll.a"
+                       if test -f "$dir/lib$name.la"; then
+                         found_la="$dir/lib$name.la"
+                       fi
+diff --git a/intl/localcharset.c b/intl/localcharset.c
+index 8ece6e3..affbadb 100644
+--- a/intl/localcharset.c
++++ b/intl/localcharset.c
+@@ -23,6 +23,10 @@
+ # include <config.h>
+ #endif
+ 
++#ifndef STATIC
++#define STATIC static
++#endif
++
+ /* Specification.  */
+ #include "localcharset.h"
+ 
+diff --git a/intl/localcharset.h b/intl/localcharset.h
+index 47b21a0..da588f5 100644
+--- a/intl/localcharset.h
++++ b/intl/localcharset.h
+@@ -31,7 +31,12 @@ extern "C" {
+    The result must not be freed; it is statically allocated.
+    If the canonical name cannot be determined, the result is a non-canonical
+    name.  */
+-extern const char * locale_charset (void);
++#ifdef STATIC
++STATIC
++#else
++extern
++#endif
++const char * locale_charset (void);
+ 
+ 
+ #ifdef __cplusplus
+diff --git a/ld/Makefile.am b/ld/Makefile.am
+index 9575f1f..d98bec0 100644
+--- a/ld/Makefile.am
++++ b/ld/Makefile.am
+@@ -1960,8 +1960,8 @@ ld_new_SOURCES = ldgram.y ldlex-wrapper.c lexsup.c ldlang.c mri.c ldctor.c ldmai
+ 	ldwrite.c ldexp.c ldemul.c ldver.c ldmisc.c ldfile.c ldcref.c $(PLUGIN_C) \
+ 	ldbuildid.c
+ ld_new_DEPENDENCIES = $(EMULATION_OFILES) $(EMUL_EXTRA_OFILES) \
+-		      $(BFDLIB) $(LIBIBERTY) $(LIBINTL_DEP)
+-ld_new_LDADD = $(EMULATION_OFILES) $(EMUL_EXTRA_OFILES) $(BFDLIB) $(LIBIBERTY) $(LIBINTL)
++		      $(BFDLIB) $(LIBINTL_DEP)
++ld_new_LDADD = $(EMULATION_OFILES) $(EMUL_EXTRA_OFILES) $(BFDLIB) $(LIBINTL)
+ 
+ # Dependency tracking for the generated emulation files.
+ EXTRA_ld_new_SOURCES += $(ALL_EMULATION_SOURCES) $(ALL_64_EMULATION_SOURCES)
+@@ -1994,16 +1994,16 @@ check-DEJAGNU: site.exp
+ ld-partial.@OBJEXT@: ld-new$(EXEEXT)
+ 	./ld-new$(EXEEXT) $(HOSTING_EMU) -o ld-partial.@OBJEXT@ -r $(OFILES)
+ ld1$(EXEEXT): ld-partial.@OBJEXT@
+-	./ld-new$(EXEEXT) $(HOSTING_EMU) -o ld1$(EXEEXT) $(HOSTING_CRT0) ld-partial.@OBJEXT@ $(TESTBFDLIB) $(LIBIBERTY) $(HOSTING_LIBS) $(LIBS)
++	./ld-new$(EXEEXT) $(HOSTING_EMU) -o ld1$(EXEEXT) $(HOSTING_CRT0) ld-partial.@OBJEXT@ $(TESTBFDLIB) $(HOSTING_LIBS) $(LIBS)
+ 
+ ld1-full$(EXEEXT): ld-new
+-	./ld-new$(EXEEXT) $(HOSTING_EMU) -o ld1-full$(EXEEXT) $(HOSTING_CRT0) $(OFILES) $(TESTBFDLIB) $(LIBIBERTY) $(HOSTING_LIBS) $(LIBS)
++	./ld-new$(EXEEXT) $(HOSTING_EMU) -o ld1-full$(EXEEXT) $(HOSTING_CRT0) $(OFILES) $(TESTBFDLIB) $(HOSTING_LIBS) $(LIBS)
+ 
+ ld2$(EXEEXT): ld1$(EXEEXT)
+-	./ld1$(EXEEXT) $(HOSTING_EMU) -o ld2$(EXEEXT) $(HOSTING_CRT0) $(OFILES) $(TESTBFDLIB) $(LIBIBERTY) $(HOSTING_LIBS) $(LIBS)
++	./ld1$(EXEEXT) $(HOSTING_EMU) -o ld2$(EXEEXT) $(HOSTING_CRT0) $(OFILES) $(TESTBFDLIB) $(HOSTING_LIBS) $(LIBS)
+ 
+ ld3$(EXEEXT): ld2$(EXEEXT)
+-	./ld2$(EXEEXT) $(HOSTING_EMU) -o ld3$(EXEEXT) $(HOSTING_CRT0) $(OFILES) $(TESTBFDLIB) $(LIBIBERTY) $(HOSTING_LIBS) $(LIBS)
++	./ld2$(EXEEXT) $(HOSTING_EMU) -o ld3$(EXEEXT) $(HOSTING_CRT0) $(OFILES) $(TESTBFDLIB) $(HOSTING_LIBS) $(LIBS)
+ 
+ bootstrap: ld3$(EXEEXT)
+ 	cmp ld2$(EXEEXT) ld3$(EXEEXT)
+diff --git a/ld/Makefile.in b/ld/Makefile.in
+index 9f56ca1..14d095b 100644
+--- a/ld/Makefile.in
++++ b/ld/Makefile.in
+@@ -849,9 +849,9 @@ ld_new_SOURCES = ldgram.y ldlex-wrapper.c lexsup.c ldlang.c mri.c ldctor.c ldmai
+ 	ldbuildid.c
+ 
+ ld_new_DEPENDENCIES = $(EMULATION_OFILES) $(EMUL_EXTRA_OFILES) \
+-		      $(BFDLIB) $(LIBIBERTY) $(LIBINTL_DEP)
++		      $(BFDLIB) $(LIBINTL_DEP)
+ 
+-ld_new_LDADD = $(EMULATION_OFILES) $(EMUL_EXTRA_OFILES) $(BFDLIB) $(LIBIBERTY) $(LIBINTL)
++ld_new_LDADD = $(EMULATION_OFILES) $(EMUL_EXTRA_OFILES) $(BFDLIB) $(LIBINTL)
+ 
+ # A test program for C++ constructors and destructors.
+ # This test is now in the testsuite.
+@@ -3416,16 +3416,16 @@ check-DEJAGNU: site.exp
+ ld-partial.@OBJEXT@: ld-new$(EXEEXT)
+ 	./ld-new$(EXEEXT) $(HOSTING_EMU) -o ld-partial.@OBJEXT@ -r $(OFILES)
+ ld1$(EXEEXT): ld-partial.@OBJEXT@
+-	./ld-new$(EXEEXT) $(HOSTING_EMU) -o ld1$(EXEEXT) $(HOSTING_CRT0) ld-partial.@OBJEXT@ $(TESTBFDLIB) $(LIBIBERTY) $(HOSTING_LIBS) $(LIBS)
++	./ld-new$(EXEEXT) $(HOSTING_EMU) -o ld1$(EXEEXT) $(HOSTING_CRT0) ld-partial.@OBJEXT@ $(TESTBFDLIB) $(HOSTING_LIBS) $(LIBS)
+ 
+ ld1-full$(EXEEXT): ld-new
+-	./ld-new$(EXEEXT) $(HOSTING_EMU) -o ld1-full$(EXEEXT) $(HOSTING_CRT0) $(OFILES) $(TESTBFDLIB) $(LIBIBERTY) $(HOSTING_LIBS) $(LIBS)
++	./ld-new$(EXEEXT) $(HOSTING_EMU) -o ld1-full$(EXEEXT) $(HOSTING_CRT0) $(OFILES) $(TESTBFDLIB) $(HOSTING_LIBS) $(LIBS)
+ 
+ ld2$(EXEEXT): ld1$(EXEEXT)
+-	./ld1$(EXEEXT) $(HOSTING_EMU) -o ld2$(EXEEXT) $(HOSTING_CRT0) $(OFILES) $(TESTBFDLIB) $(LIBIBERTY) $(HOSTING_LIBS) $(LIBS)
++	./ld1$(EXEEXT) $(HOSTING_EMU) -o ld2$(EXEEXT) $(HOSTING_CRT0) $(OFILES) $(TESTBFDLIB) $(HOSTING_LIBS) $(LIBS)
+ 
+ ld3$(EXEEXT): ld2$(EXEEXT)
+-	./ld2$(EXEEXT) $(HOSTING_EMU) -o ld3$(EXEEXT) $(HOSTING_CRT0) $(OFILES) $(TESTBFDLIB) $(LIBIBERTY) $(HOSTING_LIBS) $(LIBS)
++	./ld2$(EXEEXT) $(HOSTING_EMU) -o ld3$(EXEEXT) $(HOSTING_CRT0) $(OFILES) $(TESTBFDLIB) $(HOSTING_LIBS) $(LIBS)
+ 
+ bootstrap: ld3$(EXEEXT)
+ 	cmp ld2$(EXEEXT) ld3$(EXEEXT)
+diff --git a/libiberty/Makefile.in b/libiberty/Makefile.in
+index 1b0d8ae..c2e0e5b 100644
+--- a/libiberty/Makefile.in
++++ b/libiberty/Makefile.in
+@@ -130,7 +130,7 @@ CFILES = alloca.c argv.c asprintf.c atexit.c				\
+ 	d-demangle.c dwarfnames.c dyn-string.c				\
+ 	fdmatch.c ffs.c fibheap.c filename_cmp.c floatformat.c		\
+ 	fnmatch.c fopen_unlocked.c					\
+-	getcwd.c getopt.c getopt1.c getpagesize.c getpwd.c getruntime.c	\
++	getcwd.c getpagesize.c getpwd.c getruntime.c	\
+          gettimeofday.c                                                 \
+ 	hashtab.c hex.c							\
+ 	index.c insque.c						\
+@@ -155,9 +155,8 @@ CFILES = alloca.c argv.c asprintf.c atexit.c				\
+ 	 strtoll.c strtoul.c strtoull.c strndup.c strnlen.c             \
+ 	 strverscmp.c timeval-utils.c tmpnam.c				\
+ 	unlink-if-ordinary.c						\
+-	vasprintf.c vfork.c vfprintf.c vprintf.c vprintf-support.c	\
+-	 vsnprintf.c vsprintf.c						\
+-	waitpid.c							\
++	vasprintf.c vfprintf.c vprintf.c vprintf-support.c vsnprintf.c vsprintf.c	\
++	msdos.c							\
+ 	xasprintf.c xatexit.c xexit.c xmalloc.c xmemdup.c xstrdup.c	\
+ 	 xstrerror.c xstrndup.c xvasprintf.c
+ 
+@@ -172,7 +172,7 @@ REQUIRED_OFILES =							\
+ 	./fdmatch.$(objext) ./fibheap.$(objext)				\
+ 	./filename_cmp.$(objext) ./floatformat.$(objext)		\
+ 	./fnmatch.$(objext) ./fopen_unlocked.$(objext)			\
+-	./getopt.$(objext) ./getopt1.$(objext) ./getpwd.$(objext)	\
++	./getpwd.$(objext)	\
+ 	./getruntime.$(objext) ./hashtab.$(objext) ./hex.$(objext)	\
+ 	./lbasename.$(objext) ./lrealpath.$(objext)			\
+ 	./make-relative-prefix.$(objext) ./make-temp-file.$(objext)	\
+@@ -221,9 +221,9 @@ CONFIGURED_OFILES = ./asprintf.$(objext) ./atexit.$(objext)		\
+ 	 ./strrchr.$(objext) ./strstr.$(objext) ./strtod.$(objext)	\
+ 	 ./strtol.$(objext) ./strtoul.$(objext) strtoll.$(objext)	\
+ 	./strtoull.$(objext) ./tmpnam.$(objext) ./strverscmp.$(objext)	\
+-	./vasprintf.$(objext) ./vfork.$(objext) ./vfprintf.$(objext)	\
++	./vasprintf.$(objext) ./vfprintf.$(objext)	\
+ 	 ./vprintf.$(objext) ./vsnprintf.$(objext) ./vsprintf.$(objext)	\
+-	./waitpid.$(objext)
++	./msdos.$(objext)
+ 
+ # These files are installed if the library has been configured to do so.
+ INSTALLED_HEADERS =                                                     \
+diff --git a/libiberty/configure b/libiberty/configure
+index 4a5e40a..1e7fcd8 100755
+--- a/libiberty/configure
++++ b/libiberty/configure
+@@ -5472,7 +5472,6 @@ funcs="$funcs vfprintf"
+ funcs="$funcs vprintf"
+ funcs="$funcs vsnprintf"
+ funcs="$funcs vsprintf"
+-funcs="$funcs waitpid"
+ funcs="$funcs setproctitle"
+ 
+ # Also in the old function.def file: alloca, vfork, getopt.
+@@ -5839,13 +5838,6 @@ esac
+  ;;
+ esac
+ 
+-    case " $LIBOBJS " in
+-  *" waitpid.$ac_objext "* ) ;;
+-  *) LIBOBJS="$LIBOBJS waitpid.$ac_objext"
+- ;;
+-esac
+-
+-
+     for f in $funcs; do
+       case "$f" in
+ 	asprintf | basename | bcmp | bcopy | bzero | clock | ffs | getpagesize | index | insque | mempcpy | mkstemps | random | rindex | sigsetmask | stpcpy | stpncpy | strdup | strndup | strnlen | strverscmp | vasprintf | waitpid)
+@@ -5986,12 +5978,6 @@ esac
+ esac
+ 
+     case " $LIBOBJS " in
+-  *" vfork.$ac_objext "* ) ;;
+-  *) LIBOBJS="$LIBOBJS vfork.$ac_objext"
+- ;;
+-esac
+-
+-    case " $LIBOBJS " in
+   *" waitpid.$ac_objext "* ) ;;
+   *) LIBOBJS="$LIBOBJS waitpid.$ac_objext"
+  ;;
+@@ -6453,7 +6439,7 @@ fi
+   if test $ac_cv_func_vfork_works = no; then
+     case " $LIBOBJS " in
+   *" vfork.$ac_objext "* ) ;;
+-  *) LIBOBJS="$LIBOBJS vfork.$ac_objext"
++  *) 
+  ;;
+ esac
+ 
+diff --git a/libiberty/configure.ac b/libiberty/configure.ac
+index 90adaea..945e967 100644
+--- a/libiberty/configure.ac
++++ b/libiberty/configure.ac
+@@ -380,7 +380,6 @@ funcs="$funcs vfprintf"
+ funcs="$funcs vprintf"
+ funcs="$funcs vsnprintf"
+ funcs="$funcs vsprintf"
+-funcs="$funcs waitpid"
+ funcs="$funcs setproctitle"
+ 
+ # Also in the old function.def file: alloca, vfork, getopt.
+@@ -481,6 +480,7 @@ if test -n "${with_target_subdir}"; then
+     AC_LIBOBJ([insque])
+     AC_LIBOBJ([mempcpy])
+     AC_LIBOBJ([mkstemps])
++    AC_LIBOBJ([msdos])
+     AC_LIBOBJ([random])
+     AC_LIBOBJ([rindex])
+     AC_LIBOBJ([sigsetmask])
+@@ -490,7 +490,6 @@ if test -n "${with_target_subdir}"; then
+     AC_LIBOBJ([strnlen])
+     AC_LIBOBJ([strverscmp])
+     AC_LIBOBJ([vasprintf])
+-    AC_LIBOBJ([waitpid])
+ 
+     for f in $funcs; do
+       case "$f" in
+@@ -638,9 +637,6 @@ if test -z "${setobjs}"; then
+   AC_REPLACE_FUNCS($funcs)
+   libiberty_AC_FUNC_C_ALLOCA
+   AC_FUNC_FORK
+-  if test $ac_cv_func_vfork_works = no; then
+-    AC_LIBOBJ([vfork])
+-  fi
+   # We only need _doprnt if we might use it to implement v*printf.
+   if test $ac_cv_func_vprintf != yes \
+      || test $ac_cv_func_vfprintf != yes \
+diff --git a/opcodes/Makefile.am b/opcodes/Makefile.am
+index 4acc436..46f9763 100644
+--- a/opcodes/Makefile.am
++++ b/opcodes/Makefile.am
+@@ -320,7 +320,7 @@ libopcodes_la_SOURCES =  dis-buf.c disassemble.c dis-init.c
+ # hardcoded path to libbfd.so instead of relying on the entries in libbfd.la.
+ libopcodes_la_DEPENDENCIES = $(OFILES) @SHARED_DEPENDENCIES@
+ libopcodes_la_LIBADD = $(OFILES) @SHARED_LIBADD@
+-libopcodes_la_LDFLAGS += -release `cat ../bfd/libtool-soversion` @SHARED_LDFLAGS@
++libopcodes_la_LDFLAGS += -release `cat ../bfd/libtool-soversion` @SHARED_LDFLAGS@ -Wl,$(LIBIBERTY) $(addprefix -Wl$(comma),$(LIBINTL))
+ # Allow dependency tracking to work on all the source files.
+ EXTRA_libopcodes_la_SOURCES = $(LIBOPCODES_CFILES)
+ 
+diff --git a/opcodes/Makefile.in b/opcodes/Makefile.in
+index 46ef017..8654aff 100644
+--- a/opcodes/Makefile.in
++++ b/opcodes/Makefile.in
+@@ -319,8 +319,9 @@ COMPILE_FOR_BUILD = $(CC_FOR_BUILD) $(INCLUDES) $(AM_CPPFLAGS) \
+ LINK_FOR_BUILD = $(CC_FOR_BUILD) $(CFLAGS_FOR_BUILD) \
+ 	$(LDFLAGS_FOR_BUILD) -o $@
+ 
++comma := ,
+ libopcodes_la_LDFLAGS = $(am__append_1) -release `cat \
+-	../bfd/libtool-soversion` @SHARED_LDFLAGS@
++	../bfd/libtool-soversion` @SHARED_LDFLAGS@ -Wl,$(LIBIBERTY) $(addprefix -Wl$(comma),$(LIBINTL))
+ @INSTALL_LIBBFD_TRUE@bfdlib_LTLIBRARIES = libopcodes.la
+ @INSTALL_LIBBFD_TRUE@bfdinclude_DATA = $(INCDIR)/dis-asm.h
+ @INSTALL_LIBBFD_FALSE@rpath_bfdlibdir = @bfdlibdir@
+diff --git a/opcodes/configure b/opcodes/configure
+index 7f13699..08da93e 100755
+--- a/opcodes/configure
++++ b/opcodes/configure
+@@ -12453,11 +12453,17 @@ if test "$enable_shared" = "yes"; then
+     SHARED_LIBADD="-L`pwd`/../libiberty/pic -liberty"
+   fi
+ 
++  LCLINK="-Wl,-lc,"
+   case "${host}" in
+     *-*-cygwin*)
+       SHARED_LDFLAGS="-no-undefined"
+       SHARED_LIBADD="-L`pwd`/../bfd -lbfd -L`pwd`/../libiberty -liberty -L`pwd`/../intl -lintl -lcygwin"
+       ;;
++    *-*-mingw*)
++      SHARED_LDFLAGS="-no-undefined"
++      SHARED_LIBADD="-L`pwd`/../bfd -lbfd"
++      LCLINK=
++      ;;
+    *-*-darwin*)
+      SHARED_LIBADD="-Wl,`pwd`/../bfd/.libs/libbfd.dylib ${SHARED_LIBADD}"
+      SHARED_DEPENDENCIES="../bfd/libbfd.la"
+@@ -12480,7 +12486,7 @@ if test "$enable_shared" = "yes"; then
+       if test x"$bfd_cv_ld_as_needed" = xyes; then
+ 	# Link against libm only when needed.  Put -lc, -lm inside -Wl
+ 	# to stop libtool reordering these options.
+-	SHARED_LIBADD="$SHARED_LIBADD -Wl,-lc,--as-needed,`echo $LIBM | sed 's/ /,/g'`,--no-as-needed"
++	SHARED_LIBADD="$SHARED_LIBADD  $LCLINK--as-needed,`echo $LIBM | sed 's/ /,/g'`,--no-as-needed"
+       else
+ 	SHARED_LIBADD="$SHARED_LIBADD $LIBM"
+       fi
+diff --git a/opcodes/configure.ac b/opcodes/configure.ac
+index b93e855..21d6a5c 100644
+--- a/opcodes/configure.ac
++++ b/opcodes/configure.ac
+@@ -170,11 +170,17 @@ changequote([,])dnl
+     SHARED_LIBADD="-L`pwd`/../libiberty/pic -liberty"
+   fi
+ 
++  LCLINK="-Wl,-lc,"
+   case "${host}" in
+     *-*-cygwin*)
+       SHARED_LDFLAGS="-no-undefined"
+       SHARED_LIBADD="-L`pwd`/../bfd -lbfd -L`pwd`/../libiberty -liberty -L`pwd`/../intl -lintl -lcygwin"
+       ;;
++    *-*-mingw*)
++      SHARED_LDFLAGS="-no-undefined"
++      SHARED_LIBADD="-L`pwd`/../bfd -lbfd"
++      LCLINK=
++      ;;
+    *-*-darwin*)
+      SHARED_LIBADD="-Wl,`pwd`/../bfd/.libs/libbfd.dylib ${SHARED_LIBADD}"
+      SHARED_DEPENDENCIES="../bfd/libbfd.la"
+@@ -197,7 +203,7 @@ changequote([,])dnl
+       if test x"$bfd_cv_ld_as_needed" = xyes; then
+ 	# Link against libm only when needed.  Put -lc, -lm inside -Wl
+ 	# to stop libtool reordering these options.
+-	SHARED_LIBADD="$SHARED_LIBADD -Wl,-lc,--as-needed,`echo $LIBM | sed 's/ /,/g'`,--no-as-needed"
++	SHARED_LIBADD="$SHARED_LIBADD $LCLINK--as-needed,`echo $LIBM | sed 's/ /,/g'`,--no-as-needed"
+       else
+ 	SHARED_LIBADD="$SHARED_LIBADD $LIBM"
+       fi

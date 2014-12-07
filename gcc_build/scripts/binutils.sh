@@ -27,35 +27,21 @@ function prepare_binutils() {
     patch -p1 -i ${PATCHES_DIR}/binutils/0001-check-for-unusual-file-harder.patch \
         > ${LOGS_DIR}/binutils/binutils_patch.log 2>&1 || exit 1
     # For --enable-shared.
-    patch -p1 -i ${PATCHES_DIR}/binutils/0002-enable-shared-bfd.all.patch \
-        >> ${LOGS_DIR}/binutils/binutils_patch.log 2>&1 || exit 1
-    patch -p1 -i ${PATCHES_DIR}/binutils/0003-link-to-libibtl-and-libiberty.mingw.patch \
-        >> ${LOGS_DIR}/binutils/binutils_patch.log 2>&1 || exit 1
-    patch -p1 -i ${PATCHES_DIR}/binutils/0004-shared-opcodes.mingw.patch \
-        >> ${LOGS_DIR}/binutils/binutils_patch.log 2>&1 || exit 1
-    patch -p1 -i ${PATCHES_DIR}/binutils/0005-fix-libiberty-makefile.mingw.patch \
-        >> ${LOGS_DIR}/binutils/binutils_patch.log 2>&1 || exit 1
-    patch -p1 -i ${PATCHES_DIR}/binutils/0006-fix-libiberty-configure.mingw.patch \
-        >> ${LOGS_DIR}/binutils/binutils_patch.log 2>&1 || exit 1
-    patch -p1 -i ${PATCHES_DIR}/binutils/0007-dont-link-gas-to-libiberty.mingw.patch \
-        >> ${LOGS_DIR}/binutils/binutils_patch.log 2>&1 || exit 1
-    patch -p1 -i ${PATCHES_DIR}/binutils/0008-dont-link-binutils-to-libiberty.mingw.patch \
-        >> ${LOGS_DIR}/binutils/binutils_patch.log 2>&1 || exit 1
-    patch -p1 -i ${PATCHES_DIR}/binutils/0009-dont-link-ld-to-libiberty.mingw.patch \
-        >> ${LOGS_DIR}/binutils/binutils_patch.log 2>&1 || exit 1
-    patch -p1 -i ${PATCHES_DIR}/binutils/0010-binutils-mingw-gnu-print.patch \
-        >> ${LOGS_DIR}/binutils/binutils_patch.log 2>&1 || exit 1
-    patch -p1 -i ${PATCHES_DIR}/binutils/0011-fix-iconv-linking.all.patch \
+    patch -p1 -i ${PATCHES_DIR}/binutils/0002-enable-shared.patch >> ${LOGS_DIR}/binutils/binutils_patch.log 2>&1 || exit 1
+    patch -p1 -i ${PATCHES_DIR}/binutils/0003-binutils-mingw-gnu-print.patch \
         >> ${LOGS_DIR}/binutils/binutils_patch.log 2>&1 || exit 1
     # Don't search dirs under ${prefix} but ${build_sysroot}.
-    patch -p1 -i ${PATCHES_DIR}/binutils/0012-binutils-use-build-sysroot-dir.patch \
+    patch -p1 -i ${PATCHES_DIR}/binutils/0004-binutils-use-build-sysroot-dir.patch \
         >> ${LOGS_DIR}/binutils/binutils_patch.log 2>&1 || exit 1
     # For building with -fstack-protector*.
-    patch -p1 -i ${PATCHES_DIR}/binutils/0013-update-ltmain.sh.patch \
+    patch -p1 -i ${PATCHES_DIR}/binutils/0005-update-ltmain.sh.patch \
         >> ${LOGS_DIR}/binutils/binutils_patch.log 2>&1 || exit 1
     # A newer standards.info is installed later on in the Autoconf instructions.
     rm -fv ${BUILD_DIR}/binutils/src/binutils-${BINUTILS_VER}/etc/standards.info
     sed -i.bak '/^INFO/s/standards.info //' ${BUILD_DIR}/binutils/src/binutils-${BINUTILS_VER}/etc/Makefile.in
+    # Disable automatic image base calculation.
+    sed -i 's/enable-auto-image-base/disable-auto-image-base/g' {bfd,binutils,gas,gprof,ld,opcodes}/configure
+    perl -pi -e 's/_stat\n/_stat64\n/g' ltmain.sh
     popd > /dev/null
     echo "done"
 
@@ -73,11 +59,6 @@ function symlink_binutils() {
     # Symlinking to ${_arch}-w64-mingw32-*.exe.
     ln -fsr ./ld.bfd.exe ./${_arch}-w64-mingw32-ld.exe
     find . -type f -a -name "*.exe" -printf '%f\n' | xargs -I% ln -fsr % ${_arch}-w64-mingw32-%
-    # Symlinking to ../$CHOST/bin/*.exe.
-    ln -fsr ./ld.bfd.exe ../${_arch}-w64-mingw32/bin/ld.exe
-    find . -type f -a \( -name "ar.exe" -o -name "as.exe" -o -name "dlltool.exe" -o -name "ld.bfd.exe" -o -name "nm.exe" \
-        -o -name "objcopy.exe" -o -name "objdump.exe" -o -name "ranlib.exe" -o -name "strip.exe" \) -printf '%f\n' |     \
-            xargs -I% ln -fsr % ../${_arch}-w64-mingw32/bin/%
     popd > /dev/null
 
     # New ld.
@@ -85,8 +66,6 @@ function symlink_binutils() {
     ln -fsr ./ld.bfd.exe ./ld.exe
     ln -fsr ./ld.bfd.exe ./${_arch}-w64-mingw32-ld.bfd.exe
     ln -fsr ./ld.bfd.exe ./${_arch}-w64-mingw32-ld.exe
-    ln -fsr ./ld.bfd.exe ../${_arch}-w64-mingw32/bin/ld.bfd.exe
-    ln -fsr ./ld.bfd.exe ../${_arch}-w64-mingw32/bin/ld.exe
     popd > /dev/null
 
     return 0
@@ -123,6 +102,9 @@ function build_binutils() {
         prepare_binutils
     fi
 
+    MSYS2_ARG_CONV_EXCL="LIB_PATH="
+    export MSYS2_ARG_CONV_EXCL
+
     local _arch
     for _arch in ${TARGET_ARCH[@]}
     do
@@ -150,53 +132,58 @@ function build_binutils() {
 
             # Configure.
             printf "===> Configuring Binutils %s...\n" $_arch
-            ../src/binutils-${BINUTILS_VER}/configure                    \
-                --prefix=/mingw$_bitval                                  \
-                --build=${_arch}-w64-mingw32                             \
-                --host=${_arch}-w64-mingw32                              \
-                --target=${_arch}-w64-mingw32                            \
-                --enable-lto                                             \
-                --disable-werror                                         \
-                --enable-shared                                          \
-                --disable-static                                         \
-                --enable-plugins                                         \
-                ${_64_bit_bfd}                                           \
-                --enable-install-libbfd                                  \
-                --enable-nls                                             \
-                --disable-rpath                                          \
-                --disable-multilib                                       \
-                --disable-install-libiberty                              \
-                --disable-gdb                                            \
-                --disable-libdecnumber                                   \
-                --disable-readline                                       \
-                --disable-sim                                            \
-                --with-build-sysroot=${DST_DIR}/mingw$_bitval            \
-                --with-gnu-ld                                            \
-                --with-zlib=yes                                          \
-                --with-lib{iconv,intl}-prefix=${DST_DIR}/mingw$_bitval   \
-                --with-sysroot=/mingw$_bitval                            \
-                --with-lib-path=${_libpath}                              \
-                --with-stage1-ldflags=no                                 \
-                CFLAGS="-march=${_arch/_/-} ${CFLAGS_} ${CPPFLAGS_}"     \
-                LDFLAGS="${LDFLAGS_}"                                    \
-                CXXFLAGS="-march=${_arch/_/-} ${CXXFLAGS_} ${CPPFLAGS_}" \
+            ../src/binutils-${BINUTILS_VER}/configure                  \
+                --prefix=/mingw$_bitval                                \
+                --build=${_arch}-w64-mingw32                           \
+                --host=${_arch}-w64-mingw32                            \
+                --target=${_arch}-w64-mingw32                          \
+                --enable-ld=default                                    \
+                --enable-lto                                           \
+                --disable-werror                                       \
+                --enable-shared                                        \
+                --disable-static                                       \
+                --enable-fast-install                                  \
+                --enable-plugins                                       \
+                ${_64_bit_bfd}                                         \
+                --enable-secureplt                                     \
+                --enable-install-libbfd                                \
+                --enable-nls                                           \
+                --disable-rpath                                        \
+                --enable-got=target                                    \
+                --disable-multilib                                     \
+                --disable-install-libiberty                            \
+                --disable-gdb                                          \
+                --disable-libdecnumber                                 \
+                --disable-readline                                     \
+                --disable-sim                                          \
+                --with-stage1-ldflags=no                               \
+                --with-build-sysroot=${DST_DIR}/mingw$_bitval          \
+                --with-gnu-ld                                          \
+                --with-zlib=yes                                        \
+                --with-lib{iconv,intl}-prefix=${DST_DIR}/mingw$_bitval \
+                --with-lib-path=${_libpath}                            \
+                --with-sysroot=/mingw$_bitval                          \
+                CFLAGS="${CFLAGS_} ${CPPFLAGS_}"                       \
+                LDFLAGS="${LDFLAGS_}"                                  \
+                CXXFLAGS="${CXXFLAGS_} ${CPPFLAGS_}"                   \
                 > ${LOGS_DIR}/binutils/binutils_config_${_arch}.log 2>&1 || exit 1
             echo "done"
 
             # Make.
             printf "===> Making Binutils %s...\n" $_arch
             # Setting -j$(($(nproc)+1)) sometimes makes error.
-            make > ${LOGS_DIR}/binutils/binutils_make_${_arch}.log 2>&1 || exit 1
+            make LIB_PATH=${DST_DIR}/mingw${_bitval}/lib:${DST_DIR}/mingw${_bitval}/${_arch}-w64-mingw32/lib \
+                tooldir=/mingw$_bitval > ${LOGS_DIR}/binutils/binutils_make_${_arch}.log 2>&1 || exit 1
             echo "done"
 
             # Install.
             printf "===> Installing Binutils %s...\n" $_arch
             rm -fr ${PREIN_DIR}/binutils/mingw${_bitval}/*
-            make DESTDIR=${PREIN_DIR}/binutils install > ${LOGS_DIR}/binutils/binutils_install_${_arch}.log 2>&1 || exit 1
+            make DESTDIR=${PREIN_DIR}/binutils prefix=/mingw$_bitval tooldir=/mingw$_bitval install \
+                > ${LOGS_DIR}/binutils/binutils_install_${_arch}.log 2>&1 || exit 1
             # Remove unneeded files.
-            rm -fr ${PREIN_DIR}/binutils/mingw${_bitval}/lib
-            # Install only ansidecl.h, which is included by ieeefp.h.
-            rm -f ${PREIN_DIR}/binutils/mingw${_bitval}/include/{bfd*,dis-asm,plugin-api,symcat}.h
+            rm -f ${PREIN_DIR}/binutils/mingw${_bitval}/lib/*.a
+            rm -fr ${PREIN_DIR}/binutils/mingw${_bitval}/include
             remove_empty_dirs ${PREIN_DIR}/binutils/mingw$_bitval
             remove_la_files   ${PREIN_DIR}/binutils/mingw$_bitval
             # Strip files.
@@ -208,12 +195,13 @@ function build_binutils() {
             # Setting -j$(($(nproc)+1)) sometimes makes error.
             make -C ld clean > ${LOGS_DIR}/binutils/binutils_remakeld_${_arch}.log 2>&1 || exit 1
             make -C ld LIB_PATH=/mingw${_bitval}/lib:/mingw${_bitval}/${_arch}-w64-mingw32/lib:/mingw${_bitval}/local/lib \
-                >> ${LOGS_DIR}/binutils/binutils_remakeld_${_arch}.log 2>&1 || exit 1
+                tooldir=/mingw$_bitval >> ${LOGS_DIR}/binutils/binutils_remakeld_${_arch}.log 2>&1 || exit 1
             echo "done"
 
             # Reinstall ld.
             printf "===> Reinstalling ld %s...\n" $_arch
-            make -C ld DESTDIR=${PREIN_DIR}/binutils_ld install \
+            rm -fr ${PREIN_DIR}/binutils_ld/mingw${_bitval}/*
+            make -C ld DESTDIR=${PREIN_DIR}/binutils_ld prefix=/mingw$_bitval tooldir=/mingw$_bitval install \
                 > ${LOGS_DIR}/binutils/binutils_reinstallld_${_arch}.log 2>&1 || exit 1
             strip_files ${PREIN_DIR}/binutils_ld/mingw$_bitval
             echo "done"
@@ -231,6 +219,8 @@ function build_binutils() {
             echo "done"
         fi
     done
+
+    unset MSYS2_ARG_CONV_EXCL
 
     cd $ROOT_DIR
     return 0

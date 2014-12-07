@@ -79,23 +79,23 @@ function build_gmp() {
 
             # Configure.
             printf "===> Configuring GMP %s...\n" $_arch
-            ../src/gmp-${GMP_VER}/configure                 \
-                --prefix=/mingw$_bitval                     \
-                --build=${_arch}-w64-mingw32                \
-                --host=${_arch}-w64-mingw32                 \
-                --disable-silent-rules                      \
-                --disable-cxx                               \
-                --enable-assembly                           \
-                --enable-fft                                \
-                --enable-fat                                \
-                --enable-shared                             \
-                --disable-static                            \
-                --enable-fast-install                       \
-                --with-gnu-ld                               \
-                CFLAGS="-march=${_arch/_/-} ${CFLAGS_}"     \
-                LDFLAGS="${LDFLAGS_}"                       \
-                CPPFLAGS="${CPPFLAGS_}"                     \
-                CXXFLAGS="-march=${_arch/_/-} ${CXXFLAGS_}" \
+            ../src/gmp-${GMP_VER}/configure  \
+                --prefix=/mingw$_bitval      \
+                --build=${_arch}-w64-mingw32 \
+                --host=${_arch}-w64-mingw32  \
+                --disable-silent-rules       \
+                --disable-cxx                \
+                --enable-assembly            \
+                --enable-fft                 \
+                --enable-fat                 \
+                --enable-shared              \
+                --disable-static             \
+                --enable-fast-install        \
+                --with-gnu-ld                \
+                CFLAGS="${CFLAGS_}"          \
+                LDFLAGS="${LDFLAGS_}"        \
+                CPPFLAGS="${CPPFLAGS_}"      \
+                CXXFLAGS="${CXXFLAGS_}"      \
                 > ${LOGS_DIR}/gcc_libs/gmp/gmp_config_${_arch}.log 2>&1 || exit 1
             echo "done"
 

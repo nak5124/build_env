@@ -99,20 +99,20 @@ function build_mpfr() {
 
             # Configure.
             printf "===> Configuring MPFR %s...\n" $_arch
-            ../src/mpfr-${MPFR_VER}/configure           \
-                --prefix=/mingw$_bitval                 \
-                --build=${_arch}-w64-mingw32            \
-                --host=${_arch}-w64-mingw32             \
-                --disable-silent-rules                  \
-                --enable-thread-safe                    \
-                --enable-shared                         \
-                --disable-static                        \
-                --enable-fast-install                   \
-                --with-gmp=${DST_DIR}/mingw$_bitval     \
-                --with-gnu-ld                           \
-                CFLAGS="-march=${_arch/_/-} ${CFLAGS_}" \
-                LDFLAGS="${LDFLAGS_}"                   \
-                CPPFLAGS="${CPPFLAGS_}"                 \
+            ../src/mpfr-${MPFR_VER}/configure       \
+                --prefix=/mingw$_bitval             \
+                --build=${_arch}-w64-mingw32        \
+                --host=${_arch}-w64-mingw32         \
+                --disable-silent-rules              \
+                --enable-thread-safe                \
+                --enable-shared                     \
+                --disable-static                    \
+                --enable-fast-install               \
+                --with-gmp=${DST_DIR}/mingw$_bitval \
+                --with-gnu-ld                       \
+                CFLAGS="${CFLAGS_}"                 \
+                LDFLAGS="${LDFLAGS_}"               \
+                CPPFLAGS="${CPPFLAGS_}"             \
                 > ${LOGS_DIR}/gcc_libs/mpfr/mpfr_config_${_arch}.log 2>&1 || exit 1
             echo "done"
 

@@ -24,48 +24,89 @@ function download_intl_src() {
 
 # Apply patches and libtoolize.
 function prepare_intl() {
-    # Apply patches.
-    printf "===> Applying patches to libintl %s...\n" $INTL_VER
-    pushd ${BUILD_DIR}/libintl/src/gettext-$INTL_VER > /dev/null
-    if [ ! -f ${BUILD_DIR}/libintl/src/gettext-${INTL_VER}/patched_01.marker ]; then
+    if [ "${INTL_VER}" = "git" ]; then
+        # Git clone.
+        if [ ! -d ${BUILD_DIR}/libintl/src/gettext-$INTL_VER ]; then
+            echo "===> Cloning libintl git repo..."
+            pushd ${BUILD_DIR}/libintl/src > /dev/null
+            dl_files git http://git.savannah.gnu.org/r/gettext.git
+            popd > /dev/null
+            echo "done"
+        fi
+
+        # Git pull.
+        echo "===> Updating libintl git repo..."
+        pushd ${BUILD_DIR}/libintl/src/gettext-$INTL_VER > /dev/null
+        git clean -fdx > /dev/null 2>&1
+        git reset --hard > /dev/null 2>&1
+        git submodule foreach git clean -fdx > /dev/null 2>&1
+        git submodule foreach git reset --hard > /dev/null 2>&1
+        git pull > /dev/null 2>&1
+        git_hash > ${LOGS_DIR}/libintl/libintl.hash 2>&1
+        git_rev >> ${LOGS_DIR}/libintl/libintl.hash 2>&1
+        echo "done"
+
+        # Autogen
+        printf "===> Autogening libintl %s...\n" $INTL_VER
+        ./autogen.sh > /dev/null 2>&1
+        local _git_ver=$(expr "$(git describe)" : v*'\(.*\)')
+        echo ${_git_ver%%-*} > .version
+        echo "done"
+
+        # Apply patches.
+        printf "===> Applying patches to libintl %s...\n" $INTL_VER
         # For --enable-relocatable.
         patch -p1 -i ${PATCHES_DIR}/libintl/0001-relocatex-libintl-0.18.3.1.patch \
             > ${LOGS_DIR}/libintl/libintl_patch.log 2>&1 || exit 1
-        touch ${BUILD_DIR}/libintl/src/gettext-${INTL_VER}/patched_01.marker
-    fi
-    if [ ! -f ${BUILD_DIR}/libintl/src/gettext-${INTL_VER}/patched_02.marker ]; then
         patch -p0 -i ${PATCHES_DIR}/libintl/0002-always-use-libintl-vsnprintf.mingw.patch \
             >> ${LOGS_DIR}/libintl/libintl_patch.log 2>&1 || exit 1
-        touch ${BUILD_DIR}/libintl/src/gettext-${INTL_VER}/patched_02.marker
-    fi
-    if [ ! -f ${BUILD_DIR}/libintl/src/gettext-${INTL_VER}/patched_03.marker ]; then
         # Fix linking to gcc dynamically.
         patch -p1 -i ${PATCHES_DIR}/libintl/0003-static-locale_charset.patch \
             >> ${LOGS_DIR}/libintl/libintl_patch.log 2>&1 || exit 1
-        touch ${BUILD_DIR}/libintl/src/gettext-${INTL_VER}/patched_03.marker
-    fi
-    if [ ! -f ${BUILD_DIR}/libintl/src/gettext-${INTL_VER}/patched_04.marker ]; then
         patch -p1 -i ${PATCHES_DIR}/libintl/0004-use-GetConsoleOutputCP.patch \
             >> ${LOGS_DIR}/libintl/libintl_patch.log 2>&1 || exit 1
-        touch ${BUILD_DIR}/libintl/src/gettext-${INTL_VER}/patched_04.marker
-    fi
-    if [ ! -f ${BUILD_DIR}/libintl/src/gettext-${INTL_VER}/patched_05.marker ]; then
         # Fix linking to gcc with -fstack-protector*.
         patch -p1 -i ${PATCHES_DIR}/libintl/0005-dont-use-disable-auto-import.patch \
             >> ${LOGS_DIR}/libintl/libintl_patch.log 2>&1 || exit 1
-        touch ${BUILD_DIR}/libintl/src/gettext-${INTL_VER}/patched_05.marker
+        # Disable automatic image base calculation.
+        sed -i 's/enable-auto-image-base/disable-auto-image-base/g' gettext-runtime/configure
+        popd > /dev/null
+        echo "done"
+    else
+        # Apply patches.
+        printf "===> Applying patches to libintl %s...\n" $INTL_VER
+        pushd ${BUILD_DIR}/libintl/src/gettext-$INTL_VER > /dev/null
+        if [ ! -f ${BUILD_DIR}/libintl/src/gettext-${INTL_VER}/patched_01.marker ]; then
+            # For --enable-relocatable.
+            patch -p1 -i ${PATCHES_DIR}/libintl/0001-relocatex-libintl-0.18.3.1.patch \
+                > ${LOGS_DIR}/libintl/libintl_patch.log 2>&1 || exit 1
+            touch ${BUILD_DIR}/libintl/src/gettext-${INTL_VER}/patched_01.marker
+        fi
+        if [ ! -f ${BUILD_DIR}/libintl/src/gettext-${INTL_VER}/patched_02.marker ]; then
+            patch -p0 -i ${PATCHES_DIR}/libintl/0002-always-use-libintl-vsnprintf.mingw.patch \
+                >> ${LOGS_DIR}/libintl/libintl_patch.log 2>&1 || exit 1
+            touch ${BUILD_DIR}/libintl/src/gettext-${INTL_VER}/patched_02.marker
+        fi
+        if [ ! -f ${BUILD_DIR}/libintl/src/gettext-${INTL_VER}/patched_03.marker ]; then
+            # Fix linking to gcc dynamically.
+            patch -p1 -i ${PATCHES_DIR}/libintl/0003-static-locale_charset.patch \
+                >> ${LOGS_DIR}/libintl/libintl_patch.log 2>&1 || exit 1
+            touch ${BUILD_DIR}/libintl/src/gettext-${INTL_VER}/patched_03.marker
+        fi
+        if [ ! -f ${BUILD_DIR}/libintl/src/gettext-${INTL_VER}/patched_04.marker ]; then
+            patch -p1 -i ${PATCHES_DIR}/libintl/0004-use-GetConsoleOutputCP.patch \
+                >> ${LOGS_DIR}/libintl/libintl_patch.log 2>&1 || exit 1
+            touch ${BUILD_DIR}/libintl/src/gettext-${INTL_VER}/patched_04.marker
+        fi
+        if [ ! -f ${BUILD_DIR}/libintl/src/gettext-${INTL_VER}/patched_05.marker ]; then
+            # Fix linking to gcc with -fstack-protector*.
+            patch -p1 -i ${PATCHES_DIR}/libintl/0005-dont-use-disable-auto-import.patch \
+                >> ${LOGS_DIR}/libintl/libintl_patch.log 2>&1 || exit 1
+            touch ${BUILD_DIR}/libintl/src/gettext-${INTL_VER}/patched_05.marker
+        fi
+        popd > /dev/null
+        echo "done"
     fi
-    echo "done"
-
-    # Libtoolize
-    printf "===> Libtoolizing libintl %s...\n" $INTL_VER
-    # For building with -fstack-protector*.
-    cd ${BUILD_DIR}/libintl/src/gettext-${INTL_VER}/gettext-runtime
-    libtoolize -i > /dev/null 2>&1
-    sed -i "s/macro_version='2.4.2'/macro_version='2.4.2.458.26-92994'/" configure
-    sed -i "s/macro_revision='1.3337'/macro_revision='2.4.3'/" configure
-    popd > /dev/null
-    echo "done"
 
     return 0
 }
@@ -94,7 +135,9 @@ function build_intl() {
 
     # Setup.
     if ${_rebuild}; then
-        download_intl_src
+        if [ "${INTL_VER}" != "git" ]; then
+            download_intl_src
+        fi
         prepare_intl
     fi
 
@@ -133,10 +176,10 @@ function build_intl() {
                 --disable-libasprintf                            \
                 --with-gnu-ld                                    \
                 --with-libiconv-prefix=${DST_DIR}/mingw$_bitval  \
-                CFLAGS="-march=${_arch/_/-} ${CFLAGS_}"          \
+                CFLAGS="${CFLAGS_}"                              \
                 LDFLAGS="${LDFLAGS_}"                            \
                 CPPFLAGS="${CPPFLAGS_}"                          \
-                CXXFLAGS="-march=${_arch/_/-} ${CXXFLAGS_}"      \
+                CXXFLAGS="${CXXFLAGS_}"                          \
                 > ${LOGS_DIR}/libintl/libintl_config_${_arch}.log 2>&1 || exit 1
             echo "done"
 

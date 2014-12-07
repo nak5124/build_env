@@ -87,23 +87,23 @@ function build_isl() {
 
             # Configure.
             printf "===> Configuring ISL %s...\n" $_arch
-            ../src/isl-${ISL_VER}/configure                 \
-                --prefix=/mingw$_bitval                     \
-                --build=${_arch}-w64-mingw32                \
-                --host=${_arch}-w64-mingw32                 \
-                --disable-silent-rules                      \
-                --enable-shared                             \
-                --disable-static                            \
-                --enable-fast-install                       \
-                --with-gnu-ld                               \
-                --with-int=gmp                              \
-                --with-gmp=system                           \
-                --with-gmp-prefix=${DST_DIR}/mingw$_bitval  \
-                --with-clang=no                             \
-                CFLAGS="-march=${_arch/_/-} ${CFLAGS_}"     \
-                LDFLAGS="${LDFLAGS_}"                       \
-                CPPFLAGS="${CPPFLAGS_}"                     \
-                CXXFLAGS="-march=${_arch/_/-} ${CXXFLAGS_}" \
+            ../src/isl-${ISL_VER}/configure                \
+                --prefix=/mingw$_bitval                    \
+                --build=${_arch}-w64-mingw32               \
+                --host=${_arch}-w64-mingw32                \
+                --disable-silent-rules                     \
+                --enable-shared                            \
+                --disable-static                           \
+                --enable-fast-install                      \
+                --with-gnu-ld                              \
+                --with-int=gmp                             \
+                --with-gmp=system                          \
+                --with-gmp-prefix=${DST_DIR}/mingw$_bitval \
+                --with-clang=no                            \
+                CFLAGS="${CFLAGS_}"                        \
+                LDFLAGS="${LDFLAGS_}"                      \
+                CPPFLAGS="${CPPFLAGS_}"                    \
+                CXXFLAGS="${CXXFLAGS_}"                    \
                 > ${LOGS_DIR}/gcc_libs/isl/isl_config_${_arch}.log 2>&1 || exit 1
             echo "done"
 

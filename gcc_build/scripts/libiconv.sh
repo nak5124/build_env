@@ -49,18 +49,14 @@ function prepare_iconv() {
             >> ${LOGS_DIR}/libiconv/libiconv_patch.log 2>&1 || exit 1
         touch ${BUILD_DIR}/libiconv/src/libiconv-${ICONV_VER}/patched_04.marker
     fi
-    echo "done"
-
-    # Libtoolize
-    printf "===> Libtoolizing libiconv %s...\n" $ICONV_VER
-    # For building with -fstack-protector*.
-    libtoolize -i > /dev/null 2>&1
-    sed -i "s/macro_version='2.4'/macro_version='2.4.2.458.26-92994'/" configure
-    sed -i "s/macro_revision='1.3293'/macro_revision='2.4.3'/" configure
-    cd ${BUILD_DIR}/libiconv/src/libiconv-${ICONV_VER}/libcharset
-    libtoolize -i > /dev/null 2>&1
-    sed -i "s/macro_version='2.4'/macro_version='2.4.2.458.26-92994'/" configure
-    sed -i "s/macro_revision='1.3293'/macro_revision='2.4.3'/" configure
+    if [ ! -f ${BUILD_DIR}/libiconv/src/libiconv-${ICONV_VER}/patched_05.marker ]; then
+        # For building with -fstack-protector*.
+        patch -p1 -i ${PATCHES_DIR}/libiconv/0005-libiconv-ltmain.sh.patch \
+            >> ${LOGS_DIR}/libiconv/libiconv_patch.log 2>&1 || exit 1
+        touch ${BUILD_DIR}/libiconv/src/libiconv-${ICONV_VER}/patched_05.marker
+    fi
+    # Disable automatic image base calculation.
+    sed -i 's/enable-auto-image-base/disable-auto-image-base/g' {.,preload,libcharset}/configure
     popd > /dev/null
     echo "done"
 
@@ -124,21 +120,21 @@ function build_iconv() {
 
             # Configure.
             printf "===> Configuring libiconv %s...\n" $_arch
-            ../src/libiconv-${ICONV_VER}/configure      \
-                --prefix=/mingw$_bitval                 \
-                --build=${_arch}-w64-mingw32            \
-                --host=${_arch}-w64-mingw32             \
-                --enable-relocatable                    \
-                --enable-extra-encodings                \
-                --disable-static                        \
-                --enable-shared                         \
-                --enable-fast-install                   \
-                --disable-rpath                         \
-                ${_intl}                                \
-                --with-gnu-ld                           \
-                CFLAGS="-march=${_arch/_/-} ${CFLAGS_}" \
-                LDFLAGS="${LDFLAGS_}"                   \
-                CPPFLAGS="${CPPFLAGS_}"                 \
+            ../src/libiconv-${ICONV_VER}/configure \
+                --prefix=/mingw$_bitval            \
+                --build=${_arch}-w64-mingw32       \
+                --host=${_arch}-w64-mingw32        \
+                --enable-relocatable               \
+                --enable-extra-encodings           \
+                --disable-static                   \
+                --enable-shared                    \
+                --enable-fast-install              \
+                --disable-rpath                    \
+                ${_intl}                           \
+                --with-gnu-ld                      \
+                CFLAGS="${CFLAGS_}"                \
+                LDFLAGS="${LDFLAGS_}"              \
+                CPPFLAGS="${CPPFLAGS_}"            \
                 > ${LOGS_DIR}/libiconv/libiconv_config_${_arch}.log 2>&1 || exit 1
             echo "done"
 

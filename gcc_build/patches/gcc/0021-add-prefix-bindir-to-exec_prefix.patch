@@ -1,0 +1,46 @@
+--- gcc-4.9.2/gcc/gcc.c.old	2014-12-29 23:13:55.680135900 +0900
++++ gcc-4.9.2/gcc/gcc.c	2014-12-29 16:53:28.689411200 +0900
+@@ -3707,7 +3707,7 @@
+ {
+   const char *temp;
+   char *temp1;
+-  char *tooldir_prefix, *tooldir_prefix2;
++  char *tooldir_prefix, *tooldir_prefix2, *bindir_prefix, *bindir_prefix2;
+   char *(*get_relative_prefix) (const char *, const char *,
+ 				const char *) = NULL;
+   struct cl_option_handlers handlers;
+@@ -4058,23 +4058,34 @@
+     }
+ 
+   gcc_assert (!IS_ABSOLUTE_PATH (tooldir_base_prefix));
++  bindir_prefix2 = concat (tooldir_base_prefix, "bin",
++			    dir_separator_str, NULL);
+   tooldir_prefix2 = concat (tooldir_base_prefix, spec_machine,
+ 			    dir_separator_str, NULL);
+ 
+   /* Look for tools relative to the location from which the driver is
+      running, or, if that is not available, the configured prefix.  */
++  bindir_prefix
++    = concat (gcc_exec_prefix ? gcc_exec_prefix : standard_exec_prefix,
++	      spec_machine, dir_separator_str,
++	      spec_version, dir_separator_str, bindir_prefix2, NULL);
+   tooldir_prefix
+     = concat (gcc_exec_prefix ? gcc_exec_prefix : standard_exec_prefix,
+ 	      spec_machine, dir_separator_str,
+ 	      spec_version, dir_separator_str, tooldir_prefix2, NULL);
++  free (bindir_prefix2);
+   free (tooldir_prefix2);
+ 
+   add_prefix (&exec_prefixes,
++	      bindir_prefix,
++	      "BINUTILS", PREFIX_PRIORITY_LAST, 0, 0);
++  add_prefix (&exec_prefixes,
+ 	      concat (tooldir_prefix, "bin", dir_separator_str, NULL),
+ 	      "BINUTILS", PREFIX_PRIORITY_LAST, 0, 0);
+   add_prefix (&startfile_prefixes,
+ 	      concat (tooldir_prefix, "lib", dir_separator_str, NULL),
+ 	      "BINUTILS", PREFIX_PRIORITY_LAST, 0, 1);
++  free (bindir_prefix);
+   free (tooldir_prefix);
+ 
+ #if defined(TARGET_SYSTEM_ROOT_RELOCATABLE) && !defined(VMS)

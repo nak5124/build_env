@@ -93,13 +93,13 @@ function build_bzip2() {
 
             # Configure.
             printf "===> Configuring bzip2 %s...\n" $_arch
-            ../src/bzip2-${BZIP2_VER}/configure                      \
-                --prefix=/mingw$_bitval                              \
-                --build=${_arch}-w64-mingw32                         \
-                --host=${_arch}-w64-mingw32                          \
-                --enable-shared                                      \
-                CFLAGS="-march=${_arch/_/-} ${CFLAGS_} ${CPPFLAGS_}" \
-                LDFLAGS="${CFLAGS_} ${LDFLAGS_}"                     \
+            ../src/bzip2-${BZIP2_VER}/configure  \
+                --prefix=/mingw$_bitval          \
+                --build=${_arch}-w64-mingw32     \
+                --host=${_arch}-w64-mingw32      \
+                --enable-shared                  \
+                CFLAGS="${CFLAGS_} ${CPPFLAGS_}" \
+                LDFLAGS="${CFLAGS_} ${LDFLAGS_}" \
                 > ${LOGS_DIR}/bzip2/bzip2_config_${_arch}.log 2>&1 || exit 1
             echo "done"
 

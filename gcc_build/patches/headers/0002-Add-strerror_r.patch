@@ -1,0 +1,12 @@
+diff --git a/mingw-w64-headers/crt/string.h b/mingw-w64-headers/crt/string.h
+index 16831e3..612745f 100644
+--- a/mingw-w64-headers/crt/string.h
++++ b/mingw-w64-headers/crt/string.h
+@@ -178,4 +178,7 @@ extern "C" {
+ #endif
+ 
+ #include <sec_api/string_s.h>
++__forceinline int __cdecl strerror_r(int _ErrNum, char *_Buf, size_t _SizeInBytes) {
++  return strerror_s(_Buf, _SizeInBytes, _ErrNum);
++}
+ #endif

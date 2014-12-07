@@ -41,6 +41,10 @@ function prepare_zlib() {
             >> ${LOGS_DIR}/zlib/zlib_patch.log 2>&1 || exit 1
         touch ${BUILD_DIR}/zlib/src/zlib-${ZLIB_VER}/patched_03.marker
     fi
+    if [ ! -f ${BUILD_DIR}/zlib/src/zlib-${ZLIB_VER}/patched_04.marker ]; then
+        patch -p1 -i ${PATCHES_DIR}/zlib/0004-lfs.patch >> ${LOGS_DIR}/zlib/zlib_patch.log 2>&1 || exit 1
+        touch ${BUILD_DIR}/zlib/src/zlib-${ZLIB_VER}/patched_04.marker
+    fi
     popd > /dev/null
     echo "done"
 
@@ -101,11 +105,11 @@ function build_zlib() {
 
             # Configure.
             printf "===> Configuring zlib %s...\n" $_arch
-            CFLAGS="-march=${_arch/_/-} ${CFLAGS_} ${CPPFLAGS_}" \
-            LDFLAGS="${LDFLAGS_}"                                \
-            ./configure                                          \
-                --prefix=/mingw$_bitval                          \
-                --shared                                         \
+            CFLAGS="${CFLAGS_} ${CPPFLAGS_}" \
+            LDFLAGS="${LDFLAGS_}"            \
+            ./configure                      \
+                --prefix=/mingw$_bitval      \
+                --shared                     \
                 > ${LOGS_DIR}/zlib/libz_config_${_arch}.log 2>&1 || exit 1
             echo "done"
 

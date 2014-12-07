@@ -1,32 +1,5 @@
 --- gcc-4.9.2/gcc/intl.c.old	2014-01-03 07:23:26.000000000 +0900
 +++ gcc-4.9.2/gcc/intl.c	2014-10-28 17:59:23.032539600 +0900
-@@ -33,10 +33,10 @@
- const char *close_quote = "'";
- 
- /* The name of the locale encoding.  */
--const char *locale_encoding = NULL;
-+const char *locale_encoding = "utf-8";
- 
- /* Whether the locale is using UTF-8.  */
--bool locale_utf8 = false;
-+bool locale_utf8 = true;
- 
- #ifdef ENABLE_NLS
- 
-@@ -78,13 +78,11 @@
- 	 U+2018 and U+2019; but otherwise use "'" instead of "`" as
- 	 opening quote.  */
-       open_quote = "'";
--#if defined HAVE_LANGINFO_CODESET
-       if (locale_utf8)
- 	{
- 	  open_quote = "\xe2\x80\x98";
- 	  close_quote = "\xe2\x80\x99";
- 	}
--#endif
-     }
- }
- 
 @@ -105,14 +103,126 @@
  }
  
@@ -157,17 +130,6 @@
  }
  
  #endif
---- gcc-4.9.2/gcc/pretty-print.c.old	2014-01-03 07:23:26.000000000 +0900
-+++ gcc-4.9.2/gcc/pretty-print.c	2014-10-28 17:57:35.577393500 +0900
-@@ -1073,7 +1073,7 @@
- 
-   /* Otherwise IDENT is converted to the locale character set if
-      possible.  */
--#if defined ENABLE_NLS && defined HAVE_LANGINFO_CODESET && HAVE_ICONV
-+#if defined ENABLE_NLS && HAVE_ICONV
-   if (locale_encoding != NULL)
-     {
-       iconv_t cd = iconv_open (locale_encoding, "UTF-8");
 --- gcc-4.9.2/libstdc++-v3/configure.old	2014-10-28 17:49:05.503562100 +0900
 +++ gcc-4.9.2/libstdc++-v3/configure	2014-10-28 18:00:18.872733500 +0900
 @@ -16106,7 +16106,9 @@

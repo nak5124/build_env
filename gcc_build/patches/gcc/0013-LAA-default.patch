@@ -6,7 +6,7 @@
    %{shared|mdll: " SUB_LINK_ENTRY " --enable-auto-image-base} \
 -  %(shared_libgcc_undefs)"
 +  %(shared_libgcc_undefs) \
-+  %{!shared: %{!mdll: --large-address-aware}}"
++  %{!shared: %{!mdll: --large-address-aware --tsaware}}"
  
  /* Include in the mingw32 libraries with libgcc */
  #ifdef ENABLE_SHARED_LIBGCC
@@ -18,4 +18,4 @@
    %{shared|mdll: " SUB_LINK_ENTRY " --enable-auto-image-base} \
 -  %(shared_libgcc_undefs)"
 +  %(shared_libgcc_undefs) \
-+  %{!shared: %{!mdll: %{" SPEC_32 ": --large-address-aware}}}"
++  %{!shared: %{!mdll: %{" SPEC_32 ": --large-address-aware} --tsaware}}"

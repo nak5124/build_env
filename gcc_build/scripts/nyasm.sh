@@ -87,12 +87,12 @@ function build_nasm() {
 
             # Configure.
             printf "===> Configuring NASM %s...\n" $_arch
-            ./configure                                              \
-                --prefix=/mingw$_bitval                              \
-                --build=${_arch}-w64-mingw32                         \
-                --host=${_arch}-w64-mingw32                          \
-                CFLAGS="-march=${_arch/_/-} ${CFLAGS_} ${CPPFLAGS_}" \
-                LDFLAGS="${CFLAGS_} ${LDFLAGS_}"                     \
+            ./configure                          \
+                --prefix=/mingw$_bitval          \
+                --build=${_arch}-w64-mingw32     \
+                --host=${_arch}-w64-mingw32      \
+                CFLAGS="${CFLAGS_} ${CPPFLAGS_}" \
+                LDFLAGS="${CFLAGS_} ${LDFLAGS_}" \
                 > ${LOGS_DIR}/nyasm/nasm/nasm_config_${_arch}.log 2>&1 || exit 1
             echo "done"
 
@@ -207,15 +207,15 @@ function build_yasm() {
 
             # Configure.
             printf "===> Configuring Yasm %s...\n" $_arch
-            ../src/yasm-${YASM_VER}/configure           \
-                --prefix=/mingw$_bitval                 \
-                --build=${_arch}-w64-mingw32            \
-                --host=${_arch}-w64-mingw32             \
-                --disable-silent-rules                  \
-                --with-gnu-ld                           \
-                CFLAGS="-march=${_arch/_/-} ${CFLAGS_}" \
-                LDFLAGS="${LDFLAGS_}"                   \
-                CPPFLAGS="${CPPFLAGS_}"                 \
+            ../src/yasm-${YASM_VER}/configure \
+                --prefix=/mingw$_bitval       \
+                --build=${_arch}-w64-mingw32  \
+                --host=${_arch}-w64-mingw32   \
+                --disable-silent-rules        \
+                --with-gnu-ld                 \
+                CFLAGS="${CFLAGS_}"           \
+                LDFLAGS="${LDFLAGS_}"         \
+                CPPFLAGS="${CPPFLAGS_}"       \
                 > ${LOGS_DIR}/nyasm/yasm/yasm_config_${_arch}.log 2>&1 || exit 1
             echo "done"
 

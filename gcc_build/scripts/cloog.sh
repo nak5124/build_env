@@ -5,13 +5,13 @@ function download_cloog_src() {
     if [ ! -f ${BUILD_DIR}/gcc_libs/cloog/src/cloog-${CLOOG_VER}.tar.gz ]; then
         printf "===> Downloading CLooG %s...\n" $CLOOG_VER
         pushd ${BUILD_DIR}/gcc_libs/cloog/src > /dev/null
-        dl_files http http://www.bastoul.net/cloog/pages/download/cloog-${CLOOG_VER}.tar.gz
+        dl_files http https://github.com/periscop/cloog/archive/cloog-${CLOOG_VER}.tar.gz
         popd > /dev/null
         echo "done"
     fi
 
     # Decompress the src archive.
-    if [ ! -d ${BUILD_DIR}/gcc_libs/cloog/src/cloog-$CLOOG_VER ]; then
+    if [ ! -d ${BUILD_DIR}/gcc_libs/cloog/src/cloog-cloog-$CLOOG_VER ]; then
         printf "===> Extracting CLooG %s...\n" $CLOOG_VER
         pushd ${BUILD_DIR}/gcc_libs/cloog/src > /dev/null
         decomp_arch ${BUILD_DIR}/gcc_libs/cloog/src/cloog-${CLOOG_VER}.tar.gz
@@ -26,17 +26,12 @@ function download_cloog_src() {
 function prepare_cloog() {
     # Apply patches.
     printf "===> Applying patches to CLooG %s...\n" $CLOOG_VER
-    pushd ${BUILD_DIR}/gcc_libs/cloog/src/cloog-$CLOOG_VER > /dev/null
-    if [ ! -f ${BUILD_DIR}/gcc_libs/cloog/src/cloog-${CLOOG_VER}/patched_01.marker ]; then
+    pushd ${BUILD_DIR}/gcc_libs/cloog/src/cloog-cloog-$CLOOG_VER > /dev/null
+    if [ ! -f ${BUILD_DIR}/gcc_libs/cloog/src/cloog-cloog-${CLOOG_VER}/patched_01.marker ]; then
         # Combination of upstream commits b561f860, 2d8b7c6b and 22643c94.
-        patch -p1 -i ${PATCHES_DIR}/cloog/0001-cloog-0.18.1-isl-compat.patch \
+        patch -p1 -i ${PATCHES_DIR}/cloog/0001-cloog-0.18.3-no-undefined.patch \
             > ${LOGS_DIR}/gcc_libs/cloog/cloog_patch.log 2>&1 || exit 1
-        touch ${BUILD_DIR}/gcc_libs/cloog/src/cloog-${CLOOG_VER}/patched_01.marker
-    fi
-    if [ ! -f ${BUILD_DIR}/gcc_libs/cloog/src/cloog-${CLOOG_VER}/patched_02.marker ]; then
-        patch -p1 -i ${PATCHES_DIR}/cloog/0002-cloog-0.18.1-no-undefined.patch \
-            >> ${LOGS_DIR}/gcc_libs/cloog/cloog_patch.log 2>&1 || exit 1
-        touch ${BUILD_DIR}/gcc_libs/cloog/src/cloog-${CLOOG_VER}/patched_02.marker
+        touch ${BUILD_DIR}/gcc_libs/cloog/src/cloog-cloog-${CLOOG_VER}/patched_01.marker
     fi
     echo "done"
 
@@ -94,7 +89,7 @@ function build_cloog() {
 
             # Configure.
             printf "===> Configuring CLooG %s...\n" $_arch
-            ../src/cloog-${CLOOG_VER}/configure                  \
+            ../src/cloog-cloog-${CLOOG_VER}/configure            \
                 --prefix=/mingw$_bitval                          \
                 --build=${_arch}-w64-mingw32                     \
                 --host=${_arch}-w64-mingw32                      \
@@ -106,7 +101,7 @@ function build_cloog() {
                 --with-{isl,gmp}=system                          \
                 --with-{isl,gmp}-prefix=${DST_DIR}/mingw$_bitval \
                 --with-osl=no                                    \
-                CFLAGS="-march=${_arch/_/-} ${CFLAGS_}"          \
+                CFLAGS="${CFLAGS_}"                              \
                 LDFLAGS="${LDFLAGS_}"                            \
                 CPPFLAGS="${CPPFLAGS_}"                          \
                 > ${LOGS_DIR}/gcc_libs/cloog/cloog_config_${_arch}.log 2>&1 || exit 1

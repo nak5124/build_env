@@ -89,7 +89,7 @@ function build_mpc() {
                 --enable-fast-install                      \
                 --with-{mpfr,gmp}=${DST_DIR}/mingw$_bitval \
                 --with-gnu-ld                              \
-                CFLAGS="-march=${_arch/_/-} ${CFLAGS_}"    \
+                CFLAGS="${CFLAGS_}"                        \
                 LDFLAGS="${LDFLAGS_}"                      \
                 CPPFLAGS="${CPPFLAGS_}"                    \
                 > ${LOGS_DIR}/gcc_libs/mpc/mpc_config_${_arch}.log 2>&1 || exit 1

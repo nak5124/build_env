@@ -1,0 +1,104 @@
+--- zlib-1.2.8/zconf.h.in.old	2014-12-30 10:20:48.415187000 +0900
++++ zlib-1.2.8/zconf.h.in	2014-12-30 10:56:52.251698100 +0900
+@@ -434,21 +434,11 @@
+ #  endif
+ #endif
+ 
+-/* a little trick to accommodate both "#define _LARGEFILE64_SOURCE" and
+- * "#define _LARGEFILE64_SOURCE 1" as requesting 64-bit operations, (even
+- * though the former does not conform to the LFS document), but considering
+- * both "#undef _LARGEFILE64_SOURCE" and "#define _LARGEFILE64_SOURCE 0" as
+- * equivalently requesting no 64-bit operations
+- */
+-#if defined(_LARGEFILE64_SOURCE) && -_LARGEFILE64_SOURCE - -1 == 1
+-#  undef _LARGEFILE64_SOURCE
+-#endif
+-
+ #if defined(__WATCOMC__) && !defined(Z_HAVE_UNISTD_H)
+ #  define Z_HAVE_UNISTD_H
+ #endif
+ #ifndef Z_SOLO
+-#  if defined(Z_HAVE_UNISTD_H) || defined(_LARGEFILE64_SOURCE)
++#  if defined(Z_HAVE_UNISTD_H)
+ #    include <unistd.h>         /* for SEEK_*, off_t, and _LFS64_LARGEFILE */
+ #    ifdef VMS
+ #      include <unixio.h>       /* for off_t */
+@@ -459,15 +449,7 @@
+ #  endif
+ #endif
+ 
+-#if defined(_LFS64_LARGEFILE) && _LFS64_LARGEFILE-0
+-#  define Z_LFS64
+-#endif
+-
+-#if defined(_LARGEFILE64_SOURCE) && defined(Z_LFS64)
+-#  define Z_LARGE64
+-#endif
+-
+-#if defined(_FILE_OFFSET_BITS) && _FILE_OFFSET_BITS-0 == 64 && defined(Z_LFS64)
++#if defined(_FILE_OFFSET_BITS) && _FILE_OFFSET_BITS-0 == 64
+ #  define Z_WANT64
+ #endif
+ 
+@@ -481,14 +463,10 @@
+ #  define z_off_t long
+ #endif
+ 
+-#if !defined(_WIN32) && defined(Z_LARGE64)
+-#  define z_off64_t off64_t
++#if defined(_MSC_VER)
++#  define z_off64_t __int64
+ #else
+-#  if defined(_WIN32) && !defined(__GNUC__) && !defined(Z_SOLO)
+-#    define z_off64_t __int64
+-#  else
+-#    define z_off64_t z_off_t
+-#  endif
++#  define z_off64_t z_off_t
+ #endif
+ 
+ /* MVS linker does not support external names larger than 8 bytes */
+--- zlib-1.2.8/zlib.h.old	2014-12-30 10:57:06.212717700 +0900
++++ zlib-1.2.8/zlib.h	2014-12-30 11:01:35.415095800 +0900
+@@ -1682,20 +1682,12 @@
+           ((g)->have ? ((g)->have--, (g)->pos++, *((g)->next)++) : gzgetc(g))
+ #endif
+ 
+-/* provide 64-bit offset functions if _LARGEFILE64_SOURCE defined, and/or
+- * change the regular functions to 64 bits if _FILE_OFFSET_BITS is 64 (if
+- * both are true, the application gets the *64 functions, and the regular
+- * functions are changed to 64 bits) -- in case these are set on systems
+- * without large file support, _LFS64_LARGEFILE must also be true
+- */
+-#ifdef Z_LARGE64
+-   ZEXTERN gzFile ZEXPORT gzopen64 OF((const char *, const char *));
+-   ZEXTERN z_off64_t ZEXPORT gzseek64 OF((gzFile, z_off64_t, int));
+-   ZEXTERN z_off64_t ZEXPORT gztell64 OF((gzFile));
+-   ZEXTERN z_off64_t ZEXPORT gzoffset64 OF((gzFile));
+-   ZEXTERN uLong ZEXPORT adler32_combine64 OF((uLong, uLong, z_off64_t));
+-   ZEXTERN uLong ZEXPORT crc32_combine64 OF((uLong, uLong, z_off64_t));
+-#endif
++ZEXTERN gzFile ZEXPORT gzopen64 OF((const char *, const char *));
++ZEXTERN z_off64_t ZEXPORT gzseek64 OF((gzFile, z_off64_t, int));
++ZEXTERN z_off64_t ZEXPORT gztell64 OF((gzFile));
++ZEXTERN z_off64_t ZEXPORT gzoffset64 OF((gzFile));
++ZEXTERN uLong ZEXPORT adler32_combine64 OF((uLong, uLong, z_off64_t));
++ZEXTERN uLong ZEXPORT crc32_combine64 OF((uLong, uLong, z_off64_t));
+ 
+ #if !defined(ZLIB_INTERNAL) && defined(Z_WANT64)
+ #  ifdef Z_PREFIX_SET
+@@ -1713,14 +1705,6 @@
+ #    define adler32_combine adler32_combine64
+ #    define crc32_combine crc32_combine64
+ #  endif
+-#  ifndef Z_LARGE64
+-     ZEXTERN gzFile ZEXPORT gzopen64 OF((const char *, const char *));
+-     ZEXTERN z_off_t ZEXPORT gzseek64 OF((gzFile, z_off_t, int));
+-     ZEXTERN z_off_t ZEXPORT gztell64 OF((gzFile));
+-     ZEXTERN z_off_t ZEXPORT gzoffset64 OF((gzFile));
+-     ZEXTERN uLong ZEXPORT adler32_combine64 OF((uLong, uLong, z_off_t));
+-     ZEXTERN uLong ZEXPORT crc32_combine64 OF((uLong, uLong, z_off_t));
+-#  endif
+ #else
+    ZEXTERN gzFile ZEXPORT gzopen OF((const char *, const char *));
+    ZEXTERN z_off_t ZEXPORT gzseek OF((gzFile, z_off_t, int));
