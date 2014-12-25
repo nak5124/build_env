@@ -1,40 +1,42 @@
 #!/usr/bin/env bash
 
 
-for opt in "$@"
+declare plist
+declare needed=""
+declare opt
+for opt in "${@}"
 do
     case "${opt}" in
         --list=* | -l=* )
             plist="${opt#*=}"
             ;;
+        -n )
+            needed=" --needed"
+            ;;
     esac
 done
 
-if [ -z "${plist}" ] ; then
-    shdir=$(cd $(dirname $0);pwd)
+if [ -z "${plist}" ]; then
+    declare -r shdir=$(cd $(dirname $BASH_SOURCE); pwd)
     plist=${shdir}/pacman_list
 fi
 
-if [ ! -f "${plist}" ] ; then
+if [ ! -f "${plist}" ]; then
     echo "pacman_list can not be found..."
     exit 1
 fi
 
-i=0
+declare -i i=0
+declare tmp
 while read line
 do
-    tmp=($line)
+    tmp=(${line})
     case "${tmp[3]}" in
-        "*installed*" )
+        *installed* )
             pl_array[i]=${tmp[1]}
             i=$((${i} + 1))
             ;;
     esac
 done < $plist
 
-if [ "$1" == "-n" ] ; then
-    local opt=" --needed"
-else
-    local opt=""
-fi
-pacman -S ${pl_array[@]} --force --noconfirm ${opt}
+pacman -S ${pl_array[@]} --force --noconfirm ${needed}
