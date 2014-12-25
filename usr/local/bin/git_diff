@@ -1,2 +1,2 @@
 #!/usr/bin/env bash
-exec git diff --ignore-space-at-eol
+exec git diff --ignore-space-at-eol "${@}"
