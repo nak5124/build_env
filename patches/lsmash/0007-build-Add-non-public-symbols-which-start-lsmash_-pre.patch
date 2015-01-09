@@ -1,0 +1,50 @@
+From 01bcf3b8e190267aa8b5c588bd93d8423e586951 Mon Sep 17 00:00:00 2001
+From: Yuta NAKAI <nak5124@live.jp>
+Date: Thu, 18 Dec 2014 00:21:56 +0900
+Subject: [PATCH 7/7] build: Add non-public symbols which start lsmash_* prefix
+ to local.
+
+---
+ configure   | 14 ++++++++++++++
+ liblsmash.v |  2 +-
+ 2 files changed, 15 insertions(+), 1 deletion(-)
+
+diff --git a/configure b/configure
+index 9d42e68..4767d1e 100755
+--- a/configure
++++ b/configure
+@@ -408,6 +408,20 @@ EOF
+ 
+ 
+ sed "s/\\\$MAJOR/$MAJVER/" $SRCDIR/liblsmash.v > liblsmash.ver
++# Add non-public symbols which have lsmash_* prefix to local.
++find $SRCDIR/common/ $SRCDIR/importer/ -name "*.h" | xargs sed -e 's/^[ ]*//g' | \
++    grep "^\(void\|lsmash_bits_t\|uint64_t\|int\|int64_t\|lsmash_bs_t\|uint8_t\|uint16_t\|uint32_t\|lsmash_entry_list_t\|lsmash_entry_t\|lsmash_multiple_buffers_t\|double\|float\|FILE\).*lsmash_" | \
++    sed -e "s/.*\(lsmash_.*\)(.*/\1/g" -e "s/.*\(lsmash_.*\)/\1;/g" | xargs -I% sed -i "/^};$/i \           %" liblsmash.ver
++# Get rid of non-public symbols for the cli tools from local.
++sed -i -e '/lsmash_win32_fopen/d' \
++    -e '/lsmash_string_from_wchar/d' \
++    -e '/lsmash_importer_open/d' \
++    -e '/lsmash_importer_close/d' \
++    -e '/lsmash_importer_get_access_unit/d' \
++    -e '/lsmash_importer_get_last_delta/d' \
++    -e '/lsmash_importer_construct_timeline/d' \
++    -e '/lsmash_importer_get_track_count/d' \
++    -e '/lsmash_duplicate_summary/d' liblsmash.ver
+ 
+ 
+ cat >> liblsmash.pc << EOF
+diff --git a/liblsmash.v b/liblsmash.v
+index 2122775..bd91fe4 100644
+--- a/liblsmash.v
++++ b/liblsmash.v
+@@ -2,5 +2,5 @@ LSMASH_$MAJOR {
+     global: lsmash_*;
+             ISOM_*;
+             QT_*;
+-    local: *;
++    local:  *;
+ };
+-- 
+2.2.0
+

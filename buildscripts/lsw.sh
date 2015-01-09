@@ -7,6 +7,63 @@ if [ ! -d $LOGS_DIR ]; then
     mkdir -p $LOGS_DIR
 fi
 
+declare -ra _32dll_list=(
+    "/mingw32/bin/libgcc_s_dw2-1.dll"
+    "/mingw32/bin/libstdc++-6.dll"
+    "/mingw32/bin/libssp-0.dll"
+    "/mingw32/bin/libwinpthread-1.dll"
+    "/mingw32/bin/libiconv-2.dll"
+    "/mingw32/bin/libintl-8.dll"
+    "/mingw32/bin/libz-1.dll"
+    "/mingw32/bin/libbz2-1.dll"
+    "/mingw32/local/bin/liblsmash-2.dll"
+    "/mingw32/local/bin/avcodec-56.dll"
+    "/mingw32/local/bin/avformat-56.dll"
+    "/mingw32/local/bin/avutil-54.dll"
+    "/mingw32/local/bin/avresample-2.dll"
+    "/mingw32/local/bin/swscale-3.dll"
+    "/mingw32/local/bin/liblzma-5.dll"
+    "/mingw32/local/bin/libogg-0.dll"
+    "/mingw32/local/bin/libopencore-amrnb-0.dll"
+    "/mingw32/local/bin/libopencore-amrwb-0.dll"
+    "/mingw32/local/bin/libopenmj2-7.dll"
+    "/mingw32/local/bin/libopus-0.dll"
+    "/mingw32/local/bin/libspeex-1.dll"
+    "/mingw32/local/bin/libutvideo-15.dll"
+    "/mingw32/local/bin/libvorbis-0.dll"
+    "/mingw32/local/bin/libvorbisenc-2.dll"
+    "/mingw32/local/bin/libvpx-1.dll"
+)
+declare -ra _64dll_list=(
+    "/mingw64/bin/libgcc_s_seh-1.dll"
+    "/mingw64/bin/libstdc++-6.dll"
+    "/mingw64/bin/libssp-0.dll"
+    "/mingw64/bin/libwinpthread-1.dll"
+    "/mingw64/bin/libiconv-2.dll"
+    "/mingw64/bin/libintl-8.dll"
+    "/mingw64/bin/libz-1.dll"
+    "/mingw64/bin/libbz2-1.dll"
+    "/mingw64/local/bin/liblsmash-2.dll"
+    "/mingw64/local/bin/avcodec-56.dll"
+    "/mingw64/local/bin/avformat-56.dll"
+    "/mingw64/local/bin/avutil-54.dll"
+    "/mingw64/local/bin/avresample-2.dll"
+    "/mingw64/local/bin/swscale-3.dll"
+    "/mingw64/local/bin/liblzma-5.dll"
+    "/mingw64/local/bin/libogg-0.dll"
+    "/mingw64/local/bin/libopencore-amrnb-0.dll"
+    "/mingw64/local/bin/libopencore-amrwb-0.dll"
+    "/mingw64/local/bin/libopenmj2-7.dll"
+    "/mingw64/local/bin/libopus-0.dll"
+    "/mingw64/local/bin/libspeex-1.dll"
+    "/mingw64/local/bin/libutvideo-15.dll"
+    "/mingw64/local/bin/libvorbis-0.dll"
+    "/mingw64/local/bin/libvorbisenc-2.dll"
+    "/mingw64/local/bin/libvpx-1.dll"
+    "/mingw64/local/bin/libx264-145.dll"
+    "/mingw64/local/bin/libx265-40.dll"
+)
+
 # common
 function build_LSW_common() {
     clear; echo "Build L-SMASH Works"
@@ -26,10 +83,9 @@ function build_LSW_common() {
     patch -p1 -i ${PATCHES_DIR}/0001-vslsmashsource-Don-t-print-any-info-from-libav-ffmpe.patch \
         > ${LOGS_DIR}/lsw_patches.log 2>&1 || exit 1
     patch -p1 -i ${PATCHES_DIR}/0002-lsmashsource.diff >> ${LOGS_DIR}/lsw_patches.log 2>&1 || exit 1
-    patch -p1 -i ${PATCHES_DIR}/0003-lsmash-initialize-codec-id-here.patch >> ${LOGS_DIR}/lsw_patches.log 2>&1 || exit 1
+    patch -p1 -i ${PATCHES_DIR}/0003-update-gitignore.patch >> ${LOGS_DIR}/lsw_patches.log 2>&1 || exit 1
 
     cp -fa ${PATCHES_DIR}/build_2013.bat ./AviSynth
-    cp -fa ${PATCHES_DIR}/build_2013_x64.bat ./AviSynth
 
     return 0
 }
@@ -56,28 +112,11 @@ function build_LSW_aviutl() {
 
     echo "===> Copying LSW AviUtl..."
     cp -fa ./*.aui ./*.auf ./*.auc /d/encode/aviutl/Plugins
-    ln -fs /mingw32/bin/libgcc_s_dw2-1.dll /d/encode/aviutl
-    ln -fs /mingw32/bin/libwinpthread-1.dll /d/encode/aviutl
-    ln -fs /mingw32/bin/libssp-0.dll /d/encode/aviutl
-    ln -fs /mingw32/bin/libbz2-1.dll /d/encode/aviutl
-    ln -fs /mingw32/bin/libz-1.dll /d/encode/aviutl
-    ln -fs /mingw32/bin/libiconv-2.dll /d/encode/aviutl
-    ln -fs /mingw32/local/bin/liblsmash-2.dll /d/encode/aviutl
-    ln -fs /mingw32/local/bin/avcodec-56.dll /d/encode/aviutl
-    ln -fs /mingw32/local/bin/avformat-56.dll /d/encode/aviutl
-    ln -fs /mingw32/local/bin/avresample-2.dll /d/encode/aviutl
-    ln -fs /mingw32/local/bin/avutil-54.dll /d/encode/aviutl
-    ln -fs /mingw32/local/bin/swscale-3.dll /d/encode/aviutl
-    ln -fs /mingw32/local/bin/libopencore-amrnb-0.dll /d/encode/aviutl
-    ln -fs /mingw32/local/bin/libopencore-amrwb-0.dll /d/encode/aviutl
-    ln -fs /mingw32/local/bin/libopenmj2-7.dll /d/encode/aviutl
-    ln -fs /mingw32/local/bin/libopus-0.dll /d/encode/aviutl
-    ln -fs /mingw32/local/bin/libspeex-1.dll /d/encode/aviutl
-    ln -fs /mingw32/local/bin/libvorbis-0.dll /d/encode/aviutl
-    ln -fs /mingw32/local/bin/libvorbisenc-2.dll /d/encode/aviutl
-    ln -fs /mingw32/local/bin/libogg-0.dll /d/encode/aviutl
-    ln -fs /mingw32/local/bin/libvpx-1.dll /d/encode/aviutl
-    ln -fs /mingw32/local/bin/liblzma-5.dll /d/encode/aviutl
+    local _dll
+    for _dll in ${_32dll_list[@]}
+    do
+        ln -fs $_dll /d/encode/aviutl
+    done
     echo "done"
 
     return 0
@@ -88,58 +127,24 @@ function build_LSW_avisynth() {
     cd ${HOME}/OSS/lsw/AviSynth
 
     echo "===> build LSW AviSynth win32"
-    cmd /c 'build_2013.bat' > ${LOGS_DIR}/lsw_avisynth_i686.log 2>&1 || exit 1
+    cmd /c 'build_2013.bat Win32' > ${LOGS_DIR}/lsw_avisynth_i686.log 2>&1 || exit 1
     echo "done"
     echo "===> build LSW AviSynth x64"
-    cmd /c 'build_2013_x64.bat' > ${LOGS_DIR}/lsw_avisynth_x86_64.log 2>&1 || exit 1
+    cmd /c 'build_2013.bat x64' > ${LOGS_DIR}/lsw_avisynth_x86_64.log 2>&1 || exit 1
     echo "done"
 
     echo "===> Copying LSW AviSynth..."
     cp -fa ./Release/LSMASHSource.dll /c/AviSynth+/plugins
     cp -fa ./x64/Release/LSMASHSource.dll /c/AviSynth+/plugins64
-    ln -fs /mingw32/bin/libgcc_s_dw2-1.dll /c/AviSynth+/plugins
-    ln -fs /mingw32/bin/libwinpthread-1.dll /c/AviSynth+/plugins
-    ln -fs /mingw32/bin/libssp-0.dll /c/AviSynth+/plugins
-    ln -fs /mingw32/bin/libbz2-1.dll /c/AviSynth+/plugins
-    ln -fs /mingw32/bin/libz-1.dll /c/AviSynth+/plugins
-    ln -fs /mingw32/bin/libiconv-2.dll /c/AviSynth+/plugins
-    ln -fs /mingw32/local/bin/liblsmash-2.dll /c/AviSynth+/plugins
-    ln -fs /mingw32/local/bin/avcodec-56.dll /c/AviSynth+/plugins
-    ln -fs /mingw32/local/bin/avformat-56.dll /c/AviSynth+/plugins
-    ln -fs /mingw32/local/bin/avresample-2.dll /c/AviSynth+/plugins
-    ln -fs /mingw32/local/bin/avutil-54.dll /c/AviSynth+/plugins
-    ln -fs /mingw32/local/bin/swscale-3.dll /c/AviSynth+/plugins
-    ln -fs /mingw32/local/bin/libopencore-amrnb-0.dll /c/AviSynth+/plugins
-    ln -fs /mingw32/local/bin/libopencore-amrwb-0.dll /c/AviSynth+/plugins
-    ln -fs /mingw32/local/bin/libopenmj2-7.dll /c/AviSynth+/plugins
-    ln -fs /mingw32/local/bin/libopus-0.dll /c/AviSynth+/plugins
-    ln -fs /mingw32/local/bin/libspeex-1.dll /c/AviSynth+/plugins
-    ln -fs /mingw32/local/bin/libvorbis-0.dll /c/AviSynth+/plugins
-    ln -fs /mingw32/local/bin/libvorbisenc-2.dll /c/AviSynth+/plugins
-    ln -fs /mingw32/local/bin/libogg-0.dll /c/AviSynth+/plugins
-    ln -fs /mingw32/local/bin/libvpx-1.dll /c/AviSynth+/plugins
-    ln -fs /mingw32/local/bin/liblzma-5.dll /c/AviSynth+/plugins
-    ln -fs /mingw64/bin/libwinpthread-1.dll /c/AviSynth+/plugins64
-    ln -fs /mingw64/bin/libssp-0.dll /c/AviSynth+/plugins64
-    ln -fs /mingw64/bin/libbz2-1.dll /c/AviSynth+/plugins64
-    ln -fs /mingw64/bin/libz-1.dll /c/AviSynth+/plugins64
-    ln -fs /mingw64/bin/libiconv-2.dll /c/AviSynth+/plugins64
-    ln -fs /mingw64/local/bin/liblsmash-2.dll /c/AviSynth+/plugins64
-    ln -fs /mingw64/local/bin/avcodec-56.dll /c/AviSynth+/plugins64
-    ln -fs /mingw64/local/bin/avformat-56.dll /c/AviSynth+/plugins64
-    ln -fs /mingw64/local/bin/avresample-2.dll /c/AviSynth+/plugins64
-    ln -fs /mingw64/local/bin/avutil-54.dll /c/AviSynth+/plugins64
-    ln -fs /mingw64/local/bin/swscale-3.dll /c/AviSynth+/plugins64
-    ln -fs /mingw64/local/bin/libopencore-amrnb-0.dll /c/AviSynth+/plugins64
-    ln -fs /mingw64/local/bin/libopencore-amrwb-0.dll /c/AviSynth+/plugins64
-    ln -fs /mingw64/local/bin/libopenmj2-7.dll /c/AviSynth+/plugins64
-    ln -fs /mingw64/local/bin/libopus-0.dll /c/AviSynth+/plugins64
-    ln -fs /mingw64/local/bin/libspeex-1.dll /c/AviSynth+/plugins64
-    ln -fs /mingw64/local/bin/libvorbis-0.dll /c/AviSynth+/plugins64
-    ln -fs /mingw64/local/bin/libvorbisenc-2.dll /c/AviSynth+/plugins64
-    ln -fs /mingw64/local/bin/libogg-0.dll /c/AviSynth+/plugins64
-    ln -fs /mingw64/local/bin/libvpx-1.dll /c/AviSynth+/plugins64
-    ln -fs /mingw64/local/bin/liblzma-5.dll /c/AviSynth+/plugins64
+    local _dll
+    for _dll in ${_32dll_list[@]}
+    do
+        ln -fs $_dll /c/AviSynth+/plugins
+    done
+    for _dll in ${_64dll_list[@]}
+    do
+        ln -fs $_dll /c/AviSynth+/plugins64
+    done
     echo "done"
 
     return 0
@@ -149,6 +154,7 @@ function build_LSW_avisynth() {
 function build_LSW_vapoursynth() {
     cd ${HOME}/OSS/lsw/VapourSynth
 
+    sed -i 's/-Wl,--enable-auto-image-base -Wl,--export-all-symbols//g' ${HOME}/OSS/lsw/VapourSynth/configure
     local _arch
     for _arch in i686 x86_64
     do
@@ -167,62 +173,28 @@ function build_LSW_vapoursynth() {
             --target-os=mingw32                              \
             --extra-cflags="${BASE_CFLAGS} ${BASE_CPPFLAGS}" \
             --extra-ldflags="${BASE_CFLAGS} ${BASE_LDFLAGS}" \
-        > ${LOGS_DIR}/lsw_config_VS_${_arch}.log 2>&1 || exit 1
+        > ${LOGS_DIR}/lsw_config_vapoursynth_${_arch}.log 2>&1 || exit 1
         echo "done"
 
         make clean > /dev/null 2>&1
         printf "===> Making LSW VapourSynth %s...\n" $_arch
-        make -j9 -O > ${LOGS_DIR}/lsw_make_VS_${_arch}.log 2>&1 || exit 1
+        make -j9 -O > ${LOGS_DIR}/lsw_make_vapoursynth_${_arch}.log 2>&1 || exit 1
         echo "done"
 
         printf "===> Copying LSW VapourSynth %s...\n" $_arch
         if [ "${_arch}" = "i686" ]; then
             cp -fa ./vslsmashsource.dll /c/VapourSynth/plugins32
-            ln -fs /mingw32/bin/libgcc_s_dw2-1.dll /c/VapourSynth/plugins32
-            ln -fs /mingw32/bin/libwinpthread-1.dll /c/VapourSynth/plugins32
-            ln -fs /mingw32/bin/libssp-0.dll /c/VapourSynth/plugins32
-            ln -fs /mingw32/bin/libbz2-1.dll /c/VapourSynth/plugins32
-            ln -fs /mingw32/bin/libz-1.dll /c/VapourSynth/plugins32
-            ln -fs /mingw32/bin/libiconv-2.dll /c/VapourSynth/plugins32
-            ln -fs /mingw32/local/bin/liblsmash-2.dll /c/VapourSynth/plugins32
-            ln -fs /mingw32/local/bin/avcodec-56.dll /c/VapourSynth/plugins32
-            ln -fs /mingw32/local/bin/avformat-56.dll /c/VapourSynth/plugins32
-            ln -fs /mingw32/local/bin/avresample-2.dll /c/VapourSynth/plugins32
-            ln -fs /mingw32/local/bin/avutil-54.dll /c/VapourSynth/plugins32
-            ln -fs /mingw32/local/bin/swscale-3.dll /c/VapourSynth/plugins32
-            ln -fs /mingw32/local/bin/libopencore-amrnb-0.dll /c/VapourSynth/plugins32
-            ln -fs /mingw32/local/bin/libopencore-amrwb-0.dll /c/VapourSynth/plugins32
-            ln -fs /mingw32/local/bin/libopenmj2-7.dll /c/VapourSynth/plugins32
-            ln -fs /mingw32/local/bin/libopus-0.dll /c/VapourSynth/plugins32
-            ln -fs /mingw32/local/bin/libspeex-1.dll /c/VapourSynth/plugins32
-            ln -fs /mingw32/local/bin/libvorbis-0.dll /c/VapourSynth/plugins32
-            ln -fs /mingw32/local/bin/libvorbisenc-2.dll /c/VapourSynth/plugins32
-            ln -fs /mingw32/local/bin/libogg-0.dll /c/VapourSynth/plugins32
-            ln -fs /mingw32/local/bin/libvpx-1.dll /c/VapourSynth/plugins32
-            ln -fs /mingw32/local/bin/liblzma-5.dll /c/VapourSynth/plugins32
+            local _dll
+            for _dll in ${_32dll_list[@]}
+            do
+                ln -fs $_dll /c/VapourSynth/plugins32
+            done
         else
             cp -fa ./vslsmashsource.dll  /c/VapourSynth/plugins64
-            ln -fs /mingw64/bin/libwinpthread-1.dll /c/VapourSynth/plugins64
-            ln -fs /mingw64/bin/libssp-0.dll /c/VapourSynth/plugins64
-            ln -fs /mingw64/bin/libbz2-1.dll /c/VapourSynth/plugins64
-            ln -fs /mingw64/bin/libz-1.dll /c/VapourSynth/plugins64
-            ln -fs /mingw64/bin/libiconv-2.dll /c/VapourSynth/plugins64
-            ln -fs /mingw64/local/bin/liblsmash-2.dll /c/VapourSynth/plugins64
-            ln -fs /mingw64/local/bin/avcodec-56.dll /c/VapourSynth/plugins64
-            ln -fs /mingw64/local/bin/avformat-56.dll /c/VapourSynth/plugins64
-            ln -fs /mingw64/local/bin/avresample-2.dll /c/VapourSynth/plugins64
-            ln -fs /mingw64/local/bin/avutil-54.dll /c/VapourSynth/plugins64
-            ln -fs /mingw64/local/bin/swscale-3.dll /c/VapourSynth/plugins64
-            ln -fs /mingw64/local/bin/libopencore-amrnb-0.dll /c/VapourSynth/plugins64
-            ln -fs /mingw64/local/bin/libopencore-amrwb-0.dll /c/VapourSynth/plugins64
-            ln -fs /mingw64/local/bin/libopenmj2-7.dll /c/VapourSynth/plugins64
-            ln -fs /mingw64/local/bin/libopus-0.dll /c/VapourSynth/plugins64
-            ln -fs /mingw64/local/bin/libspeex-1.dll /c/VapourSynth/plugins64
-            ln -fs /mingw64/local/bin/libvorbis-0.dll /c/VapourSynth/plugins64
-            ln -fs /mingw64/local/bin/libvorbisenc-2.dll /c/VapourSynth/plugins64
-            ln -fs /mingw64/local/bin/libogg-0.dll /c/VapourSynth/plugins64
-            ln -fs /mingw64/local/bin/libvpx-1.dll /c/VapourSynth/plugins64
-            ln -fs /mingw64/local/bin/liblzma-5.dll /c/VapourSynth/plugins64
+            for _dll in ${_64dll_list[@]}
+            do
+                ln -fs $_dll /c/VapourSynth/plugins64
+            done
         fi
         echo "done"
 

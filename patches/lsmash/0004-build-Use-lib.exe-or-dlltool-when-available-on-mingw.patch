@@ -1,7 +1,7 @@
-From 7f80758b65d2086ff8babeb786af054f691182e9 Mon Sep 17 00:00:00 2001
+From 7ad2f7fac19e8bcf2215832299fbd405c262526f Mon Sep 17 00:00:00 2001
 From: Yuta NAKAI <nak5124@live.jp>
 Date: Mon, 27 Oct 2014 16:01:04 +0900
-Subject: [PATCH 3/5] build: Use lib.exe or dlltool when available on mingw.
+Subject: [PATCH 4/7] build: Use lib.exe or dlltool when available on mingw.
 
 ---
  .gitignore |  1 +
@@ -10,7 +10,7 @@ Subject: [PATCH 3/5] build: Use lib.exe or dlltool when available on mingw.
  3 files changed, 35 insertions(+), 2 deletions(-)
 
 diff --git a/.gitignore b/.gitignore
-index a20f4c2..9ae81bd 100644
+index ae1cc88..c9c71c1 100644
 --- a/.gitignore
 +++ b/.gitignore
 @@ -6,6 +6,7 @@
@@ -22,7 +22,7 @@ index a20f4c2..9ae81bd 100644
  *.o
  *.orig
 diff --git a/Makefile b/Makefile
-index bfd2ccc..9fad5ae 100644
+index 7d24d86..9131f85 100644
 --- a/Makefile
 +++ b/Makefile
 @@ -28,6 +28,9 @@ $(STATICLIBNAME): $(OBJS)
@@ -50,13 +50,13 @@ index bfd2ccc..9fad5ae 100644
  	$(RM) $(addprefix $(DESTDIR)$(bindir)/, $(TOOLS_ALL) $(TOOLS_ALL:%=%.exe) liblsmash.dll cyglsmash.dll)
  
  clean:
--	$(RM) */*.o *.a *.so* *.dll *.dylib $(addprefix cli/, *.exe $(TOOLS_ALL)) .depend
-+	$(RM) */*.o *.a *.so* *.def *.exp *.lib *.dll *.dylib $(addprefix cli/, *.exe $(TOOLS_ALL)) .depend
+-	$(RM) */*.o *.a *.so* *.dll *.dylib $(addprefix cli/, *.exe $(TOOLS_ALL)) .depend *.ver
++	$(RM) */*.o *.a *.so* *.def *.exp *.lib *.dll *.dylib $(addprefix cli/, *.exe $(TOOLS_ALL)) .depend *.ver
  
  distclean: clean
  	$(RM) config.* *.pc
 diff --git a/configure b/configure
-index 74036b9..f8d3586 100755
+index a3d11ad..9d96bc3 100755
 --- a/configure
 +++ b/configure
 @@ -56,6 +56,15 @@ cc_check()
@@ -74,15 +74,15 @@ index 74036b9..f8d3586 100755
 +
  #-----------------------------------------------------------------------------
  
- rm -f config.* .depend conftest* liblsmash.pc
-@@ -206,9 +215,22 @@ case "$TARGET_OS" in
+ rm -f config.* .depend conftest* liblsmash.pc *.ver
+@@ -200,9 +209,22 @@ case "$TARGET_OS" in
          EXT=".exe"
          SHARED_NAME="liblsmash-$MAJVER"
          SHARED_EXT=".dll"
 +        DEFNAME="${SHARED_NAME}.def"
          IMPLIB="liblsmash.dll.a"
--        SO_LDFLAGS="-shared -Wl,--out-implib,$IMPLIB"
-+        SO_LDFLAGS="-shared -Wl,--output-def,$DEFNAME -Wl,--out-implib,$IMPLIB"
+-        SO_LDFLAGS="-shared -Wl,--out-implib,$IMPLIB -Wl,--version-script,liblsmash.ver"
++        SO_LDFLAGS="-shared -Wl,--output-def,$DEFNAME -Wl,--out-implib,$IMPLIB -Wl,--version-script,liblsmash.ver"
          CFLAGS="$CFLAGS -D__USE_MINGW_ANSI_STDIO=1"
 +        LIBARCH=i386
 +        if lib.exe --list > /dev/null 2>&1 ; then
@@ -99,7 +99,7 @@ index 74036b9..f8d3586 100755
          ;;
      *cygwin*)
          EXT=".exe"
-@@ -371,6 +393,9 @@ CFLAGS = $CFLAGS
+@@ -427,6 +449,9 @@ CFLAGS = $CFLAGS
  LDFLAGS = $LDFLAGS
  SO_LDFLAGS = $SO_LDFLAGS
  LIBS = $LIBS
@@ -110,5 +110,5 @@ index 74036b9..f8d3586 100755
  
  cat config.mak
 -- 
-2.1.3
+2.2.0
 

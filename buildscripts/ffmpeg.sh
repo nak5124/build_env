@@ -61,6 +61,7 @@ function build_sdl() {
     fi
 
     sed -i 's|-mwindows||g' ${HOME}/OSS/SDL-1.2.15/configure
+    sed -i 's/enable-auto-image-base/disable-auto-image-base/g' ${HOME}/OSS/SDL-1.2.15/configure
 
     local _arch
     for _arch in ${target_arch[@]}
@@ -92,10 +93,9 @@ function build_sdl() {
             --enable-file                            \
             --enable-loadso                          \
             --enable-cpuinfo                         \
-            --enable-assembly                        \
+            --disable-assembly                       \
             --enable-diskaudio                       \
             --enable-dummyaudio                      \
-            --enable-nasm                            \
             --enable-video-dummy                     \
             --enable-video-opengl                    \
             --enable-stdio-redirect                  \
@@ -182,70 +182,6 @@ function build_libopencore_amr() {
         printf "===> Installing libopencore-amr %s...\n" $_arch
         make install-strip > ${LOGS_DIR}/opencore-amr_install_${_arch}.log 2>&1 || exit 1
         rm -f ${_FFPREFIX}/lib/libopencore*.la
-        echo "done"
-        make distclean > /dev/null 2>&1
-    done
-
-    return 0
-}
-
-# openjpeg-1.5
-function build_openjpeg() {
-    clear; echo "Build OpenJPEG svn openjpeg-1.5 branch"
-
-    if [ ! -d ${HOME}/OSS/openjpeg-1.5 ]; then
-        cd ${HOME}/OSS
-        svn checkout http://openjpeg.googlecode.com/svn/branches/openjpeg-1.5 openjpeg-1.5
-    fi
-    cd ${HOME}/OSS/openjpeg-1.5
-
-    svn cleanup > /dev/null
-    svn revert --recursive . > /dev/null
-    svn update > /dev/null
-    svnversion > ${LOGS_DIR}/openjpeg.hash
-
-    patch -p1 -i ${PATCHES_DIR}/openjpeg/0001-cdecl.patch > ${LOGS_DIR}/openjpeg_patch.log 2>&1 || exit 1
-
-    autoreconf -fi > /dev/null 2>&1
-    dos2unix libopenjpeg/opj_malloc.h > /dev/null 2>&1
-
-    local _arch
-    for _arch in ${target_arch[@]}
-    do
-        source cpath $_arch
-
-        if [ "${_arch}" = "i686" ]; then
-            local _FFPREFIX=/mingw32/local
-        else
-            local _FFPREFIX=/mingw64/local
-        fi
-
-        printf "===> Configuring OpenJPEG 1.5 %s...\n" $_arch
-        ./configure                      \
-            --prefix=$_FFPREFIX          \
-            --build=${_arch}-w64-mingw32 \
-            --host=${_arch}-w64-mingw32  \
-            --disable-silent-rules       \
-            --enable-shared              \
-            --disable-static             \
-            --enable-fast-install        \
-            --disable-doc                \
-            --with-gnu-ld                \
-            CFLAGS="${BASE_CFLAGS}"      \
-            LDFLAGS="${BASE_LDFLAGS}"    \
-            CPPFLAGS="${BASE_CPPFLAGS}"  \
-            > ${LOGS_DIR}/openjpeg_config_${_arch}.log 2>&1 || exit 1
-        sed -i 's|-O3||g' config.status
-        echo "done"
-
-        make clean > /dev/null 2>&1
-        printf "===> Making OpenJPEG %s...\n" $_arch
-        make -j9 -O > ${LOGS_DIR}/openjpeg_make_${_arch}.log 2>&1 || exit 1
-        echo "done"
-
-        printf "===> Installing OpenJPEG %s...\n" $_arch
-        make install-strip > ${LOGS_DIR}/openjpeg_install_${_arch}.log 2>&1 || exit 1
-        rm -fr ${_FFPREFIX}/bin/*j2k*.exe
         echo "done"
         make distclean > /dev/null 2>&1
     done
@@ -401,6 +337,11 @@ function build_libvorbis() {
     fi
     cd ${HOME}/OSS/xiph/aotuv-b6.03_20110424-20140429
 
+    if [ ! -f ${HOME}/OSS/xiph/aotuv-b6.03_20110424-20140429/patched_01.marker ]; then
+        patch -p1 -i ${PATCHES_DIR}/vorbis/0001-libvorbis-1.3.5.diff > ${LOGS_DIR}/vorbis_patch.log 2>&1 || exit 1
+        touch ${HOME}/OSS/xiph/aotuv-b6.03_20110424-20140429/patched_01.marker
+    fi
+
     local _arch
     for _arch in ${target_arch[@]}
     do
@@ -505,8 +446,6 @@ function build_libvpx() {
             --as=yasm                            \
             --disable-codec-srcs                 \
             --disable-debug-libs                 \
-            --disable-vp8-decoder                \
-            --disable-vp9-decoder                \
             --disable-postproc                   \
             --disable-vp9-postproc               \
             --enable-multithread                 \
@@ -608,31 +547,73 @@ function build_lzma() {
     return 0
 }
 
+#libutvideo
+function build_libutvideo() {
+    clear; echo "Build libutvideo git-master"
+
+    if [ ! -d ${HOME}/OSS/libutvideo-mingw-w64 ]; then
+        cd ${HOME}/OSS
+        git clone https://github.com/nak5124/libutvideo-mingw-w64.git
+    fi
+    cd ${HOME}/OSS/libutvideo-mingw-w64
+
+    git clean -fdx > /dev/null 2>&1
+    git reset --hard > /dev/null 2>&1
+    git pull > /dev/null 2>&1
+    git_hash > ${LOGS_DIR}/utvideo.hash
+    git_rev >> ${LOGS_DIR}/utvideo.hash
+
+    local _arch
+    for _arch in ${target_arch[@]}
+    do
+        source cpath $_arch
+
+        if [ "${_arch}" = "i686" ]; then
+            local _FFPREFIX=/mingw32/local
+        else
+            local _FFPREFIX=/mingw64/local
+        fi
+
+        printf "===> Configuring libutvideo %s...\n" $_arch
+        ./configure                                            \
+            --prefix=$_FFPREFIX                                \
+            --enable-strip                                     \
+            --disable-static                                   \
+            --enable-shared                                    \
+            --extra-cppflags="${BASE_CPPFLAGS}"                \
+            --extra-cxxflags="${BASE_CXXFLAGS}"                \
+            --extra-ldflags="${BASE_CXXFLAGS} ${BASE_LDFLAGS}" \
+            > ${LOGS_DIR}/utvideo_config_${_arch}.log 2>&1 || exit 1
+        echo "done"
+
+        make clean > /dev/null 2>&1
+        printf "===> Making libutvideo %s...\n" $_arch
+        make -j9 -O > ${LOGS_DIR}/utvideo_make_${_arch}.log 2>&1 || exit 1
+        echo "done"
+
+        printf "===> Installing libutvideo %s...\n" $_arch
+        make install > ${LOGS_DIR}/utvideo_install_${_arch}.log 2>&1 || exit 1
+        echo "done"
+        make distclean > /dev/null 2>&1
+    done
+
+    return 0
+}
+
 # FFmpeg
 function patch_ffmpeg() {
     echo "===> Applying patches to FFmpeg..."
 
-    local -i _N=54
+    local -i _N=59
     local -i _i
+    local _num
+    echo "===> Apply patches..." > ${LOGS_DIR}/ffmpeg_patches.log
     for _i in $(seq 1 ${_N})
     do
-        local _num=$( printf "%04d" ${_i} )
-        if [ $_i -eq 1 ]; then
-            patch -p1 -i ${PATCHES_DIR}/${_num}*.patch > ${LOGS_DIR}/ffmpeg_patches.log 2>&1 || exit 1
-        else
-            patch -p1 -i ${PATCHES_DIR}/${_num}*.patch >> ${LOGS_DIR}/ffmpeg_patches.log 2>&1 || exit 1
-        fi
+        _num=$(printf "%04d" ${_i})
+        printf "\n========== patch No.%s ==========\n" $_num >> ${LOGS_DIR}/ffmpeg_patches.log
+        patch -p1 -i ${PATCHES_DIR}/${_num}*.patch >> ${LOGS_DIR}/ffmpeg_patches.log 2>&1 || exit 1
     done
-
-: << "#__CO__"
-    local -i _M=42
-    local -i _j
-    for _j in $(seq 1 ${_M})
-    do
-        local _num=$( printf "%04d" $_j )
-        patch -p1 -i ${PATCHES_DIR}/haali/${_num}*.patch >> ${LOGS_DIR}/ffmpeg_patches.log 2>&1 || exit 1
-    done
-#__CO__
 
     echo "done"
 
@@ -660,6 +641,7 @@ function build_ffmpeg() {
     local -r _AVFORMAT_API_VER=$(cat libavformat/version.h | grep "#define LIBAVFORMAT_VERSION_MAJOR" | awk '{print $3}')
     local -r _AVRESAMPLE_API_VER=$(cat libavresample/version.h | grep "#define LIBAVRESAMPLE_VERSION_MAJOR" | awk '{print $3}')
     local -r _AVUTIL_API_VER=$(cat libavutil/version.h | grep "#define LIBAVUTIL_VERSION_MAJOR" | awk '{print $3}')
+    local -r _POSTPROC_API_VER=$(cat libpostproc/version.h | grep "#define LIBPOSTPROC_VERSION_MAJOR" | awk '{print $3}')
     local -r _SWRESAMPLE_API_VER=$(cat libswresample/version.h | grep "#define LIBSWRESAMPLE_VERSION_MAJOR" | awk '{print $3}')
     local -r _SWSCALE_API_VER=$(cat libswscale/version.h | grep "#define LIBSWSCALE_VERSION_MAJOR" | awk '{print $3}')
     local -ra _bin_list=(
@@ -672,6 +654,7 @@ function build_ffmpeg() {
         "avformat-${_AVFORMAT_API_VER}.dll"
         "avresample-${_AVRESAMPLE_API_VER}.dll"
         "avutil-${_AVUTIL_API_VER}.dll"
+        "postproc-${_POSTPROC_API_VER}.dll"
         "swresample-${_SWRESAMPLE_API_VER}.dll"
         "swscale-${_SWSCALE_API_VER}.dll"
         "SDL.dll"
@@ -679,10 +662,21 @@ function build_ffmpeg() {
         "libopencore-amrwb-0.dll"
         "libopenmj2-7.dll"
         "libspeex-1.dll"
+        "libutvideo-15.dll"
         "libvorbis-0.dll"
         "libvorbisenc-2.dll"
         "libvpx-1.dll"
         "liblzma-5.dll"
+    )
+    local -ra _sysdll_list=(
+        "libgcc_s_seh-1.dll"
+        "libstdc++-6.dll"
+        "libssp-0.dll"
+        "libwinpthread-1.dll"
+        "libiconv-2.dll"
+        "libintl-8.dll"
+        "libz-1.dll"
+        "libbz2-1.dll"
     )
 
     patch_ffmpeg
@@ -693,9 +687,11 @@ function build_ffmpeg() {
         if [ "${_arch}" = "i686" ]; then
             local _FFPREFIX=/mingw32/local
             local _VCDIR=$VC32_DIR
+            local _libx26X=""
         else
             local _FFPREFIX=/mingw64/local
             local _VCDIR=$VC64_DIR
+            local _libx26X="--enable-libx264 --enable-libx265"
         fi
 
         source cpath $_arch
@@ -705,45 +701,42 @@ function build_ffmpeg() {
         printf "===> Configuring FFmpeg %s...\n" $_arch
         ./configure                                          \
             --prefix=$_FFPREFIX                              \
+            --enable-gpl                                     \
             --enable-version3                                \
+            --enable-nonfree                                 \
             --disable-static                                 \
             --enable-shared                                  \
+            --enable-gray                                    \
             --disable-doc                                    \
             --enable-avresample                              \
             --disable-pthreads                               \
-            --disable-encoder=vorbis                         \
-            --disable-decoder=amrnb                          \
-            --disable-decoder=amrwb                          \
-            --disable-decoder=jpeg2000                       \
-            --disable-decoder=libopus                        \
-            --disable-decoder=libvpx_vp8                     \
-            --disable-decoder=libvpx_vp9                     \
-            --disable-decoder=vorbis                         \
             --enable-avisynth                                \
             --enable-libopencore-amrnb                       \
             --enable-libopencore-amrwb                       \
             --enable-libopenjpeg                             \
             --enable-libopus                                 \
             --enable-libspeex                                \
+            --enable-libutvideo                              \
             --enable-libvorbis                               \
             --enable-libvpx                                  \
+            ${_libx26X}                                      \
+            --enable-nvenc                                   \
+            --enable-opencl                                  \
             --enable-opengl                                  \
             --arch=${_arch/i6/x}                             \
             --cpu=sandybridge                                \
-            --disable-debug                                  \
             --extra-ldflags="${BASE_CFLAGS} ${BASE_LDFLAGS}" \
             --optflags="${BASE_CFLAGS} ${BASE_CPPFLAGS}"     \
+            --sws-max-filter-size=512                        \
+            --disable-debug                                  \
             > ${LOGS_DIR}/ffmpeg_config_${_arch}.log 2>&1 || exit 1
-        # if linking with MSVC statically, uncomment the following lines
-        # sed -i '/HAVE_CLOCK_GETTIME/d' config.h
-        # sed -i '/HAVE_NANOSLEEP/d' config.h
-        printf "\nconfigh\n" >> ${LOGS_DIR}/ffmpeg_config_${_arch}.log
+        printf "\nconfig.h\n" >> ${LOGS_DIR}/ffmpeg_config_${_arch}.log
         cat config.h >> ${LOGS_DIR}/ffmpeg_config_${_arch}.log
         echo "done"
 
         make clean > /dev/null 2>&1
         printf "===> Making FFmpeg %s...\n" $_arch
-        make -j9 -O > ${LOGS_DIR}/ffmpeg_make_${_arch}.log 2>&1 || exit 1
+        make -j9 -O V=1 > ${LOGS_DIR}/ffmpeg_make_${_arch}.log 2>&1 || exit 1
         echo "done"
 
         printf "===> Installing FFmpeg %s...\n" $_arch
@@ -754,11 +747,10 @@ function build_ffmpeg() {
             do
                 ln -fs ${_FFPREFIX}/bin/$_bin /d/encode/tools
             done
-            ln -fs /mingw64/bin/libwinpthread-1.dll /d/encode/tools
-            ln -fs /mingw64/bin/libssp-0.dll /d/encode/tools
-            ln -fs /mingw64/bin/libiconv-2.dll /d/encode/tools
-            ln -fs /mingw64/bin/libz-1.dll /d/encode/tools
-            ln -fs /mingw64/bin/libbz2-1.dll /d/encode/tools
+            for _bin in ${_sysdll_list[@]}
+            do
+                ln -fs /mingw64/bin/$_bin /d/encode/tools
+            done
         fi
         echo "done"
         make distclean > /dev/null 2>&1
@@ -773,12 +765,12 @@ unset MINTTY
 if ${all_build}; then
     build_sdl
     build_libopencore_amr
-    # build_openjpeg
     build_openjpeg2
     build_libspeex
     build_libvorbis
     build_libvpx
     build_lzma
+    build_libutvideo
 fi
 build_ffmpeg
 

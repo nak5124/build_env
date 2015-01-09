@@ -1,0 +1,87 @@
+From 5fbc56927a46536c8dea1f261eab2ea8cb2e6d60 Mon Sep 17 00:00:00 2001
+From: Yuta NAKAI <nak5124@live.jp>
+Date: Fri, 9 Jan 2015 14:46:48 +0900
+Subject: [PATCH 58/58] configure: Fix detection of functions on mingw-w64.
+
+---
+ configure                | 17 +++++++++++++----
+ libavformat/os_support.c |  4 ++++
+ libavformat/os_support.h |  4 ++++
+ 3 files changed, 21 insertions(+), 4 deletions(-)
+
+diff --git a/configure b/configure
+index 4a19990..04951c0 100755
+--- a/configure
++++ b/configure
+@@ -4708,7 +4708,7 @@ if ! disabled network; then
+         check_type ws2tcpip.h "struct group_source_req"
+         check_type ws2tcpip.h "struct ip_mreq_source"
+         check_type ws2tcpip.h "struct ipv6_mreq"
+-        check_type winsock2.h "struct pollfd"
++        check_type winsock2.h "struct pollfd" -D_WIN32_WINNT=0x0600
+         check_struct winsock2.h "struct sockaddr" sa_len
+         check_type ws2tcpip.h "struct sockaddr_in6"
+         check_type ws2tcpip.h "struct sockaddr_storage"
+@@ -4736,9 +4736,15 @@ check_func  gethrtime
+ check_func  getopt
+ check_func  getrusage
+ check_func  gettimeofday
+-check_func  gmtime_r
++check_func  gmtime_r || { check_cc <<EOF && enable gmtime_r; }
++#include <time.h>
++int main(void){return gmtime_r;}
++EOF
+ check_func  isatty
+-check_func  localtime_r
++check_func  localtime_r || { check_cc <<EOF && enable localtime_r; }
++#include <time.h>
++int main(void){return localtime_r;}
++EOF
+ check_func  mach_absolute_time
+ check_func  mkstemp
+ check_func  mmap
+@@ -4748,7 +4754,10 @@ check_func_headers time.h nanosleep || { check_func_headers time.h nanosleep -lr
+ check_func  sched_getaffinity
+ check_func  setrlimit
+ check_struct "sys/stat.h" "struct stat" st_mtim.tv_nsec -D_BSD_SOURCE
+-check_func  strerror_r
++check_func  strerror_r || { check_cc <<EOF && enable strerror_r; }
++#include <string.h>
++int main(void){return strerror_r;}
++EOF
+ check_func  sysconf
+ check_func  sysctl
+ check_func  usleep
+diff --git a/libavformat/os_support.c b/libavformat/os_support.c
+index 7950e44..11ba421 100644
+--- a/libavformat/os_support.c
++++ b/libavformat/os_support.c
+@@ -35,6 +35,10 @@
+ #include <sys/time.h>
+ #endif /* HAVE_SYS_TIME_H */
+ #if HAVE_WINSOCK2_H
++#if !defined(_WIN32_WINNT) || _WIN32_WINNT < 0x0600
++#undef _WIN32_WINNT
++#define _WIN32_WINNT 0x0600
++#endif
+ #include <winsock2.h>
+ #elif HAVE_SYS_SELECT_H
+ #include <sys/select.h>
+diff --git a/libavformat/os_support.h b/libavformat/os_support.h
+index a332911..e72a66a 100644
+--- a/libavformat/os_support.h
++++ b/libavformat/os_support.h
+@@ -109,6 +109,10 @@ typedef int socklen_t;
+ typedef unsigned long nfds_t;
+ 
+ #if HAVE_WINSOCK2_H
++#if !defined(_WIN32_WINNT) || _WIN32_WINNT < 0x0600
++#undef _WIN32_WINNT
++#define _WIN32_WINNT 0x0600
++#endif
+ #include <winsock2.h>
+ #endif
+ #if !HAVE_STRUCT_POLLFD
+-- 
+2.2.1
+

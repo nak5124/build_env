@@ -1,0 +1,29 @@
+From 5cd8e8f55edd23cda1b5ef2df3cd02ef9d33693f Mon Sep 17 00:00:00 2001
+From: Yuta NAKAI <nak5124@live.jp>
+Date: Tue, 16 Dec 2014 20:28:30 +0900
+Subject: [PATCH 6/7] Makefile: Move *.ver from clean to distclean.
+
+---
+ Makefile | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/Makefile b/Makefile
+index 9131f85..781c6eb 100644
+--- a/Makefile
++++ b/Makefile
+@@ -84,10 +84,10 @@ uninstall:
+ 	$(RM) $(addprefix $(DESTDIR)$(bindir)/, $(TOOLS_ALL) $(TOOLS_ALL:%=%.exe) liblsmash.dll cyglsmash.dll)
+ 
+ clean:
+-	$(RM) */*.o *.a *.so* *.def *.exp *.lib *.dll *.dylib $(addprefix cli/, *.exe $(TOOLS_ALL)) .depend *.ver
++	$(RM) */*.o *.a *.so* *.def *.exp *.lib *.dll *.dylib $(addprefix cli/, *.exe $(TOOLS_ALL)) .depend
+ 
+ distclean: clean
+-	$(RM) config.* *.pc
++	$(RM) config.* *.pc *.ver
+ 
+ dep: .depend
+ 
+-- 
+2.2.0
+

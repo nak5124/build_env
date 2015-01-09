@@ -1,7 +1,7 @@
-From 253fd2850f3c363d4c7b3580adfc0fe94be228bb Mon Sep 17 00:00:00 2001
+From a4d94431a4121b00063df6463392992312a1edbe Mon Sep 17 00:00:00 2001
 From: Yuta NAKAI <nak5124@live.jp>
 Date: Sun, 28 Sep 2014 04:10:10 +0900
-Subject: [PATCH 2/5] configure: Add api version to mingw shared library name.
+Subject: [PATCH 3/7] configure: Add api version to mingw shared library name.
 
 ---
  Makefile  | 6 ++++++
@@ -9,7 +9,7 @@ Subject: [PATCH 2/5] configure: Add api version to mingw shared library name.
  2 files changed, 7 insertions(+)
 
 diff --git a/Makefile b/Makefile
-index 83ecb0f..bfd2ccc 100644
+index cb9ee41..7d24d86 100644
 --- a/Makefile
 +++ b/Makefile
 @@ -31,6 +31,9 @@ $(SHAREDLIBNAME): $(OBJS)
@@ -33,17 +33,17 @@ index 83ecb0f..bfd2ccc 100644
  	install -m 644 $(SHAREDLIB) $(DESTDIR)$(libdir)
  ifeq ($(SHAREDLIB), liblsmash.so.$(MAJVER))
 diff --git a/configure b/configure
-index 363552c..74036b9 100755
+index f59d96d..a3d11ad 100755
 --- a/configure
 +++ b/configure
-@@ -204,6 +204,7 @@ fi
+@@ -198,6 +198,7 @@ fi
  case "$TARGET_OS" in
      *mingw*)
          EXT=".exe"
 +        SHARED_NAME="liblsmash-$MAJVER"
          SHARED_EXT=".dll"
          IMPLIB="liblsmash.dll.a"
-         SO_LDFLAGS="-shared -Wl,--out-implib,$IMPLIB"
+         SO_LDFLAGS="-shared -Wl,--out-implib,$IMPLIB -Wl,--version-script,liblsmash.ver"
 -- 
-2.1.3
+2.2.0
 

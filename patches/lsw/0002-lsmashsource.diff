@@ -1,23 +1,45 @@
 diff --git a/AviSynth/LSMASHSourceVCX.vcxproj b/AviSynth/LSMASHSourceVCX.vcxproj
-index 8ff380d..6223c2a 100644
+index 8ff380d..7aadfab 100644
 --- a/AviSynth/LSMASHSourceVCX.vcxproj
 +++ b/AviSynth/LSMASHSourceVCX.vcxproj
-@@ -71,6 +71,14 @@
+@@ -30,11 +30,13 @@
+     <ConfigurationType>DynamicLibrary</ConfigurationType>
+     <CharacterSet>Unicode</CharacterSet>
+     <WholeProgramOptimization>true</WholeProgramOptimization>
++    <PlatformToolset>v120</PlatformToolset>
+   </PropertyGroup>
+   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+     <ConfigurationType>DynamicLibrary</ConfigurationType>
+     <CharacterSet>Unicode</CharacterSet>
+     <WholeProgramOptimization>true</WholeProgramOptimization>
++    <PlatformToolset>v120</PlatformToolset>
+   </PropertyGroup>
+   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+     <ConfigurationType>DynamicLibrary</ConfigurationType>
+@@ -71,6 +73,14 @@
      <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkIncremental>
      <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkIncremental>
    </PropertyGroup>
 +  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-+    <IncludePath>C:\msys2\mingw32\local\include;$(IncludePath)</IncludePath>
-+    <LibraryPath>C:\msys2\mingw32\local\bin;$(LibraryPath)</LibraryPath>
++    <IncludePath>$(MINGW32_INCLUDE_PATH);$(IncludePath)</IncludePath>
++    <LibraryPath>$(MINGW32_LIB_PATH);$(LibraryPath)</LibraryPath>
 +  </PropertyGroup>
 +  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-+    <IncludePath>C:\msys2\mingw64\local\include;$(VCInstallDir)atlmfc\include;$(WindowsSDK_IncludePath);$(VCInstallDir)include</IncludePath>
-+    <LibraryPath>C:\msys2\mingw64\local\bin;$(VCInstallDir)atlmfc\lib\amd64;$(WindowsSDK_LibraryPath_x64);$(VCInstallDir)lib\amd64</LibraryPath>
++    <IncludePath>$(MINGW64_INCLUDE_PATH);$(VCInstallDir)atlmfc\include;$(WindowsSDK_IncludePath);$(VCInstallDir)include</IncludePath>
++    <LibraryPath>$(MINGW64_LIB_PATH);$(VCInstallDir)atlmfc\lib\amd64;$(WindowsSDK_LibraryPath_x64);$(VCInstallDir)lib\amd64</LibraryPath>
 +  </PropertyGroup>
    <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
      <ClCompile>
        <Optimization>Disabled</Optimization>
-@@ -118,14 +126,21 @@
+@@ -111,41 +121,60 @@
+     <ClCompile>
+       <Optimization>MaxSpeed</Optimization>
+       <IntrinsicFunctions>true</IntrinsicFunctions>
+-      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;LSMASHSOURCE_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
++      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;LSMASH_API_IMPORTS;LSMASHSOURCE_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+       <FunctionLevelLinking>true</FunctionLevelLinking>
+       <PrecompiledHeader>
        </PrecompiledHeader>
        <WarningLevel>Level3</WarningLevel>
        <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -25,6 +47,8 @@ index 8ff380d..6223c2a 100644
 +      <FloatingPointModel>Fast</FloatingPointModel>
 +      <ProgramDataBaseFileName />
 +      <MultiProcessorCompilation>true</MultiProcessorCompilation>
++      <EnableEnhancedInstructionSet>AdvancedVectorExtensions</EnableEnhancedInstructionSet>
++      <ExceptionHandling>Async</ExceptionHandling>
      </ClCompile>
      <Link>
 -      <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -37,16 +61,26 @@ index 8ff380d..6223c2a 100644
 +      <ProgramDatabaseFile />
 +      <LargeAddressAware>true</LargeAddressAware>
 +      <AdditionalDependencies>avformat.lib;avutil.lib;avcodec.lib;swscale.lib;avresample.lib;lsmash.lib;%(AdditionalDependencies)</AdditionalDependencies>
++      <MinimumRequiredVersion>6.1</MinimumRequiredVersion>
      </Link>
    </ItemDefinitionGroup>
    <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-@@ -139,13 +154,19 @@
+     <ClCompile>
+       <Optimization>MaxSpeed</Optimization>
+       <IntrinsicFunctions>true</IntrinsicFunctions>
+-      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;LSMASHSOURCE_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
++      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;LSMASH_API_IMPORTS;LSMASHSOURCE_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+       <FunctionLevelLinking>true</FunctionLevelLinking>
+       <PrecompiledHeader>
        </PrecompiledHeader>
        <WarningLevel>Level3</WarningLevel>
        <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
 +      <MultiProcessorCompilation>true</MultiProcessorCompilation>
 +      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
 +      <FloatingPointModel>Fast</FloatingPointModel>
++      <ExceptionHandling>Async</ExceptionHandling>
++      <EnableEnhancedInstructionSet>AdvancedVectorExtensions</EnableEnhancedInstructionSet>
      </ClCompile>
      <Link>
 -      <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -58,10 +92,11 @@ index 8ff380d..6223c2a 100644
 +      <ProgramDatabaseFile />
 +      <LargeAddressAware>true</LargeAddressAware>
 +      <AdditionalDependencies>avformat.lib;avutil.lib;avcodec.lib;swscale.lib;avresample.lib;lsmash.lib;%(AdditionalDependencies)</AdditionalDependencies>
++      <MinimumRequiredVersion>6.1</MinimumRequiredVersion>
      </Link>
    </ItemDefinitionGroup>
    <ItemGroup>
-@@ -160,7 +181,6 @@
+@@ -160,7 +189,6 @@
        <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">CompileAsCpp</CompileAs>
      </ClCompile>
      <ClCompile Include="audio_output.cpp" />
@@ -92,7 +127,7 @@ index 143261b..0000000
 -/*****************************************************************************
 - * exlibs.cpp
 - *****************************************************************************
-- * Copyright (C) 2012-2014 L-SMASH Works project
+- * Copyright (C) 2012-2015 L-SMASH Works project
 - *
 - * Authors: Yusuke Nakamura <muken.the.vfrmaniac@gmail.com>
 - *

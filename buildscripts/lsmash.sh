@@ -59,15 +59,19 @@ function build_lsmash() {
         "liblsmash-${_LSMASH_API_VER}.dll"
     )
 
-    patch -p1 -i ${PATCHES_DIR}/0001-configure-Check-whether-SRCDIR-is-git-repo-or-not.patch \
-        > ${LOGS_DIR}/lsmash_patch.log 2>&1 || exit 1
-    patch -p1 -i ${PATCHES_DIR}/0002-configure-Add-api-version-to-mingw-shared-library-na.patch \
+    patch -p1 -i ${PATCHES_DIR}/0000-build-Add-unix-version-script.patch > ${LOGS_DIR}/lsmash_patch.log 2>&1 || exit 1
+    patch -p1 -i ${PATCHES_DIR}/0001-.gitignore-Add-version-script.patch >> ${LOGS_DIR}/lsmash_patch.log 2>&1 || exit 1
+    patch -p1 -i ${PATCHES_DIR}/0002-configure-Check-whether-SRCDIR-is-git-repo-or-not.patch \
         >> ${LOGS_DIR}/lsmash_patch.log 2>&1 || exit 1
-    patch -p1 -i ${PATCHES_DIR}/0003-build-Use-lib.exe-or-dlltool-when-available-on-mingw.patch \
+    patch -p1 -i ${PATCHES_DIR}/0003-configure-Add-api-version-to-mingw-shared-library-na.patch \
         >> ${LOGS_DIR}/lsmash_patch.log 2>&1 || exit 1
-    patch -p1 -i ${PATCHES_DIR}/0004-configure-If-shared-is-enabled-put-LIBS-on-Libs.priv.patch \
+    patch -p1 -i ${PATCHES_DIR}/0004-build-Use-lib.exe-or-dlltool-when-available-on-mingw.patch \
         >> ${LOGS_DIR}/lsmash_patch.log 2>&1 || exit 1
-    patch -p1 -i ${PATCHES_DIR}/0005-build-Add-symbol-versioning-for-shared-libraries.patch \
+    patch -p1 -i ${PATCHES_DIR}/0005-configure-If-shared-is-enabled-put-LIBS-on-Libs.priv.patch \
+        >> ${LOGS_DIR}/lsmash_patch.log 2>&1 || exit 1
+    patch -p1 -i ${PATCHES_DIR}/0006-Makefile-Move-.ver-from-clean-to-distclean.patch \
+        >> ${LOGS_DIR}/lsmash_patch.log 2>&1 || exit 1
+    patch -p1 -i ${PATCHES_DIR}/0007-build-Add-non-public-symbols-which-start-lsmash_-pre.patch \
         >> ${LOGS_DIR}/lsmash_patch.log 2>&1 || exit 1
 
     local _arch
