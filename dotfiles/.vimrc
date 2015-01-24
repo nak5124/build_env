@@ -228,10 +228,6 @@ let g:avs_operator = 1
 au BufNewFile,BufRead *.rs set filetype=rust
 " mappings
 let g:neocomplcache_enable_insert_char_pre = 1
-inoremap <C-p> <Up>
-inoremap <C-n> <Down>
-inoremap <C-b> <Left>
-inoremap <C-f> <Right>
 inoremap <C-e> <End>
 inoremap <C-a> <Home>
 inoremap <C-d> <Del>
