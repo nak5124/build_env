@@ -26,6 +26,7 @@ declare -ra _32dll_list=(
     "/mingw32/local/bin/libogg-0.dll"
     "/mingw32/local/bin/libopencore-amrnb-0.dll"
     "/mingw32/local/bin/libopencore-amrwb-0.dll"
+    "/mingw32/local/bin/libopenh264.dll"
     "/mingw32/local/bin/libopenmj2-7.dll"
     "/mingw32/local/bin/libopus-0.dll"
     "/mingw32/local/bin/libspeex-1.dll"
@@ -53,6 +54,7 @@ declare -ra _64dll_list=(
     "/mingw64/local/bin/libogg-0.dll"
     "/mingw64/local/bin/libopencore-amrnb-0.dll"
     "/mingw64/local/bin/libopencore-amrwb-0.dll"
+    "/mingw64/local/bin/libopenh264.dll"
     "/mingw64/local/bin/libopenmj2-7.dll"
     "/mingw64/local/bin/libopus-0.dll"
     "/mingw64/local/bin/libspeex-1.dll"
@@ -60,8 +62,8 @@ declare -ra _64dll_list=(
     "/mingw64/local/bin/libvorbis-0.dll"
     "/mingw64/local/bin/libvorbisenc-2.dll"
     "/mingw64/local/bin/libvpx-1.dll"
-    "/mingw64/local/bin/libx264-145.dll"
-    "/mingw64/local/bin/libx265-40.dll"
+    "/mingw64/local/bin/libx264-144.dll"
+    "/mingw64/local/bin/libx265-44.dll"
 )
 
 # common

@@ -600,11 +600,64 @@ function build_libutvideo() {
     return 0
 }
 
+# openh264
+function build_openh264() {
+    clear; echo "Build libopenh264 git-openh264v1.3"
+
+    if [ ! -d ${HOME}/OSS/openh264 ]; then
+        cd ${HOME}/OSS
+        git clone https://github.com/cisco/openh264.git
+        cd ${HOME}/OSS/openh264
+        git checkout openh264v1.3
+    fi
+    cd ${HOME}/OSS/openh264
+
+    git clean -fdx > /dev/null 2>&1
+    git reset --hard > /dev/null 2>&1
+    git pull > /dev/null 2>&1
+    git_hash > ${LOGS_DIR}/openh264.hash
+    git_rev >> ${LOGS_DIR}/openh264.hash
+
+    patch -p1 -i ${PATCHES_DIR}/openh264/0001-build-x86-common.mk-Use-Yasm-instead-of-NASM.patch \
+        > ${LOGS_DIR}/openh264_patch.log 2>&1 || exit 1
+    patch -p1 -i ${PATCHES_DIR}/openh264/0002-.gitignore-Add-codec-common-inc-version.h.patch \
+        >> ${LOGS_DIR}/openh264_patch.log 2>&1 || exit 1
+    patch -p1 -i ${PATCHES_DIR}/openh264/0003-build-Use-version-script.patch >> ${LOGS_DIR}/openh264_patch.log 2>&1 || exit 1
+    patch -p1 -i ${PATCHES_DIR}/openh264/0004-Makefile-Fix-PREFIX.patch >> ${LOGS_DIR}/openh264_patch.log 2>&1 || exit 1
+
+    local _arch
+    for _arch in ${target_arch[@]}
+    do
+        source cpath $_arch
+
+        if [ "${_arch}" = "i686" ]; then
+            local _FFPREFIX=/mingw32/local
+            local _64bit="No"
+        else
+            local _FFPREFIX=/mingw64/local
+            local _64bit="Yes"
+        fi
+
+        make clean > /dev/null 2>&1
+        printf "===> Making libopenh264 %s...\n" $_arch
+        make ENABLE64BIT=$_64bit CFLAGS_OPT="${BASE_CPPFLAGS} ${BASE_CFLAGS}" LDFLAGS="${BASE_CFLAGS} ${BASE_LDFLAGS}" -j9 -O \
+            > ${LOGS_DIR}/openh264_make_${_arch}.log 2>&1 || exit 1
+        echo "done"
+
+        printf "===> Installing libopenh264 %s...\n" $_arch
+        make install-shared PREFIX=$_FFPREFIX > ${LOGS_DIR}/openh264_install_${_arch}.log 2>&1 || exit 1
+        echo "done"
+    done
+
+    return 0
+
+}
+
 # FFmpeg
 function patch_ffmpeg() {
     echo "===> Applying patches to FFmpeg..."
 
-    local -i _N=59
+    local -i _N=62
     local -i _i
     local _num
     echo "===> Apply patches..." > ${LOGS_DIR}/ffmpeg_patches.log
@@ -660,6 +713,7 @@ function build_ffmpeg() {
         "SDL.dll"
         "libopencore-amrnb-0.dll"
         "libopencore-amrwb-0.dll"
+        "libopenh264.dll"
         "libopenmj2-7.dll"
         "libspeex-1.dll"
         "libutvideo-15.dll"
@@ -667,6 +721,8 @@ function build_ffmpeg() {
         "libvorbisenc-2.dll"
         "libvpx-1.dll"
         "liblzma-5.dll"
+        "libx264-144.dll"
+        "libx265-44.dll"
     )
     local -ra _sysdll_list=(
         "libgcc_s_seh-1.dll"
@@ -713,6 +769,7 @@ function build_ffmpeg() {
             --enable-avisynth                                \
             --enable-libopencore-amrnb                       \
             --enable-libopencore-amrwb                       \
+            --enable-libopenh264                             \
             --enable-libopenjpeg                             \
             --enable-libopus                                 \
             --enable-libspeex                                \
@@ -771,6 +828,7 @@ if ${all_build}; then
     build_libvpx
     build_lzma
     build_libutvideo
+    build_openh264
 fi
 build_ffmpeg
 

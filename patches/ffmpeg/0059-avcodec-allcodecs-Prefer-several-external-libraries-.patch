@@ -1,18 +1,18 @@
-From b06014261896e44ab55ce086f43dc49b4370592a Mon Sep 17 00:00:00 2001
+From 1799398e7cf61ef9f62869fa51ec22a477438039 Mon Sep 17 00:00:00 2001
 From: Yuta NAKAI <nak5124@live.jp>
 Date: Wed, 7 Jan 2015 13:14:52 +0900
-Subject: [PATCH 57/58] avcodec/allcodecs: Prefer several external libraries
+Subject: [PATCH 59/62] avcodec/allcodecs: Prefer several external libraries
  over native codecs.
 
 ---
- libavcodec/allcodecs.c | 12 +++++++-----
- 1 file changed, 7 insertions(+), 5 deletions(-)
+ libavcodec/allcodecs.c | 16 +++++++++-------
+ 1 file changed, 9 insertions(+), 7 deletions(-)
 
 diff --git a/libavcodec/allcodecs.c b/libavcodec/allcodecs.c
-index 512711e..469d0c6 100644
+index 2fe3609..0231824 100644
 --- a/libavcodec/allcodecs.c
 +++ b/libavcodec/allcodecs.c
-@@ -96,6 +96,13 @@ void avcodec_register_all(void)
+@@ -97,6 +97,15 @@ void avcodec_register_all(void)
      REGISTER_HWACCEL(WMV3_VAAPI,        wmv3_vaapi);
      REGISTER_HWACCEL(WMV3_VDPAU,        wmv3_vdpau);
  
@@ -22,11 +22,13 @@ index 512711e..469d0c6 100644
 +    REGISTER_ENCDEC (LIBOPENJPEG,       libopenjpeg);
 +    REGISTER_ENCDEC (LIBUTVIDEO,        libutvideo);
 +    REGISTER_ENCDEC (LIBVORBIS,         libvorbis);
++    REGISTER_ENCODER(LIBX264,           libx264);
++    REGISTER_ENCODER(LIBX264RGB,        libx264rgb);
 +
      /* video codecs */
      REGISTER_ENCODER(A64MULTI,          a64multi);
      REGISTER_ENCODER(A64MULTI5,         a64multi5);
-@@ -509,9 +516,6 @@ void avcodec_register_all(void)
+@@ -511,9 +520,6 @@ void avcodec_register_all(void)
      REGISTER_ENCDEC (LIBGSM_MS,         libgsm_ms);
      REGISTER_ENCDEC (LIBILBC,           libilbc);
      REGISTER_ENCODER(LIBMP3LAME,        libmp3lame);
@@ -36,7 +38,7 @@ index 512711e..469d0c6 100644
      REGISTER_ENCDEC (LIBOPUS,           libopus);
      REGISTER_ENCDEC (LIBSCHROEDINGER,   libschroedinger);
      REGISTER_ENCODER(LIBSHINE,          libshine);
-@@ -519,10 +523,8 @@ void avcodec_register_all(void)
+@@ -521,16 +527,12 @@ void avcodec_register_all(void)
      REGISTER_DECODER(LIBSTAGEFRIGHT_H264, libstagefright_h264);
      REGISTER_ENCODER(LIBTHEORA,         libtheora);
      REGISTER_ENCODER(LIBTWOLAME,        libtwolame);
@@ -47,6 +49,12 @@ index 512711e..469d0c6 100644
      REGISTER_ENCDEC (LIBVPX_VP8,        libvpx_vp8);
      REGISTER_ENCDEC (LIBVPX_VP9,        libvpx_vp9);
      REGISTER_ENCODER(LIBWAVPACK,        libwavpack);
+     REGISTER_ENCODER(LIBWEBP,           libwebp);
+-    REGISTER_ENCODER(LIBX264,           libx264);
+-    REGISTER_ENCODER(LIBX264RGB,        libx264rgb);
+     REGISTER_ENCODER(LIBX265,           libx265);
+     REGISTER_ENCODER(LIBXAVS,           libxavs);
+     REGISTER_ENCODER(LIBXVID,           libxvid);
 -- 
-2.2.1
+2.3.0
 

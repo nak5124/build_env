@@ -27,7 +27,7 @@ index cb9ee41..7d24d86 100644
  	install -d $(DESTDIR)$(bindir)
  	install -m 755 $(SHAREDLIB) $(DESTDIR)$(bindir)
 +ifeq ($(SHAREDLIB), liblsmash-$(MAJVER).dll)
-+	ln -fs $(DESTDIR)$(bindir)/$(SHAREDLIB) $(DESTDIR)$(bindir)/liblsmash.dll
++	ln -fs $(SHAREDLIB) $(DESTDIR)$(bindir)/liblsmash.dll
 +endif
  else
  	install -m 644 $(SHAREDLIB) $(DESTDIR)$(libdir)

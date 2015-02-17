@@ -1,0 +1,23 @@
+From 0272905fc098e39b2ae4a426bd8cf784cf27f033 Mon Sep 17 00:00:00 2001
+From: Yuta NAKAI <nak5124@live.jp>
+Date: Sat, 24 Jan 2015 01:22:11 +0900
+Subject: [PATCH 1/4] build/x86-common.mk: Use Yasm instead of NASM.
+
+---
+ build/x86-common.mk | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/build/x86-common.mk b/build/x86-common.mk
+index 5f73919..90e5c7c 100644
+--- a/build/x86-common.mk
++++ b/build/x86-common.mk
+@@ -19,5 +19,5 @@ ifeq ($(USE_ASM),Yes)
+ CFLAGS += -DX86_ASM
+ ASM_ARCH = x86
+ endif
+-ASM = nasm
++ASM = yasm
+ ASMFLAGS += $(ASMFLAGS_PLATFORM)
+-- 
+2.2.2
+

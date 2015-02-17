@@ -1,8 +1,8 @@
-From 96a49c6344d7519a4b1cc0cc3a570e93f858f044 Mon Sep 17 00:00:00 2001
+From 9b9dcb819d6aa1402f6e7a4aefee0bc1edee69f2 Mon Sep 17 00:00:00 2001
 From: Yuta NAKAI <nak5124@live.jp>
 Date: Sun, 6 Apr 2014 18:05:22 +0900
-Subject: [PATCH] Revert "avcodec/h264: fix Lossless Decoding (Profile 244) for
- 8x8 Intra Prediction"
+Subject: [PATCH 55/62] Revert "avcodec/h264: fix Lossless Decoding (Profile
+ 244) for 8x8 Intra Prediction"
 
 This reverts commit 6f7ca1f55be1270e0d7c33409de4473e4dd00add.
 ---
@@ -13,10 +13,10 @@ This reverts commit 6f7ca1f55be1270e0d7c33409de4473e4dd00add.
  4 files changed, 1 insertion(+), 82 deletions(-)
 
 diff --git a/libavcodec/h264_mb.c b/libavcodec/h264_mb.c
-index ff902be..9af46cc 100644
+index dd406c7..bb7fa50 100644
 --- a/libavcodec/h264_mb.c
 +++ b/libavcodec/h264_mb.c
-@@ -623,12 +623,7 @@ static av_always_inline void hl_decode_mb_predict_luma(H264Context *h,
+@@ -630,12 +630,7 @@ static av_always_inline void hl_decode_mb_predict_luma(H264Context *h,
                  uint8_t *const ptr = dest_y + block_offset[i];
                  const int dir      = h->intra4x4_pred_mode_cache[scan8[i]];
                  if (transform_bypass && h->sps.profile_idc == 244 && dir <= 1) {
@@ -140,5 +140,5 @@ index f684433..af01e1c 100644
  #undef PREDICT_8x8_LOAD_TOP
  #undef PREDICT_8x8_LOAD_TOPLEFT
 -- 
-1.9.0
+2.3.0
 
