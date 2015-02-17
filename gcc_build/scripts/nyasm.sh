@@ -5,16 +5,23 @@ function download_nasm_src() {
     if [ ! -f ${BUILD_DIR}/nyasm/nasm/src/nasm-${NASM_VER}.tar.xz ]; then
         printf "===> Downloading NASM %s...\n" $NASM_VER
         pushd ${BUILD_DIR}/nyasm/nasm/src > /dev/null
-        dl_files http http://www.nasm.us/pub/nasm/releasebuilds/${NASM_VER}/nasm-${NASM_VER}.tar.xz
+        local _nasm_ver
+        if [ ! -z "${NASM_SS}" ]; then
+            dl_files http http://www.nasm.us/pub/nasm/snapshots/${NASM_SS}/nasm-${NASM_VER}-${NASM_SS}.tar.xz
+            _nasm_ver=${NASM_VER}-$NASM_SS
+        else
+            dl_files http http://www.nasm.us/pub/nasm/releasebuilds/${NASM_VER}/nasm-${NASM_VER}.tar.xz
+            _nasm_ver=$NASM_VER
+        fi
         popd > /dev/null
         echo "done"
     fi
 
     # Decompress the src archive.
-    if [ ! -d ${BUILD_DIR}/nyasm/nasm/src/nasm-$NASM_VER ]; then
+    if [ ! -d ${BUILD_DIR}/nyasm/nasm/src/nasm-$_nasm_ver ]; then
         printf "===> Extracting NASM %s...\n" $NASM_VER
         pushd ${BUILD_DIR}/nyasm/nasm/src > /dev/null
-        decomp_arch ${BUILD_DIR}/nyasm/nasm/src/nasm-${NASM_VER}.tar.xz
+        decomp_arch ${BUILD_DIR}/nyasm/nasm/src/nasm-${_nasm_ver}.tar.xz
         popd > /dev/null
         echo "done"
     fi
@@ -26,10 +33,16 @@ function download_nasm_src() {
 function prepare_nasm() {
     # Apply patches.
     printf "===> Applying patches to NASM %s...\n" $NASM_VER
-    pushd ${BUILD_DIR}/nyasm/nasm/src/nasm-$NASM_VER > /dev/null
-    if [ ! -f ${BUILD_DIR}/nyasm/nasm/src/nasm-${NASM_VER}/patched_01.marker ]; then
+    local _nasm_ver
+    if [ ! -z "${NASM_SS}" ]; then
+        _nasm_ver=${NASM_VER}-$NASM_SS
+    else
+        _nasm_ver=$NASM_VER
+    fi
+    pushd ${BUILD_DIR}/nyasm/nasm/src/nasm-$_nasm_ver > /dev/null
+    if [ ! -f ${BUILD_DIR}/nyasm/nasm/src/nasm-${_nasm_ver}/patched_01.marker ]; then
         patch -p1 -i ${PATCHES_DIR}/nasm/0001-mingw-printf.patch > ${LOGS_DIR}/nyasm/nasm/nasm_patch.log 2>&1 || exit 1
-        touch ${BUILD_DIR}/nyasm/nasm/src/nasm-${NASM_VER}/patched_01.marker
+        touch ${BUILD_DIR}/nyasm/nasm/src/nasm-${_nasm_ver}/patched_01.marker
     fi
     popd > /dev/null
     echo "done"
@@ -65,6 +78,13 @@ function build_nasm() {
         prepare_nasm
     fi
 
+    local _nasm_ver
+    if [ ! -z "${NASM_SS}" ]; then
+        _nasm_ver=${NASM_VER}-$NASM_SS
+    else
+        _nasm_ver=$NASM_VER
+    fi
+
     local _arch
     for _arch in ${TARGET_ARCH[@]}
     do
@@ -75,7 +95,7 @@ function build_nasm() {
             # Cleanup the build dir.
             rm -fr ${BUILD_DIR}/nyasm/nasm/build_${_arch}/*
             # NASM cannot be built out of tree.
-            cp -fra ${BUILD_DIR}/nyasm/nasm/src/nasm-${NASM_VER}/* ${BUILD_DIR}/nyasm/nasm/build_$_arch
+            cp -fra ${BUILD_DIR}/nyasm/nasm/src/nasm-${_nasm_ver}/* ${BUILD_DIR}/nyasm/nasm/build_$_arch
 
             # PATH exporting.
             source cpath $_arch

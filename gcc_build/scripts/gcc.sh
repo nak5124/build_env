@@ -149,6 +149,11 @@ function prepare_gcc() {
             >> ${LOGS_DIR}/gcc/gcc_patch.log 2>&1 || exit 1
         touch ${BUILD_DIR}/gcc/src/gcc-${GCC_VER}/patched_23.marker
     fi
+    if [ ! -f ${BUILD_DIR}/gcc/src/gcc-${GCC_VER}/patched_24.marker ]; then
+        patch -p1 -i ${PATCHES_DIR}/gcc/0022-Add--mcrtdll-option-for-msvcrt-stubbing.patch \
+            >> ${LOGS_DIR}/gcc/gcc_patch.log 2>&1 || exit 1
+        touch ${BUILD_DIR}/gcc/src/gcc-${GCC_VER}/patched_24.marker
+    fi
     # Disable automatic image base calculation.
     sed -i 's/enable-auto-image-base/disable-auto-image-base/g' {gcc,libbacktrace,libssp,libstdc++-v3,lto-plugin}/configure
     perl -pi -e 's/_stat\n/_stat64\n/g' ltmain.sh

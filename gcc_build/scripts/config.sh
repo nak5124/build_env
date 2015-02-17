@@ -47,7 +47,7 @@ declare -r MAKEFLAGS_="-j$(($(nproc)+1)) -O"
 declare -r THREAD_MODEL="posix"
 
 # GCC package revision
-declare -r GCC_PKGREV=3
+declare -r GCC_PKGREV=4
 declare -r GCC_BUILT_DATE=$(date +%Y.%m.%d)
 
 # Version
@@ -63,11 +63,12 @@ declare -r ZLIB_VER="1.2.8"
 declare -r MINGW_VER="git"
 declare -r BINUTILS_VER="git"
 declare -r GCC_VER="4.9.2"
-declare -r NASM_VER="2.11.06"
+declare -r NASM_VER="2.11.07"
+declare -r NASM_SS="20150118"
 declare -r YASM_VER="1.3.0"
 declare -r AUTOCONF_VER="2.69"
 declare -r AUTOMAKE_VER="1.15"
-declare -r LIBTOOL_VER="2.4.4"
+declare -r LIBTOOL_VER="2.4.6"
 
 # Comment out if you don't want to rebuild.
 # prerequisites for GCC

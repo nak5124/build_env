@@ -7,7 +7,7 @@ function prepare_mingw_w64() {
     if [ ! -d ${BUILD_DIR}/mingw-w64/src/mingw-w64-$MINGW_VER ]; then
         echo "===> Cloning MinGW-w64 git repo..."
         pushd ${BUILD_DIR}/mingw-w64/src > /dev/null
-        dl_files git http://git.code.sf.net/p/mingw-w64/mingw-w64 mingw-w64-$MINGW_VER
+        dl_files git https://github.com/nak5124/MinGW-w64.git mingw-w64-$MINGW_VER
         popd > /dev/null
         echo "done"
     fi
@@ -17,19 +17,9 @@ function prepare_mingw_w64() {
     pushd ${BUILD_DIR}/mingw-w64/src/mingw-w64-$MINGW_VER > /dev/null
     git clean -fdx > /dev/null 2>&1
     git reset --hard > /dev/null 2>&1
-    git pull > /dev/null 2>&1
+    # git pull > /dev/null 2>&1
     git_hash > ${LOGS_DIR}/mingw-w64/mingw-w64.hash 2>&1
     git_rev >> ${LOGS_DIR}/mingw-w64/mingw-w64.hash 2>&1
-    echo "done"
-
-    # Apply a patch
-    printf "===> Applying patches to MinGW-w64 %s...\n" $MINGW_VER
-    patch -p1 -i ${PATCHES_DIR}/winpthreads/0001-winpthreads-dont-use-fakelibs.patch \
-        > ${LOGS_DIR}/mingw-w64/mingw-w64_patch.log 2>&1 || exit 1
-    patch -p1 -i ${PATCHES_DIR}/headers/0001-Revert-time.h-Restore-POSIX-guards-around-_r-functio.patch \
-        >> ${LOGS_DIR}/mingw-w64/mingw-w64_patch.log 2>&1 || exit 1
-    patch -p1 -i ${PATCHES_DIR}/headers/0002-Add-strerror_r.patch >> ${LOGS_DIR}/mingw-w64/mingw-w64_patch.log 2>&1 || exit 1
-    patch -p1 -i ${PATCHES_DIR}/crt/0001-Add-libmsvcr120.patch >> ${LOGS_DIR}/mingw-w64/mingw-w64_patch.log 2>&1 || exit 1
     echo "done"
 
     # Autoreconf.

@@ -55,6 +55,12 @@ function prepare_iconv() {
             >> ${LOGS_DIR}/libiconv/libiconv_patch.log 2>&1 || exit 1
         touch ${BUILD_DIR}/libiconv/src/libiconv-${ICONV_VER}/patched_05.marker
     fi
+    if [ ! -f ${BUILD_DIR}/libiconv/src/libiconv-${ICONV_VER}/patched_06.marker ]; then
+        # libtool, I hate you...
+        patch -p1 -i ${PATCHES_DIR}/libiconv/0006-exe-force-linking-to-a-new-libiconv.patch \
+            >> ${LOGS_DIR}/libiconv/libiconv_patch.log 2>&1 || exit 1
+        touch ${BUILD_DIR}/libiconv/src/libiconv-${ICONV_VER}/patched_06.marker
+    fi
     # Disable automatic image base calculation.
     sed -i 's/enable-auto-image-base/disable-auto-image-base/g' {.,preload,libcharset}/configure
     popd > /dev/null

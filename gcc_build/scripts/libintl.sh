@@ -68,6 +68,8 @@ function prepare_intl() {
         # Fix linking to gcc with -fstack-protector*.
         patch -p1 -i ${PATCHES_DIR}/libintl/0005-dont-use-disable-auto-import.patch \
             >> ${LOGS_DIR}/libintl/libintl_patch.log 2>&1 || exit 1
+        patch -p1 -i ${PATCHES_DIR}/libintl/0006-dont-compile-exes.patch \
+            >> ${LOGS_DIR}/libintl/libintl_patch.log 2>&1 || exit 1
         # Disable automatic image base calculation.
         sed -i 's/enable-auto-image-base/disable-auto-image-base/g' gettext-runtime/configure
         popd > /dev/null
