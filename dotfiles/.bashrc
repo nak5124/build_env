@@ -53,6 +53,9 @@ alias less='less -r'
 LESSHISTFILE=/tmp/.lesshst
 export LESSHISTFILE
 
+# pacman
+alias pacman_mingw64='pacman --root $HOME/.pacman --cachedir $HOME/.pacman/var/cache/pacman/pkg --config $HOME/.pacman/pacman.conf'
+
 # makepkg
 alias makepkg='makepkg --skippgpcheck --skipchecksums --nocheck'
 
