@@ -313,6 +313,7 @@ ln -fsr ./texi2pdf ./pdftexi2dvi
 ln -fsr ./unzip.exe ./zipinfo.exe
 
 # vim
+ln -fsr ./vim.exe ./vi.exe
 ln -fsr ./vim.exe ./ex.exe
 ln -fsr ./vim.exe ./rview.exe
 ln -fsr ./vim.exe ./rvim.exe

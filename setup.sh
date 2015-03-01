@@ -3,13 +3,11 @@
 
 shdir=$(cd $(dirname $0);pwd)
 
-dot_files=( .bashrc .gitconfig .hgrc .minttyrc .bash_profile .vimrc .bash_logout .tigrc .tmux.conf )
+dot_files=( .bash_logout .bash_profile .bashrc .gitconfig .hgrc .inputrc .minttyrc .tigrc .tmux.conf .vimrc .vimshrc )
 mg_patches=( mpfr isl cloog libiconv libintl bzip2 zlib binutils gcc nasm autoconf automake libtool )
 
 # bat
-cp -f ${shdir}/bat/* /
-# buildscripts
-ln -sf ${shdir}/buildscripts/*.sh $HOME
+cp -fa ${shdir}/bat/* /
 # dotfiles
 for fname in ${dot_files[@]}
 do
