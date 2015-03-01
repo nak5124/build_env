@@ -1,0 +1,47 @@
+#!/usr/bin/env bash
+
+declare fname="${1}"
+declare -r fnameonly="${fname##*/}"
+declare -ri dotnunm=$(echo -n ${fnameonly} | sed -e 's|[^\.]||g' | wc -c)
+if [ $dotnunm -eq 0 ]; then
+    declare -r fext=
+else
+    declare -r fext="${fnameonly##*.}"
+fi
+expr "${fext}" + 1 >/dev/null 2>&1
+declare -ri is_num=$?
+
+if [ ! -f "${fname}" ]; then
+    printf "%s does not exist.\n" "${fname}"
+    echo 'exit...'
+    exit -1
+elif [ "$(file --brief --mime-type ${fname})" != 'application/x-dosexec' ]; then
+    printf "%s is neither win exe nor dll.\n" "${fname}"
+    echo 'exit...'
+    exit -2
+fi
+
+if [ -z "${fext}" ]; then
+    if [ -f "${fname}.exe" -a "$(file --brief --mime-type ${fname}.exe)" = 'application/x-dosexec' ]; then
+        fname="${fname}".exe
+    elif [ -f "${fname}.dll" -a "$(file --brief --mime-type ${fname}.dll)" = 'application/x-dosexec' ]; then
+        fname="${fname}".dll
+    else
+        echo 'mingw objdump cannot handle filename without extension.'
+        echo 'exit...'
+        exit -3
+    fi
+elif [ $is_num -lt 2 ]; then
+    if [ -f "${fname}.exe" -a "$(file --brief --mime-type ${fname}.exe)" = 'application/x-dosexec' ]; then
+        fname="${fname}".exe
+    elif [ -f "${fname}.dll" -a "$(file --brief --mime-type ${fname}.dll)" = 'application/x-dosexec' ]; then
+        fname="${fname}".dll
+    else
+        echo 'file extension is numeric.'
+        echo 'maybe cannot handle correctly...'
+        echo 'exit...'
+        exit -4
+    fi
+fi
+
+objdump -p "${fname}" | grep --color 'DLL Name'

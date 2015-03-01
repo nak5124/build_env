@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+
+declare -r gcc_ver=$(gcc -dumpmachine)
+case $gcc_ver in
+    *mingw*)
+        ;;
+    *)
+        echo "gcc target processor is not *mingw*."
+        echo 'exit...'
+        exit -1
+        ;;
+esac
+
+cat << _EOF_ > /tmp/csp.c
+int main( void )
+{
+    return 0;
+}
+_EOF_
+
+echo 'gcc include dirs:'
+gcc -v /tmp/csp.c -o/tmp/csp 2>&1 | \
+    sed ':1;s,/[^/.][^/]*/\.\./,/,;t 1' | \
+    sed -n '/search/,/list/p' | \
+    awk '!a[$0]++'
+
+echo
+echo 'g++ include dirs:'
+g++ -v /tmp/csp.c -o/tmp/csp 2>&1 | \
+    sed ':1;s,/[^/.][^/]*/\.\./,/,;t 1' | \
+    sed -n '/search/,/list/p' | \
+    awk '!a[$0]++'
+
+echo
+echo 'libraries search dirs:'
+gcc -print-search-dirs | \
+    sed '/^lib/b 1;d;:1;s,/[^/.][^/]*/\.\./,/,;t 1;s,:[^=]*=,:;,;s,;,;  ,g' | \
+    tr \; \\012 | \
+    grep -v '^ */' | \
+    awk '!a[$0]++'
+
+rm -f /tmp/csp.c /tmp/csp.exe
