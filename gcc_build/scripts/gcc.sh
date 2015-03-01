@@ -168,7 +168,7 @@ function symlink_gcc() {
     local _arch=${1}
     local _bitval=$(get_arch_bit ${_arch})
 
-    pushd ${PREIN_DIR}/gcc/mingw${_bitval}/bin > /dev/null
+    pushd ${DST_DIR}/mingw${_bitval}/bin > /dev/null
     # Symlinking to ${_arch}-w64-mingw32-*.exe.
     find . -type f -a \( -name "cpp*.exe" -o -name "g++*.exe" -o -name "gcc*.exe" -o -name "gcov*.exe" \) -printf '%f\n' | \
         xargs -I% ln -fsr % ./${_arch}-w64-mingw32-%
@@ -193,9 +193,9 @@ function symlink_gcc() {
     ln -fsr ./gcc.exe ./cc
     popd > /dev/null
 
-    pushd ${PREIN_DIR}/gcc/mingw${_bitval}/lib/gcc/${_arch}-w64-mingw32/${GCC_VER/-*} > /dev/null
+    pushd ${DST_DIR}/mingw${_bitval}/lib/gcc/${_arch}-w64-mingw32/${GCC_VER/-*} > /dev/null
     # This is necessary for slim LTO.
-    mkdir -p ${PREIN_DIR}/gcc/mingw${_bitval}/lib/bfd-plugins
+    mkdir -p ${DST_DIR}/mingw${_bitval}/lib/bfd-plugins
     ln -fsr ./liblto_plugin-*.dll ../../../bfd-plugins
     popd > /dev/null
 
@@ -531,17 +531,19 @@ __EOF__
                 mv -f /mingw${_bitval}/lib/gcc/${_arch}-w64-mingw32/${_old_gcc_ver}/specs.bak \
                     /mingw${_bitval}/lib/gcc/${_arch}-w64-mingw32/${_old_gcc_ver}/specs
             fi
-
-            # Create symlinks.
-            printf "===> Creating symlinks %s...\n" $_arch
-            symlink_gcc $_arch
-            echo "done"
         fi
 
         # Copy to DST_DIR.
         printf "===> Copying GCC %s to %s/mingw%s...\n" $_arch $DST_DIR $_bitval
         symcopy ${PREIN_DIR}/gcc/mingw$_bitval $DST_DIR
         echo "done"
+        # Create symlinks.
+        if ${create_symlinks:-false}; then
+            rm -f  ${DST_DIR}/mingw${_bitval}/bin/c++-${GCC_VER/-*}.exe
+            printf "===> Creating symlinks %s...\n" $_arch
+            symlink_gcc $_arch
+            echo "done"
+        fi
         # Relocate DLLs & cleanup.
         printf "===> Cleanup GCC %s...\n" $_arch
         term_gcc $_arch

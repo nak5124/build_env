@@ -324,18 +324,19 @@ function build_automake() {
             rm -fr ${PREIN_DIR}/autotools/automake/mingw${_bitval}/*
             make DESTDIR=${PREIN_DIR}/autotools/automake install \
                 > ${LOGS_DIR}/autotools/automake/automake_install_${_arch}.log 2>&1 || exit 1
-            # Create symlinks.
-            if [ "${AUTOMAKE_VER}" != "git" ]; then
-                pushd ${PREIN_DIR}/autotools/automake/mingw${_bitval}/bin > /dev/null
-                ln -fsr ./automake-1.14 ./automake
-                ln -fsr ./aclocal-1.14 ./aclocal
-                popd > /dev/null
-            fi
             echo "done"
         fi
 
         printf "===> Copying Automake %s to %s/mingw%s...\n" $_arch $DST_DIR $_bitval
-        symcopy ${PREIN_DIR}/autotools/automake/mingw$_bitval $DST_DIR
+        cp -fra ${PREIN_DIR}/autotools/automake/mingw$_bitval $DST_DIR
+        # Create symlinks.
+        if [ "${AUTOMAKE_VER}" != "git" ] && ${create_symlinks:-false}; then
+            printf "===> Creating symlinks %s...\n" $_arch
+            pushd ${DST_DIR}/mingw${_bitval}/bin > /dev/null
+            ln -fsr ./automake-$AUTOMAKE_VER ./automake
+            ln -fsr ./aclocal-$AUTOMAKE_VER ./aclocal
+            popd > /dev/null
+        fi
         echo "done"
     done
 

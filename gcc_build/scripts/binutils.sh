@@ -53,19 +53,12 @@ function symlink_binutils() {
     local _arch=${1}
     local _bitval=$(get_arch_bit ${_arch})
 
-    pushd ${PREIN_DIR}/binutils/mingw${_bitval}/bin > /dev/null
+    pushd ${DST_DIR}/mingw${_bitval}/bin > /dev/null
     # ld is symlink of lb.bfd.
     ln -fsr ./ld.bfd.exe ./ld.exe
     # Symlinking to ${_arch}-w64-mingw32-*.exe.
     ln -fsr ./ld.bfd.exe ./${_arch}-w64-mingw32-ld.exe
     find . -type f -a -name "*.exe" -printf '%f\n' | xargs -I% ln -fsr % ${_arch}-w64-mingw32-%
-    popd > /dev/null
-
-    # New ld.
-    pushd ${PREIN_DIR}/binutils_ld/mingw${_bitval}/bin > /dev/null
-    ln -fsr ./ld.bfd.exe ./ld.exe
-    ln -fsr ./ld.bfd.exe ./${_arch}-w64-mingw32-ld.bfd.exe
-    ln -fsr ./ld.bfd.exe ./${_arch}-w64-mingw32-ld.exe
     popd > /dev/null
 
     return 0
@@ -203,20 +196,22 @@ function build_binutils() {
             rm -fr ${PREIN_DIR}/binutils_ld/mingw${_bitval}/*
             make -C ld DESTDIR=${PREIN_DIR}/binutils_ld prefix=/mingw$_bitval tooldir=/mingw$_bitval install \
                 > ${LOGS_DIR}/binutils/binutils_reinstallld_${_arch}.log 2>&1 || exit 1
+            rm -f ${PREIN_DIR}/binutils_ld/mingw${_bitval}/bin/ld.exe
             strip_files ${PREIN_DIR}/binutils_ld/mingw$_bitval
-            echo "done"
-
-            # Create symlinks.
-            printf "===> Creating symlinks %s...\n" $_arch
-            symlink_binutils $_arch
             echo "done"
         fi
 
         if ! ( ! ${_rebuild} && ${_2nd_build} ); then
             # Copy to DST_DIR.
             printf "===> Copying Binutils %s to %s/mingw%s...\n" $_arch $DST_DIR $_bitval
-            symcopy ${PREIN_DIR}/binutils/mingw$_bitval $DST_DIR
+            cp -fra ${PREIN_DIR}/binutils/mingw$_bitval $DST_DIR
             echo "done"
+            # Create symlinks.
+            if ${create_symlinks:-false}; then
+                printf "===> Creating symlinks %s...\n" $_arch
+                symlink_binutils $_arch
+                echo "done"
+            fi
         fi
     done
 
@@ -237,7 +232,7 @@ function copy_ld() {
 
         # Copy to DST_DIR.
         printf "===> Copying ld %s to %s/mingw%s...\n" $_arch $DST_DIR $_bitval
-        symcopy ${PREIN_DIR}/binutils_ld/mingw$_bitval $DST_DIR
+        cp -fra ${PREIN_DIR}/binutils_ld/mingw$_bitval $DST_DIR
         echo "done"
     done
 

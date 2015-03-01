@@ -28,6 +28,7 @@ export LC_ALL
 # symlink
 MSYS=winsymlinks:nativestrict
 export MSYS
+declare -r create_symlinks=false
 
 # PATH
 declare -r LOGS_DIR=${ROOT_DIR}/logs
@@ -53,7 +54,7 @@ declare -r GCC_BUILT_DATE=$(date +%Y.%m.%d)
 # Version
 declare -r GMP_VER="6.0.0"
 declare -r MPFR_VER="3.1.2"
-declare -r MPC_VER="1.0.2"
+declare -r MPC_VER="1.0.3"
 declare -r ISL_VER="0.14"
 declare -r CLOOG_VER="0.18.3"
 declare -r ICONV_VER="1.14"
@@ -63,8 +64,8 @@ declare -r ZLIB_VER="1.2.8"
 declare -r MINGW_VER="git"
 declare -r BINUTILS_VER="git"
 declare -r GCC_VER="4.9.2"
-declare -r NASM_VER="2.11.07"
-declare -r NASM_SS="20150118"
+declare -r NASM_VER="2.11.08"
+# declare -r NASM_SS="20150118"
 declare -r YASM_VER="1.3.0"
 declare -r AUTOCONF_VER="2.69"
 declare -r AUTOMAKE_VER="1.15"
