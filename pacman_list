@@ -6,27 +6,29 @@ msys asciidoc 8.6.9-3 [installed]
 msys autoconf 2.69-3 [installed]
 msys autoconf2.13 2.13-2 [installed]
 msys autogen 5.18.4-2
-msys automake-wrapper 9-2 [installed]
+msys automake-wrapper 10-1 [installed]
 msys automake1.10 1.10.3-2 [installed]
 msys automake1.11 1.11.6-2 [installed]
 msys automake1.12 1.12.6-2 [installed]
 msys automake1.13 1.13.4-2 [installed]
 msys automake1.14 1.14.1-2 [installed]
+msys automake1.15 1.15-1 [installed]
 msys automake1.6 1.6.3-2 [installed]
 msys automake1.7 1.7.9-2 [installed]
 msys automake1.8 1.8.5-3 [installed]
 msys automake1.9 1.9.6-2 [installed]
-msys bash 4.3.030-4 [installed]
+msys bash 4.3.033-1 [installed]
 msys bash-completion 2.1-4 [installed]
-msys bash-devel 4.3.030-4
+msys bash-devel 4.3.033-1
 msys binutils 2.25-1 [installed]
-msys bison 3.0.2-2 [installed]
+msys bison 3.0.4-1 [installed]
 msys bsdcpio 3.1.2-4 [installed]
 msys bsdtar 3.1.2-4 [installed]
 msys busybox 1.22.1-2 [installed]
 msys bzip2 1.0.6-2 [installed]
 msys bzr 2.6.0-2
-msys ca-certificates 20140325-1 [installed]
+msys bzr-fastimport 0.13.0-1
+msys ca-certificates 20141019-2 [installed]
 msys catgets 1.1-2 [installed]
 msys cdecl 2.5-1
 msys cgdb 0.6.8-1
@@ -36,26 +38,29 @@ msys cocom 0.996-1 [installed]
 msys coreutils 8.23-4 [installed]
 msys crosstool-ng-git 1.19.314.a483cd9-1
 msys crypt 1.1-6 [installed]
-msys curl 7.39.0-1 [installed]
-msys cvs 1.11.23-2
+msys cscope 15.8a-1
+msys ctags 5.8-1
+msys curl 7.40.0-1 [installed]
+msys cvs 1.11.23-2 [installed]
 msys cygrunsrv 1.61-1
 msys cyrus-sasl 2.1.26-6
 msys dash 0.5.8-1 [installed]
 msys db 5.3.28-2 [installed]
 msys db-docs 5.3.28-2
+msys delta 20060803-1
 msys depot-tools-git r2542.77b74b5-1
 msys diffstat 1.58-1
 msys diffutils 3.3-3 [installed]
 msys docbook-xml 4.5-2 [installed]
 msys docbook-xsl 1.78.1-3 [installed]
-msys dos2unix 7.1-1 [installed]
-msys doxygen 1.8.8-2
+msys dos2unix 7.2-1 [installed]
+msys doxygen 1.8.9.1-1 [installed]
 msys ed 1.10-2 [installed]
 msys elinks-git 0.13.3945.7453b03-1
 msys expat 2.1.0-2 [installed]
-msys file 5.21-2 [installed]
-msys filesystem 2014.12-1 [installed]
-msys findutils 4.5.14-3 [installed]
+msys file 5.22-1 [installed]
+msys filesystem 2015.02-2 [installed: 2014.12-1]
+msys findutils 4.5.14-4 [installed]
 msys flex 2.5.39-4 [installed]
 msys gamin 0.1.10-2
 msys gamin-devel 0.1.10-2
@@ -69,29 +74,32 @@ msys gdbm 1.11-3 [installed]
 msys gengetopt 2.22.6-2
 msys gettext 0.18.3.2-4 [installed]
 msys gettext-devel 0.18.3.2-4 [installed]
-msys git 2.2.1-1 [installed]
+msys git 2.3.0-1 [installed]
 msys glib2 2.42.0-1 [installed]
 msys glib2-devel 2.42.0-1
 msys glib2-docs 2.42.0-1
+msys global 6.3.4-1
 msys gmp 6.0.0-3 [installed]
 msys gmp-devel 6.0.0-3 [installed]
 msys gnome-doc-utils 0.20.10-1
+msys gnu-netcat 0.7.1-1
 msys gnupg 1.4.18-2 [installed]
 msys gperf 3.0.4-3
 msys gradle 1.12-1
 msys gradle-doc 1.12-1
 msys grep 2.21-1 [installed]
 msys groff 1.22.3-1 [installed]
-msys gtk-doc 1.20-1
+msys gtk-doc 1.21-1
 msys guile 2.0.11-3 [installed]
 msys gyp-svn r1945-1
 msys gzip 1.6-1 [installed]
 msys heimdal 1.5.3-5 [installed]
 msys heimdal-devel 1.5.3-5 [installed]
 msys heimdal-libs 1.5.3-5 [installed]
-msys help2man 1.46.4-2 [installed]
+msys help2man 1.46.5-1 [installed]
 msys icu 51.2-2 [installed]
 msys icu-devel 51.2-2 [installed]
+msys idutils 4.6-1
 msys inetutils 1.9.2-1
 msys info 5.2-5 [installed]
 msys intltool 0.50.2-2
@@ -100,7 +108,7 @@ msys isl-devel 0.12.1-1 [installed]
 msys itstool 2.0.2-2
 msys lemon 3.8.7.0-1
 msys less 471-1 [installed]
-msys lftp 4.6.0-1
+msys lftp 4.6.1-1
 msys libarchive 3.1.2-4 [installed]
 msys libarchive-devel 3.1.2-4
 msys libasprintf 0.18.3.2-4 [installed]
@@ -115,8 +123,8 @@ msys libcatgets 1.1-2 [installed]
 msys libcatgets-devel 1.1-2 [installed]
 msys libcrypt 1.1-6 [installed]
 msys libcrypt-devel 1.1-6 [installed]
-msys libcurl 7.39.0-1 [installed]
-msys libcurl-devel 7.39.0-1 [installed]
+msys libcurl 7.40.0-1 [installed]
+msys libcurl-devel 7.40.0-1 [installed]
 msys libdb 5.3.28-2 [installed]
 msys libdb-devel 5.3.28-2 [installed]
 msys libedit 3.1-20130712 [installed]
@@ -148,18 +156,18 @@ msys libidn-devel 1.29-3 [installed]
 msys libintl 0.18.3.2-4 [installed]
 msys libksba 1.3.0-2
 msys libksba-devel 1.3.0-2
-msys libltdl 2.4.4-1 [installed]
+msys libltdl 2.4.6-1 [installed]
 msys liblzma 5.2.0-1 [installed]
 msys liblzma-devel 5.2.0-1 [installed]
-msys liblzo2 2.08-2 [installed]
-msys liblzo2-devel 2.08-2 [installed]
+msys liblzo2 2.09-1 [installed]
+msys liblzo2-devel 2.09-1 [installed]
 msys libmetalink 0.1.2-2 [installed]
 msys libmetalink-devel 0.1.2-2 [installed]
 msys libneon 0.30.0-1
 msys libneon-devel 0.30.0-1
 msys libnettle 3.0-2 [installed]
 msys libnettle-devel 3.0-2 [installed]
-msys libopenssl 1.0.1.j-3 [installed]
+msys libopenssl 1.0.2-1 [installed]
 msys libp11-kit 0.22.1-1 [installed]
 msys libp11-kit-devel 0.22.1-1
 msys libpcre 8.36-2 [installed]
@@ -173,17 +181,17 @@ msys libreadline 6.3.008-3 [installed]
 msys libreadline-devel 6.3.008-3 [installed]
 msys libsasl 2.1.26-6 [installed]
 msys libsasl-devel 2.1.26-6 [installed]
-msys libserf 1.3.7-2 [installed]
-msys libserf-devel 1.3.7-2 [installed]
-msys libsqlite 3.8.7.1-2 [installed]
-msys libsqlite-devel 3.8.7.1-2 [installed]
+msys libserf 1.3.8-1 [installed]
+msys libserf-devel 1.3.8-1 [installed]
+msys libsqlite 3.8.8.2-1 [installed]
+msys libsqlite-devel 3.8.8.2-1 [installed]
 msys libssh2 1.4.3-3 [installed]
 msys libssh2-devel 1.4.3-3 [installed]
 msys libtasn1 4.2-3 [installed]
 msys libtasn1-devel 4.2-3
 msys libtirpc 0.2.5-1
 msys libtirpc-devel 0.2.5-1
-msys libtool 2.4.4-1 [installed]
+msys libtool 2.4.6-1 [installed]
 msys libtre-devel-git 0.8.0.122.c2f5d13-1
 msys libtre-git 0.8.0.122.c2f5d13-1
 msys libunistring 0.9.4-2 [installed]
@@ -192,7 +200,7 @@ msys libunrar 5.2.2-1
 msys libutil-linux 2.25.1-3 [installed]
 msys libutil-linux-devel 2.25.1-3 [installed]
 msys libxml2 2.9.2-2 [installed]
-msys libxml2-devel 2.9.2-2
+msys libxml2-devel 2.9.2-2 [installed]
 msys libxml2-python 2.9.2-2
 msys libxslt 1.1.28-7 [installed]
 msys libxslt-devel 1.1.28-7
@@ -200,65 +208,68 @@ msys libxslt-python 1.1.28-7
 msys libyaml 0.1.4-1 [installed]
 msys libyaml-devel 0.1.4-1
 msys lndir 1.0.3-1 [installed]
-msys lzip 1.15-1 [installed]
+msys lzip 1.16-1 [installed]
 msys m4 1.4.17-4 [installed]
 msys make 4.1-2 [installed]
 msys make-git 4.1.8.g292da6f-1
 msys man-db 2.7.1-1 [installed]
 msys man-pages-posix 2013_a-1
 msys mc 4.8.13-1 [installed]
-msys mercurial 3.2.2-1
-msys mingw-w64-cross-binutils 2.24-1 [installed]
-msys mingw-w64-cross-crt-git 4.0.0.4305.9bd8fe9-1 [installed]
+msys mercurial 3.3-1
+msys mingw-w64-cross-binutils 2.25-1 [installed]
+msys mingw-w64-cross-crt-git 4.0.0.4384.404d457-1 [installed]
 msys mingw-w64-cross-gcc 4.9.2-2 [installed]
-msys mingw-w64-cross-headers-git 4.0.0.4305.9bd8fe9-1 [installed]
+msys mingw-w64-cross-headers-git 4.0.0.4384.404d457-1 [installed]
 msys mingw-w64-cross-windows-default-manifest 6.4-1 [installed]
 msys mingw-w64-cross-winpthreads-git 4.0.0.4305.9bd8fe9-1 [installed]
 msys mingw-w64-cross-zlib 1.2.8-1 [installed]
 msys mintty 1322-2 [installed]
 msys mksh 50.d-2
-msys mpc 1.0.2-2 [installed]
-msys mpc-devel 1.0.2-2 [installed]
-msys mpfr 3.1.2.p10-2 [installed]
-msys mpfr-devel 3.1.2.p10-2 [installed]
+msys mpc 1.0.2-3 [installed]
+msys mpc-devel 1.0.2-3 [installed]
+msys mpfr 3.1.2.p11-1 [installed]
+msys mpfr-devel 3.1.2.p11-1 [installed]
 msys msys2-keyring r8.3864337-1 [installed]
-msys msys2-runtime 2.0.16467.0bee699-1 [installed]
-msys msys2-runtime-devel 2.0.16467.0bee699-1 [installed]
+msys msys2-runtime 2.0.16570.bc1ecbf-1 [installed]
+msys msys2-runtime-devel 2.0.16570.bc1ecbf-1 [installed]
 msys msys2-w32api-headers 4.0.0.4379.3403da3-1 [installed]
 msys msys2-w32api-runtime 4.0.0.4379.3403da3-1 [installed]
 msys nano 2.3.6-2
 msys nasm 2.11.06-1
-msys ncurses 5.9.20141206-1 [installed]
-msys ncurses-devel 5.9.20141206-1 [installed]
+msys ncurses 5.9.20150110-1 [installed]
+msys ncurses-devel 5.9.20150110-1 [installed]
 msys nettle 3.0-2
 msys openssh 6.7p1-1 [installed]
-msys openssl 1.0.1.j-3 [installed]
-msys openssl-devel 1.0.1.j-3 [installed]
+msys openssl 1.0.2-1 [installed]
+msys openssl-devel 1.0.2-1 [installed]
 msys p11-kit 0.22.1-1 [installed]
-msys p7zip 9.20.1-1 [installed]
-msys pacman 4.2.0.5937.97eb956-1 [installed]
+msys p7zip 9.38-1 [installed]
+msys pacman 4.2.0.6080.e0d06d1-1 [installed]
 msys pacman-mirrors 20141223-1 [installed]
-msys patch 2.7.1-2 [installed]
+msys patch 2.7.4-1 [installed]
 msys patchutils 0.3.3-2
 msys pcre 8.36-2 [installed]
 msys pcre-devel 8.36-2 [installed]
-msys perl 5.20.1-2 [installed]
-msys perl-Archive-Zip 1.38-1
+msys perl 5.20.2-1 [installed]
+msys perl-Archive-Zip 1.41-1
 msys perl-Authen-SASL 2.16-2 [installed]
+msys perl-Benchmark-Timer 0.7102-1
 msys perl-Capture-Tiny 0.24-1
 msys perl-Compress-Bzip2 2.19-1
 msys perl-Convert-BinHex 1.123-2 [installed]
 msys perl-Crypt-SSLeay 0.72-1
-msys perl-DBI 1.632-1
+msys perl-DBI 1.633-1
 msys perl-Digest-HMAC 1.03-2
 msys perl-Encode-Locale 1.03-2 [installed]
-msys perl-Error 0.17022-1 [installed]
+msys perl-Error 0.17023-1 [installed]
+msys perl-Exporter-Lite 0.06-1
 msys perl-ExtUtils-Depends 0.308-2
 msys perl-ExtUtils-PkgConfig 1.15-2
 msys perl-File-Copy-Recursive 0.38-2
 msys perl-File-Listing 6.04-2 [installed]
 msys perl-File-Next 1.12-2
 msys perl-File-Which 1.09-2
+msys perl-Getopt-Tabular 0.3-1
 msys perl-HTML-Parser 3.71-2 [installed]
 msys perl-HTML-Tagset 3.20-2 [installed]
 msys perl-HTTP-Cookies 6.01-2 [installed]
@@ -284,7 +295,9 @@ msys perl-Net-SMTP-SSL 1.01-2 [installed]
 msys perl-Net-SSLeay 1.64-1 [installed]
 msys perl-Path-Class 0.33-1
 msys perl-Probe-Perl 0.03-2
+msys perl-Regexp-Common 2013031301-1
 msys perl-Socket6 0.25-1
+msys perl-Sys-CPU 0.61-1
 msys perl-TermReadKey 2.32-2 [installed]
 msys perl-Test-Pod 1.48-2 [installed]
 msys perl-Test-Script 1.07-2
@@ -308,41 +321,50 @@ msys pkgconf 0.9.7-1 [installed]
 msys pkgfile 15-1 [installed]
 msys procps 3.2.8-2 [installed]
 msys psmisc 22.21-1 [installed]
-msys python 3.3.3-1 [installed]
-msys python2 2.7.9-1 [installed]
+msys python 3.3.3-3 [installed]
+msys python2 2.7.9-2 [installed]
 msys python2-colorama 0.3.2-1
-msys python2-setuptools 7.0-1
-msys python3-setuptools 7.0-1
+msys python2-distutils-extra 2.38-1
+msys python2-fastimport 0.9.4-1
+msys python2-pygments 2.0.2-1
+msys python2-setuptools 12.0.5-1
+msys python3-distutils-extra 2.38-1
+msys python3-fastimport 0.9.4-1
+msys python3-pygments 2.0.2-1
+msys python3-setuptools 12.0.5-1
 msys rarian 0.8.1-1
-msys rcs 5.9.3-1
+msys rcs 5.9.4-1
 msys rebase 4.4.1-6 [installed]
-msys repman-git r18.69da11c-1
+msys repman-git r18.69da11c-2 [installed]
 msys rsync 3.1.1-1 [installed]
 msys ruby 2.1.5-1 [installed]
 msys ruby-docs 2.1.5-1
 msys scons 2.3.4-2
 msys sed 4.2.2-2 [installed]
 msys setconf 0.6.2-1
-msys sqlite 3.8.7.1-2
-msys sqlite-doc 3.8.7.1-2
+msys sqlite 3.8.8.2-1
+msys sqlite-doc 3.8.8.2-1
 msys sshpass 1.05-1
 msys subversion 1.8.11-1 [installed]
-msys swig 3.0.2-1 [installed]
+msys swig 3.0.5-1 [installed]
 msys tar 1.28-2 [installed]
 msys tcsh 6.18.01-2
 msys texinfo 5.2-5 [installed]
-msys texinfo-tex 5.2-5
+msys texinfo-tex 5.2-5 [installed]
 msys tftp-hpa 5.2-1
-msys tig 2.0.3-1 [installed]
+msys tig 2.0.3-1 [installed: 2.0.3-2]
 msys time 1.7-1
-msys tmux-git 1.9.4851.f8481f9-1 [installed]
+msys tmux-git 1.9.4851.f8481f9-1 [installed: 1.9a.5006.b8aec17-1]
 msys tree 1.7.0-1 [installed]
 msys tzcode 2014.i-1 [installed]
+msys ucl 1.03-1
+msys ucl-devel 1.03-1
 msys unrar 5.2.2-1 [installed]
 msys unzip 6.0-2 [installed]
+msys upx 3.91-1
 msys util-linux 2.25.1-3 [installed]
 msys util-macros 1.19.0-1 [installed]
-msys vim 7.4.507-1 [installed]
+msys vim 7.4.567-1 [installed]
 msys wget 1.16.1-1 [installed]
 msys which 2.20-2 [installed]
 msys windows-default-manifest 6.4-1 [installed]
@@ -357,5 +379,48 @@ msys yelp-xsl 3.14.0-1
 msys zip 3.0-1 [installed]
 msys zlib 1.2.8-3 [installed]
 msys zlib-devel 1.2.8-3 [installed]
-msys zsh 5.0.7-3
-msys zsh-doc 5.0.7-3
+msys zsh 5.0.7-4
+msys zsh-doc 5.0.7-4
+mingw64_Takuan mingw64-SDL 1.2.15-1 [installed]
+mingw64_Takuan mingw64-ffmpeg-git 2.6.70274.a220322-1 [installed]
+mingw64_Takuan mingw64-flac-git 1.3.1.3499.fed0dfa-1 [installed]
+mingw64_Takuan mingw64-l-smash-git 2.8.0.1342.70f2610-1 [installed]
+mingw64_Takuan mingw64-liblzma-git 5.2.1.1051.a245189-1 [installed]
+mingw64_Takuan mingw64-libogg-svn 1.3.2.r19443-1 [installed]
+mingw64_Takuan mingw64-libutvideo-git 15.1.0.13.c309918-1 [installed]
+mingw64_Takuan mingw64-libvorbis-aotuv b6.03-1 [installed]
+mingw64_Takuan mingw64-libvpx-git 1.3.0.12743.44adb8e-1 [installed]
+mingw64_Takuan mingw64-mfx_dispatch-git 1.7.18.e1594a0-1 [installed]
+mingw64_Takuan mingw64-opencl 1.2-1 [installed]
+mingw64_Takuan mingw64-opencore-amr-git 0.1.3.199.3b67218-1 [installed]
+mingw64_Takuan mingw64-openh264-git 1.3.3085.d0fdf1c-1 [installed]
+mingw64_Takuan mingw64-openmj2-svn 2.1.0.r2997-1 [installed]
+mingw64_Takuan mingw64-opus-git 1.1.1.3355.45cbdff-1 [installed]
+mingw64_Takuan mingw64-opus-tools-git 0.1.9.324.f2a2e88-1 [installed]
+mingw64_Takuan mingw64-speex-git 1.2rc2.1950.6aab25c-1 [installed]
+mingw64_Takuan mingw64-toolchain 4.9.2-6 [installed]
+mingw64_Takuan mingw64-x264-10bit-git 144.2549.4c005a5-1 [installed]
+mingw64_Takuan mingw64-x265-10bit-hg 1.5.129.018e8bbaa854-1 [installed]
+mingw32_Takuan mingw32-SDL 1.2.15-1 [installed]
+mingw32_Takuan mingw32-ffmpeg-git 2.6.70274.a220322-1 [installed]
+mingw32_Takuan mingw32-flac-git 1.3.1.3499.fed0dfa-1 [installed]
+mingw32_Takuan mingw32-l-smash-git 2.8.0.1342.70f2610-1 [installed]
+mingw32_Takuan mingw32-liblzma-git 5.2.1.1051.a245189-1 [installed]
+mingw32_Takuan mingw32-libogg-svn 1.3.2.r19443-1 [installed]
+mingw32_Takuan mingw32-libutvideo-git 15.1.0.13.c309918-1 [installed]
+mingw32_Takuan mingw32-libvorbis-aotuv b6.03-1 [installed]
+mingw32_Takuan mingw32-libvpx-git 1.3.0.12743.44adb8e-1 [installed]
+mingw32_Takuan mingw32-mfx_dispatch-git 1.7.18.e1594a0-1 [installed]
+mingw32_Takuan mingw32-opencl 1.2-1 [installed]
+mingw32_Takuan mingw32-opencore-amr-git 0.1.3.199.3b67218-1 [installed]
+mingw32_Takuan mingw32-openh264-git 1.3.3085.d0fdf1c-1 [installed]
+mingw32_Takuan mingw32-openmj2-svn 2.1.0.r2997-1 [installed]
+mingw32_Takuan mingw32-opus-git 1.1.1.3355.45cbdff-1 [installed]
+mingw32_Takuan mingw32-opus-tools-git 0.1.9.324.f2a2e88-1 [installed]
+mingw32_Takuan mingw32-speex-git 1.2rc2.1950.6aab25c-1 [installed]
+mingw32_Takuan mingw32-toolchain 4.9.2-6 [installed]
+mingw32_Takuan mingw32-x264-10bit-git 144.2549.4c005a5-1 [installed]
+mingw32_Takuan mingw32-x265-10bit-hg 1.5.129.018e8bbaa854-1 [installed]
+msys_Takuan erutaso-git 9.ed5b15f-1 [installed]
+msys_Takuan the_silver_searcher-git 0.29.1.1497.773e96a-1 [installed]
+msys_Takuan tmux-git 1.9a.5006.b8aec17-1 [installed]
