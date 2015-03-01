@@ -1,0 +1,47 @@
+From 029844a57b132260415fd61f465732d6151ffa0c Mon Sep 17 00:00:00 2001
+From: Hendrik Leppkes <h.leppkes@gmail.com>
+Date: Sat, 10 Sep 2011 12:10:05 +0200
+Subject: [PATCH 03/62] aacdec: construct extradata if it wasn't present
+ before.
+
+---
+ libavcodec/aacdec.c | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
+
+diff --git a/libavcodec/aacdec.c b/libavcodec/aacdec.c
+index 3879600..b38d17f 100644
+--- a/libavcodec/aacdec.c
++++ b/libavcodec/aacdec.c
+@@ -86,6 +86,7 @@
+ #include "avcodec.h"
+ #include "internal.h"
+ #include "get_bits.h"
++#include "put_bits.h"
+ #include "fft.h"
+ #include "imdct15.h"
+ #include "fmtconvert.h"
+@@ -3172,6 +3173,21 @@ static av_cold int aac_decode_close(AVCodecContext *avctx)
+     AACContext *ac = avctx->priv_data;
+     int i, type;
+ 
++    if (!avctx->extradata_size && ac->oc[1].m4ac.object_type && ac->oc[1].m4ac.chan_config) {
++        PutBitContext pb;
++
++        avctx->extradata = av_mallocz(2);
++        avctx->extradata_size = 2;
++        init_put_bits(&pb, avctx->extradata, avctx->extradata_size);
++        put_bits(&pb, 5, ac->oc[1].m4ac.object_type);
++        put_bits(&pb, 4, ac->oc[1].m4ac.sampling_index);
++        put_bits(&pb, 4, ac->oc[1].m4ac.chan_config);
++        put_bits(&pb, 1, 0); //frame length - 1024 samples
++        put_bits(&pb, 1, 0); //does not depend on core coder
++        put_bits(&pb, 1, 0); //is not extension
++        flush_put_bits(&pb);
++    }
++
+     for (i = 0; i < MAX_ELEM_ID; i++) {
+         for (type = 0; type < 4; type++) {
+             if (ac->che[type][i])
+-- 
+2.3.0
+

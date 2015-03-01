@@ -1,0 +1,31 @@
+From 2f21a63a7c96627b251de755ba5c2456a8543072 Mon Sep 17 00:00:00 2001
+From: Hendrik Leppkes <h.leppkes@gmail.com>
+Date: Mon, 12 Mar 2012 22:04:19 +0100
+Subject: [PATCH 07/62] Revert "mov: Set negative Sample_duration in STTS to 1"
+
+This reverts commit 1892052f8dee858dcab3292d1c40c5deef67e18f.
+Some files may violate the spec, but this way they play properly.
+---
+ libavformat/mov.c | 6 ------
+ 1 file changed, 6 deletions(-)
+
+diff --git a/libavformat/mov.c b/libavformat/mov.c
+index 52b6728..916263d 100644
+--- a/libavformat/mov.c
++++ b/libavformat/mov.c
+@@ -2135,12 +2135,6 @@ static int mov_read_stts(MOVContext *c, AVIOContext *pb, MOVAtom atom)
+         sample_count=avio_rb32(pb);
+         sample_duration = avio_rb32(pb);
+ 
+-        /* sample_duration < 0 is invalid based on the spec */
+-        if (sample_duration < 0) {
+-            av_log(c->fc, AV_LOG_ERROR, "Invalid SampleDelta %d in STTS, at %d st:%d\n",
+-                   sample_duration, i, c->fc->nb_streams-1);
+-            sample_duration = 1;
+-        }
+         if (sample_count < 0) {
+             av_log(c->fc, AV_LOG_ERROR, "Invalid sample_count=%d\n", sample_count);
+             return AVERROR_INVALIDDATA;
+-- 
+2.3.0
+

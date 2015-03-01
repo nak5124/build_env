@@ -1,0 +1,14 @@
+# Maintainer: Yuta Nakai <nak5124@live.jp>
+
+_realname=toolchain
+pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
+pkgdesc='MinGW-w64/GCC toolchain'
+pkgver=4.9.2
+pkgrel=6
+arch=('any')
+options=('!strip' 'staticlibs' 'emptydirs')
+install=toolchain-${MINGW_CARCH}.install
+
+package() {
+  cp -fra "${startdir}"/$MINGW_PACKAGE_PREFIX "${pkgdir}"
+}

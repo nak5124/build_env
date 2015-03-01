@@ -1,0 +1,57 @@
+# Maintainer: Yuta Nakai <nak5124@live.jp>
+
+_realname=openh264
+pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}-git"
+pkgdesc='A free, open-source codec library for H.264 encoding and decoding (mingw-w64)'
+pkgver=1.3.3085.d0fdf1c
+pkgrel=1
+arch=('any')
+url='http://www.openh264.org/'
+license=('BSD')
+makedepends=('git')
+depends=("${MINGW_PACKAGE_PREFIX}-toolchain")
+source=("${_realname}"::'git+https://github.com/cisco/openh264.git#branch=openh264v1.3'
+        '0001-build-x86-common.mk-Use-Yasm-instead-of-NASM.patch'
+        '0002-build-Use-version-script.patch'
+        '0003-Makefile-Fix-PREFIX.patch')
+sha512sums=('SKIP'
+            '38323445b70f74b5d1c4851b0578a5b81ab0a996542e0302094d745784314aa5bccf44373e3883fdc59c30aa85011bb88eef967644729d09f9c8222b7882dcf7'
+            '0bc59767f71272baf13060aa3ca91a2769d9c091ef0399227961878fee137cef7bd8641de5c5e88fe531825554592fdc33a509fced3e5bc705c821a6e3461635'
+            'd6af6c7c66df0a6c40a3ecb65c4559f6054a78f98c24feb4026e069b63502bde77ffaa8fb9bbe2814a8c59f4259d124d3d6956e938ce9b51552cee8311eb4086')
+
+pkgver() {
+  cd "${srcdir}"/$_realname
+  local _ver=$(grep '^VERSION=' Makefile | sed 's/VERSION=//g')
+  printf "%s.%s.%s" "${_ver}" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
+}
+
+prepare() {
+  cd "${srcdir}"/$_realname
+  msg2 'Applying patches'
+  if [ -f "${srcdir}/${_realname}/libopenh264.ver" ]; then
+    rm -f "${srcdir}"/${_realname}/libopenh264.ver
+  fi
+  patch -p1 -i "${srcdir}"/0001-build-x86-common.mk-Use-Yasm-instead-of-NASM.patch
+  patch -p1 -i "${srcdir}"/0002-build-Use-version-script.patch
+  patch -p1 -i "${srcdir}"/0003-Makefile-Fix-PREFIX.patch
+}
+
+build() {
+  cd "${srcdir}"/$_realname
+
+  if [ "${MINGW_CARCH}" = "x86_64" ]; then
+    _64bit='Yes'
+  else
+    _64bit='No'
+  fi
+
+  make clean
+  make ENABLE64BIT=$_64bit CFLAGS_OPT="${CPPFLAGS} ${CFLAGS}" LDFLAGS="${CFLAGS} ${LDFLAGS}" $MAKEFLAGS
+}
+
+package() {
+  cd "${srcdir}"/$_realname
+  make DESTDIR="${pkgdir}" PREFIX=$MINGW_LOCAL_PREFIX install-shared
+
+  install -Dm644 LICENSE "${pkgdir}"${MINGW_LOCAL_PREFIX}/share/licenses/${_realname}/LICENSE
+}

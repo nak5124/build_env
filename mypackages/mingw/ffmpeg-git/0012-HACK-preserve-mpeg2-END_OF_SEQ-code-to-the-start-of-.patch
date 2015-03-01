@@ -1,0 +1,34 @@
+From 353afd34ad84313fa0f62bd3d9501f53e27afe9e Mon Sep 17 00:00:00 2001
+From: Hendrik Leppkes <h.leppkes@gmail.com>
+Date: Wed, 7 Nov 2012 22:37:48 +0100
+Subject: [PATCH 12/62] HACK: preserve mpeg2 END_OF_SEQ code to the start of
+ the next frame to cause a implicit decoder flush
+
+---
+ libavcodec/mpeg12.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
+
+diff --git a/libavcodec/mpeg12.c b/libavcodec/mpeg12.c
+index 3128e8d..a838389 100644
+--- a/libavcodec/mpeg12.c
++++ b/libavcodec/mpeg12.c
+@@ -218,9 +218,15 @@ int ff_mpeg1_find_frame_end(ParseContext *pc, const uint8_t *buf, int buf_size,
+                 pc->frame_start_found = 4;
+             }
+             if (state == SEQ_END_CODE) {
++                int idx = i+1;
++                /* DVDs won't send the next frame start on still images */
++                /* SEQ_END_CODE will have to stay at the beginning of the next frame */
++                if (pc->frame_start_found && i != 3) {
++                    idx = i-3;
++                }
+                 pc->frame_start_found = 0;
+                 pc->state=-1;
+-                return i+1;
++                return idx;
+             }
+             if (pc->frame_start_found == 2 && state == SEQ_START_CODE)
+                 pc->frame_start_found = 0;
+-- 
+2.3.0
+

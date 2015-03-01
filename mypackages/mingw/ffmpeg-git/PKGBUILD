@@ -1,0 +1,244 @@
+# Maintainer: Yuta Nakai <nak5124@live.jp>
+
+_realname=ffmpeg
+pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}-git"
+pkgdesc='Complete and free Internet live audio and video broadcasting solution (mingw-w64)'
+pkgver=2.6.70274.a220322
+pkgrel=1
+arch=('any')
+url='http://ffmpeg.org/'
+license=('GPL' 'nonfree')
+makedepends=('git'
+             'pkgconf'
+             "${MINGW_PACKAGE_PREFIX}-mfx_dispatch-git"
+             "${MINGW_PACKAGE_PREFIX}-opencl")
+depends=("${MINGW_PACKAGE_PREFIX}-SDL"
+         "${MINGW_PACKAGE_PREFIX}-liblzma-git"
+         "${MINGW_PACKAGE_PREFIX}-libutvideo-git"
+         "${MINGW_PACKAGE_PREFIX}-libvorbis-aotuv"
+         "${MINGW_PACKAGE_PREFIX}-libvpx-git"
+         "${MINGW_PACKAGE_PREFIX}-opencore-amr-git"
+         "${MINGW_PACKAGE_PREFIX}-openh264-git"
+         "${MINGW_PACKAGE_PREFIX}-openmj2-svn"
+         "${MINGW_PACKAGE_PREFIX}-opus-git"
+         "${MINGW_PACKAGE_PREFIX}-speex-git"
+         "${MINGW_PACKAGE_PREFIX}-toolchain"
+         "${MINGW_PACKAGE_PREFIX}-x264-10bit-git"
+         "${MINGW_PACKAGE_PREFIX}-x265-10bit-hg")
+source=("${_realname}"::'git://source.ffmpeg.org/ffmpeg.git'
+        '0001-get-accurate-estimate-from-the-PTSes.patch'
+        '0002-HACK-Disable-tb_unreliable-preserve-original-fps-inf.patch'
+        '0003-aacdec-construct-extradata-if-it-wasn-t-present-befo.patch'
+        '0004-Increase-the-maximum-probe-size-to-4MB.patch'
+        '0005-prores-set-avtx-pix_fmt-based-on-the-fourcc-code-dur.patch'
+        '0006-Silently-error-out-when-pos_limit-exceeds-pos_max-in.patch'
+        '0007-Revert-mov-Set-negative-Sample_duration-in-STTS-to-1.patch'
+        '0008-mpegts-switch-back-to-mpegts_get_pcr.patch'
+        '0009-file-increase-io-buffer-for-better-performance-on-hi.patch'
+        '0010-mpegvideo-null-out-current_picture_ptr-when-allocati.patch'
+        '0011-h264-flag-interlaced-coded-frames-as-such-when-sei_p.patch'
+        '0012-HACK-preserve-mpeg2-END_OF_SEQ-code-to-the-start-of-.patch'
+        '0013-HACK-mov-when-seeking-secondary-streams-don-t-insist.patch'
+        '0014-aac-7.1-should-have-side-channels-and-not-2-pairs-of.patch'
+        '0015-Revert-mpegts-clear-avprograms-only-for-removed-prog.patch'
+        '0016-HACK-avio-add-a-flag-to-skip-the-fstat-on-file-openi.patch'
+        '0017-flac-export-vorbiscomment-metadata-in-extradata.patch'
+        '0018-swscale-make-sws_getCachedContext-properly-handle-pr.patch'
+        '0019-h264-set-h-sps-if-none-is-set-yet.patch'
+        '0020-riff-don-t-try-to-parse-too-small-WAVEFORMAT-headers.patch'
+        '0021-Fraps-output-repeat-frames-instead-of-discarding-the.patch'
+        '0022-vorbiscomment-allow-using-vorbiscomment-parser-witho.patch'
+        '0023-dca-parse-the-HD-frame-size-to-avoid-false-positive-.patch'
+        '0024-avidec-remove-an-assert.patch'
+        '0025-riff-add-HEVC-tags.patch'
+        '0026-HACK-hevc-ignore-invalid-extradata.patch'
+        '0027-h264-increase-MAX_SLICES-to-256.patch'
+        '0028-vc1-wait-for-bitstream-recovery-before-starting-deco.patch'
+        '0029-h264-don-t-use-deprecated-YUVJ-pixel-formats.patch'
+        '0030-HACK-mov-don-t-set-the-DEFAULT-disposition-because-o.patch'
+        '0031-avformat-utils-don-t-overwrite-existing-program-info.patch'
+        '0032-avformat-try-harder-to-find-a-duration-of-the-media.patch'
+        '0033-riff-add-ProRes-FourCCs.patch'
+        '0034-hevc-port-intrinsic-SSE2-IDCT-from-OpenHEVC.patch'
+        '0035-hevc-port-intra-pred-SIMD-from-OpenHEVC.patch'
+        '0036-h264_parser-force-grabing-a-new-timestamp-until-a-fr.patch'
+        '0037-x86-hevc-use-DECLARE_ALIGNED-for-on-stack-tmp-arrays.patch'
+        '0038-hevc-fill-avctx-information-from-sps-during-codec-op.patch'
+        '0039-hevc-scan-for-sps-pps-vps-more-aggressively.patch'
+        '0040-mpeg12dec-properly-handle-a-codec_id-change.patch'
+        '0041-hevc-try-to-handle-the-NoRaslOutputFlag-logic.patch'
+        '0042-hevc-don-t-use-deprecated-YUVJ-pixel-formats.patch'
+        '0043-dxva2_hevc-add-compat-header-for-mingw.patch'
+        '0044-isom-Support-demuxing-more-DTS-audio-in-ISOBMFF.patch'
+        '0045-Revert-avformat-mov-strengthen-some-table-allocation.patch'
+        '0046-mov-Support-roll-recovery-grouping.patch'
+        '0047-dirac_parser-Set-output_picture_number.patch'
+        '0048-mp3-enable-packed-main_data-decoding-in-MP4.patch'
+        '0049-alsdec-Fix-avoiding-reading-over-the-end-of-packet-d.patch'
+        '0050-flvdec-Support-HM10.0-based-Strongene-HEVC-demuxing.patch'
+        '0051-hevc-Set-chroma_sample_location-of-AVCodecContext.patch'
+        '0052-h264_ps-Set-chroma_sample_location-appropriately-if-.patch'
+        '0053-fix-compilation-on-msys2-mingw32-system.patch'
+        '0054-configure-Change-mingw32-into-mingw.patch'
+        '0055-Revert-avcodec-h264-fix-Lossless-Decoding-Profile-24.patch'
+        '0056-avcodec-libvpxenc-Use-VP9E_SET_NOISE_SENSITIVITY-for.patch'
+        '0057-Revert-avcodec-opusdec-switch-to-swresample.patch'
+        '0058-build-Cleanup-version-scripts.patch'
+        '0059-avcodec-allcodecs-Prefer-several-external-libraries-.patch'
+        '0060-configure-Fix-detection-of-functions-on-mingw-w64.patch'
+        '0061-libutvideodec-Fix-bits_per_raw_sample.patch'
+        '0062-configure-Disable-auto-image-base.patch')
+sha512sums=('SKIP'
+            '5ff2c0b6bb93c3a9b8a6cdd1d919d130885bd9d52d5aa3acb89057d51b49d7691628b030241eb08737498d294110ba2700ef9dd0dfd17c1ef5e27615910c2865'
+            'e15c741d26175aa9054ffb0f57ecb9309dc81d205550aa25d191bccea78efd4ab5b80a0995d565a70bd6d5567a2f771bad68551b6730f75fdb1210f28de934b0'
+            '64ea1e0f28234f8abdb1d4fad142ce35c7eabf314638daf8bf1ad4a67b9f053ec4cb153770db461067179843b7ef2ae52740e6853d623ecba5946c99ca6ce92a'
+            '27bd4c44127ed43f8b832a0ee850fa9281cd004791698ed21d8fa167e7d5c0e6533fe2f0a4e722f1c0a143be2b4ee2f46f7777435f85c9ebae37d3fa74cc0dc4'
+            '93ee871df8403fe16a4a5023fcef2f8f4167237ca07e3b589530b5f7f88d3ab803377b5c3f1d1217422045d918d53dff3d5217ff8c2f37b114c075e45eae0175'
+            '6628add3f106dfc79076fff4b00bb596d5ab8af540c85e38e96169e0c7157292e16eeab0057c17c9504da60079183e76310d0825c41853c0a6fa04486177d535'
+            'cfd58c03031c3ec882997d75836f6fd752bd0748d78bf2d0b0916cf824ed90738f030786d344719ab1da0c4b84e824c933c3764194c0bd6642e3ef693b8506e1'
+            'fd4fec94fdb9490fc9896c0030bf717de6475a6ca0a766dcc77ce435918cccd55eec66096740cd6a0ee7490df621a8b7d4a5c1ad40fb78e17e5ae8dd25de70f8'
+            '034351f2ef6362bafc9b025651062e4955c4626035819b18a25451e69c77b75796642716be026d81ed8abbafab79c3d5cfead80a2c36e43cf46ae02b5942e92f'
+            '860a905da90bab5f36d8fa64a8656de223f401eca632ed9ac482370f794586b385e7787e28f2fa3e5e30cbe9201ab2c743cfb1329fa1e1da1c014f7144b8d7db'
+            '4786b681b2cbcfd08fdfe59e452588275b0eb230bd6a0fe50bc5cfe27679e3435e5cb760e405f9ee898a06be6ea1e8199fb4987aa4889f46d82df485dd9dbc0a'
+            '19292f9c01526e643cca8b1572b22b1f33ebed2d6e3be1d2ddd62bb63aa94dba3b11b03ab70a4e342eb9f4eabd85e8de2b69b97ee6433661f2d29af742c3483b'
+            '1b95ff3f33d81fb9b4bc177a5f1cddfe911e5d693e9fb19a1c9883fa463fc590cf3141a3bef237279da49e44a5b46445c3a474b7e42591abf9e4de36f510baf2'
+            '05a92eaedbc83e96e0f8bcfb18a75403e5fe8178d4e37ab615b3b11507411d10c20bf7e7220d8bbb3193c6d7714eebe093841005a074f4211887e980749715a0'
+            'fa0c4aaa368c93cce531f28330dd84d0f8a821421b999f271cff2977765db2b9f8604dd2399daf4060e1f530c9509436559f28089b0782821e8d81ea8e3bb135'
+            'f57a885288081ff4f6056527ae54e283ff354d9abb695e50738e92139e8bbc110bacd8abf6fb89e96605f0fe03ecade35ff256f7f56c8d28f4a03553b7f7b71b'
+            '4053cfb248b27b7ddb25b690b07d68b170353d660bc0cd7a749c0571de975ddcb42624010ca9c2e2fe8b19ca25c0995feb3ca0d17ebc9ceaedede39d911c6b96'
+            '09f7e7f065fde884a50ddb3815947c47c90220ffbc4b9babe871e21c1aecbd3929a4b5333b594849955fa60a742990a57f430fa5bcad95986ae3cb1cc9b9cfda'
+            '41d94928485573ea16ca529ad74ed2831f2e3d7a82a87f38d2ae76be64b3d0ded9a50ea9de2c5da76a3e88832509173ad559882ff4021d11a9535328419026b2'
+            '8fc1e91c861fc7e9b1a7e97b4782e0bc676d961b9c4e769480ffb6790b7b6c528262906d578e90fe367b69ec71c077aba61f5d8d3ad09781e197c338a2b1b67b'
+            'cc62fa2e58f0877ecee5dfb5aa9e3bb9e3299ceb932e3975020ed6531107f35a1a6cde5da801acf2aaf024edf5b802161929dd327e9d56844b3a5470f132ddda'
+            '132f005650df5b3cd355bdf1d9105fe835e0f3940f0401958be903763c98bb46a7cf7c5cf40c22568b2a757223e05cdc08d3de234aed2deae4028e6dbca44345'
+            '30fdf8b69fa52a36acfec1c4468b5ea358fd7e4dd368db5dbe10c6d788152b1dd69dd502166b3956099f553d7cd974abeb48dbcd8c5be30bbd17ffc3f330f75f'
+            '84657a37d3c3f75698a1e319bc95ca82ef8cd74abd49fdbe50a2f6cb0886ad153408c3a45a9cb3cd7363226dad94f4a2e1898cb289cb35f21be5aaeaf8b887f5'
+            '29e7cc42f08e3d82cfd49dc0fb0304010cba2638a63bddd9f37805fdc92a12905b345651de15f0a178f87fff2d65041740650a2928ec74db97e9734f8b4f8e59'
+            '05e60d5252f0e9ebd4a874cf5bacac36b57d1a876889774411d43be97aaf658b8445fb78206df096e709138a6c4596d4b532f993c0c9b8641d8291330591022f'
+            '90a3cdf34aa5675a7db6a36e37a70217cd212e823285e671e2c8be64782cf1a35c57f7f48e7a9cb8e6e23e41161729f0c4020b318bb5b7c6dabceada8c71c587'
+            '0a7f96686aa93029f26af59104d5340c1b5e1beaa26dd90705c8e99512469748636919af1e00f3c6b32f762896ffce38dbf80840bf7391fb6a895876402deaeb'
+            '9c4838a622cf58d796693119e0dd380c7dec4bada2afe469522a0cf16d5d37f8ca4f1d8542f7ac7bd78bf73ba4c272ea24d249477d9115799a580952d35f5d90'
+            '0a764a063783d270640acd89685a290f729d4ca249ef8abf86ad24194ec65dc41b3d5ea7998a3166f99e3d8c2edcd0083565cf04c0bbe38bceae6ca35535922e'
+            'b31c00d3d776c8b9e8c8e543fa6fd2c70f8ac0f98f7c78ca4477a1c048bd1ffb10c8998b7842a5fbde264342d863a04fc6b63ca2e10e64ed842ed98098bb32be'
+            'ef7770879b65031a78a7dcdeba4920ba56355db1d1c1209c9cebbfb3ff8f30a9543944b88f788e7e59f7baf6ae632a779fa7965878830df8fb88c19282cf1570'
+            '444eee2393905f5b6300d92ca6981b0d2065d483fa82f235b9ce8c0791cb6daef32018aaf42b333eeaf43efe59063253e873bad56e585fc38eeff27294e31033'
+            '5bbb9e7a6cbb1480c2e0d918c6e2b476ba81b566445a5f022741b29af948c207fc98b5fc5c2d29d1c719e2be35f88be3cde2b068720ecb1422076bf85a6b21db'
+            '57a626cddb9ef176728b4c4c16d5d738f39abced5d25c17bac9c533b8c66c4944ee5797983494ead0c387e007f1f3efbe1c83d0ea7d88accca83220008ce7310'
+            '97117a56e6df5c5b12a487a8b95bc885535c417209ac7b1be7c13c8226d49ace9af2cf181f6f26e0cc36c54e86034becb141108c7b94b108b748969922d6478d'
+            '37d1d12d029cdd6b9644e7c23fe217042c457b05d3548fd174426a74df09d4eed378b9e4c9797ce4fcaf1ae4bfc3bded71f895a54dfe421e6bd3534b3b61608d'
+            '09b4af876f93166de0092e9c6a19586f9a3efdfabf9ff2a7b947b8b4348cd8527899107bd074f672182943066e364e8e255b275683b73d162877f3556e49aa70'
+            '07acc20d4d8fb52f01dd8f94e6ec0c01aba7f81aadd9f6cd725c6673bb3d209b9f0ba7e370b87f8c3bde274da6376affd62c99e9dc8deda8593d46c2d2e571b5'
+            '912504c50d6a1f8e4176b6b6ca73ee4c0443f334bc1eabdf5ef34ffbf0fffd761803a37abc121d4fb7ef0b8dc012484ac0996542b08780689c62911729aefc5e'
+            '6aa02d9a411e8a4ea80e2a165beb0202bc831c8382ce4e103700a97ec511f45026d0ebeaf208dc61e23881378cf0c888e09513655698ad2d6569543bd3f3c80d'
+            '5c50a4ebc4b5f2dbd589d04787742ea771d4a9644318256aedc8c94f4cecd322b016ebefe8a179f28f17feb12afdf59602120004e3861485838fec05b95e2b3e'
+            '943d12d17a9d67b3742e2c4a8718a5a858ef8d662abb005bddd81838649074c522d463b51e38e195f1b9e72fb819849fd06336704aa4d883c1e91680e7107312'
+            'c6845e2c312880946678682a29deca246f45c94507d6efadc02b9960a32fb0ae8eec72f20e0c4f1fe30e5134b298ddd2bd517d0c99b5aaf557dc2f30545bf5fa'
+            'f04cb32c57c913b470727b79faee346adc2036c4c06a468ab3783644f53906ae03fab185cb67310ad0f0d7a274b309b3c86e508c334d80dd119dca62fa1c13e9'
+            '8de4dc66b5c4c6443e585c68f0f4a509dc69c309858492140e1857b62bdd17feb7d6d8ea72be9dd6d7ecce6441bd7e1e85854dc33206bc0e383da9a56af483a2'
+            '0e26b54b0c29f4711a67f03165091a071204812597af60407bc5d3645b4a0b126b6085aba05f33129dc3aadb7798c25d2d9e16952922c08591ba838e4b5e6150'
+            '80dc17ec7d2e46e5287f8be209f16bf169d45541d4f7fa4ca3d264cec7482706ff0bf30e6b2e72a8e8ee8a5861c150c13e9c60a242a1ef3f81a922abf6fca5ff'
+            'b07d10dd4ba80e28dc408d13e63a1b162d534e2e96cabde8b618f40f8d883895281d7b379cf8a1d46b18a5a4a7584700055a77f5be18d34ae6d8cc5f486c94d5'
+            'f1a32e0edad8b016fc9432ed6ef0bb67bb94d1c320faf54ccf10326b4fb92afd85f8681d716f7f8857ec3666ba91ad12c07e7a823bcc97d90fbb9c6d4b6f784e'
+            'f3c4189655003e519cdb7ce39fa182c0d97de1529b81437e11e8d6ac36a78763164296bdd73f3ac141b9a76e069f85dcf7d3e0506e1722cc27d257a1718ec948'
+            '4066c771e07da8a389f26cd059060967884f1f384e1dee24c59dc9031d69a7f597ef249ac3930433321027c545eca1ddd21289fb24528b12fb450531ccc47eb4'
+            '55cad5373029e112628c2bf8db4a3a465d4b20bef3ff6f4461d11036f8d566fdf91d4dac4ebc16d7016396b501c486d41ec28f4645d687bffed244d00712b1e9'
+            'f2ae897313420d6236bad7c9f3e56c0906076ca0738b8b7077f259ee93ffd24a5416bb8d2c483ac305a7fd631794a5d2ed3d239e31ab6e39f4f23622261c8c73'
+            '4affa0be2420f0ceb4fea1332604ac36a6cf43adfd2906b8f2a1e991f6429de859ba086e99a723864ee2840bd646a1bcbe36a4be5bf9de9a84ff98c0453ad134'
+            '5239bc0f1a060034d8978b5ee58cbb0b6c8cf520d4a0bde70c77ac9e28b5aeb2df416a6627801a4e05868dc4efeaea4bbcb2961365ba63fb3f233eccfae1e984'
+            '3cf6dbfd1a2f753e977c0afebb87e6f13013936d686242638e720d758afbff913e3669d04e0f8fb563a1b1083c57abbc65ec872de103bf8fc0db8af14915810d'
+            '5a6534388ae0ee5f61cbd284e25b005946c0a65c2fbda23eb78f9777555844a9c01f362bb262702ecdb19242d0c28fa9b18b03e1915a2b88650e5f0efa141a4d'
+            'e964ad32b08ef93b7a7c9e9e905170f46a14802a977d966455f886418dcdd4255a87aa37215a9b7030b8a86de1318e9b1c2b05f1aa41cbbf8bc7b1f15ec61add'
+            'bdd81afa9478ac9433bfc9a7f6ac578d893d83758d369e19ff936d90293952ee0a96fc65eec14b44bbe6637462afd1aa6f75c22750c7ebd209ebe84bd722a820'
+            'bfebae55f3308bf0a02f78cf9e7a366ca41e041755d69733a0febe79b689536e0a88bd390a3c7f5202fc2dec5cb38e1a1cc6491d0d5a0fdd2479fc350e5b7d15'
+            '962e69919cfce078f9d9fb4d654c2ea1b6e987b7093bfaca6056ccc7f718e8d9719d5df71129685e65c3f82634380424a2ac7daf8f73b214bf92579cbd37c237')
+
+pkgver() {
+  cd "${srcdir}"/$_realname
+  local _ver=$(git describe | awk -F"-" '{ print $1}' | sed 's/n//g')
+  printf "%s.%s.%s" "${_ver}" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
+}
+
+prepare() {
+  cd "${srcdir}"/$_realname
+
+  if [ -f "libavcodec/x86/hevc_idct_intrinsic.c" ]; then
+    rm -f libavcodec/x86/hevc_idct_intrinsic.c
+  fi
+  if [ -f "libavcodec/x86/hevc_intra_intrinsic.c" ]; then
+    rm -f libavcodec/x86/hevc_intra_intrinsic.c
+  fi
+  if [ -f "libavcodec/x86/hevcpred.h" ]; then
+    rm -f libavcodec/x86/hevcpred.h
+  fi
+  if [ -f "compat/windows/dxva_hevc.h" ]; then
+    rm -f compat/windows/dxva_hevc.h
+  fi
+
+  local -i _N=62
+  local -i _i
+  local _num
+  msg2 'Apply patches'
+  for _i in $(seq 1 ${_N})
+  do
+    _num=$(printf "%04d" ${_i})
+    printf "\n========== patch No.%s ==========\n" $_num
+    patch -p1 -i "${srcdir}"/${_num}*.patch
+  done
+}
+
+build() {
+  cd "${srcdir}"/$_realname
+
+  if [ "${MINGW_CARCH}" = "x86_64" ]; then
+    PATH=${PATH}:$VC64_DIR
+  else
+    PATH=${PATH}:$VC32_DIR
+  fi
+  export PATH
+
+  if [ -f "${MINGW_LOCAL_PREFIX}/include/nvEncodeAPI.h" ]; then
+    local _nvenc='--enable-nvenc --enable-nonfree'
+  else
+    local _nvenc=''
+  fi
+
+  ./configure \
+    --prefix=$MINGW_LOCAL_PREFIX \
+    --enable-gpl \
+    --enable-version3 \
+    --disable-static \
+    --enable-shared \
+    --enable-gray \
+    --enable-avresample \
+    --disable-pthreads \
+    --enable-avisynth \
+    --enable-libmfx \
+    --enable-libopencore-amrnb \
+    --enable-libopencore-amrwb \
+    --enable-libopenh264 \
+    --enable-libopenjpeg \
+    --enable-libopus \
+    --enable-libspeex \
+    --enable-libutvideo \
+    --enable-libvorbis \
+    --enable-libvpx \
+    --enable-libx264 \
+    --enable-libx265 \
+    $_nvenc \
+    --enable-opencl \
+    --enable-opengl \
+    --arch=${MINGW_CARCH/i6/x} \
+    --cpu=sandybridge \
+    --extra-ldflags="${LDFLAGS}" \
+    --optflags="${CFLAGS} ${CPPFLAGS}" \
+    --sws-max-filter-size=512 \
+    --disable-debug
+
+  make clean
+  make $MAKEFLAGS V=1
+}
+
+package() {
+  cd "${srcdir}"/$_realname
+  make DESTDIR="${pkgdir}" install install-man
+}

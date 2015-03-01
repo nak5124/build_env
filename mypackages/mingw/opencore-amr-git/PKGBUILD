@@ -1,0 +1,53 @@
+# Maintainer: Yuta Nakai <nak5124@live.jp>
+
+_realname=opencore-amr
+pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}-git"
+pkgdesc='Open source implementation of the Adaptive Multi Rate (AMR) speech codec (mingw-w64)'
+pkgver=0.1.3.199.3b67218
+pkgrel=1
+arch=('any')
+url='http://opencore-amr.sourceforge.net/'
+license=('APACHE')
+makedepends=('git')
+depends=("${MINGW_PACKAGE_PREFIX}-toolchain")
+source=("${_realname}"::'git://opencore-amr.git.sourceforge.net/gitroot/opencore-amr/opencore-amr')
+sha512sums=('SKIP')
+
+pkgver() {
+  cd "${srcdir}"/$_realname
+  local _ver=$(grep AC_INIT configure.ac | sed -e "s/^.*, \[\(.*\)\],.*$/\1/")
+  printf "%s.%s.%s" "${_ver}" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
+}
+
+prepare() {
+  cd "${srcdir}"/$_realname
+
+  msg2 'Running Autoreconf'
+  autoreconf -vfis
+}
+
+build() {
+  cd "${srcdir}"/$_realname
+
+  ./configure \
+    --prefix=$MINGW_LOCAL_PREFIX \
+    --build=$MINGW_CHOST \
+    --host=$MINGW_CHOST \
+    --disable-silent-rules \
+    --enable-compile-c \
+    --enable-amrnb-encoder \
+    --enable-amrnb-decoder \
+    --disable-examples \
+    --enable-shared \
+    --disable-static \
+    --enable-fast-install \
+    --with-gnu-ld
+
+  make clean
+  make $MAKEFLAGS
+}
+
+package() {
+  cd "${srcdir}"/$_realname
+  make DESTDIR="${pkgdir}" install
+}

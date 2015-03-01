@@ -1,0 +1,28 @@
+From f5ed6fdcc23b3f8fe7458d90af874a9322c4048b Mon Sep 17 00:00:00 2001
+From: Yusuke Nakamura <muken.the.vfrmaniac@gmail.com>
+Date: Sat, 8 Nov 2014 18:30:19 +0900
+Subject: [PATCH 49/62] alsdec: Fix avoiding reading over the end of packet
+ data.
+
+---
+ libavcodec/alsdec.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/libavcodec/alsdec.c b/libavcodec/alsdec.c
+index b3d3086..1360dfe 100644
+--- a/libavcodec/alsdec.c
++++ b/libavcodec/alsdec.c
+@@ -1478,6 +1478,10 @@ static int decode_frame(AVCodecContext *avctx, void *data, int *got_frame_ptr,
+     int invalid_frame, ret;
+     unsigned int c, sample, ra_frame, bytes_read, shift;
+ 
++    /* After seek to the non-first frame, we can't get the last frame length correctly.
++     * This will avoid reading over the end of packet data. */
++    memset(avpkt->data + avpkt->size, 0, FF_INPUT_BUFFER_PADDING_SIZE);
++
+     if ((ret = init_get_bits8(&ctx->gb, buffer, buffer_size)) < 0)
+         return ret;
+ 
+-- 
+2.3.0
+

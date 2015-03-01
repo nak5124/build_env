@@ -1,0 +1,57 @@
+# Maintainer: Yuta Nakai <nak5124@live.jp>
+
+_realname=x264-10bit
+pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}-git"
+pkgver=144.2549.4c005a5
+pkgrel=1
+pkgdesc='Library and CLI tool for encoding H264/AVC video streams, 10bit-depth (mingw-w64)'
+arch=('any')
+url='http://www.videolan.org/developers/x264.html'
+license=('GPL')
+makedepends=('git' 'pkgconf')
+depends=("${MINGW_PACKAGE_PREFIX}-l-smash-git"
+         "${MINGW_PACKAGE_PREFIX}-toolchain")
+source=("${_realname%-*}"::'git+https://github.com/nak5124/x264.git'
+        '0001-no-define-winver.patch')
+sha512sums=('SKIP'
+            '3090714692ec2b6be8865866f51deb7e0d6066b1afe32286346007d5fddb590b6080a6d57c2c1e28f61ead0ac374351bb282743e4955dcc59f1897a8eb9fd17d')
+
+_samples="${HOME}/y4m/deadline_cif.y4m \
+          ${HOME}/y4m/foreman_cif.y4m  \
+          ${HOME}/y4m/soccer_4cif.y4m"
+
+pkgver() {
+  cd "${srcdir}"/${_realname%-*}
+  local _ver=$(grep '#define X264_BUILD' x264.h | awk '{ print $3}')
+  printf "%s.%s.%s" "${_ver}" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
+}
+
+prepare() {
+  cd "${srcdir}"/${_realname%-*}
+  patch -p1 -i ${srcdir}/0001-no-define-winver.patch
+}
+
+build() {
+  cd "${srcdir}"/${_realname%-*}
+
+  ./configure \
+    --prefix=$MINGW_LOCAL_PREFIX \
+    --enable-shared \
+    --disable-opencl \
+    --enable-win32thread \
+    --disable-interlaced \
+    --bit-depth=10 \
+    --chroma-format=all \
+    --host=$MINGW_CHOST
+
+  if [ ! -z "${_samples}" ]; then
+    make $MAKEFLAGS fprofiled VIDS="${_samples}" PROF_USE_LD+='-lgcov'
+  else
+    make $MAKEFLAGS
+  fi
+}
+
+package() {
+  cd "${srcdir}"/${_realname%-*}
+  make DESTDIR="${pkgdir}" install
+}

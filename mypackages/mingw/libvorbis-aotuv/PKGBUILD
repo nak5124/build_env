@@ -1,0 +1,55 @@
+# Maintainer: Yuta Nakai <nak5124@live.jp>
+
+_realname=libvorbis-aotuv
+pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
+pkgdesc='A fork of libvorbis intended to provide better quality sound at low to medium bitrates (mingw-w64)'
+pkgver=b6.03
+pkgrel=1
+_releasedate=20110424-20140429
+_srcrel=2014
+arch=('any')
+url='http://www.geocities.jp/aoyoume/aotuv'
+license=('BSD')
+makedepends=('pkgconf')
+depends=("${MINGW_PACKAGE_PREFIX}-toolchain"
+         "${MINGW_PACKAGE_PREFIX}-libogg-svn")
+source=("${url}/source_code/${_realname}_${pkgver}_${_srcrel}.tar.bz2"
+        '0001-libvorbis-1.3.5.diff')
+sha512sums=('a994b3e02365f39ffce85f5e5126e406d022046cd64f2434bff55ae562e5f0a05f03396f7c2c3e20cdcf97e3da3a9806b067966532cd4d7dca6ccdc829530f3a'
+            'd0897afeb529f3cd559b108b6cb1b825427f91ae473d90af54a682662af0abfa374bad0e50f9ec358d70b4c1eae2a5b528c3ae943bb2b87485acb08aef1a9ece')
+
+prepare() {
+  cd "${srcdir}"/aotuv-${pkgver}_$_releasedate
+
+  patch -p1 -i "${srcdir}"/0001-libvorbis-1.3.5.diff
+}
+
+build() {
+  cd "${srcdir}"/aotuv-${pkgver}_$_releasedate
+
+  ./autogen.sh \
+    --prefix=$MINGW_LOCAL_PREFIX \
+    --build=$MINGW_CHOST \
+    --host=$MINGW_CHOST \
+    --enable-shared \
+    --disable-static \
+    --enable-fast-install \
+    --disable-examples \
+    --with-gnu-ld \
+    --with-ogg=$MINGW_LOCAL_PREFIX
+
+  make clean
+  make $MAKEFLAGS
+}
+
+package() {
+  cd "${srcdir}"/aotuv-${pkgver}_$_releasedate
+  make DESTDIR="${pkgdir}" install
+
+  rm -f "${pkgdir}"${MINGW_LOCAL_PREFIX}/bin/libvorbisfile-*.dll
+  rm -f "${pkgdir}"${MINGW_LOCAL_PREFIX}/include/vorbis/vorbisfile.h
+  rm -f "${pkgdir}"${MINGW_LOCAL_PREFIX}/lib/libvorbisfile.dll.a
+  rm -f "${pkgdir}"${MINGW_LOCAL_PREFIX}/lib/pkgconfig/vorbisfile.pc
+  rm -fr "${pkgdir}"${MINGW_LOCAL_PREFIX}/share/doc/libvorbis-*/vorbisfile
+  install -Dm644 COPYING "${pkgdir}"${MINGW_LOCAL_PREFIX}/share/licenses/${_realname}/LICENSE
+}

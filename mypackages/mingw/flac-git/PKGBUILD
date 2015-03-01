@@ -1,0 +1,61 @@
+# Maintainer: Yuta Nakai <nak5124@live.jp>
+
+_realname=flac
+pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}-git"
+pkgdesc='Free Lossless Audio Codec (mingw-w64)'
+pkgver=1.3.1.3503.8267168
+pkgrel=1
+arch=('any')
+url='https://xiph.org/flac/'
+license=('custom:Xiph' 'LGPL' 'GPL' 'FDL')
+makedepends=('git' 'doxygen' 'pkgconf')
+depends=("${MINGW_PACKAGE_PREFIX}-toolchain"
+         "${MINGW_PACKAGE_PREFIX}-libogg-svn")
+source=("${_realname}"::'git://git.xiph.org/flac.git')
+sha512sums=('SKIP')
+
+pkgver() {
+  cd "${srcdir}"/$_realname
+  local _ver=$(grep AC_INIT configure.ac | sed -e "s/^.*flac\], \[\(.*\)\], \[flac-.*$/\1/")
+  printf "%s.%s.%s" "${_ver}" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
+}
+
+prepare() {
+  cd "${srcdir}"/$_realname
+
+  msg2 'Running Autoreconf'
+  touch config.rpath
+  autoreconf -vfis
+}
+
+build() {
+  cd "${srcdir}"/$_realname
+
+  ./configure \
+    --prefix=$MINGW_LOCAL_PREFIX \
+    --build=$MINGW_CHOST \
+    --host=$MINGW_CHOST \
+    --disable-silent-rules \
+    --disable-static \
+    --enable-shared \
+    --enable-fast-install \
+    --disable-xmms-plugin \
+    --disable-cpplibs \
+    --disable-rpath \
+    --with-gnu-ld \
+    --with-ogg=$MINGW_LOCAL_PREFIX \
+    --with-libiconv-prefix=$MINGW_SYS_PREFIX
+
+  make clean
+  make $MAKEFLAGS
+}
+
+package() {
+  cd "${srcdir}"/$_realname
+  make DESTDIR="${pkgdir}" install
+  make DESTDIR="${pkgdir}" -C doc install
+
+  local _ver=$(echo $pkgver | awk -F "." '{ printf "%d.%d.%d", $1, $2, $3 }')
+  sed -i "s|${srcdir}/${_realname}|${MINGW_LOCAL_PREFIX}|g" "${pkgdir}${MINGW_LOCAL_PREFIX}/share/doc/${_realname}-${_ver}/FLAC.tag"
+  install -Dm644 COPYING.Xiph "${pkgdir}"${MINGW_LOCAL_PREFIX}/share/licenses/${_realname}/LICENSE
+}

@@ -1,0 +1,56 @@
+# Maintainer: Yuta Nakai <nak5124@live.jp>
+
+_realname=speex
+pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}-git"
+pkgdesc='A free codec for free speech (mingw-w64)'
+pkgver=1.2rc2.1950.6aab25c
+pkgrel=1
+arch=('any')
+url='http://www.speex.org/'
+license=('BSD')
+makedepends=('git')
+depends=("${MINGW_PACKAGE_PREFIX}-toolchain")
+source=("${_realname}"::'git://git.xiph.org/speex.git')
+sha512sums=('SKIP')
+
+pkgver() {
+  cd "${srcdir}"/$_realname
+  local _ver=$(grep AC_INIT configure.ac | sed -e "s/^.*,\[\(.*\)\],.*$/\1/")
+  printf "%s.%s.%s" "${_ver}" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
+}
+
+prepare() {
+  cd "${srcdir}"/$_realname
+
+  msg2 'Running Autoreconf'
+  autoreconf -vfis
+}
+
+build() {
+  cd "${srcdir}"/$_realname
+
+  ./configure \
+    --prefix=$MINGW_LOCAL_PREFIX \
+    --build=$MINGW_CHOST \
+    --host=$MINGW_CHOST \
+    --disable-silent-rules \
+    --enable-shared \
+    --disable-static \
+    --enable-fast-install \
+    --enable-sse \
+    --disable-binaries \
+    --enable-vorbis-psy \
+    --with-gnu-ld \
+    LIBS='-lwinmm'
+  sed -i 's|-O3||g' config.status
+
+  make clean
+  make $MAKEFLAGS
+}
+
+package() {
+  cd "${srcdir}"/$_realname
+  make DESTDIR="${pkgdir}" install
+
+  install -Dm644 COPYING "${pkgdir}"${MINGW_LOCAL_PREFIX}/share/licenses/${_realname}/LICENSE
+}

@@ -1,0 +1,95 @@
+From 5bee8e8715048a75c4be75ab344955c71fc794d5 Mon Sep 17 00:00:00 2001
+From: Derek Buitenhuis <derek.buitenhuis@gmail.com>
+Date: Sun, 7 Dec 2014 12:30:05 -0500
+Subject: [PATCH] build: Add unix version script
+
+Now we only export public symbols.
+
+Signed-off-by: Derek Buitenhuis <derek.buitenhuis@gmail.com>
+---
+ Makefile    |  2 +-
+ configure   | 13 ++++++++-----
+ liblsmash.v |  6 ++++++
+ 3 files changed, 15 insertions(+), 6 deletions(-)
+ create mode 100644 liblsmash.v
+
+diff --git a/Makefile b/Makefile
+index 83ecb0f..cb9ee41 100644
+--- a/Makefile
++++ b/Makefile
+@@ -71,7 +71,7 @@ uninstall:
+ 	$(RM) $(addprefix $(DESTDIR)$(bindir)/, $(TOOLS_ALL) $(TOOLS_ALL:%=%.exe) liblsmash.dll cyglsmash.dll)
+ 
+ clean:
+-	$(RM) */*.o *.a *.so* *.dll *.dylib $(addprefix cli/, *.exe $(TOOLS_ALL)) .depend
++	$(RM) */*.o *.a *.so* *.dll *.dylib $(addprefix cli/, *.exe $(TOOLS_ALL)) .depend *.ver
+ 
+ distclean: clean
+ 	$(RM) config.* *.pc
+diff --git a/configure b/configure
+index 061496e..4f47437 100755
+--- a/configure
++++ b/configure
+@@ -58,7 +58,7 @@ cc_check()
+ 
+ #-----------------------------------------------------------------------------
+ 
+-rm -f config.* .depend conftest* liblsmash.pc
++rm -f config.* .depend conftest* liblsmash.pc *.ver
+ 
+ 
+ echo
+@@ -106,7 +106,7 @@ TOOLS=""
+ 
+ CFLAGS="-Wshadow -Wall -std=c99 -pedantic -I. -I$SRCDIR"
+ LDFLAGS="-L."
+-SO_LDFLAGS='-shared -Wl,-soname,$@'
++SO_LDFLAGS='-shared -Wl,-soname,$@ -Wl,--version-script,liblsmash.ver'
+ LIBS="-lm"
+ 
+ for opt; do
+@@ -200,7 +200,7 @@ case "$TARGET_OS" in
+         EXT=".exe"
+         SHARED_EXT=".dll"
+         IMPLIB="liblsmash.dll.a"
+-        SO_LDFLAGS="-shared -Wl,--out-implib,$IMPLIB"
++        SO_LDFLAGS="-shared -Wl,--out-implib,$IMPLIB -Wl,--version-script,liblsmash.ver"
+         CFLAGS="$CFLAGS -D__USE_MINGW_ANSI_STDIO=1"
+         ;;
+     *cygwin*)
+@@ -208,11 +208,11 @@ case "$TARGET_OS" in
+         SHARED_NAME="cyglsmash"
+         SHARED_EXT=".dll"
+         IMPLIB="liblsmash.dll.a"
+-        SO_LDFLAGS="-shared -Wl,--out-implib,$IMPLIB"
++        SO_LDFLAGS="-shared -Wl,--out-implib,$IMPLIB -Wl,--version-script,liblsmash.ver"
+         ;;
+     *darwin*)
+         SHARED_EXT=".dylib"
+-        SO_LDFLAGS="-dynamiclib -Wl,-undefined,suppress -Wl,-read_only_relocs,suppress -Wl,-flat_namespace"
++        SO_LDFLAGS="-dynamiclib -Wl,-undefined,suppress -Wl,-read_only_relocs,suppress -Wl,-flat_namespace -Wl,--version-script,liblsmash.ver"
+         ;;
+     *solaris*)
+         #patches welcome
+@@ -378,6 +378,9 @@ cat >> config.h << EOF
+ EOF
+ 
+ 
++sed "s/\\\$MAJOR/$MAJVER/" $SRCDIR/liblsmash.v > liblsmash.ver
++
++
+ cat >> liblsmash.pc << EOF
+ prefix=$prefix
+ exec_prefix=$exec_prefix
+diff --git a/liblsmash.v b/liblsmash.v
+new file mode 100644
+index 0000000..2122775
+--- /dev/null
++++ b/liblsmash.v
+@@ -0,0 +1,6 @@
++LSMASH_$MAJOR {
++    global: lsmash_*;
++            ISOM_*;
++            QT_*;
++    local: *;
++};

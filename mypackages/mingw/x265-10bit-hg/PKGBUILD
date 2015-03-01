@@ -1,0 +1,65 @@
+# Maintainer: Yuta Nakai <nak5124@live.jp>
+
+_realname=x265-10bit
+pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}-hg"
+pkgver=1.5.129.018e8bbaa854
+pkgrel=1
+pkgdesc='Open Source H265/HEVC video encoder, 10bit-depth (mingw-w64)'
+arch=('any')
+license=('GPL')
+depends=("${MINGW_PACKAGE_PREFIX}-toolchain")
+url='https://bitbucket.org/multicoreware/x265'
+source=("${_realname%-*}"::'hg+https://bitbucket.org/multicoreware/x265'
+        '0001-x265-shared-linking-v2.patch'
+        '0002-use-win-specific-functions.patch')
+sha512sums=('SKIP'
+            '594f6c8bd2e3506854e87a0044ce65b0b6033471f5d4d993c9b93635b860302d90a941bf3da47d05fa72a0efec6de5a227d2a43adcb956fc2eeec23d63793bc8'
+            'c5419d67938dc9a6136cb9224dc15e2ad2df2a0f28e5a30fbca123c093ee0542683864ebf2c6963ab398714d7a97784901eeb9a2b35346284de5854d6091e77c')
+
+pkgver() {
+  cd "${srcdir}"/${_realname%-*}
+  printf "%s.%s.%s" "$(hg log -r. --template "{latesttag}")" "$(hg log -r. --template "{latesttagdistance}")" "$(hg log -r. --template "{node|short}")"
+}
+
+prepare() {
+  cd "${srcdir}"/${_realname%-*}
+  patch -p1 -i "${srcdir}"/0001-x265-shared-linking-v2.patch
+  patch -p1 -i "${srcdir}"/0002-use-win-specific-functions.patch
+}
+
+build() {
+  cd "${srcdir}"/${_realname%-*}/build/msys
+
+  hg purge --all
+
+  cmake -G 'MSYS Makefiles' \
+    -DCMAKE_INSTALL_PREFIX:PATH="${pkgdir}"$MINGW_LOCAL_PREFIX \
+    -DCMAKE_BUILD_TYPE:STRING=Release \
+    -DCMAKE_CXX_FLAGS_RELEASE:STRING="${CXXFLAGS} ${CPPFLAGS}" \
+    -DCMAKE_SHARED_LINKER_FLAGS:STRING="${LDFLAGS}" \
+    -DCMAKE_COLOR_MAKEFILE:BOOL=ON \
+    -DCMAKE_VERBOSE_MAKEFILE:BOOL=ON \
+    -DCHECKED_BUILD:BOOL=OFF \
+    -DENABLE_ASSEMBLY:BOOL=ON \
+    -DHIGH_BIT_DEPTH:BOOL=ON \
+    -DWARNINGS_AS_ERRORS:BOOL=OFF \
+    -DENABLE_PPA:BOOL=OFF \
+    -DWINXP_SUPPORT:BOOL=OFF \
+    -DENABLE_STATIC:BOOL=OFF \
+    -DENABLE_SHARED:BOOL=ON \
+    -DENABLE_CLI:BOOL=ON \
+    -DENABLE_TESTS:BOOL=OFF \
+    ../../source
+
+  sed -i 's| -Wl,--out-implib,libx265.dll.a||g' CMakeFiles/cli.dir/build.make
+  make $MAKEFLAGS
+
+}
+
+package() {
+  cd "${srcdir}"/${_realname%-*}/build/msys
+  make install
+
+  local _pkgdir=$(cygpath -ma ${pkgdir})
+  sed -i "s|${_pkgdir}||g" "${pkgdir}"${MINGW_LOCAL_PREFIX}/lib/pkgconfig/x265.pc
+}

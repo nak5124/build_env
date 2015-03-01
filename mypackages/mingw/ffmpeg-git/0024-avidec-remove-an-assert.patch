@@ -1,0 +1,25 @@
+From dc240774183d59f4dc2107a1d8774f6f963914ce Mon Sep 17 00:00:00 2001
+From: Hendrik Leppkes <h.leppkes@gmail.com>
+Date: Wed, 18 Sep 2013 20:19:41 +0200
+Subject: [PATCH 24/62] avidec: remove an assert
+
+---
+ libavformat/avidec.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/libavformat/avidec.c b/libavformat/avidec.c
+index 963af34..b5ad26b 100644
+--- a/libavformat/avidec.c
++++ b/libavformat/avidec.c
+@@ -1798,7 +1798,7 @@ static int avi_read_seek(AVFormatContext *s, int stream_index,
+             continue;
+ 
+ //        av_assert1(st2->codec->block_align);
+-        av_assert0(fabs(av_q2d(st2->time_base) - ast2->scale / (double)ast2->rate) < av_q2d(st2->time_base) * 0.00000001);
++//        av_assert0(fabs(av_q2d(st2->time_base) - ast2->scale / (double)ast2->rate) < av_q2d(st2->time_base) * 0.00000001);
+         index = av_index_search_timestamp(st2,
+                                           av_rescale_q(timestamp,
+                                                        st->time_base,
+-- 
+2.3.0
+

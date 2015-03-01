@@ -1,0 +1,30 @@
+From 70e0592f4708b4fd25a46b7d7118713545e40130 Mon Sep 17 00:00:00 2001
+From: Hendrik Leppkes <h.leppkes@gmail.com>
+Date: Fri, 20 Jul 2012 23:03:32 +0200
+Subject: [PATCH 10/62] mpegvideo: null out current_picture_ptr when allocation
+ failed
+
+This avoids using an uninitialized picture in further decode calls.
+---
+ libavcodec/mpegvideo.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/libavcodec/mpegvideo.c b/libavcodec/mpegvideo.c
+index 837bd0e..ea1e526 100644
+--- a/libavcodec/mpegvideo.c
++++ b/libavcodec/mpegvideo.c
+@@ -1822,8 +1822,10 @@ int ff_mpv_frame_start(MpegEncContext *s, AVCodecContext *avctx)
+ 
+     pic->f->coded_picture_number = s->coded_picture_number++;
+ 
+-    if (ff_alloc_picture(s, pic, 0) < 0)
++    if (ff_alloc_picture(s, pic, 0) < 0) {
++        s->current_picture_ptr = NULL;
+         return -1;
++    }
+ 
+     s->current_picture_ptr = pic;
+     // FIXME use only the vars from current_pic
+-- 
+2.3.0
+

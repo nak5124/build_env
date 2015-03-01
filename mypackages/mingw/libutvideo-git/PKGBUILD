@@ -1,0 +1,42 @@
+# Maintainer: Yuta Nakai <nak5124@live.jp>
+
+_realname=libutvideo
+pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}-git"
+pkgdesc='Library of Ut Video Codec Suite (mingw-w64)'
+pkgver=15.1.0.13.c309918
+pkgrel=1
+arch=('any')
+url='http://umezawa.dyndns.info/wordpress/?cat=28'
+license=('GPL')
+makedepends=('git')
+depends=("${MINGW_PACKAGE_PREFIX}-toolchain")
+source=("${_realname}"::'git+https://github.com/nak5124/libutvideo-mingw-w64.git')
+sha512sums=('SKIP')
+
+pkgver() {
+  cd "${srcdir}"/$_realname
+  local _major=$(grep -e '#define UTVIDEO_VERSION_MAJOR' src/version.h | sed -e 's/#define UTVIDEO_VERSION_MAJOR //;s/ //g')
+  local _minor=$(grep -e '#define UTVIDEO_VERSION_MINOR' src/version.h | sed -e 's/#define UTVIDEO_VERSION_MINOR //;s/ //g')
+  local _micro=$(grep -e '#define UTVIDEO_VERSION_BUGFIX' src/version.h | sed -e 's/#define UTVIDEO_VERSION_BUGFIX //;s/ //g')
+  printf "%s.%s.%s.%s.%s" "${_major}" "${_minor}" "${_micro}" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
+}
+
+build() {
+  cd "${srcdir}"/$_realname
+
+  ./configure \
+    --prefix=$MINGW_LOCAL_PREFIX \
+    --disable-static \
+    --enable-shared
+
+  make clean
+  make $MAKEFLAGS
+}
+
+package() {
+  cd "${srcdir}"/$_realname
+  make DESTDIR="${pkgdir}" install
+
+  install -Dm644 doc/gplv2.txt "${pkgdir}"${MINGW_LOCAL_PREFIX}/share/licenses/${_realname}/LICENSE
+  dos2unix "${pkgdir}"${MINGW_LOCAL_PREFIX}/share/licenses/${_realname}/LICENSE
+}

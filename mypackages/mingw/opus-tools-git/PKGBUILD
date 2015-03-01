@@ -1,0 +1,51 @@
+# Maintainer: Yuta Nakai <nak5124@live.jp>
+
+_realname=opus-tools
+pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}-git"
+pkgdesc='Collection of tools for Opus audio codec (mingw-w64)'
+pkgver=0.1.9.324.f2a2e88
+pkgrel=1
+arch=('any')
+url='http://wiki.xiph.org/Opus-tools'
+license=('BSD')
+makedepends=('git' 'pkgconf')
+depends=("${MINGW_PACKAGE_PREFIX}-toolchain"
+         "${MINGW_PACKAGE_PREFIX}-flac-git"
+         "${MINGW_PACKAGE_PREFIX}-libogg-svn"
+         "${MINGW_PACKAGE_PREFIX}-opus-git")
+source=("${_realname}"::'git://git.xiph.org/opus-tools.git')
+sha512sums=('SKIP')
+
+pkgver() {
+  cd "${srcdir}"/$_realname
+  local _ver=$(git describe --tags --match 'v*' | awk -F"-" '{ print $1}' | sed 's/v//g')
+  printf "%s.%s.%s" "${_ver}" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
+}
+
+prepare() {
+  cd "${srcdir}"/$_realname
+
+  msg2 'Running autogen.sh'
+  ./autogen.sh
+}
+
+build() {
+  cd "${srcdir}"/$_realname
+
+  ./configure \
+    --prefix=$MINGW_LOCAL_PREFIX \
+    --build=$MINGW_CHOST \
+    --host=$MINGW_CHOST \
+    --disable-silent-rules \
+    --enable-sse
+
+  make clean
+  make $MAKEFLAGS
+}
+
+package() {
+  cd "${srcdir}"/$_realname
+  make DESTDIR="${pkgdir}" install
+
+  install -Dm644 COPYING "${pkgdir}"${MINGW_LOCAL_PREFIX}/share/licenses/${_realname}/LICENSE
+}

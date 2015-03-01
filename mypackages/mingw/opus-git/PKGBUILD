@@ -1,0 +1,51 @@
+# Maintainer: Yuta Nakai <nak5124@live.jp>
+
+_realname=opus
+pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}-git"
+pkgdesc='Codec designed for interactive speech and audio transmission over the Internet (mingw-w64)'
+pkgver=1.1.1.3355.45cbdff
+pkgrel=1
+arch=('any')
+url='http://www.opus-codec.org/'
+license=('BSD')
+makedepends=('git' 'pkgconf')
+depends=("${MINGW_PACKAGE_PREFIX}-toolchain")
+source=("${_realname}"::'git://git.xiph.org/opus.git')
+sha512sums=('SKIP')
+
+pkgver() {
+  cd "${srcdir}"/$_realname
+  local _ver=$(git describe --tags --match 'v*' | awk -F"-" '{ print $1}' | sed 's/v//g')
+  printf "%s.%s.%s" "${_ver}" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
+}
+
+prepare() {
+  cd "${srcdir}"/$_realname
+
+  msg2 'Running Autoreconf'
+  autoreconf -vfis
+}
+
+build() {
+  cd "${srcdir}"/$_realname
+
+  ./configure \
+    --prefix=$MINGW_LOCAL_PREFIX \
+    --build=$MINGW_CHOST \
+    --host=$MINGW_CHOST \
+    --disable-silent-rules \
+    --enable-shared \
+    --disable-static \
+    --enable-fast-install \
+    --disable-extra-programs
+
+  make clean
+  make $MAKEFLAGS
+}
+
+package() {
+  cd "${srcdir}"/$_realname
+  make DESTDIR="${pkgdir}" install
+
+  install -Dm644 COPYING "${pkgdir}"${MINGW_LOCAL_PREFIX}/share/licenses/${_realname}/LICENSE
+}

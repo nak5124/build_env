@@ -1,0 +1,26 @@
+From b4601b48d600a88273bfa9b5c2e9c8220357a4bb Mon Sep 17 00:00:00 2001
+From: Hendrik Leppkes <h.leppkes@gmail.com>
+Date: Fri, 15 Nov 2013 19:25:11 +0100
+Subject: [PATCH 27/62] h264: increase MAX_SLICES to 256
+
+This was recommended by Jason on IRC a while ago.
+---
+ libavcodec/h264.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/libavcodec/h264.h b/libavcodec/h264.h
+index 2d363c9..f1ada5a 100644
+--- a/libavcodec/h264.h
++++ b/libavcodec/h264.h
+@@ -65,7 +65,7 @@
+  * The maximum number of slices supported by the decoder.
+  * must be a power of 2
+  */
+-#define MAX_SLICES 32
++#define MAX_SLICES 256
+ 
+ #ifdef ALLOW_INTERLACE
+ #define MB_MBAFF(h)    (h)->mb_mbaff
+-- 
+2.3.0
+

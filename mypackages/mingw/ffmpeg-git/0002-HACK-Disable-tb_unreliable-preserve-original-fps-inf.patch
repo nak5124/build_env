@@ -1,0 +1,35 @@
+From 37bfc6bbc8179e48943bf3989032fd3b443e8d51 Mon Sep 17 00:00:00 2001
+From: Hendrik Leppkes <h.leppkes@gmail.com>
+Date: Fri, 15 Apr 2011 18:09:48 +0200
+Subject: [PATCH 02/62] HACK: Disable tb_unreliable, preserve original fps
+ information.
+
+---
+ libavformat/utils.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/libavformat/utils.c b/libavformat/utils.c
+index ff71781..e4195af 100644
+--- a/libavformat/utils.c
++++ b/libavformat/utils.c
+@@ -2871,13 +2871,13 @@ static int get_std_framerate(int i)
+ static int tb_unreliable(AVCodecContext *c)
+ {
+     if (c->time_base.den >= 101LL * c->time_base.num ||
+-        c->time_base.den <    5LL * c->time_base.num ||
+-        // c->codec_tag == AV_RL32("DIVX") ||
+-        // c->codec_tag == AV_RL32("XVID") ||
++        c->time_base.den <    5LL * c->time_base.num/* ||
++        c->codec_tag == AV_RL32("DIVX") ||
++        c->codec_tag == AV_RL32("XVID") ||
+         c->codec_tag == AV_RL32("mp4v") ||
+         c->codec_id == AV_CODEC_ID_MPEG2VIDEO ||
+         c->codec_id == AV_CODEC_ID_GIF ||
+-        c->codec_id == AV_CODEC_ID_H264)
++        c->codec_id == AV_CODEC_ID_H264*/)
+         return 1;
+     return 0;
+ }
+-- 
+2.3.0
+

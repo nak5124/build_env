@@ -1,0 +1,27 @@
+From 903d6914b75edc5d8fc0af587142940f09f4a315 Mon Sep 17 00:00:00 2001
+From: Hendrik Leppkes <h.leppkes@gmail.com>
+Date: Mon, 1 Sep 2014 11:39:09 +0200
+Subject: [PATCH 36/62] h264_parser: force grabing a new timestamp until a
+ frame start was found
+
+---
+ libavcodec/h264_parser.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/libavcodec/h264_parser.c b/libavcodec/h264_parser.c
+index b1815e6..3a78337 100644
+--- a/libavcodec/h264_parser.c
++++ b/libavcodec/h264_parser.c
+@@ -488,6 +488,9 @@ static int h264_parse(AVCodecParserContext *s,
+     } else {
+         next = h264_find_frame_end(p, buf, buf_size);
+ 
++        if (next == END_NOT_FOUND && pc->frame_start_found == 0)
++            s->fetch_timestamp = 1;
++
+         if (ff_combine_frame(pc, next, &buf, &buf_size) < 0) {
+             *poutbuf      = NULL;
+             *poutbuf_size = 0;
+-- 
+2.3.0
+

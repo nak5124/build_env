@@ -1,0 +1,71 @@
+# Maintainer: Yuta Nakai <nak5124@live.jp>
+
+_realname=opencl
+pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
+pkgver=1.2
+pkgrel=1
+pkgdesc='OpenCL (Open Computing Language) header & import library (mingw-w64)'
+arch=('any')
+url='http://www.khronos.org/registry/cl/'
+license=('custom')
+options=('staticlibs')
+source=("${_realname}-${pkgver}.src.tar.xz"
+        'LICENSE'
+        'OpenCL_i686.def'
+        'OpenCL_x86_64.def')
+_headers=("http://www.khronos.org/registry/cl/api/${pkgver}/opencl.h"
+          "http://www.khronos.org/registry/cl/api/${pkgver}/cl_platform.h"
+          "http://www.khronos.org/registry/cl/api/${pkgver}/cl.h"
+          "http://www.khronos.org/registry/cl/api/${pkgver}/cl_ext.h"
+          "http://www.khronos.org/registry/cl/api/${pkgver}/cl_egl.h"
+          "http://www.khronos.org/registry/cl/api/${pkgver}/cl_dx9_media_sharing.h"
+          "http://www.khronos.org/registry/cl/api/${pkgver}/cl_d3d10.h"
+          "http://www.khronos.org/registry/cl/api/${pkgver}/cl_d3d11.h"
+          "http://www.khronos.org/registry/cl/api/${pkgver}/cl_gl.h"
+          "http://www.khronos.org/registry/cl/api/${pkgver}/cl_gl_ext.h")
+sha512sums=('9a23cadeb9a00a6a0fd50c04371a047baaf8cb969bbe13e392fdec3066c603e35cd62aa2e758b014c0d89aedbd4722f8887548bf3f4b330d8f46264fa1fe56bd'
+            'cc0bfa59de7a430d15c1c4fcb0dee8af6aecb8a8336dea78df85e29839dcf77151f74c303b7c375c6756c6040515345fe5c531be330fc6d72f616695e05d250f'
+            '6471504d0bf4f73fec4e168adb58c28f3db5e2fd79b509d62f77b124dc96ba441b8fcc91ca049dd4185e68efd29ed2a8717cd02ad3af0577940a1ebd3814175e'
+            '79c82787f73b588a192e25d0b5b5cd3a5d583584492bc19e841999360608a509f6b9a7316225c2a3a025b9fd4bff7886e66689e2104f0ccc06c7a37c20985be2')
+
+# source PKGBUILD && mksource
+mksource() {
+  cd "${srcdir}"
+  local _dirname=${_realname}-$pkgver
+  mkdir $_dirname
+
+  pushd $_dirname > /dev/null
+  local _h
+  for _h in ${_headers[@]}
+  do
+    wget $_h
+  done
+  popd > /dev/null
+
+  tar -cJv --exclude=CVS -f ${_dirname}.src.tar.xz $_dirname
+  rm -rf $_dirname
+}
+
+build() {
+  cd "${srcdir}"
+  if [ "${MINGW_CARCH}" = "x86_64" ]; then
+    cp -f OpenCL_x86_64.def OpenCL.def
+  else
+    cp -f OpenCL_i686.def OpenCL.def
+  fi
+  dlltool -l libOpenCL.a -d OpenCL.def -A -k
+}
+
+package() {
+  cd "${srcdir}"/${_realname}-$pkgver
+
+  local _h
+  for _h in $(ls -1 *.h)
+  do
+    install -Dm644 $_h "${pkgdir}"${MINGW_LOCAL_PREFIX}/include/CL/$_h
+  done
+
+  install -Dm644 "${srcdir}"/libOpenCL.a "${pkgdir}"${MINGW_LOCAL_PREFIX}/lib/libOpenCL.a
+  install -Dm644 "${srcdir}"/OpenCL.def "${pkgdir}"${MINGW_LOCAL_PREFIX}/lib/OpenCL.def
+  install -Dm644 "${srcdir}"/LICENSE "${pkgdir}"${MINGW_LOCAL_PREFIX}/share/licenses/${_realname}/LICENSE
+}

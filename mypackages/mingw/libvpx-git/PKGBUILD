@@ -1,0 +1,84 @@
+# Maintainer: Yuta Nakai <nak5124@live.jp>
+
+_realname=libvpx
+pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}-git"
+pkgdesc='The VP8 Codec SDK (mingw-w64)'
+pkgver=1.3.0.12743.44adb8e
+pkgrel=1
+arch=('any')
+url='http://www.webmproject.org/'
+license=('BSD')
+makedepends=('git')
+depends=("${MINGW_PACKAGE_PREFIX}-toolchain")
+source=("${_realname}"::'git+http://git.chromium.org/webm/libvpx.git'
+        '0001-enable-shared-mingw.patch'
+        '0002-fix-exports.mingw.patch'
+        '0003-give-preference-win32api-over-pthread.patch')
+sha512sums=('SKIP'
+            '85e8887d489cbece1148c3aca1b539bbf3e555cc3eed12f2f40e06314c043b9d427998405a125b24518fb6c508ec4f26609c58c258a559720f6444e3af063fcf'
+            '69dd57bd50b5dfe37f4e6a7884f39c0b49ea7ca05051dedb51c5be13107866673f55aa5cd42e0d3b39252d77ec78e7ddb0466e11bb4bb3c7d758e8f41eb0ff36'
+            'bfee499c82a9f4387ef43ac2a3d9de922dad20af0b86cdadc4a3cf219c3cd52e17081092a2143607d148a72a43d8ac3d4d59c9c92c5f8dba632e5d5dc5d51721')
+
+pkgver() {
+  cd "${srcdir}"/$_realname
+  local _ver=$(git describe | awk -F"-" '{ print $1}' | sed 's/v//g')
+  printf "%s.%s.%s" "${_ver}" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
+}
+
+prepare() {
+  cd "${srcdir}"/$_realname
+
+  patch -p1 -i "${srcdir}"/0001-enable-shared-mingw.patch
+  patch -p1 -i "${srcdir}"/0002-fix-exports.mingw.patch
+  patch -p1 -i "${srcdir}"/0003-give-preference-win32api-over-pthread.patch
+}
+
+build() {
+  cd "${srcdir}"/$_realname
+
+  if [ "${MINGW_CARCH}" = "x86_64" ]; then
+    local _target=x86_64-win64-gcc
+  else
+    local _target=x86-win32-gcc
+  fi
+
+  ./configure \
+    --prefix=$MINGW_LOCAL_PREFIX \
+    --target=$_target \
+    --disable-werror \
+    --enable-optimizations \
+    --disable-debug \
+    --disable-install-docs \
+    --disable-install-bins \
+    --enable-install-libs \
+    --disable-install-srcs \
+    --enable-libs \
+    --disable-examples \
+    --disable-docs \
+    --disable-unit-tests \
+    --as=yasm \
+    --disable-codec-srcs \
+    --disable-debug-libs \
+    --disable-postproc \
+    --disable-vp9-postproc \
+    --enable-multithread \
+    --enable-spatial-resampling \
+    --enable-runtime-cpu-detect \
+    --enable-shared \
+    --disable-static \
+    --enable-multi-res-encoding \
+    --disable-webm-io \
+    --disable-libyuv
+  sed -i 's|-O3||g' libs-${_target}.mk
+
+  make clean
+  make $MAKEFLAGS
+}
+
+package() {
+  cd "${srcdir}"/$_realname
+  make DIST_DIR="${pkgdir}"${MINGW_LOCAL_PREFIX} install
+
+  sed -i 's|-lpthread||g' "${pkgdir}"${MINGW_LOCAL_PREFIX}/lib/pkgconfig/vpx.pc
+  install -Dm644 LICENSE "${pkgdir}"${MINGW_LOCAL_PREFIX}/share/licenses/${_realname}/LICENSE
+}

@@ -1,0 +1,97 @@
+diff -r b6f36b277234 source/CMakeLists.txt
+--- a/source/CMakeLists.txt	Fri Feb 06 21:57:45 2015 -0600
++++ b/source/CMakeLists.txt	Mon Feb 09 00:43:15 2015 +0900
+@@ -22,8 +22,6 @@
+ 
+ # X265_BUILD must be incremented each time the public API is changed
+ set(X265_BUILD 47)
+-configure_file("${PROJECT_SOURCE_DIR}/x265.def.in"
+-               "${PROJECT_BINARY_DIR}/x265.def")
+ configure_file("${PROJECT_SOURCE_DIR}/x265_config.h.in"
+                "${PROJECT_BINARY_DIR}/x265_config.h")
+ 
+@@ -136,16 +134,12 @@
+     if(ARM)
+         add_definitions(-march=armv6 -mfloat-abi=hard -mfpu=vfp)
+     endif()
+-    check_cxx_compiler_flag(-Wno-narrowing CC_HAS_NO_NARROWING) 
+-    check_cxx_compiler_flag(-Wno-array-bounds CC_HAS_NO_ARRAY_BOUNDS) 
++    check_cxx_compiler_flag(-Wno-narrowing CC_HAS_NO_NARROWING)
++    check_cxx_compiler_flag(-Wno-array-bounds CC_HAS_NO_ARRAY_BOUNDS)
+     if (CC_HAS_NO_ARRAY_BOUNDS)
+         add_definitions(-Wno-array-bounds) # these are unhelpful
+     endif()
+-    check_cxx_compiler_flag(-ffast-math CC_HAS_FAST_MATH) 
+-    if (CC_HAS_FAST_MATH)
+-        add_definitions(-ffast-math)
+-    endif()
+-    check_cxx_compiler_flag(-mstackrealign CC_HAS_STACK_REALIGN) 
++    check_cxx_compiler_flag(-mstackrealign CC_HAS_STACK_REALIGN)
+     if (CC_HAS_STACK_REALIGN)
+         add_definitions(-mstackrealign)
+     endif()
+@@ -268,13 +262,16 @@
+ endif()
+ 
+ source_group(ASM FILES ${YASM_SRCS})
+-add_library(x265-static STATIC $<TARGET_OBJECTS:encoder> $<TARGET_OBJECTS:common> ${YASM_OBJS} ${YASM_SRCS})
+-if(NOT MSVC)
+-    set_target_properties(x265-static PROPERTIES OUTPUT_NAME x265)
+-endif()
+-install(TARGETS x265-static
+-    LIBRARY DESTINATION ${LIB_INSTALL_DIR}
+-    ARCHIVE DESTINATION ${LIB_INSTALL_DIR})
++option(ENABLE_STATIC "Build static library" ON)
++if(ENABLE_STATIC)
++    add_library(x265-static STATIC $<TARGET_OBJECTS:encoder> $<TARGET_OBJECTS:common> ${YASM_OBJS} ${YASM_SRCS})
++    if(NOT MSVC)
++        set_target_properties(x265-static PROPERTIES OUTPUT_NAME x265)
++   endif()
++    install(TARGETS x265-static
++        LIBRARY DESTINATION ${LIB_INSTALL_DIR}
++        ARCHIVE DESTINATION ${LIB_INSTALL_DIR})
++endif(ENABLE_STATIC)
+ install(FILES x265.h "${PROJECT_BINARY_DIR}/x265_config.h" DESTINATION include)
+ 
+ if(CMAKE_RC_COMPILER)
+@@ -299,13 +296,17 @@
+ 
+ option(ENABLE_SHARED "Build shared library" ON)
+ if(ENABLE_SHARED)
+-    add_library(x265-shared SHARED "${PROJECT_BINARY_DIR}/x265.def" ${YASM_OBJS}
++    add_library(x265-shared SHARED ${YASM_OBJS}
+                 ${X265_RC_FILE} $<TARGET_OBJECTS:encoder> $<TARGET_OBJECTS:common>)
+     target_link_libraries(x265-shared ${PLATFORM_LIBS})
+     if(MSVC)
+         set_target_properties(x265-shared PROPERTIES OUTPUT_NAME libx265)
+     else()
+-        set_target_properties(x265-shared PROPERTIES OUTPUT_NAME x265)
++        if(WIN32)
++            set_target_properties(x265-shared PROPERTIES OUTPUT_NAME x265 RUNTIME_OUTPUT_NAME x265-${X265_BUILD})
++        else()
++            set_target_properties(x265-shared PROPERTIES OUTPUT_NAME x265)
++        endif()
+     endif()
+     if(UNIX)
+         set_target_properties(x265-shared PROPERTIES VERSION ${X265_BUILD})
+@@ -384,9 +385,7 @@
+                            $<TARGET_OBJECTS:encoder> $<TARGET_OBJECTS:common> ${YASM_OBJS} ${YASM_SRCS})
+     else()
+         add_executable(cli ../COPYING ${InputFiles} ${OutputFiles} ${FilterFiles} ${GETOPT} ${X265_RC_FILE} x265.cpp x265.h x265cli.h)
+-        if(WIN32 OR NOT ENABLE_SHARED OR INTEL_CXX)
+-            # The CLI cannot link to the shared library on Windows, it
+-            # requires internal APIs not exported from the DLL
++        if(NOT ENABLE_SHARED OR INTEL_CXX)
+             target_link_libraries(cli x265-static ${PLATFORM_LIBS})
+         else()
+             target_link_libraries(cli x265-shared ${PLATFORM_LIBS})
+diff -r b6f36b277234 source/cmake/clean-generated.cmake
+--- a/source/cmake/clean-generated.cmake	Fri Feb 06 21:57:45 2015 -0600
++++ b/source/cmake/clean-generated.cmake	Mon Feb 09 00:43:15 2015 +0900
+@@ -1,6 +1,5 @@
+ set(generated "${CMAKE_CURRENT_BINARY_DIR}/x265.rc"
+               "${CMAKE_CURRENT_BINARY_DIR}/x265.pc"
+-              "${CMAKE_CURRENT_BINARY_DIR}/x265.def"
+               "${CMAKE_CURRENT_BINARY_DIR}/x265_config.h")
+ 
+ foreach(file ${generated})

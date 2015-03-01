@@ -1,0 +1,131 @@
+post_install() {
+    local -r _gccver=${1%-*}
+    local -r _amver=$(find mingw64/bin -name "automake*" | awk -F'-' '{ print $2}')
+    local -ra _bintuils_exe=(
+        'addr2line.exe'
+        'ar.exe'
+        'as.exe'
+        'c++filt.exe'
+        'dlltool.exe'
+        'dllwrap.exe'
+        'elfedit.exe'
+        'gprof.exe'
+        'ld.bfd.exe'
+        'nm.exe'
+        'objcopy.exe'
+        'objdump.exe'
+        'ranlib.exe'
+        'readelf.exe'
+        'size.exe'
+        'strings.exe'
+        'strip.exe'
+        'windmc.exe'
+        'windres.exe'
+    )
+    local -ra _gcc_exe=(
+        "cpp-${_gccver}.exe"
+        "g++-${_gccver}.exe"
+        "gcc-${_gccver}.exe"
+        "gcc-ar-${_gccver}.exe"
+        "gcc-nm-${_gccver}.exe"
+        "gcc-ranlib-${_gccver}.exe"
+        "gcov-${_gccver}.exe"
+    )
+
+    pushd mingw64/bin > /dev/null
+    # Automake
+    ln -fs automake-$_amver automake
+    ln -fs aclocal-$_amver aclocal
+    # Binutils
+    ln -fs ld.bfd.exe ld.exe
+    ln -fs ld.bfd.exe x86_64-w64-mingw32-ld.exe
+    local _bin
+    for _bin in ${_bintuils_exe[@]}
+    do
+        ln -fs $_bin x86_64-w64-mingw32-$_bin
+    done
+    # GCC
+    for _bin in ${_gcc_exe[@]}
+    do
+        ln -fs $_bin x86_64-w64-mingw32-$_bin
+        ln -fs $_bin ${_bin%%-${_gccver}.exe}.exe
+        ln -fs $_bin x86_64-w64-mingw32-${_bin%%-${_gccver}.exe}.exe
+    done
+    ln -fs g++-${_gccver}.exe c++-${_gccver}.exe
+    ln -fs g++-${_gccver}.exe c++.exe
+    ln -fs g++-${_gccver}.exe x86_64-w64-mingw32-c++-${_gccver}.exe
+    ln -fs g++-${_gccver}.exe x86_64-w64-mingw32-c++.exe
+    ln -fs gcc-${_gccver}.exe cc
+    popd > /dev/null
+
+    mkdir -p mingw64/lib/bfd-plugins
+    pushd mingw64/lib/bfd-plugins > /dev/null
+    ln -fsr ../gcc/x86_64-w64-mingw32/${_gccver}/liblto_plugin-*.dll
+    popd > /dev/null
+}
+
+post_upgrade() {
+    post_install $1
+}
+
+pre_remove() {
+    local -r _gccver=${1%-*}
+    local -ra _bintuils_exe=(
+        'addr2line.exe'
+        'ar.exe'
+        'as.exe'
+        'c++filt.exe'
+        'dlltool.exe'
+        'dllwrap.exe'
+        'elfedit.exe'
+        'gprof.exe'
+        'ld.bfd.exe'
+        'nm.exe'
+        'objcopy.exe'
+        'objdump.exe'
+        'ranlib.exe'
+        'readelf.exe'
+        'size.exe'
+        'strings.exe'
+        'strip.exe'
+        'windmc.exe'
+        'windres.exe'
+    )
+    local -ra _gcc_exe=(
+        "cpp-${_gccver}.exe"
+        "g++-${_gccver}.exe"
+        "gcc-${_gccver}.exe"
+        "gcc-ar-${_gccver}.exe"
+        "gcc-nm-${_gccver}.exe"
+        "gcc-ranlib-${_gccver}.exe"
+        "gcov-${_gccver}.exe"
+    )
+
+    # Automake
+    rm -f mingw64/bin/automake
+    rm -f mingw64/bin/aclocal
+    # Binutils
+    rm -f mingw64/bin/ld.exe
+    rm -f mingw64/bin/x86_64-w64-mingw32-ld.exe
+    local _bin
+    for _bin in ${_bintuils_exe[@]}
+    do
+        rm -f mingw64/bin/x86_64-w64-mingw32-$_bin
+    done
+    # GCC
+    for _bin in ${_gcc_exe[@]}
+    do
+        rm -f mingw64/bin/x86_64-w64-mingw32-$_bin
+        rm -f mingw64/bin/${_bin%%-${_gccver}.exe}.exe
+        rm -f mingw64/bin/x86_64-w64-mingw32-${_bin%%-${_gccver}.exe}.exe
+    done
+    rm -f mingw64/bin/c++-${_gccver}.exe
+    rm -f mingw64/bin/c++.exe
+    rm -f mingw64/bin/x86_64-w64-mingw32-c++-${_gccver}.exe
+    rm -f mingw64/bin/x86_64-w64-mingw32-c++.exe
+    rm -f mingw64/bin/cc
+    rm -f mingw64/lib/bfd-plugins/liblto_plugin-*.dll
+    if [ ! "$(ls -A mingw64/lib/bfd-plugins)" ]; then
+        rmdir mingw64/lib/bfd-plugins
+    fi
+}

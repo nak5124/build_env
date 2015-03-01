@@ -1,0 +1,53 @@
+From b892403248edab656328221a1bfc630a587e5966 Mon Sep 17 00:00:00 2001
+From: Hendrik Leppkes <h.leppkes@gmail.com>
+Date: Thu, 25 Sep 2014 13:35:57 +0200
+Subject: [PATCH 38/62] hevc: fill avctx information from sps during codec open
+
+---
+ libavcodec/hevc.c | 23 ++++++++++++++++++++++-
+ 1 file changed, 22 insertions(+), 1 deletion(-)
+
+diff --git a/libavcodec/hevc.c b/libavcodec/hevc.c
+index 27bca8e..08ad017 100644
+--- a/libavcodec/hevc.c
++++ b/libavcodec/hevc.c
+@@ -3424,7 +3424,7 @@ static int hevc_decode_extradata(HEVCContext *s)
+ static av_cold int hevc_decode_init(AVCodecContext *avctx)
+ {
+     HEVCContext *s = avctx->priv_data;
+-    int ret;
++    int ret, i;
+ 
+     ff_init_cabac_states();
+ 
+@@ -3455,6 +3455,27 @@ static av_cold int hevc_decode_init(AVCodecContext *avctx)
+         else
+             s->threads_type = FF_THREAD_SLICE;
+ 
++    if (s->pps == NULL) {
++        for (i = 0; i < MAX_PPS_COUNT; i++) {
++            if (s->pps_list[i] != NULL) {
++                HEVCPPS *pps = (HEVCPPS*)s->pps_list[i]->data;
++                if (s->sps_list[pps->sps_id] == NULL)
++                    continue;
++
++                HEVCSPS *sps = (HEVCSPS*)s->sps_list[pps->sps_id]->data;
++
++                /* set active pps/sps */
++                s->pps = pps;
++                set_sps(s, sps);
++
++                /* additional profile/level info */
++                s->avctx->profile = sps->ptl.general_ptl.profile_idc;
++                s->avctx->level   = sps->ptl.general_ptl.level_idc;
++                break;
++            }
++        }
++    }
++
+     return 0;
+ }
+ 
+-- 
+2.3.0
+

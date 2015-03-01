@@ -1,0 +1,45 @@
+From b9353362949b445851e16e6ff420f80c2d89c101 Mon Sep 17 00:00:00 2001
+From: Hendrik Leppkes <h.leppkes@gmail.com>
+Date: Sat, 7 Jan 2012 02:01:08 +0100
+Subject: [PATCH 05/62] prores: set avtx->pix_fmt based on the fourcc code
+ during init
+
+---
+ libavcodec/proresdec2.c | 21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
+
+diff --git a/libavcodec/proresdec2.c b/libavcodec/proresdec2.c
+index 4d04a0a..321d12e 100644
+--- a/libavcodec/proresdec2.c
++++ b/libavcodec/proresdec2.c
+@@ -53,6 +53,27 @@ static av_cold int decode_init(AVCodecContext *avctx)
+     ff_blockdsp_init(&ctx->bdsp, avctx);
+     ff_proresdsp_init(&ctx->prodsp, avctx);
+ 
++    switch (avctx->codec_tag) {
++    case MKTAG('a', 'p', 'c', 'h'):
++        avctx->pix_fmt = PIX_FMT_YUV422P10;
++        break;
++    case MKTAG('a', 'p', 'c', 'n'):
++        avctx->pix_fmt = PIX_FMT_YUV422P10;
++        break;
++    case MKTAG('a', 'p', 'c', 's'):
++        avctx->pix_fmt = PIX_FMT_YUV422P10;
++        break;
++    case MKTAG('a', 'p', 'c', 'o'):
++        avctx->pix_fmt = PIX_FMT_YUV422P10;
++        break;
++    case MKTAG('a', 'p', '4', 'h'):
++        avctx->pix_fmt = PIX_FMT_YUV444P10;
++        break;
++    default:
++        av_log(avctx, AV_LOG_WARNING, "Unknown ProRes FOURCC provided (%08X)\n",
++               avctx->codec_tag);
++    }
++
+     ff_init_scantable_permutation(idct_permutation,
+                                   ctx->prodsp.idct_permutation_type);
+ 
+-- 
+2.3.0
+

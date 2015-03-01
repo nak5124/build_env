@@ -1,0 +1,41 @@
+# Maintainer: Yuta Nakai <nak5124@live.jp>
+
+pkgname=the_silver_searcher-git
+pkgver=0.29.1.1497.773e96a
+pkgrel=1
+pkgdesc='Code searching tool similar to Ack, but faster'
+url='https://github.com/ggreer/the_silver_searcher'
+arch=('i686' 'x86_64')
+license=('Apache')
+depends=('zlib' 'pcre' 'xz')
+makedepends=('git' 'liblzma-devel' 'pcre-devel' 'zlib-devel')
+source=("${pkgname}"::'git+https://github.com/ggreer/the_silver_searcher.git')
+sha512sums=('SKIP')
+
+pkgver() {
+    cd "${srcdir}"/$pkgname
+    printf "%s.%s.%s" "$(git describe --tags | awk -F'-' '{ print $1 }')" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
+}
+
+prepare() {
+  cd "${srcdir}"/$pkgname
+
+  msg2 'Running Autoreconf'
+  autoreconf -vfis
+}
+
+build() {
+  cd "${srcdir}"/$pkgname
+
+  ./configure \
+    --prefix=/usr \
+    --sysconfdir=/etc \
+    --localstatedir=/var
+
+  make
+}
+
+package() {
+  cd "${srcdir}"/$pkgname
+  make DESTDIR="${pkgdir}" install
+}

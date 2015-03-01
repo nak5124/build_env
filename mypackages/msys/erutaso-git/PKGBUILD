@@ -1,0 +1,32 @@
+# Maintainer: Yuta Nakai <nak5124@live.jp>
+
+pkgname=erutaso-git
+pkgver=9.ed5b15f
+pkgrel=1
+pkgdesc='Cure your bad habit of mistyping, えるたそ～'
+url='https://github.com/sgymtic/sl'
+arch=('i686' 'x86_64')
+license=('Custom')
+depends=('ncurses')
+makedepends=('git' 'ncurses-devel')
+source=("${pkgname}"::'git+https://github.com/sgymtic/sl.git')
+sha512sums=('SKIP')
+
+pkgver() {
+  cd "${srcdir}"/$pkgname
+  printf "%s.%s" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
+}
+
+build() {
+  cd "${srcdir}"/$pkgname
+
+  gcc $CFLAGS $CPPFLAGS -I/usr/include/ncursesw -o erutaso sl.c -lncursesw
+}
+
+package() {
+  cd "${srcdir}"/$pkgname
+
+  install -Dm644 "${srcdir}"/${pkgname}/LICENSE "${pkgdir}"/usr/share/licenses/erutaso/LICENSE
+  install -d "${pkgdir}"/usr/bin
+  install -m755 "${srcdir}"/${pkgname}/erutaso "${pkgdir}"/usr/bin
+}

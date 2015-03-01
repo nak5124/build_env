@@ -1,0 +1,26 @@
+From a4ffcd33792a0ff0d9dc56a81443d5023b7b4d9d Mon Sep 17 00:00:00 2001
+From: Hendrik Leppkes <h.leppkes@gmail.com>
+Date: Tue, 27 Nov 2012 18:00:52 +0100
+Subject: [PATCH 13/62] HACK: mov: when seeking secondary streams, don't insist
+ on key-frames.
+
+---
+ libavformat/mov.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/libavformat/mov.c b/libavformat/mov.c
+index 916263d..87f02aa 100644
+--- a/libavformat/mov.c
++++ b/libavformat/mov.c
+@@ -4263,7 +4263,7 @@ static int mov_read_seek(AVFormatContext *s, int stream_index, int64_t sample_ti
+             continue;
+ 
+         timestamp = av_rescale_q(seek_timestamp, s->streams[stream_index]->time_base, st->time_base);
+-        mov_seek_stream(s, st, timestamp, flags);
++        mov_seek_stream(s, st, timestamp, flags|AVSEEK_FLAG_ANY);
+     }
+     return 0;
+ }
+-- 
+2.3.0
+
