@@ -4,7 +4,7 @@ _realname=libvorbis-aotuv
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
 pkgdesc='A fork of libvorbis intended to provide better quality sound at low to medium bitrates (mingw-w64)'
 pkgver=b6.03
-pkgrel=1
+pkgrel=2
 _releasedate=20110424-20140429
 _srcrel=2014
 arch=('any')
@@ -16,7 +16,7 @@ depends=("${MINGW_PACKAGE_PREFIX}-toolchain"
 source=("${url}/source_code/${_realname}_${pkgver}_${_srcrel}.tar.bz2"
         '0001-libvorbis-1.3.5.diff')
 sha512sums=('a994b3e02365f39ffce85f5e5126e406d022046cd64f2434bff55ae562e5f0a05f03396f7c2c3e20cdcf97e3da3a9806b067966532cd4d7dca6ccdc829530f3a'
-            'd0897afeb529f3cd559b108b6cb1b825427f91ae473d90af54a682662af0abfa374bad0e50f9ec358d70b4c1eae2a5b528c3ae943bb2b87485acb08aef1a9ece')
+            'a0cbae3f671af3d717e986957c30b69ace8c6a01888c02f5b5af93f1a62644150ae2898f687a172bf5c7706c82f7f60cb45ddc1877ec03d4414ac34bab5740a6')
 
 prepare() {
   cd "${srcdir}"/aotuv-${pkgver}_$_releasedate

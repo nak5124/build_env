@@ -1,7 +1,7 @@
-From 9e66274f8449d8b3dae05c595df7dca2a243a0e9 Mon Sep 17 00:00:00 2001
+From a45ba4cde75defc021914cebdf945a5e9b8efbd4 Mon Sep 17 00:00:00 2001
 From: Yusuke Nakamura <muken.the.vfrmaniac@gmail.com>
 Date: Mon, 21 Oct 2013 06:29:47 +0900
-Subject: [PATCH 50/62] flvdec: Support HM10.0-based Strongene HEVC demuxing.
+Subject: [PATCH 49/65] flvdec: Support HM10.0-based Strongene HEVC demuxing.
 
 ---
  libavformat/flv.h    |  1 +
@@ -21,7 +21,7 @@ index db9468f..50113e1 100644
  
  enum {
 diff --git a/libavformat/flvdec.c b/libavformat/flvdec.c
-index 572268f..0695f63 100644
+index b625c78..853c6c2 100644
 --- a/libavformat/flvdec.c
 +++ b/libavformat/flvdec.c
 @@ -231,6 +231,8 @@ static int flv_same_video_codec(AVCodecContext *vcodec, int flags)
@@ -43,7 +43,7 @@ index 572268f..0695f63 100644
      case FLV_CODECID_MPEG4:
          vcodec->codec_id = AV_CODEC_ID_MPEG4;
          return 3;
-@@ -668,6 +673,53 @@ static void clear_index_entries(AVFormatContext *s, int64_t pos)
+@@ -672,6 +677,53 @@ static void clear_index_entries(AVFormatContext *s, int64_t pos)
      }
  }
  
@@ -97,8 +97,8 @@ index 572268f..0695f63 100644
  static int amf_skip_tag(AVIOContext *pb, AMFDataType type)
  {
      int nb = -1, ret, parse_name = 1;
-@@ -952,12 +1004,15 @@ retry_duration:
-         size -= flv_set_video_codec(s, st, flags & FLV_VIDEO_CODECID_MASK, 1);
+@@ -968,12 +1020,15 @@ retry_duration:
+         st->codec->codec_id = AV_CODEC_ID_TEXT;
      }
  
 -    if (st->codec->codec_id == AV_CODEC_ID_AAC ||
@@ -115,7 +115,7 @@ index 572268f..0695f63 100644
              // sign extension
              int32_t cts = (avio_rb24(s->pb) + 0xff800000) ^ 0xff800000;
              pts = dts + cts;
-@@ -979,11 +1034,21 @@ retry_duration:
+@@ -995,11 +1050,21 @@ retry_duration:
              if (st->codec->extradata) {
                  if ((ret = flv_queue_extradata(flv, s->pb, stream_type, size)) < 0)
                      return ret;
@@ -138,5 +138,5 @@ index 572268f..0695f63 100644
              /* Workaround for buggy Omnia A/XE encoder */
              t = av_dict_get(s->metadata, "Encoder", NULL, 0);
 -- 
-2.3.0
+2.3.5
 

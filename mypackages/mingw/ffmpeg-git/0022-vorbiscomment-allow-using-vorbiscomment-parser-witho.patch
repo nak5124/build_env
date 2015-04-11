@@ -1,7 +1,7 @@
-From 023b14de16bfe55018297e00831fd86a308b2c19 Mon Sep 17 00:00:00 2001
+From 2d8f4eb4ac31596b19ebb93984516df94e3a899b Mon Sep 17 00:00:00 2001
 From: Hendrik Leppkes <h.leppkes@gmail.com>
 Date: Tue, 13 Aug 2013 13:47:34 +0200
-Subject: [PATCH 22/62] vorbiscomment: allow using vorbiscomment parser without
+Subject: [PATCH 22/65] vorbiscomment: allow using vorbiscomment parser without
  input context
 
 ---
@@ -31,5 +31,5 @@ index dd44337..467270e 100644
                  if (av_dict_get(*m, tt, NULL, 0)) {
                      av_dict_set(m, tt, ";", AV_DICT_APPEND);
 -- 
-2.3.0
+2.3.5
 

@@ -1,7 +1,7 @@
-From db2e8109032c5ba1ed01f2286d570500179273d3 Mon Sep 17 00:00:00 2001
+From 8d0b81a3d6fe19684b064ba894a167f377adb038 Mon Sep 17 00:00:00 2001
 From: Yusuke Nakamura <muken.the.vfrmaniac@gmail.com>
 Date: Fri, 5 Jul 2013 01:17:14 +0900
-Subject: [PATCH 47/62] dirac_parser: Set output_picture_number.
+Subject: [PATCH 46/65] dirac_parser: Set output_picture_number.
 
 ---
  libavcodec/dirac_parser.c | 10 +++++-----
@@ -45,5 +45,5 @@ index 45ded5a..6b97e3d 100644
                  s->dts = pts - 1;
              else
 -- 
-2.3.0
+2.3.5
 

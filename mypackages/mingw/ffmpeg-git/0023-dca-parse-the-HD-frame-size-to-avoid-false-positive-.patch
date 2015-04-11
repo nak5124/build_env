@@ -1,7 +1,7 @@
-From 5f7e6702eb4e7a37f99ddde3e8adf0c7b1458442 Mon Sep 17 00:00:00 2001
+From 774768d577313f8f0a5ece31f91c21794c40d44c Mon Sep 17 00:00:00 2001
 From: Hendrik Leppkes <h.leppkes@gmail.com>
 Date: Mon, 2 Sep 2013 15:54:41 +0200
-Subject: [PATCH 23/62] dca: parse the HD frame size to avoid false positive
+Subject: [PATCH 23/65] dca: parse the HD frame size to avoid false positive
  marker matches
 
 ---
@@ -9,10 +9,10 @@ Subject: [PATCH 23/62] dca: parse the HD frame size to avoid false positive
  1 file changed, 29 insertions(+), 5 deletions(-)
 
 diff --git a/libavcodec/dca_parser.c b/libavcodec/dca_parser.c
-index 9fa6d0d..7ace8c9 100644
+index 9797760..f1c090d 100644
 --- a/libavcodec/dca_parser.c
 +++ b/libavcodec/dca_parser.c
-@@ -31,7 +31,7 @@ typedef struct DCAParseContext {
+@@ -32,7 +32,7 @@ typedef struct DCAParseContext {
      uint32_t lastmarker;
      int size;
      int framesize;
@@ -21,9 +21,9 @@ index 9fa6d0d..7ace8c9 100644
  } DCAParseContext;
  
  #define IS_MARKER(state, i, buf, buf_size) \
-@@ -39,6 +39,27 @@ typedef struct DCAParseContext {
-      (state == DCA_MARKER_14B_BE && (i < buf_size - 2) &&  buf[i + 1]         == 0x07 && (buf[i + 2] & 0xF0) == 0xF0) || \
-       state == DCA_MARKER_RAW_LE || state == DCA_MARKER_RAW_BE || state == DCA_HD_MARKER)
+@@ -40,6 +40,27 @@ typedef struct DCAParseContext {
+      (state == DCA_SYNCWORD_CORE_14B_BE && (i < buf_size - 2) &&  buf[i + 1]         == 0x07 && (buf[i + 2] & 0xF0) == 0xF0) || \
+       state == DCA_SYNCWORD_CORE_LE || state == DCA_SYNCWORD_CORE_BE || state == DCA_SYNCWORD_SUBSTREAM)
  
 +static int dca_parse_hd_framesize(const uint8_t *buf, int buf_size, int *framesize)
 +{
@@ -49,7 +49,7 @@ index 9fa6d0d..7ace8c9 100644
  /**
   * Find the end of the current frame in the bitstream.
   * @return the position of the first byte of the next frame, or -1
-@@ -55,7 +76,8 @@ static int dca_find_frame_end(DCAParseContext *pc1, const uint8_t *buf,
+@@ -56,7 +77,8 @@ static int dca_find_frame_end(DCAParseContext *pc1, const uint8_t *buf,
  
      i = 0;
      if (!start_found) {
@@ -58,23 +58,23 @@ index 9fa6d0d..7ace8c9 100644
 +      for (i = 0; i < buf_size; i++) {
              state = (state << 8) | buf[i];
              if (IS_MARKER(state, i, buf, buf_size)) {
-                 if (!pc1->lastmarker || state == pc1->lastmarker || pc1->lastmarker == DCA_HD_MARKER) {
-@@ -71,10 +93,12 @@ static int dca_find_frame_end(DCAParseContext *pc1, const uint8_t *buf,
+                 if (!pc1->lastmarker || state == pc1->lastmarker || pc1->lastmarker == DCA_SYNCWORD_SUBSTREAM) {
+@@ -72,10 +94,12 @@ static int dca_find_frame_end(DCAParseContext *pc1, const uint8_t *buf,
          for (; i < buf_size; i++) {
              pc1->size++;
              state = (state << 8) | buf[i];
--            if (state == DCA_HD_MARKER && !pc1->hd_pos)
+-            if (state == DCA_SYNCWORD_SUBSTREAM && !pc1->hd_pos)
 -                pc1->hd_pos = pc1->size;
-+            if (state == DCA_HD_MARKER && pc1->size >= pc1->framesize && !pc1->hdframesize) {
++            if (state == DCA_SYNCWORD_SUBSTREAM && pc1->size >= pc1->framesize && !pc1->hdframesize) {
 +                if (dca_parse_hd_framesize(&buf[i+1], buf_size - (i+1), &pc1->hdframesize) < 0)
 +                    pc1->hdframesize = 0;
 +            }
-             if (IS_MARKER(state, i, buf, buf_size) && (state == pc1->lastmarker || pc1->lastmarker == DCA_HD_MARKER)) {
+             if (IS_MARKER(state, i, buf, buf_size) && (state == pc1->lastmarker || pc1->lastmarker == DCA_SYNCWORD_SUBSTREAM)) {
 -                if (pc1->framesize > pc1->size)
 +                if (pc1->framesize + pc1->hdframesize > pc1->size)
                      continue;
                  pc->frame_start_found = 0;
                  pc->state             = -1;
 -- 
-2.3.0
+2.3.5
 

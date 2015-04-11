@@ -1,7 +1,7 @@
-From 5df7e157be50d87cc5cb4fa2fe2d69a2e3967ee5 Mon Sep 17 00:00:00 2001
+From e5343309f8a6c8e0047682bfd5a6f82cc4318a9b Mon Sep 17 00:00:00 2001
 From: Yuta NAKAI <nak5124@live.jp>
 Date: Fri, 31 Oct 2014 21:44:43 +0900
-Subject: [PATCH 57/62] Revert "avcodec/opusdec: switch to swresample"
+Subject: [PATCH 56/65] Revert "avcodec/opusdec: switch to swresample"
 
 This reverts commit ffa05e0802fd77043b5d1b1aef4aa6caee2b9291.
 
@@ -14,10 +14,10 @@ Conflicts:
  3 files changed, 31 insertions(+), 30 deletions(-)
 
 diff --git a/configure b/configure
-index dc7f2cb..db39284 100755
+index a5c7beb..7122bd5 100755
 --- a/configure
 +++ b/configure
-@@ -2192,7 +2192,7 @@ nellymoser_decoder_select="mdct sinewin"
+@@ -2221,7 +2221,7 @@ nellymoser_decoder_select="mdct sinewin"
  nellymoser_encoder_select="audio_frame_queue mdct sinewin"
  nuv_decoder_select="idctdsp lzo"
  on2avc_decoder_select="mdct"
@@ -26,7 +26,7 @@ index dc7f2cb..db39284 100755
  opus_decoder_select="imdct15"
  png_decoder_select="zlib"
  png_encoder_select="huffyuvencdsp zlib"
-@@ -5440,7 +5440,7 @@ enabled uspp_filter         && prepend avfilter_deps "avcodec"
+@@ -5583,7 +5583,7 @@ enabled uspp_filter         && prepend avfilter_deps "avcodec"
  
  enabled lavfi_indev         && prepend avdevice_deps "avfilter"
  
@@ -58,7 +58,7 @@ index 1faa7d3..1732f39 100644
      int silk_samplerate;
      /* number of samples we still want to get from the resampler */
 diff --git a/libavcodec/opusdec.c b/libavcodec/opusdec.c
-index 84fa0ff..d824730 100644
+index 2ee3f2a..09dbccb 100644
 --- a/libavcodec/opusdec.c
 +++ b/libavcodec/opusdec.c
 @@ -40,7 +40,7 @@
@@ -70,7 +70,7 @@ index 84fa0ff..d824730 100644
  
  #include "avcodec.h"
  #include "get_bits.h"
-@@ -114,9 +114,9 @@ static int opus_flush_resample(OpusStreamContext *s, int nb_samples)
+@@ -112,9 +112,9 @@ static int opus_flush_resample(OpusStreamContext *s, int nb_samples)
  {
      int celt_size = av_audio_fifo_size(s->celt_delay);
      int ret, i;
@@ -83,7 +83,7 @@ index 84fa0ff..d824730 100644
      if (ret < 0)
          return ret;
      else if (ret != nb_samples) {
-@@ -159,16 +159,15 @@ static int opus_init_resample(OpusStreamContext *s)
+@@ -157,16 +157,15 @@ static int opus_init_resample(OpusStreamContext *s)
      const uint8_t *delayptr[2] = { (uint8_t*)delay, (uint8_t*)delay };
      int ret;
  
@@ -104,7 +104,7 @@ index 84fa0ff..d824730 100644
      if (ret < 0) {
          av_log(s->avctx, AV_LOG_ERROR,
                 "Error feeding initial silence to the resampler.\n");
-@@ -219,7 +218,7 @@ static int opus_decode_frame(OpusStreamContext *s, const uint8_t *data, int size
+@@ -217,7 +216,7 @@ static int opus_decode_frame(OpusStreamContext *s, const uint8_t *data, int size
  
      /* decode the silk frame */
      if (s->packet.mode == OPUS_MODE_SILK || s->packet.mode == OPUS_MODE_HYBRID) {
@@ -113,7 +113,7 @@ index 84fa0ff..d824730 100644
              ret = opus_init_resample(s);
              if (ret < 0)
                  return ret;
-@@ -233,9 +232,12 @@ static int opus_decode_frame(OpusStreamContext *s, const uint8_t *data, int size
+@@ -231,9 +230,12 @@ static int opus_decode_frame(OpusStreamContext *s, const uint8_t *data, int size
              av_log(s->avctx, AV_LOG_ERROR, "Error decoding a SILK frame.\n");
              return samples;
          }
@@ -129,7 +129,7 @@ index 84fa0ff..d824730 100644
          if (samples < 0) {
              av_log(s->avctx, AV_LOG_ERROR, "Error resampling SILK data.\n");
              return samples;
-@@ -373,10 +375,10 @@ static int opus_decode_subpacket(OpusStreamContext *s,
+@@ -371,10 +373,10 @@ static int opus_decode_subpacket(OpusStreamContext *s,
      int i, j, ret;
  
      /* check if we need to flush the resampler */
@@ -142,7 +142,7 @@ index 84fa0ff..d824730 100644
              flush_needed = (s->packet.mode == OPUS_MODE_CELT) || (cur_samplerate != s->silk_samplerate);
          } else {
              flush_needed = !!s->delayed_samples;
-@@ -405,7 +407,7 @@ static int opus_decode_subpacket(OpusStreamContext *s,
+@@ -403,7 +405,7 @@ static int opus_decode_subpacket(OpusStreamContext *s,
              av_log(s->avctx, AV_LOG_ERROR, "Error flushing the resampler.\n");
              return ret;
          }
@@ -151,7 +151,7 @@ index 84fa0ff..d824730 100644
          output_samples += s->delayed_samples;
          s->delayed_samples = 0;
  
-@@ -558,7 +560,7 @@ static av_cold void opus_decode_flush(AVCodecContext *ctx)
+@@ -564,7 +566,7 @@ static av_cold void opus_decode_flush(AVCodecContext *ctx)
  
          if (s->celt_delay)
              av_audio_fifo_drain(s->celt_delay, av_audio_fifo_size(s->celt_delay));
@@ -160,7 +160,7 @@ index 84fa0ff..d824730 100644
  
          ff_silk_flush(s->silk);
          ff_celt_flush(s->celt);
-@@ -580,7 +582,7 @@ static av_cold int opus_decode_close(AVCodecContext *avctx)
+@@ -586,7 +588,7 @@ static av_cold int opus_decode_close(AVCodecContext *avctx)
          s->out_dummy_allocated_size = 0;
  
          av_audio_fifo_free(s->celt_delay);
@@ -169,7 +169,7 @@ index 84fa0ff..d824730 100644
      }
  
      av_freep(&c->streams);
-@@ -633,17 +635,16 @@ static av_cold int opus_decode_init(AVCodecContext *avctx)
+@@ -639,17 +641,16 @@ static av_cold int opus_decode_init(AVCodecContext *avctx)
  
          s->fdsp = c->fdsp;
  
@@ -195,5 +195,5 @@ index 84fa0ff..d824730 100644
          ret = ff_silk_init(avctx, &s->silk, s->output_channels);
          if (ret < 0)
 -- 
-2.3.0
+2.3.5
 

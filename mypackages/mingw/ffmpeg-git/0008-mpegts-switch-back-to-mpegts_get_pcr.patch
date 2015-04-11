@@ -1,14 +1,14 @@
-From 9c4a335737f2f5616db5ade1a601e01fe145fa79 Mon Sep 17 00:00:00 2001
+From b11faac5d2f4bf17405cfd40efb95a60506468b1 Mon Sep 17 00:00:00 2001
 From: Hendrik Leppkes <h.leppkes@gmail.com>
 Date: Thu, 5 Apr 2012 21:43:58 +0200
-Subject: [PATCH 08/62] mpegts: switch back to mpegts_get_pcr
+Subject: [PATCH 08/65] mpegts: switch back to mpegts_get_pcr
 
 ---
  libavformat/mpegts.c | 52 +++++++++++++++++++++++++++++++++++++++++++++++-----
  1 file changed, 47 insertions(+), 5 deletions(-)
 
 diff --git a/libavformat/mpegts.c b/libavformat/mpegts.c
-index afda648..d05a1c7 100644
+index a4b6d4d..07b012b 100644
 --- a/libavformat/mpegts.c
 +++ b/libavformat/mpegts.c
 @@ -2452,6 +2452,43 @@ static void seek_back(AVFormatContext *s, AVIOContext *pb, int64_t pos) {
@@ -102,5 +102,5 @@ index afda648..d05a1c7 100644
      .priv_class     = &mpegtsraw_class,
  };
 -- 
-2.3.0
+2.3.5
 

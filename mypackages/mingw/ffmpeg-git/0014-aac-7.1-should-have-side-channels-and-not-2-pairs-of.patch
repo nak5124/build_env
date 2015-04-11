@@ -1,7 +1,7 @@
-From fb5c0a8d098403b9f4c6e7257ade510cf16bc330 Mon Sep 17 00:00:00 2001
+From 1f5a893c269b9050b1bbe0863343f5a6de6e0753 Mon Sep 17 00:00:00 2001
 From: Hendrik Leppkes <h.leppkes@gmail.com>
 Date: Tue, 18 Dec 2012 18:08:19 +0100
-Subject: [PATCH 14/62] aac: 7.1 should have side channels, and not 2 pairs of
+Subject: [PATCH 14/65] aac: 7.1 should have side channels, and not 2 pairs of
  front channels.
 
 ---
@@ -22,5 +22,5 @@ index 4a12b4f..33a9a6d 100644
  
  static const uint64_t aac_channel_layout[8] = {
 -- 
-2.3.0
+2.3.5
 

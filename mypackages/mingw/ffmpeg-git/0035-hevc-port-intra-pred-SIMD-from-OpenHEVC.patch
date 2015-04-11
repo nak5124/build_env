@@ -1,7 +1,7 @@
-From 143e4a6407d5bc5e920416e45617462c9472bfba Mon Sep 17 00:00:00 2001
+From 94a9f4a7a03532b7cd73693f6e7cbd31dda13027 Mon Sep 17 00:00:00 2001
 From: Hendrik Leppkes <h.leppkes@gmail.com>
 Date: Mon, 18 Aug 2014 09:44:50 +0200
-Subject: [PATCH 35/62] hevc: port intra pred SIMD from OpenHEVC
+Subject: [PATCH 35/65] hevc: port intra pred SIMD from OpenHEVC
 
 ---
  libavcodec/hevcpred.c                 |   2 +
@@ -37,19 +37,19 @@ index 7f14a76..81e5031 100644
  
  #endif /* AVCODEC_HEVCPRED_H */
 diff --git a/libavcodec/x86/Makefile b/libavcodec/x86/Makefile
-index 5d47697..50d5d04 100644
+index 0857fb2..f291397 100644
 --- a/libavcodec/x86/Makefile
 +++ b/libavcodec/x86/Makefile
-@@ -136,7 +136,8 @@ YASM-OBJS-$(CONFIG_HEVC_DECODER)       += x86/hevc_mc.o                 \
+@@ -138,7 +138,8 @@ YASM-OBJS-$(CONFIG_HEVC_DECODER)       += x86/hevc_mc.o                 \
                                            x86/hevc_idct.o               \
                                            x86/hevc_res_add.o            \
                                            x86/hevc_sao.o                \
 -                                          x86/hevc_idct_intrinsic.o
 +                                          x86/hevc_idct_intrinsic.o     \
 +                                          x86/hevc_intra_intrinsic.o
+ 
  YASM-OBJS-$(CONFIG_MLP_DECODER)        += x86/mlpdsp.o
- YASM-OBJS-$(CONFIG_PNG_DECODER)        += x86/pngdsp.o
- YASM-OBJS-$(CONFIG_PRORES_DECODER)     += x86/proresdsp.o
+ YASM-OBJS-$(CONFIG_MPEG4_DECODER)      += x86/xvididct.o
 diff --git a/libavcodec/x86/hevc_intra_intrinsic.c b/libavcodec/x86/hevc_intra_intrinsic.c
 new file mode 100644
 index 0000000..40e44d9
@@ -979,7 +979,7 @@ index 0000000..40e44d9
 +#pragma GCC pop_options
 +#endif
 diff --git a/libavcodec/x86/hevcdsp_init.c b/libavcodec/x86/hevcdsp_init.c
-index 9cfbc46..b44037b 100644
+index a3483de..06f499b 100644
 --- a/libavcodec/x86/hevcdsp_init.c
 +++ b/libavcodec/x86/hevcdsp_init.c
 @@ -1130,3 +1130,35 @@ void ff_hevc_dsp_init_x86(HEVCDSPContext *c, const int bit_depth)
@@ -1050,5 +1050,5 @@ index 0000000..d26e5bf
 +#endif // AVCODEC_X86_HEVCPRED_H
 \ No newline at end of file
 -- 
-2.3.0
+2.3.5
 

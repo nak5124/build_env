@@ -1,7 +1,7 @@
-From 965df92f3701e703140e0e327e6d801da3c6b3b2 Mon Sep 17 00:00:00 2001
+From dd0ace7c6157cc9943dc9098e5a10f27491d3434 Mon Sep 17 00:00:00 2001
 From: Yuta NAKAI <nak5124@live.jp>
 Date: Thu, 25 Jul 2013 03:36:14 +0900
-Subject: [PATCH 53/62] fix compilation on msys2/mingw32* system.
+Subject: [PATCH 52/65] fix compilation on msys2/mingw32* system.
 
 msys2 has cygwin-like PATH system. This needs to use lib.exe correctly.
 ---
@@ -9,10 +9,10 @@ msys2 has cygwin-like PATH system. This needs to use lib.exe correctly.
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/configure b/configure
-index cc9442a..3179cb6 100755
+index 5d741ba..8f8aeef 100755
 --- a/configure
 +++ b/configure
-@@ -4097,7 +4097,7 @@ case $target_os in
+@@ -4186,7 +4186,7 @@ case $target_os in
          SLIBNAME_WITH_MAJOR='$(SLIBPREF)$(FULLNAME)-$(LIBMAJOR)$(SLIBSUF)'
          dlltool="${cross_prefix}dlltool"
          if check_cmd lib.exe -list; then
@@ -22,5 +22,5 @@ index cc9442a..3179cb6 100755
                  LIBTARGET=x64
              fi
 -- 
-2.3.0
+2.3.5
 

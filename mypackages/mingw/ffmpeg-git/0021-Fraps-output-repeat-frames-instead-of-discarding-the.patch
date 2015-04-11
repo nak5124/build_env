@@ -1,7 +1,7 @@
-From 83b65f30d0e824bbe68dd0520c6c7378d57732fc Mon Sep 17 00:00:00 2001
+From 5128b8fc1a6fc565b6d7772013c2bffd9eebde10 Mon Sep 17 00:00:00 2001
 From: Javier Cabezas <jcabgz@gmail.com>
 Date: Sat, 25 May 2013 18:51:29 +0200
-Subject: [PATCH 21/62] Fraps: output repeat frames instead of discarding them
+Subject: [PATCH 21/65] Fraps: output repeat frames instead of discarding them
 
 Signed-off-by: Javier Cabezas <jcabgz@gmail.com>
 Signed-off-by: Hendrik Leppkes <h.leppkes@gmail.com>
@@ -329,5 +329,5 @@ index c49866e..de96773 100644
 +    .init_thread_copy      = ONLY_IF_THREADS_ENABLED(init_thread_copy)
  };
 -- 
-2.3.0
+2.3.5
 

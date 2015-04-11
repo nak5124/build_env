@@ -1,18 +1,18 @@
-From fadf86c24a3cb1b26e1a6ad985ae8cb3c02a0ff0 Mon Sep 17 00:00:00 2001
+From 61beb9c5817fd47397c75d60de58c5656b78d6ab Mon Sep 17 00:00:00 2001
 From: Yusuke Nakamura <muken.the.vfrmaniac@gmail.com>
 Date: Mon, 4 Nov 2013 02:14:45 +0900
-Subject: [PATCH 51/62] hevc: Set chroma_sample_location of AVCodecContext.
+Subject: [PATCH 50/65] hevc: Set chroma_sample_location of AVCodecContext.
 
 ---
  libavcodec/hevc.c | 7 +++++++
  1 file changed, 7 insertions(+)
 
 diff --git a/libavcodec/hevc.c b/libavcodec/hevc.c
-index 4b6e7b3..efa8c74 100644
+index 0f64d91..bbe2e0b 100644
 --- a/libavcodec/hevc.c
 +++ b/libavcodec/hevc.c
-@@ -330,6 +330,13 @@ static int set_sps(HEVCContext *s, const HEVCSPS *sps)
-         s->avctx->colorspace      = AVCOL_SPC_UNSPECIFIED;
+@@ -358,6 +358,13 @@ static int set_sps(HEVCContext *s, const HEVCSPS *sps, enum AVPixelFormat pix_fm
+         s->avctx->pix_fmt = pix_fmt;
      }
  
 +    if (sps->vui.chroma_loc_info_present_flag)
@@ -26,5 +26,5 @@ index 4b6e7b3..efa8c74 100644
      ff_hevc_dsp_init (&s->hevcdsp, sps->bit_depth);
      ff_videodsp_init (&s->vdsp,    sps->bit_depth);
 -- 
-2.3.0
+2.3.5
 

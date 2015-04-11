@@ -15,9 +15,9 @@ index ed90397..a2aff53 100644
  .libs: $(LIBS)
  	@touch $@
  $(foreach lib,$(filter %_g.a,$(LIBS)),$(eval $(call archive_template,$(lib))))
--$(foreach lib,$(filter %so.$(VERSION_MAJOR).$(VERSION_MINOR).$(VERSION_PATCH),$(LIBS)),$(eval $(call so_template,$(lib))))
-+$(foreach lib,$(filter %-$(VERSION_MAJOR).dll,$(LIBS)),$(eval $(call so_template,$(lib),-$(VERSION_MAJOR).dll)))
- $(foreach lib,$(filter %$(VERSION_MAJOR).dylib,$(LIBS)),$(eval $(call dl_template,$(lib))))
+-$(foreach lib,$(filter %so.$(SO_VERSION_MAJOR).$(SO_VERSION_MINOR).$(SO_VERSION_PATCH),$(LIBS)),$(eval $(call so_template,$(lib))))
++$(foreach lib,$(filter %-$(SO_VERSION_MAJOR).dll,$(LIBS)),$(eval $(call so_template,$(lib),-$(SO_VERSION_MAJOR).dll)))
+ $(foreach lib,$(filter %$(SO_VERSION_MAJOR).dylib,$(LIBS)),$(eval $(call dl_template,$(lib))))
  
  INSTALL-LIBS=$(call cond_enabled,CONFIG_INSTALL_LIBS,INSTALL-LIBS)
 diff --git a/build/make/configure.sh b/build/make/configure.sh
@@ -116,17 +116,16 @@ index f9f2d80..39b9de2 100644
  INSTALL-LIBS-$(CONFIG_DEBUG_LIBS) += $(LIBSUBDIR)/libvpx_g.a
  endif
  
-@@ -282,19 +284,14 @@ EXPORT_FILE             := libvpx.syms
+@@ -282,18 +284,14 @@ EXPORT_FILE             := libvpx.syms
  LIBVPX_SO_SYMLINKS      := $(addprefix $(LIBSUBDIR)/, \
                               libvpx.dylib  )
  else
--LIBVPX_SO               := libvpx.so.$(VERSION_MAJOR).$(VERSION_MINOR).$(VERSION_PATCH)
-+LIBVPX_SO               := libvpx-$(VERSION_MAJOR).dll
+-LIBVPX_SO               := libvpx.so.$(SO_VERSION_MAJOR).$(SO_VERSION_MINOR).$(SO_VERSION_PATCH)
++LIBVPX_SO               := libvpx-$(SO_VERSION_MAJOR).dll
  EXPORT_FILE             := libvpx.ver
--SYM_LINK                := libvpx.so
 -LIBVPX_SO_SYMLINKS      := $(addprefix $(LIBSUBDIR)/, \
--                             libvpx.so libvpx.so.$(VERSION_MAJOR) \
--                             libvpx.so.$(VERSION_MAJOR).$(VERSION_MINOR))
+-                             libvpx.so libvpx.so.$(SO_VERSION_MAJOR) \
+-                             libvpx.so.$(SO_VERSION_MAJOR).$(SO_VERSION_MINOR))
  endif
  
 -LIBS-$(BUILD_LIBVPX_SO) += $(BUILD_PFX)$(LIBVPX_SO)\
@@ -134,8 +133,8 @@ index f9f2d80..39b9de2 100644
 +LIBS-$(BUILD_LIBVPX_SO) += $(BUILD_PFX)$(LIBVPX_SO)
  $(BUILD_PFX)$(LIBVPX_SO): $(LIBVPX_OBJS) $(EXPORT_FILE)
  $(BUILD_PFX)$(LIBVPX_SO): extralibs += -lm
--$(BUILD_PFX)$(LIBVPX_SO): SONAME = libvpx.so.$(VERSION_MAJOR)
-+$(BUILD_PFX)$(LIBVPX_SO): SONAME = libvpx-$(VERSION_MAJOR).dll
+-$(BUILD_PFX)$(LIBVPX_SO): SONAME = libvpx.so.$(SO_VERSION_MAJOR)
++$(BUILD_PFX)$(LIBVPX_SO): SONAME = libvpx-$(SO_VERSION_MAJOR).dll
  $(BUILD_PFX)$(LIBVPX_SO): EXPORTS_FILE = $(EXPORT_FILE)
  
  libvpx.ver: $(call enabled,CODEC_EXPORTS)

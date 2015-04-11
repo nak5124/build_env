@@ -1,7 +1,7 @@
-From 353afd34ad84313fa0f62bd3d9501f53e27afe9e Mon Sep 17 00:00:00 2001
+From 8407b7f3b85fdbf14304882484cad16e672ac8c2 Mon Sep 17 00:00:00 2001
 From: Hendrik Leppkes <h.leppkes@gmail.com>
 Date: Wed, 7 Nov 2012 22:37:48 +0100
-Subject: [PATCH 12/62] HACK: preserve mpeg2 END_OF_SEQ code to the start of
+Subject: [PATCH 12/65] HACK: preserve mpeg2 END_OF_SEQ code to the start of
  the next frame to cause a implicit decoder flush
 
 ---
@@ -30,5 +30,5 @@ index 3128e8d..a838389 100644
              if (pc->frame_start_found == 2 && state == SEQ_START_CODE)
                  pc->frame_start_found = 0;
 -- 
-2.3.0
+2.3.5
 

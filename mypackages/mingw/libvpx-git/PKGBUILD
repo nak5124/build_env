@@ -3,7 +3,7 @@
 _realname=libvpx
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}-git"
 pkgdesc='The VP8 Codec SDK (mingw-w64)'
-pkgver=1.3.0.12743.44adb8e
+pkgver=1.4.0.13119.2f693be
 pkgrel=1
 arch=('any')
 url='http://www.webmproject.org/'
@@ -15,7 +15,7 @@ source=("${_realname}"::'git+http://git.chromium.org/webm/libvpx.git'
         '0002-fix-exports.mingw.patch'
         '0003-give-preference-win32api-over-pthread.patch')
 sha512sums=('SKIP'
-            '85e8887d489cbece1148c3aca1b539bbf3e555cc3eed12f2f40e06314c043b9d427998405a125b24518fb6c508ec4f26609c58c258a559720f6444e3af063fcf'
+            '3d8edac3ace46bb5746db0ae0823ee75654e0b44295ea535953fdb9a9544145638eb58ac07ffd5ec13e412ad243e41d66f17ceb5796143cbec770997a7ef1fe0'
             '69dd57bd50b5dfe37f4e6a7884f39c0b49ea7ca05051dedb51c5be13107866673f55aa5cd42e0d3b39252d77ec78e7ddb0466e11bb4bb3c7d758e8f41eb0ff36'
             'bfee499c82a9f4387ef43ac2a3d9de922dad20af0b86cdadc4a3cf219c3cd52e17081092a2143607d148a72a43d8ac3d4d59c9c92c5f8dba632e5d5dc5d51721')
 

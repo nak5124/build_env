@@ -1,7 +1,7 @@
-From 6fb39201419722a0517c0976be0c4260d43422ae Mon Sep 17 00:00:00 2001
+From 825b20758615f938b9ffdac87c418744648e8eb6 Mon Sep 17 00:00:00 2001
 From: Yusuke Nakamura <muken.the.vfrmaniac@gmail.com>
 Date: Sat, 1 Jun 2013 01:30:35 +0900
-Subject: [PATCH 46/62] mov: Support roll recovery grouping.
+Subject: [PATCH 45/65] mov: Support roll recovery grouping.
 
 Frames that are a starting point of recovery are treated as keyframe and have non-zero distance since themselves are an incomplete frame.
 This is useful for random accessing stream with gradual decoder refresh.
@@ -11,7 +11,7 @@ This is useful for random accessing stream with gradual decoder refresh.
  2 files changed, 106 insertions(+), 9 deletions(-)
 
 diff --git a/libavformat/isom.h b/libavformat/isom.h
-index d233839..5659297 100644
+index 5d48989..082c655 100644
 --- a/libavformat/isom.h
 +++ b/libavformat/isom.h
 @@ -162,6 +162,10 @@ typedef struct MOVStreamContext {
@@ -26,10 +26,10 @@ index d233839..5659297 100644
      int nb_frames_for_fps;
      int64_t duration_for_fps;
 diff --git a/libavformat/mov.c b/libavformat/mov.c
-index 1532831..194b1f5 100644
+index 6f600b3..5579208 100644
 --- a/libavformat/mov.c
 +++ b/libavformat/mov.c
-@@ -2234,6 +2234,8 @@ static int mov_read_sbgp(MOVContext *c, AVIOContext *pb, MOVAtom atom)
+@@ -2305,6 +2305,8 @@ static int mov_read_sbgp(MOVContext *c, AVIOContext *pb, MOVAtom atom)
      unsigned int i, entries;
      uint8_t version;
      uint32_t grouping_type;
@@ -38,7 +38,7 @@ index 1532831..194b1f5 100644
  
      if (c->fc->nb_streams < 1)
          return 0;
-@@ -2243,26 +2245,77 @@ static int mov_read_sbgp(MOVContext *c, AVIOContext *pb, MOVAtom atom)
+@@ -2314,26 +2316,77 @@ static int mov_read_sbgp(MOVContext *c, AVIOContext *pb, MOVAtom atom)
      version = avio_r8(pb); /* version */
      avio_rb24(pb); /* flags */
      grouping_type = avio_rl32(pb);
@@ -124,7 +124,7 @@ index 1532831..194b1f5 100644
  
      return pb->eof_reached ? AVERROR_EOF : 0;
  }
-@@ -2325,9 +2378,22 @@ static void mov_build_index(MOVContext *mov, AVStream *st)
+@@ -2396,9 +2449,22 @@ static void mov_build_index(MOVContext *mov, AVStream *st)
          unsigned int distance = 0;
          unsigned int rap_group_index = 0;
          unsigned int rap_group_sample = 0;
@@ -144,10 +144,10 @@ index 1532831..194b1f5 100644
 +            }
 +        }
 +
+         current_dts -= sc->dts_shift;
+ 
          if (!sc->sample_count || st->nb_index_entries)
-             return;
-         if (sc->sample_count >= UINT_MAX / sizeof(*st->index_entries) - st->nb_index_entries)
-@@ -2390,6 +2456,26 @@ static void mov_build_index(MOVContext *mov, AVStream *st)
+@@ -2461,6 +2527,26 @@ static void mov_build_index(MOVContext *mov, AVStream *st)
                       keyframe = 1;
                  if (keyframe)
                      distance = 0;
@@ -174,18 +174,18 @@ index 1532831..194b1f5 100644
                  sample_size = sc->stsz_sample_size > 0 ? sc->stsz_sample_size : sc->sample_sizes[current_sample];
                  if (sc->pseudo_stream_id == -1 ||
                     sc->stsc_data[stsc_index].id - 1 == sc->pseudo_stream_id) {
-@@ -2397,7 +2483,7 @@ static void mov_build_index(MOVContext *mov, AVStream *st)
+@@ -2468,7 +2554,7 @@ static void mov_build_index(MOVContext *mov, AVStream *st)
                      e->pos = current_offset;
-                     e->timestamp = current_cts;
+                     e->timestamp = current_dts;
                      e->size = sample_size;
 -                    e->min_distance = distance;
 +                    e->min_distance = recovery_present && recovery == 0 ? FFMIN(distance, recovery_distance) : distance;
                      e->flags = keyframe ? AVINDEX_KEYFRAME : 0;
-                     av_dlog(mov->fc, "AVIndex stream %d, sample %d, offset %"PRIx64", cts %"PRId64", "
+                     av_dlog(mov->fc, "AVIndex stream %d, sample %d, offset %"PRIx64", dts %"PRId64", "
                              "size %d, distance %d, keyframe %d\n", st->index, current_sample,
-@@ -2412,6 +2498,10 @@ static void mov_build_index(MOVContext *mov, AVStream *st)
+@@ -2483,6 +2569,10 @@ static void mov_build_index(MOVContext *mov, AVStream *st)
+                 distance++;
                  stts_sample++;
-                 ctts_sample++;
                  current_sample++;
 +                if (recovery_present) {
 +                    roll_group_sample++;
@@ -194,7 +194,7 @@ index 1532831..194b1f5 100644
                  if (stts_index + 1 < sc->stts_count && stts_sample == sc->stts_data[stts_index].count) {
                      stts_sample = 0;
                      stts_index++;
-@@ -2662,6 +2752,8 @@ static int mov_read_trak(MOVContext *c, AVIOContext *pb, MOVAtom atom)
+@@ -2738,6 +2828,8 @@ static int mov_read_trak(MOVContext *c, AVIOContext *pb, MOVAtom atom)
      av_freep(&sc->stps_data);
      av_freep(&sc->elst_data);
      av_freep(&sc->rap_group);
@@ -203,7 +203,7 @@ index 1532831..194b1f5 100644
  
      return 0;
  }
-@@ -3429,6 +3521,7 @@ static const MOVParseTableEntry mov_default_parse_table[] = {
+@@ -3508,6 +3600,7 @@ static const MOVParseTableEntry mov_default_parse_table[] = {
  { MKTAG('C','i','n', 0x8e), mov_read_targa_y216 },
  { MKTAG('f','r','e','e'), mov_read_free },
  { MKTAG('-','-','-','-'), mov_read_custom },
@@ -212,5 +212,5 @@ index 1532831..194b1f5 100644
  };
  
 -- 
-2.3.0
+2.3.5
 

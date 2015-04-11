@@ -1,7 +1,7 @@
-From c128cf51bed26a85d75a2c1be6b14847b916a4a8 Mon Sep 17 00:00:00 2001
+From 076c2740841d91ec44649e0d88342564bd648d3f Mon Sep 17 00:00:00 2001
 From: nu774 <honeycomb77@gmail.com>
 Date: Thu, 9 May 2013 03:36:14 +0900
-Subject: [PATCH 48/62] mp3: enable packed main_data decoding in MP4
+Subject: [PATCH 47/65] mp3: enable packed main_data decoding in MP4
 
 14496-3 suggests packing main_data of MP3 that is usually scatttered into
 multiple frames due to bit reservoir.
@@ -36,10 +36,10 @@ index 138a107..44b8345 100644
  
      ret = mp_decode_frame(s, NULL, buf, buf_size);
 diff --git a/libavformat/mov.c b/libavformat/mov.c
-index 194b1f5..6331002 100644
+index 5579208..fef6307 100644
 --- a/libavformat/mov.c
 +++ b/libavformat/mov.c
-@@ -1543,6 +1543,15 @@ static void mov_parse_stsd_audio(MOVContext *c, AVIOContext *pb,
+@@ -1614,6 +1614,15 @@ static void mov_parse_stsd_audio(MOVContext *c, AVIOContext *pb,
                      ff_mov_get_lpcm_codec_id(st->codec->bits_per_coded_sample,
                                               flags);
          }
@@ -55,7 +55,7 @@ index 194b1f5..6331002 100644
      }
  
      switch (st->codec->codec_id) {
-@@ -1753,7 +1762,6 @@ static int mov_finalize_stsd_codec(MOVContext *c, AVIOContext *pb,
+@@ -1824,7 +1833,6 @@ static int mov_finalize_stsd_codec(MOVContext *c, AVIOContext *pb,
      case AV_CODEC_ID_MP3:
          /* force type after stsd for m1a hdlr */
          st->codec->codec_type = AVMEDIA_TYPE_AUDIO;
@@ -64,5 +64,5 @@ index 194b1f5..6331002 100644
      case AV_CODEC_ID_GSM:
      case AV_CODEC_ID_ADPCM_MS:
 -- 
-2.3.0
+2.3.5
 

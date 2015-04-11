@@ -1,14 +1,14 @@
-From 1996b283b37998c0cb9ded8919f8963cd4c4e3f0 Mon Sep 17 00:00:00 2001
+From 925ddd69b08f00931de976da143fac54c3e020fc Mon Sep 17 00:00:00 2001
 From: Hendrik Leppkes <h.leppkes@gmail.com>
 Date: Tue, 2 Dec 2014 14:44:36 +0100
-Subject: [PATCH 40/62] mpeg12dec: properly handle a codec_id change
+Subject: [PATCH 40/65] mpeg12dec: properly handle a codec_id change
 
 ---
  libavcodec/mpeg12dec.c | 4 ++++
  1 file changed, 4 insertions(+)
 
 diff --git a/libavcodec/mpeg12dec.c b/libavcodec/mpeg12dec.c
-index f7e57f9..19f86ca 100644
+index a5622bf..89aa028 100644
 --- a/libavcodec/mpeg12dec.c
 +++ b/libavcodec/mpeg12dec.c
 @@ -61,6 +61,7 @@ typedef struct Mpeg1Context {
@@ -44,5 +44,5 @@ index f7e57f9..19f86ca 100644
  }
  
 -- 
-2.3.0
+2.3.5
 

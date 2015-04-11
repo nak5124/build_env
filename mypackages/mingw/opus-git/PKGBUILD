@@ -3,7 +3,7 @@
 _realname=opus
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}-git"
 pkgdesc='Codec designed for interactive speech and audio transmission over the Internet (mingw-w64)'
-pkgver=1.1.1.3355.45cbdff
+pkgver=1.1.1.3361.5771a67
 pkgrel=1
 arch=('any')
 url='http://www.opus-codec.org/'

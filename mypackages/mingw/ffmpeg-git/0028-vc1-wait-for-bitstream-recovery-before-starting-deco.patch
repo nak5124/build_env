@@ -1,7 +1,7 @@
-From c5577ca6b958a2bf046670312ee745177d3bd58b Mon Sep 17 00:00:00 2001
+From 6750da5a351bd4fb3dcbd1a56f9863b790878768 Mon Sep 17 00:00:00 2001
 From: Hendrik Leppkes <h.leppkes@gmail.com>
 Date: Thu, 12 Dec 2013 19:54:39 +0100
-Subject: [PATCH 28/62] vc1: wait for bitstream recovery before starting
+Subject: [PATCH 28/65] vc1: wait for bitstream recovery before starting
  decoding
 
 ---
@@ -23,10 +23,10 @@ index eefb613..31a5dc7 100644
  
  /**
 diff --git a/libavcodec/vc1dec.c b/libavcodec/vc1dec.c
-index da6724c..3991d8d 100644
+index 6c47d45..091c544 100644
 --- a/libavcodec/vc1dec.c
 +++ b/libavcodec/vc1dec.c
-@@ -825,6 +825,13 @@ static int vc1_decode_frame(AVCodecContext *avctx, void *data,
+@@ -828,6 +828,13 @@ static int vc1_decode_frame(AVCodecContext *avctx, void *data,
      s->current_picture.f->pict_type = s->pict_type;
      s->current_picture.f->key_frame = s->pict_type == AV_PICTURE_TYPE_I;
  
@@ -40,7 +40,7 @@ index da6724c..3991d8d 100644
      /* skip B-frames if we don't have reference frames */
      if (!s->last_picture_ptr && (s->pict_type == AV_PICTURE_TYPE_B || s->droppable)) {
          av_log(v->s.avctx, AV_LOG_DEBUG, "Skipping B frame without reference frames\n");
-@@ -1055,6 +1062,14 @@ err:
+@@ -1058,6 +1065,14 @@ err:
      return -1;
  }
  
@@ -55,7 +55,7 @@ index da6724c..3991d8d 100644
  
  static const AVProfile profiles[] = {
      { FF_PROFILE_VC1_SIMPLE,   "Simple"   },
-@@ -1087,7 +1102,7 @@ AVCodec ff_vc1_decoder = {
+@@ -1090,7 +1105,7 @@ AVCodec ff_vc1_decoder = {
      .init           = vc1_decode_init,
      .close          = ff_vc1_decode_end,
      .decode         = vc1_decode_frame,
@@ -64,7 +64,7 @@ index da6724c..3991d8d 100644
      .capabilities   = CODEC_CAP_DR1 | CODEC_CAP_DELAY,
      .pix_fmts       = vc1_hwaccel_pixfmt_list_420,
      .profiles       = NULL_IF_CONFIG_SMALL(profiles)
-@@ -1103,7 +1118,7 @@ AVCodec ff_wmv3_decoder = {
+@@ -1106,7 +1121,7 @@ AVCodec ff_wmv3_decoder = {
      .init           = vc1_decode_init,
      .close          = ff_vc1_decode_end,
      .decode         = vc1_decode_frame,
@@ -74,5 +74,5 @@ index da6724c..3991d8d 100644
      .pix_fmts       = vc1_hwaccel_pixfmt_list_420,
      .profiles       = NULL_IF_CONFIG_SMALL(profiles)
 -- 
-2.3.0
+2.3.5
 

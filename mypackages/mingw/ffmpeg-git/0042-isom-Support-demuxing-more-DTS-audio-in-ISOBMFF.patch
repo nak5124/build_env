@@ -1,17 +1,17 @@
-From beeafe56b6b37b563e5c0fff68410f165af594a7 Mon Sep 17 00:00:00 2001
+From 009b8d4330fb7c925303bec46084a1dcf32bab33 Mon Sep 17 00:00:00 2001
 From: Tsukasa OMOTO <henry0312@gmail.com>
 Date: Fri, 4 May 2012 02:32:46 +0900
-Subject: [PATCH 44/62] isom: Support demuxing more DTS audio in ISOBMFF.
+Subject: [PATCH 43/65] isom: Support demuxing more DTS audio in ISOBMFF.
 
 ---
  libavformat/isom.c | 1 +
  1 file changed, 1 insertion(+)
 
 diff --git a/libavformat/isom.c b/libavformat/isom.c
-index fcd696a..ea78781 100644
+index 73a221e..c95895e 100644
 --- a/libavformat/isom.c
 +++ b/libavformat/isom.c
-@@ -269,6 +269,7 @@ const AVCodecTag ff_codec_movaudio_tags[] = {
+@@ -270,6 +270,7 @@ const AVCodecTag ff_codec_movaudio_tags[] = {
      { AV_CODEC_ID_AMR_NB,          MKTAG('s', 'a', 'm', 'r') }, /* AMR-NB 3gp */
      { AV_CODEC_ID_AMR_WB,          MKTAG('s', 'a', 'w', 'b') }, /* AMR-WB 3gp */
      { AV_CODEC_ID_DTS,             MKTAG('d', 't', 's', 'c') }, /* DTS formats prior to DTS-HD */
@@ -20,5 +20,5 @@ index fcd696a..ea78781 100644
      { AV_CODEC_ID_DTS,             MKTAG('d', 't', 's', 'l') }, /* DTS-HD Lossless formats */
      { AV_CODEC_ID_DTS,             MKTAG('D', 'T', 'S', ' ') }, /* non-standard */
 -- 
-2.3.0
+2.3.5
 

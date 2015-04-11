@@ -1,7 +1,7 @@
-From 9e7983ca633844f354e44f339669c46eb2bf82f7 Mon Sep 17 00:00:00 2001
+From 204e9a11b2b029e99092c3879d32cc7b10f2496f Mon Sep 17 00:00:00 2001
 From: Hendrik Leppkes <h.leppkes@gmail.com>
 Date: Fri, 31 Jan 2014 16:16:09 +0100
-Subject: [PATCH 31/62] avformat/utils: don't overwrite existing program infos
+Subject: [PATCH 31/65] avformat/utils: don't overwrite existing program infos
  in av_new_program
 
 ---
@@ -9,10 +9,10 @@ Subject: [PATCH 31/62] avformat/utils: don't overwrite existing program infos
  1 file changed, 6 insertions(+), 6 deletions(-)
 
 diff --git a/libavformat/utils.c b/libavformat/utils.c
-index dda926a..bbd8228 100644
+index 397d459..136583f 100644
 --- a/libavformat/utils.c
 +++ b/libavformat/utils.c
-@@ -3774,13 +3774,13 @@ AVProgram *av_new_program(AVFormatContext *ac, int id)
+@@ -3783,13 +3783,13 @@ AVProgram *av_new_program(AVFormatContext *ac, int id)
              return NULL;
          dynarray_add(&ac->programs, &ac->nb_programs, program);
          program->discard = AVDISCARD_NONE;
@@ -33,5 +33,5 @@ index dda926a..bbd8228 100644
      return program;
  }
 -- 
-2.3.0
+2.3.5
 

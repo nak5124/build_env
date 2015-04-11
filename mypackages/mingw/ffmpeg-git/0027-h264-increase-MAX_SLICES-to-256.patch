@@ -1,7 +1,7 @@
-From b4601b48d600a88273bfa9b5c2e9c8220357a4bb Mon Sep 17 00:00:00 2001
+From b44afa284793733d04d3d463bdfa9aade07fc062 Mon Sep 17 00:00:00 2001
 From: Hendrik Leppkes <h.leppkes@gmail.com>
 Date: Fri, 15 Nov 2013 19:25:11 +0100
-Subject: [PATCH 27/62] h264: increase MAX_SLICES to 256
+Subject: [PATCH 27/65] h264: increase MAX_SLICES to 256
 
 This was recommended by Jason on IRC a while ago.
 ---
@@ -9,7 +9,7 @@ This was recommended by Jason on IRC a while ago.
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/libavcodec/h264.h b/libavcodec/h264.h
-index 2d363c9..f1ada5a 100644
+index 8cee11f..a094134 100644
 --- a/libavcodec/h264.h
 +++ b/libavcodec/h264.h
 @@ -65,7 +65,7 @@
@@ -22,5 +22,5 @@ index 2d363c9..f1ada5a 100644
  #ifdef ALLOW_INTERLACE
  #define MB_MBAFF(h)    (h)->mb_mbaff
 -- 
-2.3.0
+2.3.5
 

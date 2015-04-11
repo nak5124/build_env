@@ -1,7 +1,7 @@
-From b2c1cc748fa37e62f7541275ca092c026c3c94f1 Mon Sep 17 00:00:00 2001
+From 0d9b77240ab5fd7858d47d8d211ea02f0408b9cd Mon Sep 17 00:00:00 2001
 From: Yuta NAKAI <nak5124@live.jp>
 Date: Mon, 22 Dec 2014 17:54:01 +0900
-Subject: [PATCH 58/62] build: Cleanup version scripts.
+Subject: [PATCH 57/65] build: Cleanup version scripts.
 
 ---
  libavcodec/libavcodec.v   |  3 ---
@@ -46,5 +46,5 @@ index e90aef7..6f11d60 100644
          local: *;
  };
 -- 
-2.3.0
+2.3.5
 

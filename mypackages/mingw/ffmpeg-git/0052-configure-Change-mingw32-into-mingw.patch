@@ -1,17 +1,17 @@
-From 9e636df1878b918cd55cc4d45b5bd412aab2c7dc Mon Sep 17 00:00:00 2001
+From a0ff0db750c0322eacb366ca7bea297ce750f3c4 Mon Sep 17 00:00:00 2001
 From: Yuta NAKAI <nak5124@live.jp>
 Date: Sun, 15 Sep 2013 10:35:05 +0900
-Subject: [PATCH 54/62] configure: Change mingw32* into mingw*.
+Subject: [PATCH 53/65] configure: Change mingw32* into mingw*.
 
 ---
  configure | 6 +++---
  1 file changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/configure b/configure
-index 3179cb6..dc7f2cb 100755
+index 8f8aeef..a5c7beb 100755
 --- a/configure
 +++ b/configure
-@@ -3108,7 +3108,7 @@ fi
+@@ -3152,7 +3152,7 @@ fi
  
  exesuf() {
      case $1 in
@@ -20,7 +20,7 @@ index 3179cb6..dc7f2cb 100755
      esac
  }
  
-@@ -4074,11 +4074,11 @@ case $target_os in
+@@ -4163,11 +4163,11 @@ case $target_os in
          enabled_any pic shared x86_64 ||
              { check_cflags -mdynamic-no-pic && add_asflags -mdynamic-no-pic; }
          ;;
@@ -35,5 +35,5 @@ index 3179cb6..dc7f2cb 100755
          LIBTARGET=i386
          if enabled x86_64; then
 -- 
-2.3.0
+2.3.5
 

@@ -1,7 +1,7 @@
-From 5bd53cac53bc583358b4f7e984b10e915e340966 Mon Sep 17 00:00:00 2001
+From 775eb4ca9c5141a6c0a1a2882c15bdb4cd14c203 Mon Sep 17 00:00:00 2001
 From: Hendrik Leppkes <h.leppkes@gmail.com>
 Date: Fri, 15 Mar 2013 16:02:37 +0100
-Subject: [PATCH 15/62] Revert "mpegts: clear avprograms only for removed
+Subject: [PATCH 15/65] Revert "mpegts: clear avprograms only for removed
  programs"
 
 This reverts commit 806a66fd08a395486e763fb10588c5fd02e8d54e
@@ -11,7 +11,7 @@ and 4c41fc88df5c507e0f239b4c16f85573f7b49702.
  1 file changed, 27 deletions(-)
 
 diff --git a/libavformat/mpegts.c b/libavformat/mpegts.c
-index d05a1c7..a49ce00 100644
+index 07b012b..b6f3124 100644
 --- a/libavformat/mpegts.c
 +++ b/libavformat/mpegts.c
 @@ -251,26 +251,10 @@ static struct Program * get_program(MpegTSContext *ts, unsigned int programid)
@@ -60,5 +60,5 @@ index d05a1c7..a49ce00 100644
  
  static void sdt_cb(MpegTSFilter *filter, const uint8_t *section, int section_len)
 -- 
-2.3.0
+2.3.5
 

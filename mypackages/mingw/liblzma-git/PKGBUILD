@@ -3,7 +3,7 @@
 _realname=liblzma
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}-git"
 pkgdesc='Library for LZMA compressed files (mingw-w64)'
-pkgver=5.2.1.1051.a245189
+pkgver=5.3.0.1065.fc0df0f
 pkgrel=1
 arch=('any')
 url='http://tukaani.org/xz/'

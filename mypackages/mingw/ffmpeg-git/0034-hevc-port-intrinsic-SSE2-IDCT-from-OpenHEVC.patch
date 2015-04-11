@@ -1,30 +1,31 @@
-From 9c160bbe12f90ba38064775999e295af99d24b6a Mon Sep 17 00:00:00 2001
+From 82bcdd0662f43f85d053e5e21390c52a6f651339 Mon Sep 17 00:00:00 2001
 From: Hendrik Leppkes <h.leppkes@gmail.com>
 Date: Sun, 17 Aug 2014 13:26:23 +0200
-Subject: [PATCH 34/62] hevc: port intrinsic SSE2 IDCT from OpenHEVC
+Subject: [PATCH 34/65] hevc: port intrinsic SSE2 IDCT from OpenHEVC
 
 ---
- libavcodec/x86/Makefile              |   3 +-
+ libavcodec/x86/Makefile              |   4 +-
  libavcodec/x86/hevc_idct_intrinsic.c | 763 +++++++++++++++++++++++++++++++++++
  libavcodec/x86/hevcdsp.h             |  22 +
  libavcodec/x86/hevcdsp_init.c        |  18 +
- 4 files changed, 805 insertions(+), 1 deletion(-)
+ 4 files changed, 806 insertions(+), 1 deletion(-)
  create mode 100644 libavcodec/x86/hevc_idct_intrinsic.c
 
 diff --git a/libavcodec/x86/Makefile b/libavcodec/x86/Makefile
-index 00dacda..5d47697 100644
+index 87985f2..0857fb2 100644
 --- a/libavcodec/x86/Makefile
 +++ b/libavcodec/x86/Makefile
-@@ -135,7 +135,8 @@ YASM-OBJS-$(CONFIG_HEVC_DECODER)       += x86/hevc_mc.o                 \
+@@ -137,7 +137,9 @@ YASM-OBJS-$(CONFIG_HEVC_DECODER)       += x86/hevc_mc.o                 \
                                            x86/hevc_deblock.o            \
                                            x86/hevc_idct.o               \
                                            x86/hevc_res_add.o            \
 -                                          x86/hevc_sao.o
 +                                          x86/hevc_sao.o                \
 +                                          x86/hevc_idct_intrinsic.o
++
  YASM-OBJS-$(CONFIG_MLP_DECODER)        += x86/mlpdsp.o
+ YASM-OBJS-$(CONFIG_MPEG4_DECODER)      += x86/xvididct.o
  YASM-OBJS-$(CONFIG_PNG_DECODER)        += x86/pngdsp.o
- YASM-OBJS-$(CONFIG_PRORES_DECODER)     += x86/proresdsp.o
 diff --git a/libavcodec/x86/hevc_idct_intrinsic.c b/libavcodec/x86/hevc_idct_intrinsic.c
 new file mode 100644
 index 0000000..7f732d2
@@ -795,7 +796,7 @@ index 0000000..7f732d2
 +#pragma GCC pop_options
 +#endif
 diff --git a/libavcodec/x86/hevcdsp.h b/libavcodec/x86/hevcdsp.h
-index 7864163..caaf045 100644
+index ad8168f..74184f6 100644
 --- a/libavcodec/x86/hevcdsp.h
 +++ b/libavcodec/x86/hevcdsp.h
 @@ -258,4 +258,26 @@ void ff_hevc_transform_add32_10_sse2(uint8_t *dst, int16_t *coeffs, ptrdiff_t st
@@ -826,7 +827,7 @@ index 7864163..caaf045 100644
 +
  #endif // AVCODEC_X86_HEVCDSP_H
 diff --git a/libavcodec/x86/hevcdsp_init.c b/libavcodec/x86/hevcdsp_init.c
-index 78569ae..9cfbc46 100644
+index ddc876d..a3483de 100644
 --- a/libavcodec/x86/hevcdsp_init.c
 +++ b/libavcodec/x86/hevcdsp_init.c
 @@ -724,6 +724,12 @@ void ff_hevc_dsp_init_x86(HEVCDSPContext *c, const int bit_depth)
@@ -869,5 +870,5 @@ index 78569ae..9cfbc46 100644
          if (EXTERNAL_SSSE3(cpu_flags) && ARCH_X86_64) {
              c->hevc_v_loop_filter_luma = ff_hevc_v_loop_filter_luma_12_ssse3;
 -- 
-2.3.0
+2.3.5
 

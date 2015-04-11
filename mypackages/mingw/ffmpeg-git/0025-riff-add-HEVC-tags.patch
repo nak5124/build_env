@@ -1,20 +1,20 @@
-From 3bf131d1434fb53b9ef89691e59f1cb59ed559a0 Mon Sep 17 00:00:00 2001
+From 57fd04a02acd132d0b1e086107caa9a752889c57 Mon Sep 17 00:00:00 2001
 From: Hendrik Leppkes <h.leppkes@gmail.com>
 Date: Wed, 23 Oct 2013 09:18:16 +0200
-Subject: [PATCH 25/62] riff: add HEVC tags
+Subject: [PATCH 25/65] riff: add HEVC tags
 
 ---
  libavformat/riff.c | 3 +++
  1 file changed, 3 insertions(+)
 
 diff --git a/libavformat/riff.c b/libavformat/riff.c
-index 8d7b1c2..8fa22e9 100644
+index 440a36b..fbd2cb0 100644
 --- a/libavformat/riff.c
 +++ b/libavformat/riff.c
-@@ -363,6 +363,9 @@ const AVCodecTag ff_codec_bmp_tags[] = {
-     { AV_CODEC_ID_PRORES,       MKTAG('A', 'P', 'C', 'H') },
-     { AV_CODEC_ID_QTRLE,        MKTAG('r', 'l', 'e', ' ') },
+@@ -366,6 +366,9 @@ const AVCodecTag ff_codec_bmp_tags[] = {
+     { AV_CODEC_ID_FIC,          MKTAG('F', 'I', 'C', 'V') },
      { AV_CODEC_ID_HQX,          MKTAG('C', 'H', 'Q', 'X') },
+     { AV_CODEC_ID_TDSC,         MKTAG('T', 'D', 'S', 'C') },
 +    { AV_CODEC_ID_HEVC,         MKTAG('H', 'E', 'V', 'C') },
 +    { AV_CODEC_ID_HEVC,         MKTAG('H', 'V', 'C', '1') },
 +    { AV_CODEC_ID_HEVC,         MKTAG('H', 'M', '1', '0') },
@@ -22,5 +22,5 @@ index 8d7b1c2..8fa22e9 100644
  };
  
 -- 
-2.3.0
+2.3.5
 

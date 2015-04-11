@@ -1,7 +1,7 @@
-From f5ed6fdcc23b3f8fe7458d90af874a9322c4048b Mon Sep 17 00:00:00 2001
+From df2035ec91811b49bd62cb1f0a00dc758b715dbc Mon Sep 17 00:00:00 2001
 From: Yusuke Nakamura <muken.the.vfrmaniac@gmail.com>
 Date: Sat, 8 Nov 2014 18:30:19 +0900
-Subject: [PATCH 49/62] alsdec: Fix avoiding reading over the end of packet
+Subject: [PATCH 48/65] alsdec: Fix avoiding reading over the end of packet
  data.
 
 ---
@@ -9,7 +9,7 @@ Subject: [PATCH 49/62] alsdec: Fix avoiding reading over the end of packet
  1 file changed, 4 insertions(+)
 
 diff --git a/libavcodec/alsdec.c b/libavcodec/alsdec.c
-index b3d3086..1360dfe 100644
+index bac434f..80f9d78 100644
 --- a/libavcodec/alsdec.c
 +++ b/libavcodec/alsdec.c
 @@ -1478,6 +1478,10 @@ static int decode_frame(AVCodecContext *avctx, void *data, int *got_frame_ptr,
@@ -24,5 +24,5 @@ index b3d3086..1360dfe 100644
          return ret;
  
 -- 
-2.3.0
+2.3.5
 

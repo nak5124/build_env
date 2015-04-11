@@ -1,7 +1,7 @@
-From 314500cb41ebd740c06c51d1e22f4647d5147f7c Mon Sep 17 00:00:00 2001
+From 88bd16fbf7c034159b958669a0f0d587d89851b3 Mon Sep 17 00:00:00 2001
 From: Yuta NAKAI <nak5124@live.jp>
 Date: Sat, 10 Jan 2015 18:02:19 +0900
-Subject: [PATCH 61/62] libutvideodec: Fix bits_per_raw_sample.
+Subject: [PATCH 60/65] libutvideodec: Fix bits_per_raw_sample.
 
 ---
  libavcodec/libutvideodec.cpp | 8 +++++++-
@@ -28,5 +28,5 @@ index e4b87a8..802ea63 100644
      /* Is it interlaced? */
      avctx->coded_frame->interlaced_frame = info.flags & 0x800 ? 1 : 0;
 -- 
-2.3.0
+2.3.5
 
