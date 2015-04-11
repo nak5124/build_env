@@ -1,17 +1,21 @@
 # NASM: An 80x86 assembler designed for portability and modularity
 # Download the src and decompress it.
 function download_nasm_src() {
+    local _nasm_ver
+    if [ ! -z "${NASM_SS}" ]; then
+        _nasm_ver=${NASM_VER}-$NASM_SS
+    else
+        _nasm_ver=$NASM_VER
+    fi
+
     # Download the src.
     if [ ! -f ${BUILD_DIR}/nyasm/nasm/src/nasm-${NASM_VER}.tar.xz ]; then
         printf "===> Downloading NASM %s...\n" $NASM_VER
         pushd ${BUILD_DIR}/nyasm/nasm/src > /dev/null
-        local _nasm_ver
         if [ ! -z "${NASM_SS}" ]; then
             dl_files http http://www.nasm.us/pub/nasm/snapshots/${NASM_SS}/nasm-${NASM_VER}-${NASM_SS}.tar.xz
-            _nasm_ver=${NASM_VER}-$NASM_SS
         else
             dl_files http http://www.nasm.us/pub/nasm/releasebuilds/${NASM_VER}/nasm-${NASM_VER}.tar.xz
-            _nasm_ver=$NASM_VER
         fi
         popd > /dev/null
         echo "done"

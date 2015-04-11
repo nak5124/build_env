@@ -29,7 +29,7 @@ function prepare_intl() {
         if [ ! -d ${BUILD_DIR}/libintl/src/gettext-$INTL_VER ]; then
             echo "===> Cloning libintl git repo..."
             pushd ${BUILD_DIR}/libintl/src > /dev/null
-            dl_files git http://git.savannah.gnu.org/r/gettext.git
+            dl_files git http://git.savannah.gnu.org/r/gettext.git gettext-$INTL_VER
             popd > /dev/null
             echo "done"
         fi

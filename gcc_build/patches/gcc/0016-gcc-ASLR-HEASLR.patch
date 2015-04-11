@@ -31,8 +31,8 @@
 +  --nxcompat --dynamicbase \
 +  %{shared|mdll: " SUB_LINK_ENTRY " --disable-auto-image-base} \
    %(shared_libgcc_undefs) \
--  %{!shared: %{!mdll: --large-address-aware}}"
-+  %{!shared: %{!mdll: --large-address-aware --pic-executable " SUB_PIE_ENTRY "}}"
+-  %{!shared: %{!mdll: --large-address-aware --tsaware}}"
++  %{!shared: %{!mdll: --large-address-aware --tsaware --pic-executable " SUB_PIE_ENTRY "}}"
  
  /* Include in the mingw32 libraries with libgcc */
  #ifdef ENABLE_SHARED_LIBGCC
@@ -68,6 +68,6 @@
 +  --nxcompat --dynamicbase %{" SPEC_64 ": --high-entropy-va} \
 +  %{shared|mdll: " SUB_LINK_ENTRY " %{" SPEC_64 ": --image-base 0x180000000} --disable-auto-image-base} \
    %(shared_libgcc_undefs) \
--  %{!shared: %{!mdll: %{" SPEC_32 ": --large-address-aware}}}"
-+  %{!shared: %{!mdll: %{" SPEC_32 ": --large-address-aware} --pic-executable " SUB_PIE_ENTRY " \
+-  %{!shared: %{!mdll: %{" SPEC_32 ": --large-address-aware} --tsaware}}"
++  %{!shared: %{!mdll: %{" SPEC_32 ": --large-address-aware} --tsaware --pic-executable " SUB_PIE_ENTRY " \
 +  %{" SPEC_64 ": --image-base 0x140000000}}}"

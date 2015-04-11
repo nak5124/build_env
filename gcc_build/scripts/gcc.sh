@@ -156,7 +156,6 @@ function prepare_gcc() {
     fi
     # Disable automatic image base calculation.
     sed -i 's/enable-auto-image-base/disable-auto-image-base/g' {gcc,libbacktrace,libssp,libstdc++-v3,lto-plugin}/configure
-    perl -pi -e 's/_stat\n/_stat64\n/g' ltmain.sh
     popd > /dev/null
     echo "done"
 

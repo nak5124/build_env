@@ -41,7 +41,6 @@ function prepare_binutils() {
     sed -i.bak '/^INFO/s/standards.info //' ${BUILD_DIR}/binutils/src/binutils-${BINUTILS_VER}/etc/Makefile.in
     # Disable automatic image base calculation.
     sed -i 's/enable-auto-image-base/disable-auto-image-base/g' {bfd,binutils,gas,gprof,ld,opcodes}/configure
-    perl -pi -e 's/_stat\n/_stat64\n/g' ltmain.sh
     popd > /dev/null
     echo "done"
 
@@ -152,7 +151,7 @@ function build_binutils() {
                 --with-stage1-ldflags=no                               \
                 --with-build-sysroot=${DST_DIR}/mingw$_bitval          \
                 --with-gnu-ld                                          \
-                --with-zlib=yes                                        \
+                --with-system-zlib                                     \
                 --with-lib{iconv,intl}-prefix=${DST_DIR}/mingw$_bitval \
                 --with-lib-path=${_libpath}                            \
                 --with-sysroot=/mingw$_bitval                          \

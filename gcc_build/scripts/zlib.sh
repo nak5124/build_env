@@ -103,13 +103,16 @@ function build_zlib() {
                 cp -fa ${BUILD_DIR}/zlib/build_${_arch}/contrib/amd64/amd64-match.S ${BUILD_DIR}/zlib/build_${_arch}/match.S
             fi
 
+            # CFLAGS
+            local _cflags="${CFLAGS_} ${CPPFLAGS_} -D__MINGW_USE_VC2005_COMPAT=1 -D_FILE_OFFSET_BITS=64"
+
             # Configure.
             printf "===> Configuring zlib %s...\n" $_arch
-            CFLAGS="${CFLAGS_} ${CPPFLAGS_}" \
-            LDFLAGS="${LDFLAGS_}"            \
-            ./configure                      \
-                --prefix=/mingw$_bitval      \
-                --shared                     \
+            CFLAGS="${_cflags}"         \
+            LDFLAGS="${LDFLAGS_}"       \
+            ./configure                 \
+                --prefix=/mingw$_bitval \
+                --shared                \
                 > ${LOGS_DIR}/zlib/libz_config_${_arch}.log 2>&1 || exit 1
             echo "done"
 
