@@ -4,20 +4,13 @@ diff -r b6f36b277234 source/CMakeLists.txt
 @@ -22,8 +22,6 @@
  
  # X265_BUILD must be incremented each time the public API is changed
- set(X265_BUILD 47)
+ set(X265_BUILD 56)
 -configure_file("${PROJECT_SOURCE_DIR}/x265.def.in"
 -               "${PROJECT_BINARY_DIR}/x265.def")
  configure_file("${PROJECT_SOURCE_DIR}/x265_config.h.in"
                 "${PROJECT_BINARY_DIR}/x265_config.h")
  
-@@ -136,16 +134,12 @@
-     if(ARM)
-         add_definitions(-march=armv6 -mfloat-abi=hard -mfpu=vfp)
-     endif()
--    check_cxx_compiler_flag(-Wno-narrowing CC_HAS_NO_NARROWING) 
--    check_cxx_compiler_flag(-Wno-array-bounds CC_HAS_NO_ARRAY_BOUNDS) 
-+    check_cxx_compiler_flag(-Wno-narrowing CC_HAS_NO_NARROWING)
-+    check_cxx_compiler_flag(-Wno-array-bounds CC_HAS_NO_ARRAY_BOUNDS)
+@@ -136,11 +134,7 @@
      if (CC_HAS_NO_ARRAY_BOUNDS)
          add_definitions(-Wno-array-bounds) # these are unhelpful
      endif()

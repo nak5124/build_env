@@ -4,7 +4,7 @@ _realname=openh264
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}-git"
 pkgdesc='A free, open-source codec library for H.264 encoding and decoding (mingw-w64)'
 pkgver=1.4.3397.4adf9cd
-pkgrel=1
+pkgrel=3
 arch=('any')
 url='http://www.openh264.org/'
 license=('BSD')
@@ -13,11 +13,13 @@ depends=("${MINGW_PACKAGE_PREFIX}-toolchain")
 source=("${_realname}"::'git+https://github.com/cisco/openh264.git#branch=openh264v1.4'
         '0001-build-x86-common.mk-Use-Yasm-instead-of-NASM.patch'
         '0002-build-Use-version-script.patch'
-        '0003-Makefile-Fix-PREFIX.patch')
+        '0003-Makefile-Fix-PREFIX.patch'
+        '0004-Add-API-version-suffix-to-DLL-Name.patch')
 sha512sums=('SKIP'
-            '38323445b70f74b5d1c4851b0578a5b81ab0a996542e0302094d745784314aa5bccf44373e3883fdc59c30aa85011bb88eef967644729d09f9c8222b7882dcf7'
-            '0bc59767f71272baf13060aa3ca91a2769d9c091ef0399227961878fee137cef7bd8641de5c5e88fe531825554592fdc33a509fced3e5bc705c821a6e3461635'
-            'd6af6c7c66df0a6c40a3ecb65c4559f6054a78f98c24feb4026e069b63502bde77ffaa8fb9bbe2814a8c59f4259d124d3d6956e938ce9b51552cee8311eb4086')
+            '20229e17e3242b4da1e9dcff3dd0873533e4bab1e539755c01ac93cb0f229ba9e9813f0e4b48f3cb4403643ed6d5a9a4bc80b4d2ba2f39f1ce3dfe5b1da5ffb9'
+            'bf04d47cd9cd305d14f74fe6b7f1d05301c935695fda034bea81309aedc5f5e0888b189adbca33c75192f8dc9e50d62ca36a51d7c5b845c15890d015e5937c1d'
+            'ce8ff6e35136700ce4b119b48b62545c5fe9f6a6afd72a304d27241d876f3f6dfe45287d8472ef048b9176697e01bf9e14eade448ac972dc1f54a024a230cf8f'
+            'c796d08941c9a165a99da95249ed8cad96e34f3446244a8a721652ff2df12fc6506ea8f960c1c56b50658fd783e638973ce74bd2db0e8c18399d44a84f14fbb6')
 
 pkgver() {
   cd "${srcdir}"/$_realname
@@ -34,6 +36,7 @@ prepare() {
   patch -p1 -i "${srcdir}"/0001-build-x86-common.mk-Use-Yasm-instead-of-NASM.patch
   patch -p1 -i "${srcdir}"/0002-build-Use-version-script.patch
   patch -p1 -i "${srcdir}"/0003-Makefile-Fix-PREFIX.patch
+  patch -p1 -i "${srcdir}"/0004-Add-API-version-suffix-to-DLL-Name.patch
 }
 
 build() {

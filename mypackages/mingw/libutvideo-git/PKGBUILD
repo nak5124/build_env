@@ -3,7 +3,7 @@
 _realname=libutvideo
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}-git"
 pkgdesc='Library of Ut Video Codec Suite (mingw-w64)'
-pkgver=15.1.0.13.c309918
+pkgver=15.2.0.15.eb9a23e
 pkgrel=1
 arch=('any')
 url='http://umezawa.dyndns.info/wordpress/?cat=28'

@@ -5,7 +5,7 @@ _reponame=openjpeg
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}-svn"
 pkgdesc='An open source JPEG 2000 codec, version 2, libopenmj2 only (mingw-w64)'
 pkgver=2.1.0.r2997
-pkgrel=1
+pkgrel=2
 arch=('any')
 url='http://www.openjpeg.org'
 license=('BSD')
@@ -59,7 +59,7 @@ build() {
     -DCMAKE_SYSTEM_PREFIX_PATH="$(cygpath -ma ${MINGW_SYS_PREFIX})" \
     -DCMAKE_C_FLAGS_RELEASE:STRING="${CFLAGS} ${CPPFLAGS}" \
     -DCMAKE_SHARED_LINKER_FLAGS:STRING="${LDFLAGS}" \
-    -DCMAKE_VERBOSE_MAKEFILE:bool=ON 
+    -DCMAKE_VERBOSE_MAKEFILE:bool=ON
 
   make clean
   make openmj2

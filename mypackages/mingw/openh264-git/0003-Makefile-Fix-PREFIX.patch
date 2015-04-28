@@ -1,17 +1,17 @@
-From daa6ca3a8e8e2889bd2cc9d1245d35f18f396636 Mon Sep 17 00:00:00 2001
+From ab1f18c42bb9b6c572683187fc33ad75aa823db4 Mon Sep 17 00:00:00 2001
 From: Yuta NAKAI <nak5124@live.jp>
 Date: Sat, 24 Jan 2015 02:39:18 +0900
-Subject: [PATCH 4/4] Makefile: Fix PREFIX.
+Subject: [PATCH 3/4] Makefile: Fix PREFIX.
 
 ---
  Makefile | 24 ++++++++++++------------
  1 file changed, 12 insertions(+), 12 deletions(-)
 
 diff --git a/Makefile b/Makefile
-index 22fc4ea..fea448c 100644
+index d4c04a7..dcc2b35 100644
 --- a/Makefile
 +++ b/Makefile
-@@ -228,27 +228,27 @@ $(PROJECT_NAME)-static.pc: $(PROJECT_NAME).pc.in
+@@ -235,27 +235,27 @@ $(PROJECT_NAME)-static.pc: $(PROJECT_NAME).pc.in
  	@sed -e 's;@prefix@;$(PREFIX);' -e 's;@VERSION@;$(VERSION);' -e 's;@LIBS@;$(STATIC_LDFLAGS);' -e 's;@LIBS_PRIVATE@;;' < $(PROJECT_NAME).pc.in > $@
  
  install-headers:
@@ -52,5 +52,5 @@ index 22fc4ea..fea448c 100644
  
  install: install-static-lib install-shared
 -- 
-2.2.2
+2.3.7
 

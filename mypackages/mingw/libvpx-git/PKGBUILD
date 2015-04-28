@@ -3,7 +3,7 @@
 _realname=libvpx
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}-git"
 pkgdesc='The VP8 Codec SDK (mingw-w64)'
-pkgver=1.4.0.13119.2f693be
+pkgver=1.4.0.13179.4feae67
 pkgrel=1
 arch=('any')
 url='http://www.webmproject.org/'
@@ -17,7 +17,7 @@ source=("${_realname}"::'git+http://git.chromium.org/webm/libvpx.git'
 sha512sums=('SKIP'
             '3d8edac3ace46bb5746db0ae0823ee75654e0b44295ea535953fdb9a9544145638eb58ac07ffd5ec13e412ad243e41d66f17ceb5796143cbec770997a7ef1fe0'
             '69dd57bd50b5dfe37f4e6a7884f39c0b49ea7ca05051dedb51c5be13107866673f55aa5cd42e0d3b39252d77ec78e7ddb0466e11bb4bb3c7d758e8f41eb0ff36'
-            'bfee499c82a9f4387ef43ac2a3d9de922dad20af0b86cdadc4a3cf219c3cd52e17081092a2143607d148a72a43d8ac3d4d59c9c92c5f8dba632e5d5dc5d51721')
+            '284ea6f9bfe98605fdf1df28f546db212f494968a1e8282e94a3eb1fc53a385d5eb477863a47ea89de5d9643ea0063c66c0ff3ea151ee094a33c9d6efd76c818')
 
 pkgver() {
   cd "${srcdir}"/$_realname
@@ -59,6 +59,9 @@ build() {
     --as=yasm \
     --disable-codec-srcs \
     --disable-debug-libs \
+    --enable-vp9-highbitdepth \
+    --enable-vp8 \
+    --enable-vp9 \
     --disable-postproc \
     --disable-vp9-postproc \
     --enable-multithread \
@@ -67,6 +70,7 @@ build() {
     --enable-shared \
     --disable-static \
     --enable-multi-res-encoding \
+    --enable-vp9-temporal-denoising \
     --disable-webm-io \
     --disable-libyuv
   sed -i 's|-O3||g' libs-${_target}.mk

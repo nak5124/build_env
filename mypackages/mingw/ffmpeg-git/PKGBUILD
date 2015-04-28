@@ -3,7 +3,7 @@
 _realname=ffmpeg
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}-git"
 pkgdesc='Complete and free Internet live audio and video broadcasting solution (mingw-w64)'
-pkgver=2.6.71393.7f64a75
+pkgver=2.6.71742.e2877bd
 pkgrel=1
 arch=('any')
 url='http://ffmpeg.org/'
@@ -90,10 +90,11 @@ source=("${_realname}"::'git://source.ffmpeg.org/ffmpeg.git'
         '0061-hevc_parser-search-for-a-sps-pps-combination-instead.patch'
         '0062-hevc-ignore-overreads-in-the-VPS-its-not-used-in-the.patch'
         '0063-dca_parser-don-t-overwrite-the-sample-rate-it-may-no.patch'
-        '0064-dca_parser-fix-parsing-of-dts-hd-header-sizes-on-hd-.patch')
+        '0064-dca_parser-fix-parsing-of-dts-hd-header-sizes-on-hd-.patch'
+        '0065-utvideo.patch')
 sha512sums=('SKIP'
             '1f7e3f76a93071940dc1af45a9ebc7a4cd44d28bc4bb183b7011c51f82dcf5cf34f776a10a406b590296b829cafc2b97ed4259d47c4e404663f94b67c8887470'
-            '9170454f5151368a5cb8727813ffaa2825f4cfc0a52a87f1159a27513815b24fb47f3fc12ef49971c6f0e3b43ce50be172030398bfe1e7246e2bedf34e6f68ab'
+            'fd57ad1ab1fe389e0f59e35118bb73b053218cd68c777a7e44ecaa27fb7763810839bb7b6c0dcd61c684e2ae628c386d3dbe7281cb83d09c54279361172febc4'
             '3611dc59fb3d402aee196e9b7aab2a466084fee1226e01b38bde374710b7a83d88c01798af57a95e1509ac2014b65a76c52557287c13435be633a1afe7234acd'
             '47207685e8d030e099b59b3e8634751e115a684a02a6ccf1c43d693972d2c2eec7ed0fb224b9092758227c3e220c8d2c1708c012afd32abb82e678e5dadb4f6e'
             '5bd37c49adc7d4b2ca759aacce3cbf35db17e39863f22883ed78ec6cab6fa8f282954a6972ff23a35987740e16dee9800b3b5681fb7e637ba8d4dfcf3ae7e81b'
@@ -116,7 +117,7 @@ sha512sums=('SKIP'
             'a4f3d8ece84d5f5ddc0531e489fe6662fc56cfbbcce9e5bc857cc96b94a9f7829ed715487619d78cdc23275008e51b44d855f7e590c3a861f445e56f05f33ada'
             '6d44395968c683f9ad9ee3e01fa7659e0dfcc87a93d7357be8d34171f47c3408ae1aa9f96a432ffc3663ffb595e3f0d9c860d4a4961c379c68af8b5d9c9c3281'
             '2c7f3fd5f7fb9f412bcf19aff6be645aff459485d1517d8ecdf4bf409578d972f629b69497648b004e82f8fb8ecac91a030d2764548470ba23bd1930f0fa8e6e'
-            '856c118ce975f9a157c40735a9e8ea25ec077a4a9fc5bb1f4490396dfa3e5e6a405205c4313efc56b8d9fe347014bf389a7add76f066f3e485044d7b0011bacb'
+            'b85ad83e08c1570d354d7b4efc50a9ec127137742d6c7ee3054bd4700f01ff2dd625200f6d9f53bca0b466acf4a9db6617ee5cb8847aa93fb99b39544e7e2579'
             '3eef7fb1f49fa14230d8bb5cd0333739abb81df5bf0e05098589790e0b0250e3e09a7b8e2cd65aa9b697714c4fcfbec99171265210fc17ab229a7b4ae5ef5529'
             '94e1d3a6f83d054f6ea41735b9b294c9eb23a2ca6d995659442b4406e0aa1fc967f6eb8a3dd49e87b54e55b79ce70940eed7a121bea25d5cccfefb47c89a86f8'
             '0c9e047f9663f9df2c79b7391a17a0e3f1156225f92a5339745975ed89cf48674c9dbefdacd7abb9a93449c6662bc7b79334fc541e766a41e2ce4acdf8c7a9a4'
@@ -145,7 +146,7 @@ sha512sums=('SKIP'
             '1b90a214d2a65a7db69ff72081302b2d516d02a93e31209347cc64c08cc644fe222fb96664cb5926aa0b1267f6e7895a42474d626a2a82309d752cc9f4b7a0da'
             '35f1788d8c1ace66c02ecfad3dcdb76c1e242893b6375ea74d00819393e0d24496a9c2476a4211d89a9873e5729c104aca5b49ccabbc977d981387cb43b537b2'
             'aeaca2720fe35322f12106e38cb6b5831f44a10af5a7491cd9f1b6a8612faf0e172bbe788b928d974adce2ab4abad7889d5a53b8a2ad2db96021016ce70e846e'
-            '948f49232f3a6d47c5e7ea1865c1cbbe86162e6069451b98893ffcaa5bfeab31858cba400281d362d74abe52a04bcf3f60b7c89b1f3228b7b92b4ba9d51fdb51'
+            'e8b68556919144d643f4641e5ef429570e44dfe4a5d5c8a9aed3df4af7a86909770ef90dde60bf40392203129f0f72892f79888285e754cb569bcd4df11ee03c'
             '49659eb2b444617243e93207d3e7546cd28bec04ef66eda0b3f66b491bdd8274b2519990a9e0d644838ee843c482e242f03cb22460eb36a5509ef47741b1ddb6'
             'd3dfb1a945677307a78c04530838ab6b658041ca1706ebd22cac12743ddc5a633a5b3295e3b52c8f54d1b502e33ea249d2ccde8d9099b443cabdfef9b4a49d9d'
             'b14e856e131838fe085609f5e5f0b81029b396ea9bfb043cd96dc4c98cc31886558235ea4556f983019305ce814ca7c9ad42a9302d203bda2414a1295c5ac607'
@@ -155,7 +156,8 @@ sha512sums=('SKIP'
             '1f4238e11ee7aa6949af9e2ed67628694054a4075c848254f14b3ea026bf7d5bb767f30bbcb2401e681b5db44dc61a6179c7cac7e775ddcba8c5a996c706fd8a'
             '48f0473d4417c604565857cc6e3ad550acda4a11ba10b8d17caf928342c0d5665e0f35a4952e75dd4005b0558018e5ea4ddbb18b1b2cc328eb72bf14e82cd0de'
             '6a334e9f51a177dfd5e83b5defc15df4ea758c054dd45179589a9281fddf5d3e4ca0d8c4417e07c6007e12186f67977dda2f1941751e45ff80cc680f5c01fd16'
-            '7e0b5489766ac569609fabeb93cc2370785012fa53ad9953c533f4fc4b41e927e2000f32b9f60a755aa08126afb271422573f88543cda8c708a1749dbf5f2fce')
+            '7e0b5489766ac569609fabeb93cc2370785012fa53ad9953c533f4fc4b41e927e2000f32b9f60a755aa08126afb271422573f88543cda8c708a1749dbf5f2fce'
+            '34f8b4cf6bb74dd01cff1f682758c530b2eae1d73c2ac995e2cc05309f25233bdfe66ae9d482685d166a068e1187214f5885a7cd7741329ae9355fff82fb2e85')
 
 pkgver() {
   cd "${srcdir}"/$_realname
@@ -179,7 +181,7 @@ prepare() {
     rm -f compat/windows/dxva_hevc.h
   fi
 
-  local -i _N=64
+  local -i _N=65
   local -i _i
   local _num
   msg2 'Apply patches'
@@ -246,5 +248,5 @@ build() {
 
 package() {
   cd "${srcdir}"/$_realname
-  make DESTDIR="${pkgdir}" install install-man
+  make DESTDIR="${pkgdir}" install install-man V=1
 }

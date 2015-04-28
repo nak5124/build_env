@@ -1,0 +1,28 @@
+From aafe2f247a914bcc0ed30f027c35857093c1a198 Mon Sep 17 00:00:00 2001
+From: Yuta NAKAI <nak5124@live.jp>
+Date: Sat, 11 Apr 2015 12:15:19 +0900
+Subject: [PATCH 3/6] Makefile: Install windows DLL to BINDIR.
+
+---
+ Makefile | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/Makefile b/Makefile
+index d6ee50b..01b5f2c 100644
+--- a/Makefile
++++ b/Makefile
+@@ -129,7 +129,11 @@ dcadec.pc: dcadec.pc.in
+ 
+ install: $(OUT_LIB) $(OUT_DEC) dcadec.pc
+ 	install -d -m 755 $(DESTDIR)$(LIBDIR) $(DESTDIR)$(LIBDIR)/pkgconfig $(DESTDIR)$(INCLUDEDIR)/libdcadec $(DESTDIR)$(BINDIR)
++ifneq ($(and $(CONFIG_WINDOWS),$(CONFIG_SHARED)),)
++	install -m 644 $(OUT_LIB) $(DESTDIR)$(BINDIR)
++else
+ 	install -m 644 $(OUT_LIB) $(DESTDIR)$(LIBDIR)
++endif
+ 	install -m 644 $(INC_LIB) $(DESTDIR)$(INCLUDEDIR)/libdcadec
+ 	install -m 644 dcadec.pc $(DESTDIR)$(LIBDIR)/pkgconfig
+ 	install -m 755 $(OUT_DEC) $(DESTDIR)$(BINDIR)
+-- 
+2.3.7
+

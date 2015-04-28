@@ -1,7 +1,7 @@
-From 413be1e1dbc4a2d6b6cbf90fbf307e36f06e38e8 Mon Sep 17 00:00:00 2001
+From e1f043105e43f8d63f9d6caca2cfde8b576e77cf Mon Sep 17 00:00:00 2001
 From: Yuta NAKAI <nak5124@live.jp>
 Date: Sat, 24 Jan 2015 02:16:23 +0900
-Subject: [PATCH 3/4] build: Use version script.
+Subject: [PATCH 2/4] build: Use version script.
 
 ---
  build/platform-mingw_nt.mk |  2 +-
@@ -39,5 +39,5 @@ index 0000000..f37964f
 +};
 +
 -- 
-2.2.2
+2.3.7
 

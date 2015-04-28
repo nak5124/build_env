@@ -3,8 +3,8 @@
 _realname=toolchain
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
 pkgdesc='MinGW-w64/GCC toolchain'
-pkgver=4.9.2
-pkgrel=7
+pkgver=5.1.0
+pkgrel=1
 arch=('any')
 options=('!strip' 'staticlibs' 'emptydirs')
 install=toolchain-${MINGW_CARCH}.install

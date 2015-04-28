@@ -3,7 +3,7 @@
 _realname=speex
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}-git"
 pkgdesc='A free codec for free speech (mingw-w64)'
-pkgver=1.2rc2.1950.6aab25c
+pkgver=1.2rc2.1952.ecc63b3
 pkgrel=1
 arch=('any')
 url='http://www.speex.org/'

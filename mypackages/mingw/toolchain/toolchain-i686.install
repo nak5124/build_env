@@ -30,6 +30,7 @@ post_install() {
         "gcc-nm-${_gccver}.exe"
         "gcc-ranlib-${_gccver}.exe"
         "gcov-${_gccver}.exe"
+        "gcov-tool-${_gccver}.exe"
     )
 
     pushd mingw32/bin > /dev/null
@@ -99,6 +100,7 @@ pre_remove() {
         "gcc-nm-${_gccver}.exe"
         "gcc-ranlib-${_gccver}.exe"
         "gcov-${_gccver}.exe"
+        "gcov-tool-${_gccver}.exe"
     )
 
     # Automake

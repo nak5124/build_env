@@ -3,20 +3,43 @@
 _realname=dcadec
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}-git"
 pkgdesc='dcadec is a free DTS Coherent Acoustics decoder with support for HD extensions.'
-pkgver=0.0.0.107.082ca35
+pkgver=0.0.0.137.91be2c1
 pkgrel=1
 arch=('any')
 url='https://github.com/foo86/dcadec.git'
 license=('LGPL')
 makedepends=('git')
 depends=("${MINGW_PACKAGE_PREFIX}-toolchain")
-source=("${_realname}"::'git+https://github.com/nak5124/dcadec.git#branch=mingw')
-sha512sums=('SKIP')
+source=("${_realname}"::'git+https://github.com/foo86/dcadec.git'
+        '0001-Makefile-Don-t-set-static-libgcc-on-mingw-systems.patch'
+        '0002-Makefile-Setting-PKG_CONFIG_PATH-in-Makefile-is-nons.patch'
+        '0003-Makefile-Install-windows-DLL-to-BINDIR.patch'
+        '0004-Makefile-On-windows-install-import-library-and-def-f.patch'
+        '0005-Makefile-Install-windows-DLL-with-mode-755.patch'
+        '0006-Makefile-Add-API-version-suffix-to-DLL-Name.patch')
+sha512sums=('SKIP'
+            '835570964edf3e0830ad6dda30d3641c80995833ddf48545202a9a354a2f8374028b3624e7435dbdb030c682d43f947e2da65d7cbd38dddedb9710abec6cf745'
+            'c208ede21b3b4f083a8c22bb44a34cf182d604a53f09a94a11a6fe84a535d24c18ee8cad86e1bdfb0c004b6215c2b1ac4687538e1f57a9de481297ede1ae2449'
+            '3f53fca2882331bae151b96a68de2d18448f0a4e0be1d1484dd6b79401448f374740db8ef9541a5ebd258867ab7a2aa0c07f4847ac7bb507aaec41929e7ac855'
+            'e966ecb0f26ac35e386df815c82b35715c7b397abf6ba294b1e3c1d340b3089dd670fba08b641468e4890e3d2e592eec1a15021473344af93070a49e688b9fd4'
+            '1495b08767c6f1938cc1dc20b83206740861825c56028bacb27542ab8167a2ef3e73ff7b73ea5d1a8c3b763d7250d10ed22d628f0298b2c4d3e2cb26d6b31691'
+            '7095f0b405d309c311945908d61d2cfa99bd9802435c82159c5ce862a94a65db22637a562d9f5ea2a663b9507681fd0da505454800bf2088b6882b10e092e010')
 
 pkgver() {
   cd "${srcdir}"/$_realname
   local _ver=$(grep 'VERSION =' Makefile | awk '{ print $3 }')
   printf "%s.%s.%s" "${_ver}" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
+}
+
+prepare() {
+  cd "${srcdir}"/$_realname
+
+  patch -p1 -i "${srcdir}"/0001-Makefile-Don-t-set-static-libgcc-on-mingw-systems.patch
+  patch -p1 -i "${srcdir}"/0002-Makefile-Setting-PKG_CONFIG_PATH-in-Makefile-is-nons.patch
+  patch -p1 -i "${srcdir}"/0003-Makefile-Install-windows-DLL-to-BINDIR.patch
+  patch -p1 -i "${srcdir}"/0004-Makefile-On-windows-install-import-library-and-def-f.patch
+  patch -p1 -i "${srcdir}"/0005-Makefile-Install-windows-DLL-with-mode-755.patch
+  patch -p1 -i "${srcdir}"/0006-Makefile-Add-API-version-suffix-to-DLL-Name.patch
 }
 
 build() {
@@ -25,6 +48,7 @@ build() {
   make clean
 
   PREFIX=$MINGW_LOCAL_PREFIX \
+  CONFIG_NDEBUG=1 \
   CONFIG_WINDOWS=1 \
   CONFIG_SHARED=1 \
   make
@@ -34,6 +58,7 @@ package() {
   cd "${srcdir}"/$_realname
 
   PREFIX=$MINGW_LOCAL_PREFIX \
+  CONFIG_NDEBUG=1 \
   CONFIG_WINDOWS=1 \
   CONFIG_SHARED=1 \
   DESTDIR="${pkgdir}" \

@@ -1,81 +1,39 @@
-diff --git a/vpx_mem/vpx_mem_tracker.c b/vpx_mem/vpx_mem_tracker.c
-index 613e8a1..7b2dda4 100644
---- a/vpx_mem/vpx_mem_tracker.c
-+++ b/vpx_mem/vpx_mem_tracker.c
-@@ -28,12 +28,12 @@
- # include <lddk.h>
- #endif
+diff --git a/vp9/common/vp9_mvref_common.c b/vp9/common/vp9_mvref_common.c
+index 436be6c..bbbba44 100644
+--- a/vp9/common/vp9_mvref_common.c
++++ b/vp9/common/vp9_mvref_common.c
+@@ -73,7 +73,7 @@ static void find_mv_refs_idx(const VP9_COMMON *cm, const MACROBLOCKD *xd,
+   // on windows platform. The sync here is unncessary if use_perv_frame_mvs
+   // is 0. But after removing it, there will be hang in the unit test on windows
+   // due to several threads waiting for a thread's signal.
+-#if defined(_WIN32) && !HAVE_PTHREAD_H
++#if defined(_WIN32)
+     if (cm->frame_parallel_decode && sync != NULL) {
+       sync(data, mi_row);
+     }
+diff --git a/vp9/common/vp9_thread.h b/vp9/common/vp9_thread.h
+index 12848fe..c24ef5f 100644
+--- a/vp9/common/vp9_thread.h
++++ b/vp9/common/vp9_thread.h
+@@ -28,7 +28,7 @@ extern "C" {
  
--#if HAVE_PTHREAD_H
--# include <pthread.h>
--#elif defined(WIN32) || defined(_WIN32_WCE)
-+#if defined(WIN32) || defined(_WIN32_WCE)
- # define WIN32_LEAN_AND_MEAN
- # include <windows.h>
- # include <winbase.h>
-+#elif HAVE_PTHREAD_H
-+# include <pthread.h>
- #elif defined(VXWORKS)
- # include <sem_lib.h>
- #endif
-@@ -102,10 +102,10 @@ struct memory_tracker {
-   unsigned int current_allocated,
-            max_allocated;
+ #if CONFIG_MULTITHREAD
  
--#if HAVE_PTHREAD_H
--  pthread_mutex_t mutex;
--#elif defined(WIN32) || defined(_WIN32_WCE)
-+#if defined(WIN32) || defined(_WIN32_WCE)
-   HANDLE mutex;
-+#elif HAVE_PTHREAD_H
-+  pthread_mutex_t mutex;
- #elif defined(VXWORKS)
-   SEM_ID mutex;
- #elif defined(NO_MUTEX)
-@@ -171,14 +171,14 @@ int vpx_memory_tracker_init(int padding_size, int pad_value) {
-       memtrack.padding_size = padding_size;
-       memtrack.pad_value    = pad_value;
+-#if defined(_WIN32) && !HAVE_PTHREAD_H
++#if defined(_WIN32)
+ #include <errno.h>  // NOLINT
+ #include <process.h>  // NOLINT
+ #include <windows.h>  // NOLINT
+diff --git a/vp9/decoder/vp9_dthread.c b/vp9/decoder/vp9_dthread.c
+index 96a63bd..758d51e 100644
+--- a/vp9/decoder/vp9_dthread.c
++++ b/vp9/decoder/vp9_dthread.c
+@@ -40,7 +40,7 @@ void vp9_frameworker_signal_stats(VP9Worker *const worker) {
+   FrameWorkerData *const worker_data = worker->data1;
  
--#if HAVE_PTHREAD_H
--      ret = pthread_mutex_init(&memtrack.mutex,
--                               NULL);            /*mutex attributes (NULL=default)*/
--#elif defined(WIN32) || defined(_WIN32_WCE)
-+#if defined(WIN32) || defined(_WIN32_WCE)
-       memtrack.mutex = CreateMutex(NULL,   /*security attributes*/
-                                    FALSE,  /*we don't want initial ownership*/
-                                    NULL);  /*mutex name*/
-       ret = !memtrack.mutex;
-+#elif HAVE_PTHREAD_H
-+      ret = pthread_mutex_init(&memtrack.mutex,
-+                               NULL);            /*mutex attributes (NULL=default)*/
- #elif defined(VXWORKS)
-       memtrack.mutex = sem_bcreate(SEM_Q_FIFO, /*SEM_Q_FIFO non-priority based mutex*/
-                                    SEM_FULL);  /*SEM_FULL initial state is unlocked*/
-@@ -641,10 +641,10 @@ static int memory_tracker_lock_mutex() {
- 
-   if (g_b_mem_tracker_inited) {
- 
--#if HAVE_PTHREAD_H
--    ret = pthread_mutex_lock(&memtrack.mutex);
--#elif defined(WIN32) || defined(_WIN32_WCE)
-+#if defined(WIN32) || defined(_WIN32_WCE)
-     ret = WaitForSingleObject(memtrack.mutex, INFINITE);
-+#elif HAVE_PTHREAD_H
-+    ret = pthread_mutex_lock(&memtrack.mutex);
- #elif defined(VXWORKS)
-     ret = sem_take(memtrack.mutex, WAIT_FOREVER);
- #endif
-@@ -670,10 +670,10 @@ static int memory_tracker_unlock_mutex() {
- 
-   if (g_b_mem_tracker_inited) {
- 
--#if HAVE_PTHREAD_H
--    ret = pthread_mutex_unlock(&memtrack.mutex);
--#elif defined(WIN32) || defined(_WIN32_WCE)
-+#if defined(WIN32) || defined(_WIN32_WCE)
-     ret = !ReleaseMutex(memtrack.mutex);
-+#elif HAVE_PTHREAD_H
-+    ret = pthread_mutex_unlock(&memtrack.mutex);
- #elif defined(VXWORKS)
-     ret = sem_give(memtrack.mutex);
- #endif
+ // TODO(hkuang): Fix the pthread_cond_broadcast in windows wrapper.
+-#if defined(_WIN32) && !HAVE_PTHREAD_H
++#if defined(_WIN32)
+   pthread_cond_signal(&worker_data->stats_cond);
+ #else
+   pthread_cond_broadcast(&worker_data->stats_cond);

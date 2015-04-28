@@ -1,7 +1,7 @@
 # Maintainer: Yuta Nakai <nak5124@live.jp>
 
 pkgname=the_silver_searcher-git
-pkgver=0.29.1.1497.773e96a
+pkgver=0.30.0.1575.c81622c
 pkgrel=1
 pkgdesc='Code searching tool similar to Ack, but faster'
 url='https://github.com/ggreer/the_silver_searcher'
