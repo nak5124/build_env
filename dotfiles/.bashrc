@@ -72,17 +72,14 @@ function addpkg() {
         msys)
             mv -f "${_pkgfile}" ${HOME}/.mypackages/msys
             repo-add ${HOME}/.mypackages/msys/msys_Takuan.db.tar.gz ${HOME}/.mypackages/msys/${_pkgfile##*/}
-            repo-add -f ${HOME}/.mypackages/msys/msys_Takuan.files.tar.gz ${HOME}/.mypackages/msys/${_pkgfile##*/}
             ;;
         mingw32)
             mv -f "${_pkgfile}" ${HOME}/.mypackages/mingw32
             repo-add ${HOME}/.mypackages/mingw32/mingw32_Takuan.db.tar.gz ${HOME}/.mypackages/mingw32/${_pkgfile##*/}
-            repo-add -f ${HOME}/.mypackages/mingw32/mingw32_Takuan.files.tar.gz ${HOME}/.mypackages/mingw32/${_pkgfile##*/}
             ;;
         mingw64)
             mv -f "${_pkgfile}" ${HOME}/.mypackages/mingw64
             repo-add ${HOME}/.mypackages/mingw64/mingw64_Takuan.db.tar.gz ${HOME}/.mypackages/mingw64/${_pkgfile##*/}
-            repo-add -f ${HOME}/.mypackages/mingw64/mingw64_Takuan.files.tar.gz ${HOME}/.mypackages/mingw64/${_pkgfile##*/}
             ;;
         *)
             printf "addpkg: Unknown repository name, '%s'\n" $_reponame
@@ -273,6 +270,14 @@ function nppp() {
     if ! $_exists ; then
         echo notepad++ >> /tmp/win32applist
     fi
+}
+
+# git
+function git_sub_update() {
+    git submodule foreach --recursive git clean -fdx
+    git submodule foreach --recursive git reset --hard
+    git submodule foreach --recursive git fetch --tags
+    git submodule update --init --recursive
 }
 
 # mercurial
