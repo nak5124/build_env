@@ -1,0 +1,167 @@
+From ee46b9d56d15647b159f04a9ca530ad633c94220 Mon Sep 17 00:00:00 2001
+From: Yuta NAKAI <nak5124@live.jp>
+Date: Sun, 19 Apr 2015 21:59:01 +0900
+Subject: [PATCH 5/6] MinGW: Disable automatic image base calculation.
+
+---
+ bfd/configure      | 4 ++--
+ binutils/configure | 4 ++--
+ gas/configure      | 4 ++--
+ gprof/configure    | 4 ++--
+ ld/configure       | 8 ++++----
+ opcodes/configure  | 4 ++--
+ 6 files changed, 14 insertions(+), 14 deletions(-)
+
+diff --git a/bfd/configure b/bfd/configure
+index be53faf..4e6ed47 100755
+--- a/bfd/configure
++++ b/bfd/configure
+@@ -9168,7 +9168,7 @@ _LT_EOF
+       export_symbols_cmds='$NM $libobjs $convenience | $global_symbol_pipe | $SED -e '\''/^[BCDGRS][ ]/s/.*[ ]\([^ ]*\)/\1 DATA/'\'' | $SED -e '\''/^[AITW][ ]/s/.*[ ]//'\'' | sort | uniq > $export_symbols'
+ 
+       if $LD --help 2>&1 | $GREP 'auto-import' > /dev/null; then
+-        archive_cmds='$CC -shared $libobjs $deplibs $compiler_flags -o $output_objdir/$soname ${wl}--enable-auto-image-base -Xlinker --out-implib -Xlinker $lib'
++        archive_cmds='$CC -shared $libobjs $deplibs $compiler_flags -o $output_objdir/$soname ${wl}--disable-auto-image-base -Xlinker --out-implib -Xlinker $lib'
+ 	# If the export-symbols file already is a .def file (1st line
+ 	# is EXPORTS), use it as is; otherwise, prepend...
+ 	archive_expsym_cmds='if test "x`$SED 1q $export_symbols`" = xEXPORTS; then
+@@ -9177,7 +9177,7 @@ _LT_EOF
+ 	  echo EXPORTS > $output_objdir/$soname.def;
+ 	  cat $export_symbols >> $output_objdir/$soname.def;
+ 	fi~
+-	$CC -shared $output_objdir/$soname.def $libobjs $deplibs $compiler_flags -o $output_objdir/$soname ${wl}--enable-auto-image-base -Xlinker --out-implib -Xlinker $lib'
++	$CC -shared $output_objdir/$soname.def $libobjs $deplibs $compiler_flags -o $output_objdir/$soname ${wl}--disable-auto-image-base -Xlinker --out-implib -Xlinker $lib'
+       else
+ 	ld_shlibs=no
+       fi
+diff --git a/binutils/configure b/binutils/configure
+index ec629e6..c18ec8a 100755
+--- a/binutils/configure
++++ b/binutils/configure
+@@ -8966,7 +8966,7 @@ _LT_EOF
+       export_symbols_cmds='$NM $libobjs $convenience | $global_symbol_pipe | $SED -e '\''/^[BCDGRS][ ]/s/.*[ ]\([^ ]*\)/\1 DATA/'\'' | $SED -e '\''/^[AITW][ ]/s/.*[ ]//'\'' | sort | uniq > $export_symbols'
+ 
+       if $LD --help 2>&1 | $GREP 'auto-import' > /dev/null; then
+-        archive_cmds='$CC -shared $libobjs $deplibs $compiler_flags -o $output_objdir/$soname ${wl}--enable-auto-image-base -Xlinker --out-implib -Xlinker $lib'
++        archive_cmds='$CC -shared $libobjs $deplibs $compiler_flags -o $output_objdir/$soname ${wl}--disable-auto-image-base -Xlinker --out-implib -Xlinker $lib'
+ 	# If the export-symbols file already is a .def file (1st line
+ 	# is EXPORTS), use it as is; otherwise, prepend...
+ 	archive_expsym_cmds='if test "x`$SED 1q $export_symbols`" = xEXPORTS; then
+@@ -8975,7 +8975,7 @@ _LT_EOF
+ 	  echo EXPORTS > $output_objdir/$soname.def;
+ 	  cat $export_symbols >> $output_objdir/$soname.def;
+ 	fi~
+-	$CC -shared $output_objdir/$soname.def $libobjs $deplibs $compiler_flags -o $output_objdir/$soname ${wl}--enable-auto-image-base -Xlinker --out-implib -Xlinker $lib'
++	$CC -shared $output_objdir/$soname.def $libobjs $deplibs $compiler_flags -o $output_objdir/$soname ${wl}--disable-auto-image-base -Xlinker --out-implib -Xlinker $lib'
+       else
+ 	ld_shlibs=no
+       fi
+diff --git a/gas/configure b/gas/configure
+index cb33d03..5aebff2 100755
+--- a/gas/configure
++++ b/gas/configure
+@@ -8714,7 +8714,7 @@ _LT_EOF
+       export_symbols_cmds='$NM $libobjs $convenience | $global_symbol_pipe | $SED -e '\''/^[BCDGRS][ ]/s/.*[ ]\([^ ]*\)/\1 DATA/'\'' | $SED -e '\''/^[AITW][ ]/s/.*[ ]//'\'' | sort | uniq > $export_symbols'
+ 
+       if $LD --help 2>&1 | $GREP 'auto-import' > /dev/null; then
+-        archive_cmds='$CC -shared $libobjs $deplibs $compiler_flags -o $output_objdir/$soname ${wl}--enable-auto-image-base -Xlinker --out-implib -Xlinker $lib'
++        archive_cmds='$CC -shared $libobjs $deplibs $compiler_flags -o $output_objdir/$soname ${wl}--disable-auto-image-base -Xlinker --out-implib -Xlinker $lib'
+ 	# If the export-symbols file already is a .def file (1st line
+ 	# is EXPORTS), use it as is; otherwise, prepend...
+ 	archive_expsym_cmds='if test "x`$SED 1q $export_symbols`" = xEXPORTS; then
+@@ -8723,7 +8723,7 @@ _LT_EOF
+ 	  echo EXPORTS > $output_objdir/$soname.def;
+ 	  cat $export_symbols >> $output_objdir/$soname.def;
+ 	fi~
+-	$CC -shared $output_objdir/$soname.def $libobjs $deplibs $compiler_flags -o $output_objdir/$soname ${wl}--enable-auto-image-base -Xlinker --out-implib -Xlinker $lib'
++	$CC -shared $output_objdir/$soname.def $libobjs $deplibs $compiler_flags -o $output_objdir/$soname ${wl}--disable-auto-image-base -Xlinker --out-implib -Xlinker $lib'
+       else
+ 	ld_shlibs=no
+       fi
+diff --git a/gprof/configure b/gprof/configure
+index 80c9aaf..a114f76 100755
+--- a/gprof/configure
++++ b/gprof/configure
+@@ -8642,7 +8642,7 @@ _LT_EOF
+       export_symbols_cmds='$NM $libobjs $convenience | $global_symbol_pipe | $SED -e '\''/^[BCDGRS][ ]/s/.*[ ]\([^ ]*\)/\1 DATA/'\'' | $SED -e '\''/^[AITW][ ]/s/.*[ ]//'\'' | sort | uniq > $export_symbols'
+ 
+       if $LD --help 2>&1 | $GREP 'auto-import' > /dev/null; then
+-        archive_cmds='$CC -shared $libobjs $deplibs $compiler_flags -o $output_objdir/$soname ${wl}--enable-auto-image-base -Xlinker --out-implib -Xlinker $lib'
++        archive_cmds='$CC -shared $libobjs $deplibs $compiler_flags -o $output_objdir/$soname ${wl}--disable-auto-image-base -Xlinker --out-implib -Xlinker $lib'
+ 	# If the export-symbols file already is a .def file (1st line
+ 	# is EXPORTS), use it as is; otherwise, prepend...
+ 	archive_expsym_cmds='if test "x`$SED 1q $export_symbols`" = xEXPORTS; then
+@@ -8651,7 +8651,7 @@ _LT_EOF
+ 	  echo EXPORTS > $output_objdir/$soname.def;
+ 	  cat $export_symbols >> $output_objdir/$soname.def;
+ 	fi~
+-	$CC -shared $output_objdir/$soname.def $libobjs $deplibs $compiler_flags -o $output_objdir/$soname ${wl}--enable-auto-image-base -Xlinker --out-implib -Xlinker $lib'
++	$CC -shared $output_objdir/$soname.def $libobjs $deplibs $compiler_flags -o $output_objdir/$soname ${wl}--disable-auto-image-base -Xlinker --out-implib -Xlinker $lib'
+       else
+ 	ld_shlibs=no
+       fi
+diff --git a/ld/configure b/ld/configure
+index a558d28..b1ded00 100755
+--- a/ld/configure
++++ b/ld/configure
+@@ -9458,7 +9458,7 @@ _LT_EOF
+       export_symbols_cmds='$NM $libobjs $convenience | $global_symbol_pipe | $SED -e '\''/^[BCDGRS][ ]/s/.*[ ]\([^ ]*\)/\1 DATA/'\'' | $SED -e '\''/^[AITW][ ]/s/.*[ ]//'\'' | sort | uniq > $export_symbols'
+ 
+       if $LD --help 2>&1 | $GREP 'auto-import' > /dev/null; then
+-        archive_cmds='$CC -shared $libobjs $deplibs $compiler_flags -o $output_objdir/$soname ${wl}--enable-auto-image-base -Xlinker --out-implib -Xlinker $lib'
++        archive_cmds='$CC -shared $libobjs $deplibs $compiler_flags -o $output_objdir/$soname ${wl}--disable-auto-image-base -Xlinker --out-implib -Xlinker $lib'
+ 	# If the export-symbols file already is a .def file (1st line
+ 	# is EXPORTS), use it as is; otherwise, prepend...
+ 	archive_expsym_cmds='if test "x`$SED 1q $export_symbols`" = xEXPORTS; then
+@@ -9467,7 +9467,7 @@ _LT_EOF
+ 	  echo EXPORTS > $output_objdir/$soname.def;
+ 	  cat $export_symbols >> $output_objdir/$soname.def;
+ 	fi~
+-	$CC -shared $output_objdir/$soname.def $libobjs $deplibs $compiler_flags -o $output_objdir/$soname ${wl}--enable-auto-image-base -Xlinker --out-implib -Xlinker $lib'
++	$CC -shared $output_objdir/$soname.def $libobjs $deplibs $compiler_flags -o $output_objdir/$soname ${wl}--disable-auto-image-base -Xlinker --out-implib -Xlinker $lib'
+       else
+ 	ld_shlibs=no
+       fi
+@@ -12678,7 +12678,7 @@ if test -z "$aix_libpath"; then aix_libpath="/usr/lib:/lib"; fi
+         enable_shared_with_static_runtimes_CXX=yes
+ 
+         if $LD --help 2>&1 | $GREP 'auto-import' > /dev/null; then
+-          archive_cmds_CXX='$CC -shared -nostdlib $predep_objects $libobjs $deplibs $postdep_objects $compiler_flags -o $output_objdir/$soname ${wl}--enable-auto-image-base -Xlinker --out-implib -Xlinker $lib'
++          archive_cmds_CXX='$CC -shared -nostdlib $predep_objects $libobjs $deplibs $postdep_objects $compiler_flags -o $output_objdir/$soname ${wl}--disable-auto-image-base -Xlinker --out-implib -Xlinker $lib'
+           # If the export-symbols file already is a .def file (1st line
+           # is EXPORTS), use it as is; otherwise, prepend...
+           archive_expsym_cmds_CXX='if test "x`$SED 1q $export_symbols`" = xEXPORTS; then
+@@ -12687,7 +12687,7 @@ if test -z "$aix_libpath"; then aix_libpath="/usr/lib:/lib"; fi
+ 	    echo EXPORTS > $output_objdir/$soname.def;
+ 	    cat $export_symbols >> $output_objdir/$soname.def;
+           fi~
+-          $CC -shared -nostdlib $output_objdir/$soname.def $predep_objects $libobjs $deplibs $postdep_objects $compiler_flags -o $output_objdir/$soname ${wl}--enable-auto-image-base -Xlinker --out-implib -Xlinker $lib'
++          $CC -shared -nostdlib $output_objdir/$soname.def $predep_objects $libobjs $deplibs $postdep_objects $compiler_flags -o $output_objdir/$soname ${wl}--disable-auto-image-base -Xlinker --out-implib -Xlinker $lib'
+         else
+           ld_shlibs_CXX=no
+         fi
+diff --git a/opcodes/configure b/opcodes/configure
+index f479a0b..86bfbbc 100755
+--- a/opcodes/configure
++++ b/opcodes/configure
+@@ -8891,7 +8891,7 @@ _LT_EOF
+       export_symbols_cmds='$NM $libobjs $convenience | $global_symbol_pipe | $SED -e '\''/^[BCDGRS][ ]/s/.*[ ]\([^ ]*\)/\1 DATA/'\'' | $SED -e '\''/^[AITW][ ]/s/.*[ ]//'\'' | sort | uniq > $export_symbols'
+ 
+       if $LD --help 2>&1 | $GREP 'auto-import' > /dev/null; then
+-        archive_cmds='$CC -shared $libobjs $deplibs $compiler_flags -o $output_objdir/$soname ${wl}--enable-auto-image-base -Xlinker --out-implib -Xlinker $lib'
++        archive_cmds='$CC -shared $libobjs $deplibs $compiler_flags -o $output_objdir/$soname ${wl}--disable-auto-image-base -Xlinker --out-implib -Xlinker $lib'
+ 	# If the export-symbols file already is a .def file (1st line
+ 	# is EXPORTS), use it as is; otherwise, prepend...
+ 	archive_expsym_cmds='if test "x`$SED 1q $export_symbols`" = xEXPORTS; then
+@@ -8900,7 +8900,7 @@ _LT_EOF
+ 	  echo EXPORTS > $output_objdir/$soname.def;
+ 	  cat $export_symbols >> $output_objdir/$soname.def;
+ 	fi~
+-	$CC -shared $output_objdir/$soname.def $libobjs $deplibs $compiler_flags -o $output_objdir/$soname ${wl}--enable-auto-image-base -Xlinker --out-implib -Xlinker $lib'
++	$CC -shared $output_objdir/$soname.def $libobjs $deplibs $compiler_flags -o $output_objdir/$soname ${wl}--disable-auto-image-base -Xlinker --out-implib -Xlinker $lib'
+       else
+ 	ld_shlibs=no
+       fi
+-- 
+2.3.5
+

@@ -1,6 +1,20 @@
---- gcc-4.9.2/gcc/configure.old	2014-10-28 17:24:01.617499900 +0900
-+++ gcc-4.9.2/gcc/configure	2014-10-28 17:49:05.424557600 +0900
-@@ -9892,9 +9892,9 @@
+From 646dc55dd7b515bd4529327fbdf4dce5608be941 Mon Sep 17 00:00:00 2001
+From: Yuta NAKAI <nak5124@live.jp>
+Date: Sun, 12 Apr 2015 14:40:59 +0900
+Subject: [PATCH 10/17] mingw: Dynamically linking to libintl and libiconv.
+
+---
+ gcc/configure          |  8 ++++----
+ intl/configure         | 16 ++++++++--------
+ libcpp/configure       |  8 ++++----
+ libstdc++-v3/configure |  8 ++++----
+ 4 files changed, 20 insertions(+), 20 deletions(-)
+
+diff --git a/gcc/configure b/gcc/configure
+index 9523773..98bfa54 100755
+--- a/gcc/configure
++++ b/gcc/configure
+@@ -10095,9 +10095,9 @@ fi
                  found_la="$additional_libdir/lib$name.la"
                fi
              else
@@ -12,7 +26,7 @@
                  if test -f "$additional_libdir/lib$name.la"; then
                    found_la="$additional_libdir/lib$name.la"
                  fi
-@@ -9922,9 +9922,9 @@
+@@ -10125,9 +10125,9 @@ fi
                        found_la="$dir/lib$name.la"
                      fi
                    else
@@ -24,9 +38,11 @@
                        if test -f "$dir/lib$name.la"; then
                          found_la="$dir/lib$name.la"
                        fi
---- gcc-4.9.2/intl/configure.old	2010-09-28 05:19:41.000000000 +0900
-+++ gcc-4.9.2/intl/configure	2014-10-28 17:49:05.438558400 +0900
-@@ -5097,9 +5097,9 @@
+diff --git a/intl/configure b/intl/configure
+index 34da38b..4578bdb 100755
+--- a/intl/configure
++++ b/intl/configure
+@@ -5097,9 +5097,9 @@ fi
                  found_la="$additional_libdir/lib$name.la"
                fi
              else
@@ -38,7 +54,7 @@
                  if test -f "$additional_libdir/lib$name.la"; then
                    found_la="$additional_libdir/lib$name.la"
                  fi
-@@ -5127,9 +5127,9 @@
+@@ -5127,9 +5127,9 @@ fi
                        found_la="$dir/lib$name.la"
                      fi
                    else
@@ -50,7 +66,7 @@
                        if test -f "$dir/lib$name.la"; then
                          found_la="$dir/lib$name.la"
                        fi
-@@ -5889,9 +5889,9 @@
+@@ -5889,9 +5889,9 @@ fi
                  found_la="$additional_libdir/lib$name.la"
                fi
              else
@@ -62,7 +78,7 @@
                  if test -f "$additional_libdir/lib$name.la"; then
                    found_la="$additional_libdir/lib$name.la"
                  fi
-@@ -5919,9 +5919,9 @@
+@@ -5919,9 +5919,9 @@ fi
                        found_la="$dir/lib$name.la"
                      fi
                    else
@@ -74,9 +90,11 @@
                        if test -f "$dir/lib$name.la"; then
                          found_la="$dir/lib$name.la"
                        fi
---- gcc-4.9.2/libcpp/configure.old	2014-10-23 20:12:54.000000000 +0900
-+++ gcc-4.9.2/libcpp/configure	2014-10-28 17:49:05.451559100 +0900
-@@ -6605,9 +6605,9 @@
+diff --git a/libcpp/configure b/libcpp/configure
+index 096ac8b..284dbf8 100755
+--- a/libcpp/configure
++++ b/libcpp/configure
+@@ -6674,9 +6674,9 @@ fi
                  found_la="$additional_libdir/lib$name.la"
                fi
              else
@@ -88,7 +106,7 @@
                  if test -f "$additional_libdir/lib$name.la"; then
                    found_la="$additional_libdir/lib$name.la"
                  fi
-@@ -6635,9 +6635,9 @@
+@@ -6704,9 +6704,9 @@ fi
                        found_la="$dir/lib$name.la"
                      fi
                    else
@@ -100,9 +118,11 @@
                        if test -f "$dir/lib$name.la"; then
                          found_la="$dir/lib$name.la"
                        fi
---- gcc-4.9.2/libstdc++-v3/configure.old	2014-03-21 03:57:07.000000000 +0900
-+++ gcc-4.9.2/libstdc++-v3/configure	2014-10-28 17:49:05.503562100 +0900
-@@ -27275,9 +27275,9 @@
+diff --git a/libstdc++-v3/configure b/libstdc++-v3/configure
+index f5b28f4..099db53 100755
+--- a/libstdc++-v3/configure
++++ b/libstdc++-v3/configure
+@@ -27385,9 +27385,9 @@ fi
                  found_la="$additional_libdir/lib$name.la"
                fi
              else
@@ -114,7 +134,7 @@
                  if test -f "$additional_libdir/lib$name.la"; then
                    found_la="$additional_libdir/lib$name.la"
                  fi
-@@ -27305,9 +27305,9 @@
+@@ -27415,9 +27415,9 @@ fi
                        found_la="$dir/lib$name.la"
                      fi
                    else
@@ -126,3 +146,6 @@
                        if test -f "$dir/lib$name.la"; then
                          found_la="$dir/lib$name.la"
                        fi
+-- 
+2.3.5
+

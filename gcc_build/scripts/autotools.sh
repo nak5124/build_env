@@ -330,12 +330,16 @@ function build_automake() {
         printf "===> Copying Automake %s to %s/mingw%s...\n" $_arch $DST_DIR $_bitval
         cp -fra ${PREIN_DIR}/autotools/automake/mingw$_bitval $DST_DIR
         # Create symlinks.
-        if [ "${AUTOMAKE_VER}" != "git" ] && ${create_symlinks:-false}; then
-            printf "===> Creating symlinks %s...\n" $_arch
-            pushd ${DST_DIR}/mingw${_bitval}/bin > /dev/null
-            ln -fsr ./automake-$AUTOMAKE_VER ./automake
-            ln -fsr ./aclocal-$AUTOMAKE_VER ./aclocal
-            popd > /dev/null
+        if [ "${AUTOMAKE_VER}" != "git" ]; then
+            if ${create_symlinks:-false}; then
+                printf "===> Creating symlinks %s...\n" $_arch
+                pushd ${DST_DIR}/mingw${_bitval}/bin > /dev/null
+                ln -fsr ./automake-$AUTOMAKE_VER ./automake
+                ln -fsr ./aclocal-$AUTOMAKE_VER ./aclocal
+                popd > /dev/null
+            else
+                rm -f ${DST_DIR}/mingw${_bitval}/bin/{aclocal,automake}
+            fi
         fi
         echo "done"
     done

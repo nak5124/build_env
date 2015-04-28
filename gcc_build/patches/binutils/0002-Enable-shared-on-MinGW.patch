@@ -1,5 +1,32 @@
+From 3b823f94146a389d8be588f5737d1a26e244e039 Mon Sep 17 00:00:00 2001
+From: Yuta NAKAI <nak5124@live.jp>
+Date: Sun, 19 Apr 2015 21:44:15 +0900
+Subject: [PATCH 2/6] Enable shared on MinGW.
+
+---
+ bfd/Makefile.am        |  7 +++++--
+ bfd/Makefile.in        |  5 ++++-
+ binutils/Makefile.am   | 40 ++++++++++++++++++++--------------------
+ binutils/Makefile.in   | 40 ++++++++++++++++++++--------------------
+ binutils/configure     |  8 ++++----
+ gas/Makefile.am        |  2 +-
+ gas/Makefile.in        |  5 +++--
+ intl/configure         | 16 ++++++++--------
+ intl/localcharset.c    |  4 ++++
+ intl/localcharset.h    |  7 ++++++-
+ ld/Makefile.am         | 12 ++++++------
+ ld/Makefile.in         | 12 ++++++------
+ libiberty/Makefile.in  | 13 ++++++-------
+ libiberty/configure    | 16 +---------------
+ libiberty/configure.ac |  6 +-----
+ opcodes/Makefile.am    |  2 +-
+ opcodes/Makefile.in    |  3 ++-
+ opcodes/configure      |  8 +++++++-
+ opcodes/configure.ac   |  8 +++++++-
+ 19 files changed, 112 insertions(+), 102 deletions(-)
+
 diff --git a/bfd/Makefile.am b/bfd/Makefile.am
-index 6f64f06..55f88e7 100644
+index 03b6442..8b2a25b 100644
 --- a/bfd/Makefile.am
 +++ b/bfd/Makefile.am
 @@ -27,7 +27,7 @@ SUBDIRS = doc po
@@ -11,7 +38,7 @@ index 6f64f06..55f88e7 100644
  if INSTALL_LIBBFD
  bfdlibdir = @bfdlibdir@
  bfdincludedir = @bfdincludedir@
-@@ -823,6 +823,8 @@ stamp-ofiles: Makefile
+@@ -839,6 +839,8 @@ stamp-ofiles: Makefile
  
  ofiles: stamp-ofiles ; @true
  
@@ -20,7 +47,7 @@ index 6f64f06..55f88e7 100644
  # Since BFD64_LIBS is optional and we can't have substitution in
  # libbfd_la_SOURCES, we put BFD64_LIBS in OFILES instead.
  # However, list all sources in EXTRA_libbfd_la_SOURCES so the
-@@ -831,7 +833,8 @@ libbfd_la_SOURCES = $(BFD32_LIBS_CFILES)
+@@ -847,7 +849,8 @@ libbfd_la_SOURCES = $(BFD32_LIBS_CFILES)
  EXTRA_libbfd_la_SOURCES = $(CFILES)
  libbfd_la_DEPENDENCIES = $(OFILES) ofiles
  libbfd_la_LIBADD = `cat ofiles` @SHARED_LIBADD@ $(LIBDL) $(ZLIB)
@@ -31,10 +58,10 @@ index 6f64f06..55f88e7 100644
  # libtool will build .libs/libbfd.a.  We create libbfd.a in the build
  # directory so that we don't have to convert all the programs that use
 diff --git a/bfd/Makefile.in b/bfd/Makefile.in
-index 2c385d5..18e6866 100644
+index aac3eb2..440d9db 100644
 --- a/bfd/Makefile.in
 +++ b/bfd/Makefile.in
-@@ -341,8 +341,9 @@ INCDIR = $(srcdir)/../include
+@@ -343,8 +343,9 @@ INCDIR = $(srcdir)/../include
  CSEARCH = -I. -I$(srcdir) -I$(INCDIR)
  SUBDIRS = doc po
  bfddocdir = doc
@@ -45,7 +72,7 @@ index 2c385d5..18e6866 100644
  @INSTALL_LIBBFD_TRUE@bfdlib_LTLIBRARIES = libbfd.la
  @INSTALL_LIBBFD_FALSE@bfdinclude_HEADERS = $(am__append_2)
  @INSTALL_LIBBFD_TRUE@bfdinclude_HEADERS = $(BFD_H) \
-@@ -1097,6 +1098,8 @@ BLD_POTFILES = $(BUILD_CFILES) $(BUILD_HFILES)
+@@ -1115,6 +1116,8 @@ BLD_POTFILES = $(BUILD_CFILES) $(BUILD_HFILES)
  # bfd64_libs	Routines for 64bit support
  OFILES = $(BFD_BACKENDS) $(BFD_MACHINES) @COREFILE@ @bfd64_libs@
  
@@ -55,10 +82,10 @@ index 2c385d5..18e6866 100644
  # libbfd_la_SOURCES, we put BFD64_LIBS in OFILES instead.
  # However, list all sources in EXTRA_libbfd_la_SOURCES so the
 diff --git a/binutils/Makefile.am b/binutils/Makefile.am
-index 7f5f0c4..5b06f7c 100644
+index b55dbd6..60c2372 100644
 --- a/binutils/Makefile.am
 +++ b/binutils/Makefile.am
-@@ -198,30 +198,30 @@ installcheck-local:
+@@ -204,30 +204,30 @@ installcheck-local:
  # There's no global DEPENDENCIES.  So, we must explicitly list everything
  # which depends on libintl, since we don't know whether LIBINTL_DEP will be
  # non-empty until configure time.  Ugh!
@@ -110,10 +137,10 @@ index 7f5f0c4..5b06f7c 100644
  size_SOURCES = size.c $(BULIBS)
  
 diff --git a/binutils/Makefile.in b/binutils/Makefile.in
-index c6e0003..18c0d17 100644
+index 2c4d81b..c470794 100644
 --- a/binutils/Makefile.in
 +++ b/binutils/Makefile.in
-@@ -548,29 +548,29 @@ CC_FOR_TARGET = ` \
+@@ -555,29 +555,29 @@ CC_FOR_TARGET = ` \
  # There's no global DEPENDENCIES.  So, we must explicitly list everything
  # which depends on libintl, since we don't know whether LIBINTL_DEP will be
  # non-empty until configure time.  Ugh!
@@ -164,10 +191,10 @@ index c6e0003..18c0d17 100644
  objcopy_SOURCES = objcopy.c not-strip.c rename.c $(WRITE_DEBUG_SRCS) $(BULIBS)
  strings_SOURCES = strings.c $(BULIBS)
 diff --git a/binutils/configure b/binutils/configure
-index 39b8254..b1a098d 100755
+index 5db82d7..ec629e6 100755
 --- a/binutils/configure
 +++ b/binutils/configure
-@@ -13593,9 +13593,9 @@ fi
+@@ -13838,9 +13838,9 @@ fi
                  found_la="$additional_libdir/lib$name.la"
                fi
              else
@@ -179,7 +206,7 @@ index 39b8254..b1a098d 100755
                  if test -f "$additional_libdir/lib$name.la"; then
                    found_la="$additional_libdir/lib$name.la"
                  fi
-@@ -13623,9 +13623,9 @@ fi
+@@ -13868,9 +13868,9 @@ fi
                        found_la="$dir/lib$name.la"
                      fi
                    else
@@ -192,10 +219,10 @@ index 39b8254..b1a098d 100755
                          found_la="$dir/lib$name.la"
                        fi
 diff --git a/gas/Makefile.am b/gas/Makefile.am
-index 55c86b2..924d242 100644
+index 5161b5e..4e82cc7 100644
 --- a/gas/Makefile.am
 +++ b/gas/Makefile.am
-@@ -388,7 +388,7 @@ AM_CPPFLAGS = -I. -I$(srcdir) -I../bfd -I$(srcdir)/config \
+@@ -397,7 +397,7 @@ AM_CPPFLAGS = -I. -I$(srcdir) -I../bfd -I$(srcdir)/config \
  # How to link with both our special library facilities
  # and the system's installed libraries.
  
@@ -205,7 +232,7 @@ index 55c86b2..924d242 100644
  # Files to be copied away after each stage in building.
  STAGESTUFF = *.@OBJEXT@ $(noinst_PROGRAMS)
 diff --git a/gas/Makefile.in b/gas/Makefile.in
-index 5dc250f..8b3dd68 100644
+index 1efdb5c..dafa5e5 100644
 --- a/gas/Makefile.in
 +++ b/gas/Makefile.in
 @@ -104,7 +104,8 @@ am__objects_1 = app.$(OBJEXT) as.$(OBJEXT) atof-generic.$(OBJEXT) \
@@ -218,7 +245,7 @@ index 5dc250f..8b3dd68 100644
  am_itbl_test_OBJECTS = itbl-parse.$(OBJEXT) itbl-lex.$(OBJEXT)
  itbl_test_OBJECTS = $(am_itbl_test_OBJECTS)
  itbl_test_DEPENDENCIES = itbl-tops.@OBJEXT@ itbl-test.@OBJEXT@ \
-@@ -647,7 +648,7 @@ AM_CPPFLAGS = -I. -I$(srcdir) -I../bfd -I$(srcdir)/config \
+@@ -658,7 +659,7 @@ AM_CPPFLAGS = -I. -I$(srcdir) -I../bfd -I$(srcdir)/config \
  
  # How to link with both our special library facilities
  # and the system's installed libraries.
@@ -313,10 +340,10 @@ index 47b21a0..da588f5 100644
  
  #ifdef __cplusplus
 diff --git a/ld/Makefile.am b/ld/Makefile.am
-index 9575f1f..d98bec0 100644
+index 99e6fb1..108a0c6 100644
 --- a/ld/Makefile.am
 +++ b/ld/Makefile.am
-@@ -1960,8 +1960,8 @@ ld_new_SOURCES = ldgram.y ldlex-wrapper.c lexsup.c ldlang.c mri.c ldctor.c ldmai
+@@ -2001,8 +2001,8 @@ ld_new_SOURCES = ldgram.y ldlex-wrapper.c lexsup.c ldlang.c mri.c ldctor.c ldmai
  	ldwrite.c ldexp.c ldemul.c ldver.c ldmisc.c ldfile.c ldcref.c $(PLUGIN_C) \
  	ldbuildid.c
  ld_new_DEPENDENCIES = $(EMULATION_OFILES) $(EMUL_EXTRA_OFILES) \
@@ -327,7 +354,7 @@ index 9575f1f..d98bec0 100644
  
  # Dependency tracking for the generated emulation files.
  EXTRA_ld_new_SOURCES += $(ALL_EMULATION_SOURCES) $(ALL_64_EMULATION_SOURCES)
-@@ -1994,16 +1994,16 @@ check-DEJAGNU: site.exp
+@@ -2035,16 +2035,16 @@ check-DEJAGNU: site.exp
  ld-partial.@OBJEXT@: ld-new$(EXEEXT)
  	./ld-new$(EXEEXT) $(HOSTING_EMU) -o ld-partial.@OBJEXT@ -r $(OFILES)
  ld1$(EXEEXT): ld-partial.@OBJEXT@
@@ -349,10 +376,10 @@ index 9575f1f..d98bec0 100644
  bootstrap: ld3$(EXEEXT)
  	cmp ld2$(EXEEXT) ld3$(EXEEXT)
 diff --git a/ld/Makefile.in b/ld/Makefile.in
-index 9f56ca1..14d095b 100644
+index bc874f1..9f17c60 100644
 --- a/ld/Makefile.in
 +++ b/ld/Makefile.in
-@@ -849,9 +849,9 @@ ld_new_SOURCES = ldgram.y ldlex-wrapper.c lexsup.c ldlang.c mri.c ldctor.c ldmai
+@@ -883,9 +883,9 @@ ld_new_SOURCES = ldgram.y ldlex-wrapper.c lexsup.c ldlang.c mri.c ldctor.c ldmai
  	ldbuildid.c
  
  ld_new_DEPENDENCIES = $(EMULATION_OFILES) $(EMUL_EXTRA_OFILES) \
@@ -364,7 +391,7 @@ index 9f56ca1..14d095b 100644
  
  # A test program for C++ constructors and destructors.
  # This test is now in the testsuite.
-@@ -3416,16 +3416,16 @@ check-DEJAGNU: site.exp
+@@ -3514,16 +3514,16 @@ check-DEJAGNU: site.exp
  ld-partial.@OBJEXT@: ld-new$(EXEEXT)
  	./ld-new$(EXEEXT) $(HOSTING_EMU) -o ld-partial.@OBJEXT@ -r $(OFILES)
  ld1$(EXEEXT): ld-partial.@OBJEXT@
@@ -386,7 +413,7 @@ index 9f56ca1..14d095b 100644
  bootstrap: ld3$(EXEEXT)
  	cmp ld2$(EXEEXT) ld3$(EXEEXT)
 diff --git a/libiberty/Makefile.in b/libiberty/Makefile.in
-index 1b0d8ae..c2e0e5b 100644
+index f06cc69..a74649c 100644
 --- a/libiberty/Makefile.in
 +++ b/libiberty/Makefile.in
 @@ -130,7 +130,7 @@ CFILES = alloca.c argv.c asprintf.c atexit.c				\
@@ -410,7 +437,7 @@ index 1b0d8ae..c2e0e5b 100644
  	xasprintf.c xatexit.c xexit.c xmalloc.c xmemdup.c xstrdup.c	\
  	 xstrerror.c xstrndup.c xvasprintf.c
  
-@@ -172,7 +172,7 @@ REQUIRED_OFILES =							\
+@@ -173,7 +172,7 @@ REQUIRED_OFILES =							\
  	./fdmatch.$(objext) ./fibheap.$(objext)				\
  	./filename_cmp.$(objext) ./floatformat.$(objext)		\
  	./fnmatch.$(objext) ./fopen_unlocked.$(objext)			\
@@ -419,7 +446,7 @@ index 1b0d8ae..c2e0e5b 100644
  	./getruntime.$(objext) ./hashtab.$(objext) ./hex.$(objext)	\
  	./lbasename.$(objext) ./lrealpath.$(objext)			\
  	./make-relative-prefix.$(objext) ./make-temp-file.$(objext)	\
-@@ -221,9 +221,9 @@ CONFIGURED_OFILES = ./asprintf.$(objext) ./atexit.$(objext)		\
+@@ -223,9 +222,9 @@ CONFIGURED_OFILES = ./asprintf.$(objext) ./atexit.$(objext)		\
  	 ./strrchr.$(objext) ./strstr.$(objext) ./strtod.$(objext)	\
  	 ./strtol.$(objext) ./strtoul.$(objext) strtoll.$(objext)	\
  	./strtoull.$(objext) ./tmpnam.$(objext) ./strverscmp.$(objext)	\
@@ -432,7 +459,7 @@ index 1b0d8ae..c2e0e5b 100644
  # These files are installed if the library has been configured to do so.
  INSTALLED_HEADERS =                                                     \
 diff --git a/libiberty/configure b/libiberty/configure
-index 4a5e40a..1e7fcd8 100755
+index 2007ecc..c7e1074 100755
 --- a/libiberty/configure
 +++ b/libiberty/configure
 @@ -5472,7 +5472,6 @@ funcs="$funcs vfprintf"
@@ -480,7 +507,7 @@ index 4a5e40a..1e7fcd8 100755
  esac
  
 diff --git a/libiberty/configure.ac b/libiberty/configure.ac
-index 90adaea..945e967 100644
+index 922aa86..fe96320 100644
 --- a/libiberty/configure.ac
 +++ b/libiberty/configure.ac
 @@ -380,7 +380,6 @@ funcs="$funcs vfprintf"
@@ -518,10 +545,10 @@ index 90adaea..945e967 100644
    if test $ac_cv_func_vprintf != yes \
       || test $ac_cv_func_vfprintf != yes \
 diff --git a/opcodes/Makefile.am b/opcodes/Makefile.am
-index 4acc436..46f9763 100644
+index 4adc6ff..4d41361 100644
 --- a/opcodes/Makefile.am
 +++ b/opcodes/Makefile.am
-@@ -320,7 +320,7 @@ libopcodes_la_SOURCES =  dis-buf.c disassemble.c dis-init.c
+@@ -324,7 +324,7 @@ libopcodes_la_SOURCES =  dis-buf.c disassemble.c dis-init.c
  # hardcoded path to libbfd.so instead of relying on the entries in libbfd.la.
  libopcodes_la_DEPENDENCIES = $(OFILES) @SHARED_DEPENDENCIES@
  libopcodes_la_LIBADD = $(OFILES) @SHARED_LIBADD@
@@ -531,10 +558,10 @@ index 4acc436..46f9763 100644
  EXTRA_libopcodes_la_SOURCES = $(LIBOPCODES_CFILES)
  
 diff --git a/opcodes/Makefile.in b/opcodes/Makefile.in
-index 46ef017..8654aff 100644
+index 0bc3e16..3c3f53c 100644
 --- a/opcodes/Makefile.in
 +++ b/opcodes/Makefile.in
-@@ -319,8 +319,9 @@ COMPILE_FOR_BUILD = $(CC_FOR_BUILD) $(INCLUDES) $(AM_CPPFLAGS) \
+@@ -318,8 +318,9 @@ COMPILE_FOR_BUILD = $(CC_FOR_BUILD) $(INCLUDES) $(AM_CPPFLAGS) \
  LINK_FOR_BUILD = $(CC_FOR_BUILD) $(CFLAGS_FOR_BUILD) \
  	$(LDFLAGS_FOR_BUILD) -o $@
  
@@ -546,7 +573,7 @@ index 46ef017..8654aff 100644
  @INSTALL_LIBBFD_TRUE@bfdinclude_DATA = $(INCDIR)/dis-asm.h
  @INSTALL_LIBBFD_FALSE@rpath_bfdlibdir = @bfdlibdir@
 diff --git a/opcodes/configure b/opcodes/configure
-index 7f13699..08da93e 100755
+index cd3aa83..f479a0b 100755
 --- a/opcodes/configure
 +++ b/opcodes/configure
 @@ -12453,11 +12453,17 @@ if test "$enable_shared" = "yes"; then
@@ -577,7 +604,7 @@ index 7f13699..08da93e 100755
  	SHARED_LIBADD="$SHARED_LIBADD $LIBM"
        fi
 diff --git a/opcodes/configure.ac b/opcodes/configure.ac
-index b93e855..21d6a5c 100644
+index eab16d6..b932834 100644
 --- a/opcodes/configure.ac
 +++ b/opcodes/configure.ac
 @@ -170,11 +170,17 @@ changequote([,])dnl
@@ -607,3 +634,6 @@ index b93e855..21d6a5c 100644
        else
  	SHARED_LIBADD="$SHARED_LIBADD $LIBM"
        fi
+-- 
+2.3.5
+

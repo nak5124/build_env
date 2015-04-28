@@ -1,0 +1,25 @@
+From c7f51cd2d65c325be54951560c0146df2c44c52b Mon Sep 17 00:00:00 2001
+From: Yuta NAKAI <nak5124@live.jp>
+Date: Sun, 12 Apr 2015 11:44:14 +0900
+Subject: [PATCH 02/17] libiberty/Makefile.in: Don't install libiberty.
+
+---
+ libiberty/Makefile.in | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/libiberty/Makefile.in b/libiberty/Makefile.in
+index f06cc69..a304eee 100644
+--- a/libiberty/Makefile.in
++++ b/libiberty/Makefile.in
+@@ -354,7 +354,7 @@ libiberty.html : $(srcdir)/libiberty.texi $(TEXISRC)
+ @MAINT@	echo stamp > stamp-functions
+ 
+ INSTALL_DEST = @INSTALL_DEST@
+-install: install_to_$(INSTALL_DEST) install-subdir
++install: install-subdir
+ install-strip: install
+ 
+ .PHONY: install install-strip
+-- 
+2.3.5
+

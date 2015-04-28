@@ -93,19 +93,16 @@ source ${SCRIPTS_DIR}/gmp.sh
 source ${SCRIPTS_DIR}/mpfr.sh
 source ${SCRIPTS_DIR}/mpc.sh
 source ${SCRIPTS_DIR}/isl.sh
-source ${SCRIPTS_DIR}/cloog.sh
 if ! ${no_gcc_libs}; then
     build_gmp   --rebuild="${gmp_rebuild:-false}"
     build_mpfr  --rebuild="${mpfr_rebuild:-false}"
     build_mpc   --rebuild="${mpc_rebuild:-false}"
     build_isl   --rebuild="${isl_rebuild:-false}"
-    build_cloog --rebuild="${cloog_rebuild:-false}"
 else
     build_gmp   --rebuild=false
     build_mpfr  --rebuild=false
     build_mpc   --rebuild=false
     build_isl   --rebuild=false
-    build_cloog --rebuild=false
 fi
 
 # Build mingw-w64 toolchain.
@@ -117,10 +114,6 @@ source ${SCRIPTS_DIR}/mingw-w64.sh
 source ${SCRIPTS_DIR}/binutils.sh
 source ${SCRIPTS_DIR}/gcc.sh
 
-if ${iconv_rebuild:-false} && ! ${iconv_2nd_rebuild:-false}; then
-    iconv_2nd_rebuild=true
-fi
-
 declare update_mingw=false
 if ( ! ${no_toolchain} && ( ${headers_rebuild:-false} || ${threads_rebuild:-false} || ${crt_rebuild:-false} ) ) \
 || ( ! ${no_map}       && ( ${mangle_rebuild:-false}  || ${tools_rebuild:-false}                            ) ); then
@@ -129,10 +122,6 @@ fi
 
 if ! ${no_toolchain}; then
     build_iconv --rebuild="${iconv_rebuild:-false}"
-    build_intl  --rebuild="${intl_rebuild:-false}"
-    if ${iconv_2nd_rebuild:-false}; then
-        build_iconv --rebuild="${iconv_2nd_rebuild:-false}" --2nd
-    fi
     build_bzip2 --rebuild="${bzip2_rebuild:-false}"
     build_zlib  --rebuild="${zlib_rebuild:-false}"
     if ${update_mingw}; then
@@ -146,7 +135,6 @@ if ! ${no_toolchain}; then
     build_gcc      --rebuild="${gcc_rebuild:-false}"
 else
     build_iconv    --rebuild=false
-    build_intl     --rebuild=false
     build_bzip2    --rebuild=false
     build_zlib     --rebuild=false
     build_headers  --rebuild=false
@@ -206,8 +194,6 @@ fi
 # Reinstall ld.
 copy_ld
 
-MINTTY=$mintty_save
-export MINTTY
 LC_ALL=
 export LC_ALL
 

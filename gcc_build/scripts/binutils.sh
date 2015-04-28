@@ -22,25 +22,22 @@ function prepare_binutils() {
 
     # Apply patches.
     printf "===> Applying patches to Binutils %s...\n" $BINUTILS_VER
-    # Hack! - libiberty configure tests for header files using "$CPP $CPPFLAGS"
-    sed -i "/ac_cpp=/s/\$CPPFLAGS/\$CPPFLAGS -Os/" libiberty/configure
-    patch -p1 -i ${PATCHES_DIR}/binutils/0001-check-for-unusual-file-harder.patch \
+    patch -p1 -i ${PATCHES_DIR}/binutils/0001-binutils-Check-harder-for-the-file-in-question-being.patch \
         > ${LOGS_DIR}/binutils/binutils_patch.log 2>&1 || exit 1
     # For --enable-shared.
-    patch -p1 -i ${PATCHES_DIR}/binutils/0002-enable-shared.patch >> ${LOGS_DIR}/binutils/binutils_patch.log 2>&1 || exit 1
-    patch -p1 -i ${PATCHES_DIR}/binutils/0003-binutils-mingw-gnu-print.patch \
+    patch -p1 -i ${PATCHES_DIR}/binutils/0002-Enable-shared-on-MinGW.patch \
+        >> ${LOGS_DIR}/binutils/binutils_patch.log 2>&1 || exit 1
+    patch -p1 -i ${PATCHES_DIR}/binutils/0003-MinGW-Use-__MINGW_PRINTF_FORMAT-for-__USE_MINGW_ANSI.patch \
         >> ${LOGS_DIR}/binutils/binutils_patch.log 2>&1 || exit 1
     # Don't search dirs under ${prefix} but ${build_sysroot}.
-    patch -p1 -i ${PATCHES_DIR}/binutils/0004-binutils-use-build-sysroot-dir.patch \
+    patch -p1 -i ${PATCHES_DIR}/binutils/0004-configure-Search-dirs-under-build_sysroot-instead-of.patch \
         >> ${LOGS_DIR}/binutils/binutils_patch.log 2>&1 || exit 1
-    # For building with -fstack-protector*.
-    patch -p1 -i ${PATCHES_DIR}/binutils/0005-update-ltmain.sh.patch \
-        >> ${LOGS_DIR}/binutils/binutils_patch.log 2>&1 || exit 1
-    # A newer standards.info is installed later on in the Autoconf instructions.
-    rm -fv ${BUILD_DIR}/binutils/src/binutils-${BINUTILS_VER}/etc/standards.info
-    sed -i.bak '/^INFO/s/standards.info //' ${BUILD_DIR}/binutils/src/binutils-${BINUTILS_VER}/etc/Makefile.in
     # Disable automatic image base calculation.
-    sed -i 's/enable-auto-image-base/disable-auto-image-base/g' {bfd,binutils,gas,gprof,ld,opcodes}/configure
+    patch -p1 -i ${PATCHES_DIR}/binutils/0005-MinGW-Disable-automatic-image-base-calculation.patch \
+        >> ${LOGS_DIR}/binutils/binutils_patch.log 2>&1 || exit 1
+    # Don't make a lowercase backslashed path from argv[0] that then fail to strcmp with prefix(es) .. they're also ugly.
+    patch -p1 -i ${PATCHES_DIR}/binutils/0006-libiberty-lrealpath.c-Don-t-make-a-lowercase.patch \
+        >> ${LOGS_DIR}/binutils/binutils_patch.log 2>&1 || exit 1
     popd > /dev/null
     echo "done"
 
@@ -122,6 +119,14 @@ function build_binutils() {
             # Temporal libpath.
             local _libpath="${DST_DIR}/mingw${_bitval}/lib:${DST_DIR}/mingw${_bitval}/${_arch}-w64-mingw32/lib"
 
+            # Use the new GCC for 2nd build
+            if ${_2nd_build}; then
+                CC=${DST_DIR}/mingw${_bitval}/bin/gcc-${GCC_VER/-*}
+                CPP=${DST_DIR}/mingw${_bitval}/bin/cpp-${GCC_VER/-*}
+                CXX=${DST_DIR}/mingw${_bitval}/bin/g++-${GCC_VER/-*}
+                export CC CPP CXX
+            fi
+
             # Configure.
             printf "===> Configuring Binutils %s...\n" $_arch
             ../src/binutils-${BINUTILS_VER}/configure                  \
@@ -139,7 +144,7 @@ function build_binutils() {
                 ${_64_bit_bfd}                                         \
                 --enable-secureplt                                     \
                 --enable-install-libbfd                                \
-                --enable-nls                                           \
+                --disable-nls                                          \
                 --disable-rpath                                        \
                 --enable-got=target                                    \
                 --disable-multilib                                     \
@@ -152,7 +157,7 @@ function build_binutils() {
                 --with-build-sysroot=${DST_DIR}/mingw$_bitval          \
                 --with-gnu-ld                                          \
                 --with-system-zlib                                     \
-                --with-lib{iconv,intl}-prefix=${DST_DIR}/mingw$_bitval \
+                --with-libiconv-prefix=${DST_DIR}/mingw$_bitval        \
                 --with-lib-path=${_libpath}                            \
                 --with-sysroot=/mingw$_bitval                          \
                 CFLAGS="${CFLAGS_} ${CPPFLAGS_}"                       \

@@ -1,14 +1,20 @@
-Configure scripts tend to do things like this:
-nm -B /dev/null
-which, on Windows, turn into:
-nm -B nul
-and nul here acts like a normal file with 0 size as far as stat() is concerned.
-Check harder for the file in question being unusual (isatty() does see that).
-And since configure script expects /dev/nul, do report it that way.
+From 3002ff70de30195c5d1bc93b2e2cc1db7a82f26e Mon Sep 17 00:00:00 2001
+From: Yuta NAKAI <nak5124@live.jp>
+Date: Sun, 19 Apr 2015 21:41:59 +0900
+Subject: [PATCH 1/6] binutils: Check harder for the file in question being
+ unusual (isatty() does see that).
 
---- binutils-git-39d1b2aef3c1dbbf31d82e555624afcbda9d58e7/binutils/bucomm.c.orig	2014-04-27 18:05:31.328777900 +0400
-+++ binutils-git-39d1b2aef3c1dbbf31d82e555624afcbda9d58e7/binutils/bucomm.c	2014-05-02 08:54:46.651964974 +0400
-@@ -570,7 +570,15 @@
+---
+ binutils/bucomm.c  | 21 ++++++++++++++++++---
+ binutils/elfedit.c | 15 ++++++++++++++-
+ binutils/readelf.c | 15 ++++++++++++++-
+ 3 files changed, 46 insertions(+), 5 deletions(-)
+
+diff --git a/binutils/bucomm.c b/binutils/bucomm.c
+index 06fbc46..8c8caec 100644
+--- a/binutils/bucomm.c
++++ b/binutils/bucomm.c
+@@ -574,7 +574,15 @@ off_t
  get_file_size (const char * file_name)
  {
    struct stat statbuf;
@@ -25,7 +31,7 @@ And since configure script expects /dev/nul, do report it that way.
    if (stat (file_name, &statbuf) < 0)
      {
        if (errno == ENOENT)
-@@ -579,8 +587,15 @@
+@@ -583,8 +591,15 @@ get_file_size (const char * file_name)
  	non_fatal (_("Warning: could not locate '%s'.  reason: %s"),
  		   file_name, strerror (errno));
      }  
@@ -43,9 +49,11 @@ And since configure script expects /dev/nul, do report it that way.
    else if (statbuf.st_size < 0)
      non_fatal (_("Warning: '%s' has negative size, probably it is too large"),
                 file_name);
---- binutils-git-39d1b2aef3c1dbbf31d82e555624afcbda9d58e7/binutils/elfedit.c.orig	2014-04-27 18:05:31.340778000 +0400
-+++ binutils-git-39d1b2aef3c1dbbf31d82e555624afcbda9d58e7/binutils/elfedit.c	2014-05-02 08:55:09.433461424 +0400
-@@ -441,6 +441,14 @@
+diff --git a/binutils/elfedit.c b/binutils/elfedit.c
+index 5b2bf86..1eb6fa4 100644
+--- a/binutils/elfedit.c
++++ b/binutils/elfedit.c
+@@ -441,6 +441,14 @@ static int
  check_file (const char *file_name, struct stat *statbuf_p)
  {
    struct stat statbuf;
@@ -60,7 +68,7 @@ And since configure script expects /dev/nul, do report it that way.
  
    if (statbuf_p == NULL)
      statbuf_p = &statbuf;
-@@ -455,8 +463,13 @@
+@@ -455,8 +463,13 @@ check_file (const char *file_name, struct stat *statbuf_p)
        return 1;
      }
  
@@ -75,9 +83,11 @@ And since configure script expects /dev/nul, do report it that way.
        error (_("'%s' is not an ordinary file\n"), file_name);
        return 1;
      }
---- binutils-git-39d1b2aef3c1dbbf31d82e555624afcbda9d58e7/binutils/readelf.c.orig	2014-04-27 18:05:31.384778200 +0400
-+++ binutils-git-39d1b2aef3c1dbbf31d82e555624afcbda9d58e7/binutils/readelf.c	2014-05-02 08:55:27.018918502 +0400
-@@ -14613,6 +14613,14 @@
+diff --git a/binutils/readelf.c b/binutils/readelf.c
+index 1533806..22db653 100644
+--- a/binutils/readelf.c
++++ b/binutils/readelf.c
+@@ -16121,6 +16121,14 @@ process_file (char * file_name)
    struct stat statbuf;
    char armag[SARMAG];
    int ret;
@@ -92,7 +102,7 @@ And since configure script expects /dev/nul, do report it that way.
  
    if (stat (file_name, &statbuf) < 0)
      {
-@@ -14624,8 +14632,13 @@
+@@ -16132,8 +16140,13 @@ process_file (char * file_name)
        return 1;
      }
  
@@ -107,3 +117,6 @@ And since configure script expects /dev/nul, do report it that way.
        error (_("'%s' is not an ordinary file\n"), file_name);
        return 1;
      }
+-- 
+2.3.5
+

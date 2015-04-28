@@ -1,6 +1,19 @@
---- gcc-4.9.2/libiberty/lrealpath.c.old	2005-05-25 05:48:25.000000000 +0900
-+++ gcc-4.9.2/libiberty/lrealpath.c	2014-10-28 16:30:29.397548700 +0900
-@@ -138,15 +138,26 @@
+From fdf93f4ad2ac26541863da15ff2ba089bd977640 Mon Sep 17 00:00:00 2001
+From: Yuta NAKAI <nak5124@live.jp>
+Date: Sun, 19 Apr 2015 22:01:33 +0900
+Subject: [PATCH 6/6] libiberty/lrealpath.c: Don't make a lowercase 
+ backslashed path from argv[0] that then fail to strcmp with prefix(es) .. 
+ they're also ugly.
+
+---
+ libiberty/lrealpath.c | 19 +++++++++++++++----
+ 1 file changed, 15 insertions(+), 4 deletions(-)
+
+diff --git a/libiberty/lrealpath.c b/libiberty/lrealpath.c
+index b27c8de..423d128 100644
+--- a/libiberty/lrealpath.c
++++ b/libiberty/lrealpath.c
+@@ -138,15 +138,26 @@ lrealpath (const char *filename)
    {
      char buf[MAX_PATH];
      char* basename;
@@ -31,3 +44,6 @@
          return strdup (buf);
        }
    }
+-- 
+2.3.5
+

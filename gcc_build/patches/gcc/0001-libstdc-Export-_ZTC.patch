@@ -1,0 +1,25 @@
+From 0d70435d844c16cfde99786349b87f9ce895ba09 Mon Sep 17 00:00:00 2001
+From: Yuta NAKAI <nak5124@live.jp>
+Date: Sun, 12 Apr 2015 11:40:44 +0900
+Subject: [PATCH 01/17] libstdc++: Export _ZTC*.
+
+---
+ libstdc++-v3/config/abi/pre/gnu.ver | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/libstdc++-v3/config/abi/pre/gnu.ver b/libstdc++-v3/config/abi/pre/gnu.ver
+index 7b82ce8..ef87e28 100644
+--- a/libstdc++-v3/config/abi/pre/gnu.ver
++++ b/libstdc++-v3/config/abi/pre/gnu.ver
+@@ -2054,6 +2054,8 @@ CXXABI_1.3.6 {
+     __cxa_free_dependent_exception;
+     __cxa_deleted_virtual;
+ 
++    _ZTC*;
++
+ } CXXABI_1.3.5;
+ 
+ CXXABI_1.3.7 {
+-- 
+2.3.5
+

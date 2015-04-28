@@ -1,6 +1,19 @@
---- gcc-4.9.2/libcpp/files.c.old	2014-10-08 20:05:43.000000000 +0900
-+++ gcc-4.9.2/libcpp/files.c	2014-10-28 16:26:54.807274800 +0900
-@@ -30,6 +30,13 @@
+From 63c626c46aec3636620b62fb68a0d5b3d62f2896 Mon Sep 17 00:00:00 2001
+From: Yuta NAKAI <nak5124@live.jp>
+Date: Sun, 12 Apr 2015 12:00:35 +0900
+Subject: [PATCH 05/17] libcpp/files.c: Make Windows behave the same as Posix
+ in the consideration of whether folder "/exists/doesnt-exist/.." is a valid
+ path.. in Posix, it isn't.
+
+---
+ libcpp/files.c | 86 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 86 insertions(+)
+
+diff --git a/libcpp/files.c b/libcpp/files.c
+index 2f49122..3a6996a 100644
+--- a/libcpp/files.c
++++ b/libcpp/files.c
+@@ -30,6 +30,13 @@ along with this program; see the file COPYING3.  If not see
  #include "md5.h"
  #include <dirent.h>
  
@@ -14,7 +27,7 @@
  /* Variable length record files on VMS will have a stat size that includes
     record control characters that won't be included in the read size.  */
  #ifdef VMS
-@@ -198,6 +205,48 @@
+@@ -198,6 +205,48 @@ static int pchf_save_compare (const void *e1, const void *e2);
  static int pchf_compare (const void *d_p, const void *e_p);
  static bool check_file_against_entries (cpp_reader *, _cpp_file *, bool);
  
@@ -63,7 +76,7 @@
  /* Given a filename in FILE->PATH, with the empty string interpreted
     as <stdin>, open it.
  
-@@ -227,6 +276,43 @@
+@@ -227,6 +276,43 @@ open_file (_cpp_file *file)
      }
    else
      file->fd = open (file->path, O_RDONLY | O_NOCTTY | O_BINARY, 0666);
@@ -107,3 +120,6 @@
  
    if (file->fd != -1)
      {
+-- 
+2.3.5
+

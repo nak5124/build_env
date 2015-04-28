@@ -106,6 +106,12 @@ function build_nasm() {
             PATH=${DST_DIR}/mingw${_bitval}/bin:$PATH
             export PATH
 
+            # Use the new GCC for 2nd build
+            CC=${DST_DIR}/mingw${_bitval}/bin/gcc-${GCC_VER/-*}
+            CPP=${DST_DIR}/mingw${_bitval}/bin/cpp-${GCC_VER/-*}
+            CXX=${DST_DIR}/mingw${_bitval}/bin/g++-${GCC_VER/-*}
+            export CC CPP CXX
+
             # Autoreconf.
             autoreconf -fi > /dev/null 2>&1
 
@@ -228,6 +234,12 @@ function build_yasm() {
             source cpath $_arch
             PATH=${DST_DIR}/mingw${_bitval}/bin:$PATH
             export PATH
+
+            # Use the new GCC for 2nd build
+            CC=${DST_DIR}/mingw${_bitval}/bin/gcc-${GCC_VER/-*}
+            CPP=${DST_DIR}/mingw${_bitval}/bin/cpp-${GCC_VER/-*}
+            CXX=${DST_DIR}/mingw${_bitval}/bin/g++-${GCC_VER/-*}
+            export CC CPP CXX
 
             # Configure.
             printf "===> Configuring Yasm %s...\n" $_arch

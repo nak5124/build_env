@@ -1,0 +1,26 @@
+From fdb00c69b3ef715c5fe57caefc375d533e708989 Mon Sep 17 00:00:00 2001
+From: Yuta NAKAI <nak5124@live.jp>
+Date: Sun, 12 Apr 2015 11:48:03 +0900
+Subject: [PATCH 03/17] gthr-posix.h: (std:threads) Add !defined(__MINGW32__)
+ guard around __gthrw*.
+
+---
+ libgcc/gthr-posix.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/libgcc/gthr-posix.h b/libgcc/gthr-posix.h
+index fb59816..733bece 100644
+--- a/libgcc/gthr-posix.h
++++ b/libgcc/gthr-posix.h
+@@ -82,7 +82,7 @@ typedef struct timespec __gthread_time_t;
+ # define __GTHREAD_COND_INIT_FUNCTION __gthread_cond_init_function
+ #endif
+ 
+-#if SUPPORTS_WEAK && GTHREAD_USE_WEAK
++#if SUPPORTS_WEAK && GTHREAD_USE_WEAK && !defined(__MINGW32__)
+ # ifndef __gthrw_pragma
+ #  define __gthrw_pragma(pragma)
+ # endif
+-- 
+2.3.5
+

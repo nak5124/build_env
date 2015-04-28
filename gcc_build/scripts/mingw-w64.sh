@@ -151,8 +151,13 @@ function build_threads() {
             PATH=${DST_DIR}/mingw${_bitval}/bin:$PATH
             export PATH
 
-            # Don't pass -fstack-protector* to CFLAGS.
-            local _cflags="${CFLAGS_/-fstack-protector-strong --param=ssp-buffer-size=4/}"
+            # Use the new GCC for 2nd build
+            if ${_2nd_build}; then
+                CC=${DST_DIR}/mingw${_bitval}/bin/gcc-${GCC_VER/-*}
+                CPP=${DST_DIR}/mingw${_bitval}/bin/cpp-${GCC_VER/-*}
+                CXX=${DST_DIR}/mingw${_bitval}/bin/g++-${GCC_VER/-*}
+                export CC CPP CXX
+            fi
 
             # Configure.
             printf "===> Configuring MinGW-w64 winpthreads %s...\n" $_arch
@@ -166,7 +171,7 @@ function build_threads() {
                 --enable-fast-install                                                  \
                 --with-gnu-ld                                                          \
                 --with-sysroot=${DST_DIR}/mingw${_bitval}/${_arch}-w64-mingw32         \
-                CFLAGS="${_cflags}"                                                    \
+                CFLAGS="${CFLAGS_}"                                                    \
                 LDFLAGS="${LDFLAGS_}"                                                  \
                 > ${LOGS_DIR}/mingw-w64/winpthreads/winpthreads_config_${_arch}.log 2>&1 || exit 1
             echo "done"
@@ -251,9 +256,14 @@ function build_crt() {
             else
                 local _libs_conf="--disable-lib32 --enable-lib64"
             fi
-            # Don't pass -fstack-protector* to CFLAGS/CXXFLAGS.
-            local _cflags="${CFLAGS_/-fstack-protector-strong --param=ssp-buffer-size=4/}"
-            local _cxxflags="${CXXFLAGS_/-fstack-protector-strong --param=ssp-buffer-size=4/}"
+
+            # Use the new GCC for 2nd build
+            if ${_2nd_build}; then
+                CC=${DST_DIR}/mingw${_bitval}/bin/gcc-${GCC_VER/-*}
+                CPP=${DST_DIR}/mingw${_bitval}/bin/cpp-${GCC_VER/-*}
+                CXX=${DST_DIR}/mingw${_bitval}/bin/g++-${GCC_VER/-*}
+                export CC CPP CXX
+            fi
 
             # Configure.
             printf "===> Configuring MinGW-w64 crt %s...\n" $_arch
@@ -267,9 +277,9 @@ function build_crt() {
                 --enable-wildcard                                              \
                 --enable-warnings=2                                            \
                 --with-sysroot=${DST_DIR}/mingw${_bitval}/${_arch}-w64-mingw32 \
-                CFLAGS="${_cflags}"                                            \
+                CFLAGS="${CFLAGS_}"                                            \
                 LDFLAGS="${LDFLAGS_}"                                          \
-                CXXFLAGS="${_cxxflags}"                                        \
+                CXXFLAGS="${CXXFLAGS_}"                                        \
                 > ${LOGS_DIR}/mingw-w64/crt/crt_config_${_arch}.log 2>&1 || exit 1
             echo "done"
 
@@ -336,8 +346,11 @@ function build_mangle() {
             PATH=${DST_DIR}/mingw${_bitval}/bin:$PATH
             export PATH
 
-            # Don't pass -fstack-protector* to CFLAGS.
-            local _cflags="${CFLAGS_/-fstack-protector-strong --param=ssp-buffer-size=4/}"
+            # Use the new GCC for 2nd build
+            CC=${DST_DIR}/mingw${_bitval}/bin/gcc-${GCC_VER/-*}
+            CPP=${DST_DIR}/mingw${_bitval}/bin/cpp-${GCC_VER/-*}
+            CXX=${DST_DIR}/mingw${_bitval}/bin/g++-${GCC_VER/-*}
+            export CC CPP CXX
 
             # Configure.
             printf "===> Configuring MinGW-w64 libmangle %s...\n" $_arch
@@ -346,7 +359,7 @@ function build_mangle() {
                 --build=${_arch}-w64-mingw32                                         \
                 --host=${_arch}-w64-mingw32                                          \
                 --disable-silent-rules                                               \
-                CFLAGS="${_cflags}"                                                  \
+                CFLAGS="${CFLAGS_}"                                                  \
                 LDFLAGS="${LDFLAGS_}"                                                \
                 > ${LOGS_DIR}/mingw-w64/libmangle/libmangle_config_${_arch}.log 2>&1 || exit 1
             echo "done"
@@ -420,6 +433,12 @@ function build_tools() {
             source cpath $_arch
             PATH=${DST_DIR}/mingw${_bitval}/bin:$PATH
             export PATH
+
+            # Use the new GCC for 2nd build
+            CC=${DST_DIR}/mingw${_bitval}/bin/gcc-${GCC_VER/-*}
+            CPP=${DST_DIR}/mingw${_bitval}/bin/cpp-${GCC_VER/-*}
+            CXX=${DST_DIR}/mingw${_bitval}/bin/g++-${GCC_VER/-*}
+            export CC CPP CXX
 
             local _tool
             for _tool in ${_tools[@]}

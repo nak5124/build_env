@@ -50,16 +50,10 @@ function prepare_iconv() {
         touch ${BUILD_DIR}/libiconv/src/libiconv-${ICONV_VER}/patched_04.marker
     fi
     if [ ! -f ${BUILD_DIR}/libiconv/src/libiconv-${ICONV_VER}/patched_05.marker ]; then
-        # For building with -fstack-protector*.
-        patch -p1 -i ${PATCHES_DIR}/libiconv/0005-libiconv-ltmain.sh.patch \
+        # libtool, I hate you...
+        patch -p0 -i ${PATCHES_DIR}/libiconv/0005-exe-force-linking-to-a-new-libiconv.patch \
             >> ${LOGS_DIR}/libiconv/libiconv_patch.log 2>&1 || exit 1
         touch ${BUILD_DIR}/libiconv/src/libiconv-${ICONV_VER}/patched_05.marker
-    fi
-    if [ ! -f ${BUILD_DIR}/libiconv/src/libiconv-${ICONV_VER}/patched_06.marker ]; then
-        # libtool, I hate you...
-        patch -p0 -i ${PATCHES_DIR}/libiconv/0006-exe-force-linking-to-a-new-libiconv.patch \
-            >> ${LOGS_DIR}/libiconv/libiconv_patch.log 2>&1 || exit 1
-        touch ${BUILD_DIR}/libiconv/src/libiconv-${ICONV_VER}/patched_06.marker
     fi
     # Disable automatic image base calculation.
     sed -i 's/enable-auto-image-base/disable-auto-image-base/g' {.,preload,libcharset}/configure
@@ -75,7 +69,6 @@ function build_iconv() {
 
     # Option handling.
     local _rebuild=true
-    local _2nd_build=false
 
     local _opt
     for _opt in "${@}"
@@ -83,9 +76,6 @@ function build_iconv() {
         case "${_opt}" in
             --rebuild=* )
                 _rebuild="${_opt#*=}"
-                ;;
-            --2nd )
-                _2nd_build=true
                 ;;
             * )
                 printf "build_iconv: Unknown Option: '%s'\n" $_opt
@@ -116,14 +106,6 @@ function build_iconv() {
             PATH=${DST_DIR}/mingw${_bitval}/bin:$PATH
             export PATH
 
-            # NLS
-            if ${_2nd_build}; then
-                local _intl="--enable-nls \
-                             --with-libiconv-prefix=${DST_DIR}/mingw$_bitval --with-libintl-prefix=${DST_DIR}/mingw$_bitval"
-            else
-                local _intl="--disable-nls"
-            fi
-
             # Configure.
             printf "===> Configuring libiconv %s...\n" $_arch
             ../src/libiconv-${ICONV_VER}/configure \
@@ -136,7 +118,7 @@ function build_iconv() {
                 --enable-shared                    \
                 --enable-fast-install              \
                 --disable-rpath                    \
-                ${_intl}                           \
+                --disable-nls                      \
                 --with-gnu-ld                      \
                 CFLAGS="${CFLAGS_}"                \
                 LDFLAGS="${LDFLAGS_}"              \
@@ -164,12 +146,10 @@ function build_iconv() {
             echo "done"
         fi
 
-        if ! ( ! ${_rebuild} && ${_2nd_build} ); then
-            # Copy to DST_DIR.
-            printf "===> Copying libiconv %s to %s/mingw%s...\n" $_arch $DST_DIR $_bitval
-            cp -fra ${PREIN_DIR}/libiconv/mingw$_bitval $DST_DIR
-            echo "done"
-        fi
+        # Copy to DST_DIR.
+        printf "===> Copying libiconv %s to %s/mingw%s...\n" $_arch $DST_DIR $_bitval
+        cp -fra ${PREIN_DIR}/libiconv/mingw$_bitval $DST_DIR
+        echo "done"
     done
 
     cd $ROOT_DIR

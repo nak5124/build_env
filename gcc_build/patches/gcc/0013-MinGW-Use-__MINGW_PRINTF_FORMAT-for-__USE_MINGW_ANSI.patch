@@ -1,6 +1,38 @@
---- gcc-4.9.2/include/ansidecl.h.old    2014-11-16 04:41:56.370956300 +0900
-+++ gcc-4.9.2/include/ansidecl.h        2014-11-16 04:44:51.595204600 +0900
-@@ -197,12 +197,16 @@
+From 0990c597071925c3936d0d12c119fa2be3258c0f Mon Sep 17 00:00:00 2001
+From: Yuta NAKAI <nak5124@live.jp>
+Date: Sun, 12 Apr 2015 14:54:20 +0900
+Subject: [PATCH 13/17] MinGW: Use __MINGW_PRINTF_FORMAT for
+ __USE_MINGW_ANSI_STDIO.
+
+---
+ gcc/collect-utils.h                  |  4 ++++
+ include/ansidecl.h                   | 22 +++++++++++++++-------
+ libgcc/config/libbid/bid_functions.h |  2 +-
+ libgcc/libgcov-driver-system.c       |  6 +++++-
+ lto-plugin/lto-plugin.c              |  2 +-
+ 5 files changed, 26 insertions(+), 10 deletions(-)
+
+diff --git a/gcc/collect-utils.h b/gcc/collect-utils.h
+index 2b3ed44..79e2789 100644
+--- a/gcc/collect-utils.h
++++ b/gcc/collect-utils.h
+@@ -22,7 +22,11 @@ along with GCC; see the file COPYING3.  If not see
+ 
+ /* Provided in collect-utils.c.  */
+ extern void notice (const char *, ...)
++#ifdef __MINGW32__
++  __attribute__ ((format (__MINGW_PRINTF_FORMAT, 1, 2)));
++#else
+   __attribute__ ((format (printf, 1, 2)));
++#endif
+ extern void fatal_signal (int);
+ 
+ extern struct pex_obj *collect_execute (const char *, char **,
+diff --git a/include/ansidecl.h b/include/ansidecl.h
+index 04d75c3..3d0b61b 100644
+--- a/include/ansidecl.h
++++ b/include/ansidecl.h
+@@ -197,12 +197,16 @@ So instead we use the macro below and test it against specific values.  */
     before GCC 3.3, but as of 3.3 we need to add the `nonnull'
     attribute to retain this behavior.  */
  #ifndef ATTRIBUTE_PRINTF
@@ -23,7 +55,7 @@
  #endif /* ATTRIBUTE_PRINTF */
  
  /* Use ATTRIBUTE_FPTR_PRINTF when the format attribute is to be set on
-@@ -225,7 +229,11 @@
+@@ -225,7 +229,11 @@ So instead we use the macro below and test it against specific values.  */
     NULL format specifier was allowed as of gcc 3.3.  */
  #ifndef ATTRIBUTE_NULL_PRINTF
  # if (GCC_VERSION >= 3003)
@@ -36,36 +68,11 @@
  # else
  #  define ATTRIBUTE_NULL_PRINTF(m, n)
  # endif /* GNUC >= 3.3 */
---- gcc-4.9.2/gcc/lto-wrapper.c.old     2014-11-16 03:59:17.688589000 +0900
-+++ gcc-4.9.2/gcc/lto-wrapper.c 2014-11-16 04:01:03.737654600 +0900
-@@ -119,7 +119,11 @@
- 
- /* Just die. CMSGID is the error message. */
- 
-+#ifdef __MINGW32__
-+static void __attribute__ ((format (__MINGW_PRINTF_FORMAT, 1, 2)))
-+#else
- static void __attribute__ ((format (printf, 1, 2)))
-+#endif
- fatal (const char * cmsgid, ...)
- {
-   va_list ap;
-@@ -137,7 +141,11 @@
- 
- /* Die when sys call fails. CMSGID is the error message.  */
- 
-+#ifdef __MINGW32__
-+static void __attribute__ ((format (__MINGW_PRINTF_FORMAT, 1, 2)))
-+#else
- static void __attribute__ ((format (printf, 1, 2)))
-+#endif
- fatal_perror (const char *cmsgid, ...)
- {
-   int e = errno;
- 
---- gcc-4.9.2/libgcc/config/libbid/bid_functions.h.old	2014-11-15 13:12:19.458440200 +0900
-+++ gcc-4.9.2/libgcc/config/libbid/bid_functions.h	2014-11-15 13:15:50.023483800 +0900
-@@ -124,7 +124,7 @@
+diff --git a/libgcc/config/libbid/bid_functions.h b/libgcc/config/libbid/bid_functions.h
+index 14c9869..c21249c 100644
+--- a/libgcc/config/libbid/bid_functions.h
++++ b/libgcc/config/libbid/bid_functions.h
+@@ -124,7 +124,7 @@ ALIGN (16)
  #define DENORMAL_MODE           0x00000100
  #define INVALID_MODE            0x00000080
  
@@ -74,9 +81,11 @@
  #define LX16  "%016llx"
  #define LX    "%llx"
  #define LD4   "%4llu"
---- gcc-4.9.2/libgcc/libgcov-driver-system.c.old        2014-11-16 04:36:02.626456900 +0900
-+++ gcc-4.9.2/libgcc/libgcov-driver-system.c    2014-11-16 04:36:39.290508500 +0900
-@@ -25,7 +25,11 @@
+diff --git a/libgcc/libgcov-driver-system.c b/libgcc/libgcov-driver-system.c
+index 94f198d..ddb6090 100644
+--- a/libgcc/libgcov-driver-system.c
++++ b/libgcc/libgcov-driver-system.c
+@@ -25,7 +25,11 @@ see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
  
  /* A utility function for outputing errors.  */
  
@@ -89,9 +98,11 @@
  gcov_error (const char *fmt, ...)
  {
    int ret;
---- gcc-4.9.2/lto-plugin/lto-plugin.c.old	2014-11-15 13:25:01.821961000 +0900
-+++ gcc-4.9.2/lto-plugin/lto-plugin.c	2014-11-15 13:25:05.705183100 +0900
-@@ -65,7 +65,7 @@
+diff --git a/lto-plugin/lto-plugin.c b/lto-plugin/lto-plugin.c
+index 8d957402..cb09f6c 100644
+--- a/lto-plugin/lto-plugin.c
++++ b/lto-plugin/lto-plugin.c
+@@ -65,7 +65,7 @@ along with this program; see the file COPYING3.  If not see
  
  /* We need to use I64 instead of ll width-specifier on native Windows.
     The reason for this is that older MS-runtimes don't support the ll.  */
@@ -100,3 +111,6 @@
  #define PRI_LL "I64"
  #else
  #define PRI_LL "ll"
+-- 
+2.3.5
+
