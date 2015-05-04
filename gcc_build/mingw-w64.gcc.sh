@@ -194,6 +194,9 @@ fi
 # Reinstall ld.
 copy_ld
 
+# Replace configs with newer ones.
+replace_config
+
 LC_ALL=
 export LC_ALL
 

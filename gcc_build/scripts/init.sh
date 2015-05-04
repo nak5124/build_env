@@ -42,6 +42,9 @@ function init_dirs() {
                 mkdir -p ${BUILD_DIR}/${_target}/src
             fi
         fi
+        if [ ! -d ${BUILD_DIR}/autotools/config/src ]; then
+            mkdir -p ${BUILD_DIR}/autotools/config/src
+        fi
     done
 
     # LOGS_DIR

@@ -535,3 +535,42 @@ function build_libtool() {
     cd $ROOT_DIR
     return 0
 }
+
+# config
+function replace_config() {
+    clear; echo 'Replace configs with newer ones.'
+
+    # Git clone.
+    if [ ! -d ${BUILD_DIR}/autotools/config/src/config ]; then
+        echo '===> Cloning config git repo...'
+        pushd ${BUILD_DIR}/autotools/config/src > /dev/null
+        dl_files git git://git.sv.gnu.org/config.git
+        popd > /dev/null
+        echo 'done'
+    fi
+
+    # Git pull.
+    echo '===> Updating config git repo...'
+    pushd ${BUILD_DIR}/autotools/config/src/config > /dev/null
+    git clean -fdx > /dev/null 2>&1
+    git reset --hard > /dev/null 2>&1
+    git pull > /dev/null 2>&1
+    echo 'done'
+
+    # Replace.
+    echo '===> Copy newer configs...'
+    local _arch
+    for _arch in ${TARGET_ARCH[@]}
+    do
+        local _bitval=$(get_arch_bit ${_arch})
+
+        cp -fa ${BUILD_DIR}/autotools/config/src/config/config.{guess,sub} \
+            ${DST_DIR}/mingw${_bitval}/share/libtool/build-aux
+        cp -fa ${BUILD_DIR}/autotools/config/src/config/config.{guess,sub} \
+            ${DST_DIR}/mingw${_bitval}/share/automake-$AUTOMAKE_VER
+    done
+    echo 'done'
+
+    cd $ROOT_DIR
+    return 0
+}

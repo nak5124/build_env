@@ -1,0 +1,50 @@
+From 5e09b78a1455861c218c4e6545b8b09934496cda Mon Sep 17 00:00:00 2001
+From: Yuta NAKAI <nak5124@live.jp>
+Date: Mon, 4 May 2015 18:57:09 +0900
+Subject: [PATCH 6/9] Use version-script on MinGW.
+
+---
+ configure |  2 +-
+ zlib.map  | 13 +++++++++++++
+ 2 files changed, 14 insertions(+), 1 deletion(-)
+
+diff --git a/configure b/configure
+index 43ca05c..2792f78 100755
+--- a/configure
++++ b/configure
+@@ -233,7 +233,7 @@ if test "$gcc" -eq 1 && ($cc -c $test.c) >> configure.log 2>&1; then
+         shared_ext=".dll"
+         SHAREDLIB=libz-$VER1$shared_ext
+ 		IMPORTLIB='libz.dll.a'
+-		LDSHARED=${LDSHARED-"$cc -shared -Wl,-export-all -Wl,--disable-auto-image-base -Wl,--out-implib=${IMPORTLIB}"}
++		LDSHARED=${LDSHARED-"$cc -shared -Wl,--disable-auto-image-base,--out-implib=${IMPORTLIB},--version-script=${SRCDIR}/zlib.map"}
+ 		LDSHAREDLIBC=''
+         EXE='.exe' ;;
+   QNX*)  # This is for QNX6. I suppose that the QNX rule below is for QNX2,QNX4
+diff --git a/zlib.map b/zlib.map
+index 55c6647..cdd2d00 100644
+--- a/zlib.map
++++ b/zlib.map
+@@ -17,6 +17,19 @@ ZLIB_1.2.0 {
+     gz_error;
+     gz_intmax;
+     _*;
++    bi_windup;
++    copy_with_crc;
++    crc_*;
++    deflate_medium;
++    deflate_quick;
++    fill_window_sse;
++    flush_pending;
++    longest_match;
++    read_buf;
++    static_ltree;
++    x86_*;
++    z_stream_*;
++    zlibng_string;
+ };
+ 
+ ZLIB_1.2.0.2 {
+-- 
+2.4.0
+

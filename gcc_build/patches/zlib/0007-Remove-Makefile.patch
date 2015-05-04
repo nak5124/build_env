@@ -1,0 +1,37 @@
+From 0c384ab8c3a0d9bc272ae6dee6807571a56450dd Mon Sep 17 00:00:00 2001
+From: Yuta NAKAI <nak5124@live.jp>
+Date: Tue, 5 May 2015 15:16:17 +0900
+Subject: [PATCH 7/9] Remove Makefile.
+
+---
+ .gitignore | 1 +
+ Makefile   | 5 -----
+ 2 files changed, 1 insertion(+), 5 deletions(-)
+ delete mode 100644 Makefile
+
+diff --git a/.gitignore b/.gitignore
+index 3f60970..92301ce 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -42,6 +42,7 @@ zconf.h.included
+ configure.log
+ a.out
+ 
++Makefile
+ /arch/arm/Makefile
+ /arch/generic/Makefile
+ /arch/x86/Makefile
+diff --git a/Makefile b/Makefile
+deleted file mode 100644
+index 6bba86c..0000000
+--- a/Makefile
++++ /dev/null
+@@ -1,5 +0,0 @@
+-all:
+-	-@echo "Please use ./configure first.  Thank you."
+-
+-distclean:
+-	make -f Makefile.in distclean
+-- 
+2.4.0
+

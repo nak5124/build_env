@@ -1,0 +1,34 @@
+From 47c04a142c60a4128ab65e75670b963cc10b7f41 Mon Sep 17 00:00:00 2001
+From: Yuta NAKAI <nak5124@live.jp>
+Date: Tue, 5 May 2015 15:30:23 +0900
+Subject: [PATCH 8/9] Don't build examples and static lib when making shared.
+
+---
+ Makefile.in | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/Makefile.in b/Makefile.in
+index ad3b7d5..3e75774 100644
+--- a/Makefile.in
++++ b/Makefile.in
+@@ -74,7 +74,7 @@ all: static shared
+ 
+ static: example$(EXE) minigzip$(EXE)
+ 
+-shared: examplesh$(EXE) minigzipsh$(EXE)
++shared: $(SHAREDTARGET)
+ 
+ all64: example64$(EXE) minigzip64$(EXE)
+ 
+@@ -162,7 +162,7 @@ minigzip64.o: $(SRCDIR)/test/minigzip.c $(SRCDIR)/zlib.h zconf.h
+ 	$(CC) $(SFLAGS) -DPIC -c -o objs/$*.o $<
+ 	-@mv objs/$*.o $@
+ 
+-placebo $(SHAREDTARGET): $(PIC_OBJS) $(STATICLIB)
++placebo $(SHAREDTARGET): $(PIC_OBJS)
+ 	$(LDSHARED) $(SFLAGS) -o $@ $(PIC_OBJS) $(LDSHAREDLIBC) $(LDFLAGS)
+ 	$(SHAREDLIBPOST)
+ 	-@rmdir objs
+-- 
+2.4.0
+

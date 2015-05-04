@@ -1,0 +1,23 @@
+From 2f6d813d7025a563f2c9be87f5333867c5e5ff33 Mon Sep 17 00:00:00 2001
+From: Yuta NAKAI <nak5124@live.jp>
+Date: Wed, 29 Apr 2015 11:03:26 +0900
+Subject: [PATCH 2/9] zlib.pc: Don't put sodir into -L.
+
+---
+ zlib.pc.in | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/zlib.pc.in b/zlib.pc.in
+index 7e5acf9..244ea1d 100644
+--- a/zlib.pc.in
++++ b/zlib.pc.in
+@@ -9,5 +9,5 @@ Description: zlib compression library
+ Version: @VERSION@
+ 
+ Requires:
+-Libs: -L${libdir} -L${sharedlibdir} -lz
++Libs: -L${libdir} -lz
+ Cflags: -I${includedir}
+-- 
+2.4.0
+
