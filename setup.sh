@@ -4,7 +4,9 @@
 shdir=$(cd $(dirname $0);pwd)
 
 dot_files=( .bash_logout .bash_profile .bashrc .gitconfig .hgrc .inputrc .minttyrc .tigrc .tmux.conf .vimrc .vimshrc )
-mg_patches=( mpfr isl cloog libiconv libintl bzip2 zlib binutils gcc nasm autoconf automake libtool )
+etc_files=( DIR_COLORS fstab makepkg.conf makepkg_mingw32_Takuan.conf makepkg_mingw64_Takuan.conf pacman.conf profile )
+pd_files=( mirrorlist.mingw32 mirrorlist.mingw64 mirrorlist.msys repman.conf )
+mg_patches=( mpfr isl libiconv bzip2 zlib binutils gcc nasm autoconf automake libtool )
 
 # bat
 cp -fa ${shdir}/bat/* /
@@ -23,7 +25,14 @@ fi
 ln -sf ${shdir}/dotfiles/.vim/colors/* ${HOME}/.vim/colors
 ln -sf ${shdir}/dotfiles/.vim/syntax/* ${HOME}/.vim/syntax
 # /etc
-ln -sf ${shdir}/etc/* /etc
+for fname in ${etc_files[@]}
+do
+    ln -sf ${shdir}/etc/$fname /etc/$fname
+done
+for fname in ${pd_files[@]}
+do
+    ln -sf ${shdir}/etc/pacman.d/$fname /etc/pacman.d/$fname
+done
 # gcc_build
 if [ ! -d ${HOME}/gcc_build/scripts ] ; then
     mkdir -p ${HOME}/gcc_build/scripts
