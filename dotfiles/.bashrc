@@ -285,12 +285,11 @@ HG=${HOME}/winn/mercurial/hg.exe
 export HG
 
 # shell
-MINTTY=NO_FILE
 PROMPT_COMMAND='printf "\033]0;%s: %s\007" "${MSYSTEM}" "${PWD/${HOME}/\~}"'
 PS1="\n\033[1;32m\]\u@\h \[\033[1;31m\w\033[0m\]\n$ "
 IGNOREEOF=2
 EXECIGNORE="*.dll"
-export PROMPT_COMMAND PS1 IGNOREEOF MINTTY EXECIGNORE
+export PROMPT_COMMAND PS1 IGNOREEOF EXECIGNORE
 
 shopt -s autocd
 shopt -s cdable_vars
