@@ -57,33 +57,28 @@ export LESSHISTFILE
 alias pacman_mingw64='pacman --root $HOME/.pacman --cachedir $HOME/.pacman/var/cache/pacman/pkg --config $HOME/.pacman/pacman.conf'
 
 function addpkg() {
-    local _reponame="${1}"
-    local _pkgfile="${2}"
+    local -r _pkgfile="${1}"
 
-    if [ -z "${_reponame}" ]; then
-        echo "addpkg: Repository name is not specified!"
-        return -1
-    elif [ -z "${_pkgfile}" ]; then
-        echo "addpkg: pkgfile is not specified!"
+    local -r _pkgname="${_pkgfile##*/}"
+    local -r _MYPKG_PATH="${HOME}"/.mypackages
+
+    if [ -z "${_pkgfile}" ]; then
+        echo 'addpkg: pkgfile is not specified!'
         return -1
     fi
 
-    case "${_reponame}" in
-        msys)
-            mv -f "${_pkgfile}" ${HOME}/.mypackages/msys
-            repo-add ${HOME}/.mypackages/msys/msys_Takuan.db.tar.gz ${HOME}/.mypackages/msys/${_pkgfile##*/}
+    case "${_pkgname}" in
+        mingw32*)
+            mv -f "${_pkgfile}" "${_MYPKG_PATH}"/mingw32
+            repo-add "${_MYPKG_PATH}"/mingw32/mingw32_Takuan.db.tar.xz "${_MYPKG_PATH}"/mingw32/$_pkgname
             ;;
-        mingw32)
-            mv -f "${_pkgfile}" ${HOME}/.mypackages/mingw32
-            repo-add ${HOME}/.mypackages/mingw32/mingw32_Takuan.db.tar.gz ${HOME}/.mypackages/mingw32/${_pkgfile##*/}
-            ;;
-        mingw64)
-            mv -f "${_pkgfile}" ${HOME}/.mypackages/mingw64
-            repo-add ${HOME}/.mypackages/mingw64/mingw64_Takuan.db.tar.gz ${HOME}/.mypackages/mingw64/${_pkgfile##*/}
+        mingw64*)
+            mv -f "${_pkgfile}" "${_MYPKG_PATH}"/mingw64
+            repo-add "${_MYPKG_PATH}"/mingw64/mingw64_Takuan.db.tar.xz "${_MYPKG_PATH}"/mingw64/$_pkgname
             ;;
         *)
-            printf "addpkg: Unknown repository name, '%s'\n" $_reponame
-            return -1
+            mv -f "${_pkgfile}" "${_MYPKG_PATH}"/msys
+            repo-add "${_MYPKG_PATH}"/msys/msys_Takuan.db.tar.xz "${_MYPKG_PATH}"/msys/$_pkgname
             ;;
     esac
 
