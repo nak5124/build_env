@@ -46,7 +46,7 @@ ln -fsr ./flex.exe ./flex++.exe
 ln -fsr ./flex.exe ./lex.exe
 
 # gawk
-ln -fsr ./gawk-4.1.1.exe ./gawk.exe
+ln -fsr ./gawk-4.1.2.exe ./gawk.exe
 ln -fsr ./gawk.exe ./awk.exe
 
 # gcc
@@ -109,6 +109,7 @@ ln -fsr ../lib/git-core/git.exe ../lib/git-core/git-grep.exe
 ln -fsr ../lib/git-core/git.exe ../lib/git-core/git-hash-object.exe
 ln -fsr ../lib/git-core/git.exe ../lib/git-core/git-help.exe
 ln -fsr ../lib/git-core/git.exe ../lib/git-core/git-index-pack.exe
+ln -fsr ../lib/git-core/git.exe ../lib/git-core/git-interpret-trailers.exe
 ln -fsr ../lib/git-core/git.exe ../lib/git-core/git-init-db.exe
 ln -fsr ../lib/git-core/git.exe ../lib/git-core/git-init.exe
 ln -fsr ../lib/git-core/git.exe ../lib/git-core/git-log.exe
@@ -272,20 +273,20 @@ ln -fsr ./prockill.exe ./snice.exe
 ln -fsr ./pstree.exe ./pstree.x11.exe
 
 # python
-ln -fsr ./python3.3m.exe ./python3.3.exe
-ln -fsr ./python3.3.exe ./python3.exe
-ln -fsr ./python3.3.exe ./python.exe
-ln -fsr ./python3.3m-config ./python3.3-config
-ln -fsr ./python3.3-config ./python3-config
-ln -fsr ./python3.3-config ./python-config
-ln -fsr ./pyvenv-3.3 ./pyvenv
-ln -fsr ./2to3-3.3 ./2to3
-ln -fsr ./idle3.3 ./idle3
+ln -fsr ./python3.4m.exe ./python3.4.exe
+ln -fsr ./python3.4.exe ./python3.exe
+ln -fsr ./python3.4.exe ./python.exe
+ln -fsr ./python3.4m-config ./python3.4-config
+ln -fsr ./python3.4-config ./python3-config
+ln -fsr ./python3.4-config ./python-config
+ln -fsr ./pyvenv-3.4 ./pyvenv
+ln -fsr ./2to3-3.4 ./2to3
+ln -fsr ./idle3.4 ./idle3
 ln -fsr ./idle3 ./idle
-ln -fsr ./pydoc3.3 ./pydoc3
+ln -fsr ./pydoc3.4 ./pydoc3
 ln -fsr ./pydoc3 ./pydoc
-ln -fsr ../lib/pkgconfig/python-3.3m.pc ../lib/pkgconfig/python-3.3.pc
-ln -fsr ../lib/pkgconfig/python-3.3.pc ../lib/pkgconfig/python3.pc
+ln -fsr ../lib/pkgconfig/python-3.4m.pc ../lib/pkgconfig/python-3.4.pc
+ln -fsr ../lib/pkgconfig/python-3.4.pc ../lib/pkgconfig/python3.pc
 
 # python2
 ln -fsr ./python2.7.exe ./python2.exe
