@@ -1,17 +1,17 @@
-From 47c04a142c60a4128ab65e75670b963cc10b7f41 Mon Sep 17 00:00:00 2001
+From 531d89da08c599562db55d54e54529c106682adf Mon Sep 17 00:00:00 2001
 From: Yuta NAKAI <nak5124@live.jp>
 Date: Tue, 5 May 2015 15:30:23 +0900
-Subject: [PATCH 8/9] Don't build examples and static lib when making shared.
+Subject: [PATCH 7/8] Don't build examples and static lib when making shared.
 
 ---
  Makefile.in | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/Makefile.in b/Makefile.in
-index ad3b7d5..3e75774 100644
+index 9948dcd..67ae20a 100644
 --- a/Makefile.in
 +++ b/Makefile.in
-@@ -74,7 +74,7 @@ all: static shared
+@@ -79,7 +79,7 @@ all: static shared
  
  static: example$(EXE) minigzip$(EXE)
  
@@ -20,15 +20,15 @@ index ad3b7d5..3e75774 100644
  
  all64: example64$(EXE) minigzip64$(EXE)
  
-@@ -162,7 +162,7 @@ minigzip64.o: $(SRCDIR)/test/minigzip.c $(SRCDIR)/zlib.h zconf.h
- 	$(CC) $(SFLAGS) -DPIC -c -o objs/$*.o $<
+@@ -167,7 +167,7 @@ minigzip64.o: $(SRCDIR)/test/minigzip.c $(SRCDIR)/zlib.h zconf.h
+ 	$(CC) -I. -I$(SRCDIR) $(SFLAGS) -DPIC -c -o objs/$*.o $<
  	-@mv objs/$*.o $@
  
 -placebo $(SHAREDTARGET): $(PIC_OBJS) $(STATICLIB)
 +placebo $(SHAREDTARGET): $(PIC_OBJS)
  	$(LDSHARED) $(SFLAGS) -o $@ $(PIC_OBJS) $(LDSHAREDLIBC) $(LDFLAGS)
- 	$(SHAREDLIBPOST)
- 	-@rmdir objs
+ ifeq ($(IMPORTLIB),)
+ 	rm -f $(SHAREDLIB) $(SHAREDLIBM)
 -- 
 2.4.0
 

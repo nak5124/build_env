@@ -22,17 +22,16 @@ function download_zlib_src() {
 
     # Apply patches.
     printf "===> Applying patches to zlib %s...\n" $ZLIB_VER
-    patch -p1 -i ${PATCHES_DIR}/zlib/0001-buildsystem-for-MinGW.patch >> ${LOGS_DIR}/zlib/zlib_patch.log 2>&1 || exit 1
-    patch -p1 -i ${PATCHES_DIR}/zlib/0002-zlib.pc-Don-t-put-sodir-into-L.patch \
+    patch -p1 -i ${PATCHES_DIR}/zlib/0001-configure-Support-MinGW-Cygwin-and-MSYS.patch \
         >> ${LOGS_DIR}/zlib/zlib_patch.log 2>&1 || exit 1
-    patch -p1 -i ${PATCHES_DIR}/zlib/0003-Fix-compilation-on-MinGW64.patch >> ${LOGS_DIR}/zlib/zlib_patch.log 2>&1 || exit 1
-    patch -p1 -i ${PATCHES_DIR}/zlib/0004-Cleanup.patch >> ${LOGS_DIR}/zlib/zlib_patch.log 2>&1 || exit 1
-    patch -p1 -i ${PATCHES_DIR}/zlib/0005-Add-old-typedef.patch >> ${LOGS_DIR}/zlib/zlib_patch.log 2>&1 || exit 1
-    patch -p1 -i ${PATCHES_DIR}/zlib/0006-Use-version-script-on-MinGW.patch >> ${LOGS_DIR}/zlib/zlib_patch.log 2>&1 || exit 1
-    patch -p1 -i ${PATCHES_DIR}/zlib/0007-Remove-Makefile.patch >> ${LOGS_DIR}/zlib/zlib_patch.log 2>&1 || exit 1
-    patch -p1 -i ${PATCHES_DIR}/zlib/0008-Don-t-build-examples-and-static-lib-when-making-shar.patch \
+    patch -p1 -i ${PATCHES_DIR}/zlib/0002-Fix-compilation-on-MinGW64.patch >> ${LOGS_DIR}/zlib/zlib_patch.log 2>&1 || exit 1
+    patch -p1 -i ${PATCHES_DIR}/zlib/0003-Cleanup.patch >> ${LOGS_DIR}/zlib/zlib_patch.log 2>&1 || exit 1
+    patch -p1 -i ${PATCHES_DIR}/zlib/0004-Add-old-typedef.patch >> ${LOGS_DIR}/zlib/zlib_patch.log 2>&1 || exit 1
+    patch -p1 -i ${PATCHES_DIR}/zlib/0005-Use-version-script-on-MinGW.patch >> ${LOGS_DIR}/zlib/zlib_patch.log 2>&1 || exit 1
+    patch -p1 -i ${PATCHES_DIR}/zlib/0006-Remove-Makefile.patch >> ${LOGS_DIR}/zlib/zlib_patch.log 2>&1 || exit 1
+    patch -p1 -i ${PATCHES_DIR}/zlib/0007-Don-t-build-examples-and-static-lib-when-making-shar.patch \
         >> ${LOGS_DIR}/zlib/zlib_patch.log 2>&1 || exit 1
-    patch -p1 -i ${PATCHES_DIR}/zlib/0009-Makefile.in-Add-install-shared.patch \
+    patch -p1 -i ${PATCHES_DIR}/zlib/0008-Makefile.in-Add-install-shared.patch \
         >> ${LOGS_DIR}/zlib/zlib_patch.log 2>&1 || exit 1
     popd > /dev/null
     echo "done"

@@ -1,12 +1,12 @@
-From 25a882b5bbdef90600b18bff46e4468235b24958 Mon Sep 17 00:00:00 2001
+From 466e0f8f259d3ce34b5b67408a31ab53f3086210 Mon Sep 17 00:00:00 2001
 From: Yuta NAKAI <nak5124@live.jp>
-Date: Wed, 29 Apr 2015 11:08:42 +0900
-Subject: [PATCH 4/9] Cleanup
+Date: Sat, 9 May 2015 01:40:31 +0900
+Subject: [PATCH 3/8] Cleanup
 
 ---
  adler32.c                  | 196 ++++-------------
  arch/x86/crc_folding.c     |  69 +++---
- arch/x86/deflate_quick.c   |  48 ++--
+ arch/x86/deflate_quick.c   |  46 ++--
  arch/x86/fill_window_sse.c |  34 +--
  arch/x86/x86.c             |   2 +-
  compress.c                 |  32 ++-
@@ -34,12 +34,11 @@ Subject: [PATCH 4/9] Cleanup
  trees.c                    | 411 ++++++++++------------------------
  trees.h                    |  10 +-
  uncompr.c                  |  17 +-
- zconf.h                    | 332 ++--------------------------
  zconf.h.in                 | 332 ++--------------------------
- zlib.h                     | 497 +++++++++++++++++++-----------------------
+ zlib.h                     | 489 ++++++++++++++++++-----------------------
  zutil.c                    | 109 ++++++----
  zutil.h                    |  65 +-----
- 35 files changed, 1662 insertions(+), 3270 deletions(-)
+ 34 files changed, 1631 insertions(+), 2959 deletions(-)
 
 diff --git a/adler32.c b/adler32.c
 index 0ac4cf3..3ff091f 100644
@@ -281,7 +280,7 @@ index 0ac4cf3..3ff091f 100644
      return adler32_combine_(adler1, adler2, len2);
  }
 diff --git a/arch/x86/crc_folding.c b/arch/x86/crc_folding.c
-index 5a4e975..f033547 100644
+index fbf5f89..52e89cc 100644
 --- a/arch/x86/crc_folding.c
 +++ b/arch/x86/crc_folding.c
 @@ -40,7 +40,7 @@
@@ -401,7 +400,7 @@ index 5a4e975..f033547 100644
 +                                 const unsigned char *src,
 +                                 long len)
  {
-     unsigned long algn_diff;
+     uint64_t algn_diff;
      __m128i xmm_t0, xmm_t1, xmm_t2, xmm_t3;
 @@ -395,7 +398,7 @@ done:
      CRC_SAVE(s)
@@ -440,21 +439,21 @@ index 5a4e975..f033547 100644
  
      CRC_LOAD(s)
 diff --git a/arch/x86/deflate_quick.c b/arch/x86/deflate_quick.c
-index 1459a1b..e612f35 100644
+index 5685c5f..3bcb370 100644
 --- a/arch/x86/deflate_quick.c
 +++ b/arch/x86/deflate_quick.c
-@@ -19,8 +19,8 @@
+@@ -20,8 +20,8 @@
  extern void fill_window_sse(deflate_state *s);
  extern void flush_pending  (z_stream *strm);
  
--local inline long compare258(z_const unsigned char *z_const src0,
+-local inline int64_t compare258(z_const unsigned char *z_const src0,
 -        z_const unsigned char *z_const src1)
-+static inline long compare258(const unsigned char *const src0,
-+                              const unsigned char *const src1)
++static inline int64_t compare258(const unsigned char *const src0,
++                                 const unsigned char *const src1)
  {
      intptr_t ax, dx, cx;
      __m128i xmm_src0;
-@@ -73,13 +73,14 @@ local inline long compare258(z_const unsigned char *z_const src0,
+@@ -74,13 +74,14 @@ local inline int64_t compare258(z_const unsigned char *z_const src0,
      return ax - 16;
  }
  
@@ -474,7 +473,7 @@ index 1459a1b..e612f35 100644
  
      out = s->bi_buf;
      w = s->bi_valid;
-@@ -91,7 +92,7 @@ local inline void quick_send_bits(deflate_state *z_const s, z_const int value,
+@@ -92,7 +93,7 @@ local inline void quick_send_bits(deflate_state *z_const s, z_const int value,
      if (s->pending + 4 >= s->pending_buf_size)
          flush_pending(s->strm);
  
@@ -483,7 +482,7 @@ index 1459a1b..e612f35 100644
  
      b = w >> 3;
      s->pending += b;
-@@ -99,10 +100,11 @@ local inline void quick_send_bits(deflate_state *z_const s, z_const int value,
+@@ -100,10 +101,11 @@ local inline void quick_send_bits(deflate_state *z_const s, z_const int value,
      s->bi_valid = w - (b << 3);
  }
  
@@ -498,7 +497,7 @@ index 1459a1b..e612f35 100644
  
      code = quick_len_codes[lc] >> 8;
      len =  quick_len_codes[lc] & 0xFF;
-@@ -113,26 +115,26 @@ local inline void static_emit_ptr(deflate_state *z_const s, z_const int lc,
+@@ -114,26 +116,26 @@ local inline void static_emit_ptr(deflate_state *z_const s, z_const int lc,
      quick_send_bits(s, code, len);
  }
  
@@ -532,7 +531,7 @@ index 1459a1b..e612f35 100644
  {
      send_code(s, END_BLOCK, static_ltree);
  
-@@ -143,10 +145,10 @@ local void static_emit_end_block(deflate_state *z_const s,
+@@ -144,10 +146,10 @@ local void static_emit_end_block(deflate_state *z_const s,
      flush_pending(s->strm);
  }
  
@@ -545,16 +544,7 @@ index 1459a1b..e612f35 100644
  
      __asm__ __volatile__ (
          "crc32l (%[window], %[str], 1), %0\n\t"
-@@ -163,7 +165,7 @@ local inline Pos quick_insert_string(deflate_state *z_const s, z_const Pos str)
- ZLIB_INTERNAL block_state deflate_quick(deflate_state *s, int flush)
- {
-     IPos hash_head;
--    unsigned dist, match_len;
-+    unsigned int dist, match_len;
- 
-     static_emit_tree(s, flush);
- 
-@@ -218,7 +220,7 @@ ZLIB_INTERNAL block_state deflate_quick(deflate_state *s, int flush)
+@@ -219,7 +221,7 @@ ZLIB_INTERNAL block_state deflate_quick(deflate_state *s, int flush)
      return block_done;
  }
  
@@ -563,7 +553,7 @@ index 1459a1b..e612f35 100644
  	0x00004007, 0x00002007, 0x00006007, 0x00001007, 
  	0x00005007, 0x00003007, 0x00007007, 0x00000807, 
  	0x00004808, 0x0000c808, 0x00002808, 0x0000a808, 
-@@ -285,7 +287,7 @@ local z_const unsigned quick_len_codes[MAX_MATCH-MIN_MATCH+1] = {
+@@ -286,7 +288,7 @@ local z_const unsigned quick_len_codes[MAX_MATCH-MIN_MATCH+1] = {
  	0x001c230d, 0x001d230d, 0x001e230d, 0x0000a308, 
  };
  
@@ -747,19 +737,26 @@ index ba29677..ce058a7 100644
      return sourceLen + (sourceLen >> 12) + (sourceLen >> 14) +
             (sourceLen >> 25) + 13;
 diff --git a/configure b/configure
-index d063517..43ca05c 100755
+index 4c7209a..b172857 100755
 --- a/configure
 +++ b/configure
-@@ -227,7 +227,7 @@ if test "$gcc" -eq 1 && ($cc -c $test.c) >> configure.log 2>&1; then
- 		LDSHAREDLIBC=''
-         EXE='.exe' ;;
-   MINGW* | mingw*)
--        CFLAGS="${CFLAGS} -D_FILE_OFFSET_BITS=64"
-+        CFLAGS="${CFLAGS} -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE=1"
+@@ -221,6 +221,7 @@ if test "$gcc" -eq 1 && ($cc -c $test.c) >> configure.log 2>&1; then
+         LDSHARED=${LDSHARED-"$cc -shared -Wl,-soname,libz.so.1,--version-script,${SRCDIR}/zlib.map"}
+         LDCONFIG="ldconfig -m" ;;
+   CYGWIN* | Cygwin* | cygwin* | OS/2*)
++        CFLAGS="${CFLAGS} -D__XSI_VISIBLE=500"
          SFLAGS="${CFLAGS}"
-         LDFLAGS="-L. ${old_ldflags}"
-         shared_ext=".dll"
-@@ -646,8 +646,8 @@ case "${ARCH}" in
+         shared_ext='.dll'
+         SHAREDLIB=cygz$shared_ext
+@@ -229,6 +230,7 @@ if test "$gcc" -eq 1 && ($cc -c $test.c) >> configure.log 2>&1; then
+         LDSHAREDLIBC=''
+         EXE='.exe' ;;
+   MSYS* | msys*)
++        CFLAGS="${CFLAGS} -D__XSI_VISIBLE=500"
+         SFLAGS="${CFLAGS}"
+         shared_ext='.dll'
+         SHAREDLIB=msys-z$shared_ext
+@@ -634,8 +636,8 @@ case "${ARCH}" in
              ;;
          esac
  
@@ -770,7 +767,7 @@ index d063517..43ca05c 100755
  
  	# Enable arch-specific optimizations?
  	if test $without_optimizations -eq 0; then
-@@ -691,8 +691,8 @@ case "${ARCH}" in
+@@ -679,8 +681,8 @@ case "${ARCH}" in
              armv6l | armv6hl)
                  # Tests done on Raspberry pi (armv6hl) indicate that UNALIGNED_OK and CRC32_UNROLL_LESS both
                  # provide performance improvements, totaling about 1.5% for the two.
@@ -1199,7 +1196,7 @@ index c2f4c6b..444d2fb 100644
    }
  };
 diff --git a/deflate.c b/deflate.c
-index eecd925..400cf71 100644
+index 16d5c83..232ab42 100644
 --- a/deflate.c
 +++ b/deflate.c
 @@ -56,6 +56,7 @@
@@ -1210,7 +1207,7 @@ index eecd925..400cf71 100644
  const char deflate_copyright[] =
     " deflate 1.2.8.f Copyright 1995-2013 Jean-loup Gailly and Mark Adler ";
  /*
-@@ -69,29 +70,29 @@ const char deflate_copyright[] =
+@@ -69,31 +70,31 @@ const char deflate_copyright[] =
   *  Function prototypes.
   */
  
@@ -1222,7 +1219,14 @@ index eecd925..400cf71 100644
 -local block_state deflate_stored (deflate_state *s, int flush);
 -local block_state deflate_fast   (deflate_state *s, int flush);
 -block_state deflate_quick  (deflate_state *s, int flush);
++static void fill_window(deflate_state *s);
++static block_state deflate_stored(deflate_state *s, int flush);
++static block_state deflate_fast(deflate_state *s, int flush);
++ZLIB_INTERNAL block_state deflate_quick(deflate_state *s, int flush);
+ #ifdef MEDIUM_STRATEGY
 -local block_state deflate_medium (deflate_state *s, int flush);
++static block_state deflate_medium(deflate_state *s, int flush);
+ #endif
 -local block_state deflate_slow   (deflate_state *s, int flush);
 -local block_state deflate_rle    (deflate_state *s, int flush);
 -local block_state deflate_huff   (deflate_state *s, int flush);
@@ -1230,11 +1234,6 @@ index eecd925..400cf71 100644
 -local void putShortMSB    (deflate_state *s, uInt b);
 -ZLIB_INTERNAL void flush_pending  (z_stream *strm);
 -ZLIB_INTERNAL int read_buf        (z_stream *strm, Byte *buf, unsigned size);
-+static void fill_window(deflate_state *s);
-+static block_state deflate_stored(deflate_state *s, int flush);
-+static block_state deflate_fast(deflate_state *s, int flush);
-+block_state deflate_quick(deflate_state *s, int flush);
-+block_state deflate_medium(deflate_state *s, int flush);
 +static block_state deflate_slow(deflate_state *s, int flush);
 +static block_state deflate_rle(deflate_state *s, int flush);
 +static block_state deflate_huff(deflate_state *s, int flush);
@@ -1245,7 +1244,7 @@ index eecd925..400cf71 100644
  
  #ifdef DEBUG
 -local  void check_match (deflate_state *s, IPos start, IPos match, int length);
-+static  void check_match(deflate_state *s, IPos start, IPos match, int length);
++static void check_match(deflate_state *s, IPos start, IPos match, int length);
  #endif
  
  extern void crc_reset(deflate_state *const s);
@@ -1255,7 +1254,7 @@ index eecd925..400cf71 100644
  
  /* ===========================================================================
   * Local data
-@@ -111,14 +112,14 @@ extern void copy_with_crc(z_stream *strm, Byte *dst, long size);
+@@ -113,14 +114,14 @@ extern void copy_with_crc(z_stream *strm, Byte *dst, long size);
   * found for specific files.
   */
  typedef struct config_s {
@@ -1275,7 +1274,7 @@ index eecd925..400cf71 100644
  /*      good lazy nice chain */
  /* 0 */ {0,    0,  0,    0, deflate_stored},  /* store only */
  
-@@ -151,9 +152,6 @@ local const config configuration_table[10] = {
+@@ -153,9 +154,6 @@ local const config configuration_table[10] = {
   * meaning.
   */
  
@@ -1285,7 +1284,7 @@ index eecd925..400cf71 100644
  /* rank Z_BLOCK between Z_NO_FLUSH and Z_PARTIAL_FLUSH */
  #define RANK(f) (((f) << 1) - ((f) > 4 ? 9 : 0))
  
-@@ -162,12 +160,12 @@ local const config configuration_table[10] = {
+@@ -164,12 +162,12 @@ local const config configuration_table[10] = {
   * Insert string str in the dictionary and set match_head to the previous head
   * of the hash chain (the most recent string with same hash key). Return
   * the previous length of the hash chain.
@@ -1300,7 +1299,7 @@ index eecd925..400cf71 100644
  {
      Pos ret;
      unsigned *ip, val, h = 0;
-@@ -191,7 +189,7 @@ local inline Pos insert_string_sse(deflate_state *z_const s, z_const Pos str)
+@@ -193,7 +191,7 @@ local inline Pos insert_string_sse(deflate_state *z_const s, z_const Pos str)
  }
  #endif
  
@@ -1309,7 +1308,7 @@ index eecd925..400cf71 100644
  {
      Pos ret;
  
-@@ -202,7 +200,7 @@ local inline Pos insert_string_c(deflate_state *z_const s, z_const Pos str)
+@@ -204,7 +202,7 @@ local inline Pos insert_string_c(deflate_state *z_const s, z_const Pos str)
      return ret;
  }
  
@@ -1318,7 +1317,7 @@ index eecd925..400cf71 100644
  {
  #ifdef X86_SSE4_2_CRC_HASH
      if (x86_cpu_has_sse42)
-@@ -213,9 +211,9 @@ local inline Pos insert_string(deflate_state *z_const s, z_const Pos str)
+@@ -215,9 +213,9 @@ local inline Pos insert_string(deflate_state *z_const s, z_const Pos str)
  
  
  #ifndef NOT_TWEAK_COMPILER
@@ -1331,7 +1330,7 @@ index eecd925..400cf71 100644
      for (idx = 0; idx < count; idx++) {
          insert_string(s, startpos + idx);
      }
-@@ -228,14 +226,13 @@ bulk_insert_str(deflate_state *s, Pos startpos, uInt count) {
+@@ -230,14 +228,13 @@ bulk_insert_str(deflate_state *s, Pos startpos, uInt count) {
   */
  #define CLEAR_HASH(s) \
      s->head[s->hash_size-1] = NIL; \
@@ -1351,7 +1350,7 @@ index eecd925..400cf71 100644
  {
      return deflateInit2_(strm, level, Z_DEFLATED, MAX_WBITS, DEF_MEM_LEVEL,
                           Z_DEFAULT_STRATEGY, version, stream_size);
-@@ -243,23 +240,21 @@ int ZEXPORT deflateInit_(strm, level, version, stream_size)
+@@ -245,23 +242,21 @@ int ZEXPORT deflateInit_(strm, level, version, stream_size)
  }
  
  /* ========================================================================= */
@@ -1384,7 +1383,7 @@ index eecd925..400cf71 100644
      /* We overlay pending_buf and d_buf+l_buf. This works since the average
       * output size for (length,distance) codes is <= 24 bits.
       */
-@@ -268,27 +263,18 @@ int ZEXPORT deflateInit2_(strm, level, method, windowBits, memLevel, strategy,
+@@ -270,27 +265,18 @@ int ZEXPORT deflateInit2_(strm, level, method, windowBits, memLevel, strategy,
      x86_check_features();
  #endif
  
@@ -1418,7 +1417,7 @@ index eecd925..400cf71 100644
  
      if (level == Z_DEFAULT_COMPRESSION) level = 6;
  
-@@ -296,12 +282,10 @@ int ZEXPORT deflateInit2_(strm, level, method, windowBits, memLevel, strategy,
+@@ -298,12 +284,10 @@ int ZEXPORT deflateInit2_(strm, level, method, windowBits, memLevel, strategy,
          wrap = 0;
          windowBits = -windowBits;
      }
@@ -1431,7 +1430,7 @@ index eecd925..400cf71 100644
      if (memLevel < 1 || memLevel > MAX_MEM_LEVEL || method != Z_DEFLATED ||
          windowBits < 8 || windowBits > 15 || level < 0 || level > 9 ||
          strategy < 0 || strategy > Z_FIXED) {
-@@ -314,13 +298,13 @@ int ZEXPORT deflateInit2_(strm, level, method, windowBits, memLevel, strategy,
+@@ -316,13 +300,13 @@ int ZEXPORT deflateInit2_(strm, level, method, windowBits, memLevel, strategy,
          windowBits = 13;
  #endif
  
@@ -1448,7 +1447,7 @@ index eecd925..400cf71 100644
      s->w_bits = windowBits;
      s->w_size = 1 << s->w_bits;
      s->w_mask = s->w_size - 1;
-@@ -340,48 +324,47 @@ int ZEXPORT deflateInit2_(strm, level, method, windowBits, memLevel, strategy,
+@@ -342,48 +326,47 @@ int ZEXPORT deflateInit2_(strm, level, method, windowBits, memLevel, strategy,
      window_padding = 8;
  #endif
  
@@ -1515,7 +1514,7 @@ index eecd925..400cf71 100644
          return Z_STREAM_ERROR;
      s = strm->state;
      wrap = s->wrap;
-@@ -409,7 +392,7 @@ int ZEXPORT deflateSetDictionary (strm, dictionary, dictLength)
+@@ -411,7 +394,7 @@ int ZEXPORT deflateSetDictionary (strm, dictionary, dictLength)
      avail = strm->avail_in;
      next = strm->next_in;
      strm->avail_in = dictLength;
@@ -1524,7 +1523,7 @@ index eecd925..400cf71 100644
      fill_window(s);
      while (s->lookahead >= MIN_MATCH) {
          str = s->strstart;
-@@ -437,18 +420,17 @@ int ZEXPORT deflateSetDictionary (strm, dictionary, dictLength)
+@@ -439,18 +422,17 @@ int ZEXPORT deflateSetDictionary (strm, dictionary, dictLength)
  }
  
  /* ========================================================================= */
@@ -1546,7 +1545,7 @@ index eecd925..400cf71 100644
      strm->data_type = Z_UNKNOWN;
  
      s = (deflate_state *)strm->state;
-@@ -460,10 +442,8 @@ int ZEXPORT deflateResetKeep (strm)
+@@ -462,10 +444,8 @@ int ZEXPORT deflateResetKeep (strm)
      }
      s->status = s->wrap ? INIT_STATE : BUSY_STATE;
      strm->adler =
@@ -1559,7 +1558,7 @@ index eecd925..400cf71 100644
      s->last_flush = Z_NO_FLUSH;
  
      _tr_init(s);
-@@ -472,8 +452,7 @@ int ZEXPORT deflateResetKeep (strm)
+@@ -474,8 +454,7 @@ int ZEXPORT deflateResetKeep (strm)
  }
  
  /* ========================================================================= */
@@ -1569,7 +1568,7 @@ index eecd925..400cf71 100644
  {
      int ret;
  
-@@ -484,48 +463,45 @@ int ZEXPORT deflateReset (strm)
+@@ -486,48 +465,45 @@ int ZEXPORT deflateReset (strm)
  }
  
  /* ========================================================================= */
@@ -1633,7 +1632,7 @@ index eecd925..400cf71 100644
          s->bi_valid += put;
          _tr_flush_bits(s);
          value >>= put;
-@@ -535,16 +511,15 @@ int ZEXPORT deflatePrime (strm, bits, value)
+@@ -537,16 +513,15 @@ int ZEXPORT deflatePrime (strm, bits, value)
  }
  
  /* ========================================================================= */
@@ -1654,7 +1653,7 @@ index eecd925..400cf71 100644
      s = strm->state;
  
      if (level == Z_DEFAULT_COMPRESSION) level = 6;
-@@ -572,16 +547,15 @@ int ZEXPORT deflateParams(strm, level, strategy)
+@@ -574,16 +549,15 @@ int ZEXPORT deflateParams(strm, level, strategy)
  }
  
  /* ========================================================================= */
@@ -1677,7 +1676,7 @@ index eecd925..400cf71 100644
      s = strm->state;
      s->good_match = good_length;
      s->max_lazy_match = max_lazy;
-@@ -607,20 +581,19 @@ int ZEXPORT deflateTune(strm, good_length, max_lazy, nice_length, max_chain)
+@@ -609,20 +583,19 @@ int ZEXPORT deflateTune(strm, good_length, max_lazy, nice_length, max_chain)
   * upper bound of about 14% expansion does not seem onerous for output buffer
   * allocation.
   */
@@ -1703,7 +1702,7 @@ index eecd925..400cf71 100644
          return complen + 6;
  
      /* compute wrapper length */
-@@ -634,16 +607,16 @@ uLong ZEXPORT deflateBound(strm, sourceLen)
+@@ -636,16 +609,16 @@ uLong ZEXPORT deflateBound(strm, sourceLen)
          break;
      case 2:                                 /* gzip wrapper */
          wraplen = 18;
@@ -1724,7 +1723,7 @@ index eecd925..400cf71 100644
                  do {
                      wraplen++;
                  } while (*str++);
-@@ -669,10 +642,11 @@ uLong ZEXPORT deflateBound(strm, sourceLen)
+@@ -671,10 +644,11 @@ uLong ZEXPORT deflateBound(strm, sourceLen)
   * IN assertion: the stream state is correct and there is enough room in
   * pending_buf.
   */
@@ -1739,7 +1738,7 @@ index eecd925..400cf71 100644
  }
  
  /* =========================================================================
-@@ -681,8 +655,7 @@ local void putShortMSB (deflate_state *s, uInt b)
+@@ -683,8 +657,7 @@ local void putShortMSB (deflate_state *s, uInt b)
   * to avoid allocating a large strm->next_out buffer and copying into it.
   * (See also read_buf()).
   */
@@ -1749,7 +1748,7 @@ index eecd925..400cf71 100644
  {
      unsigned len;
      deflate_state *s = strm->state;
-@@ -704,25 +677,24 @@ ZLIB_INTERNAL void flush_pending(strm)
+@@ -706,25 +679,24 @@ ZLIB_INTERNAL void flush_pending(strm)
  }
  
  /* ========================================================================= */
@@ -1784,7 +1783,7 @@ index eecd925..400cf71 100644
  
      s->strm = strm; /* just in case */
      old_flush = s->last_flush;
-@@ -730,13 +702,12 @@ int ZEXPORT deflate (strm, flush)
+@@ -732,13 +704,12 @@ int ZEXPORT deflate (strm, flush)
  
      /* Write the header */
      if (s->status == INIT_STATE) {
@@ -1799,7 +1798,7 @@ index eecd925..400cf71 100644
                  put_byte(s, 0);
                  put_byte(s, 0);
                  put_byte(s, 0);
-@@ -751,19 +722,19 @@ int ZEXPORT deflate (strm, flush)
+@@ -753,19 +724,19 @@ int ZEXPORT deflate (strm, flush)
              else {
                  put_byte(s, (s->gzhead->text ? 1 : 0) +
                              (s->gzhead->hcrc ? 2 : 0) +
@@ -1827,7 +1826,7 @@ index eecd925..400cf71 100644
                      put_byte(s, s->gzhead->extra_len & 0xff);
                      put_byte(s, (s->gzhead->extra_len >> 8) & 0xff);
                  }
-@@ -773,12 +744,9 @@ int ZEXPORT deflate (strm, flush)
+@@ -775,12 +746,9 @@ int ZEXPORT deflate (strm, flush)
                  s->gzindex = 0;
                  s->status = EXTRA_STATE;
              }
@@ -1843,7 +1842,7 @@ index eecd925..400cf71 100644
  
              if (s->strategy >= Z_HUFFMAN_ONLY || s->level < 2)
                  level_flags = 0;
-@@ -797,16 +765,15 @@ int ZEXPORT deflate (strm, flush)
+@@ -799,16 +767,15 @@ int ZEXPORT deflate (strm, flush)
  
              /* Save the adler32 of the preset dictionary: */
              if (s->strstart != 0) {
@@ -1865,7 +1864,7 @@ index eecd925..400cf71 100644
  
              while (s->gzindex < (s->gzhead->extra_len & 0xffff)) {
                  if (s->pending == s->pending_buf_size) {
-@@ -833,8 +800,8 @@ int ZEXPORT deflate (strm, flush)
+@@ -835,8 +802,8 @@ int ZEXPORT deflate (strm, flush)
              s->status = NAME_STATE;
      }
      if (s->status == NAME_STATE) {
@@ -1876,7 +1875,7 @@ index eecd925..400cf71 100644
              int val;
  
              do {
-@@ -864,8 +831,8 @@ int ZEXPORT deflate (strm, flush)
+@@ -866,8 +833,8 @@ int ZEXPORT deflate (strm, flush)
              s->status = COMMENT_STATE;
      }
      if (s->status == COMMENT_STATE) {
@@ -1887,7 +1886,7 @@ index eecd925..400cf71 100644
              int val;
  
              do {
-@@ -897,16 +864,15 @@ int ZEXPORT deflate (strm, flush)
+@@ -899,16 +866,15 @@ int ZEXPORT deflate (strm, flush)
              if (s->pending + 2 > s->pending_buf_size)
                  flush_pending(strm);
              if (s->pending + 2 <= s->pending_buf_size) {
@@ -1907,7 +1906,7 @@ index eecd925..400cf71 100644
  
      /* Flush as much pending output as possible */
      if (s->pending != 0) {
-@@ -927,14 +893,12 @@ int ZEXPORT deflate (strm, flush)
+@@ -929,14 +895,12 @@ int ZEXPORT deflate (strm, flush)
       * returning Z_STREAM_END instead of Z_BUF_ERROR.
       */
      } else if (strm->avail_in == 0 && RANK(flush) <= RANK(old_flush) &&
@@ -1926,7 +1925,7 @@ index eecd925..400cf71 100644
  
      /* Start a new block or continue the current one.
       */
-@@ -999,23 +963,19 @@ int ZEXPORT deflate (strm, flush)
+@@ -1001,23 +965,19 @@ int ZEXPORT deflate (strm, flush)
      if (s->wrap <= 0) return Z_STREAM_END;
  
      /* Write the trailer */
@@ -1961,7 +1960,7 @@ index eecd925..400cf71 100644
      }
      flush_pending(strm);
      /* If avail_out is zero, the application will call deflate again
-@@ -1026,12 +986,11 @@ int ZEXPORT deflate (strm, flush)
+@@ -1028,12 +988,11 @@ int ZEXPORT deflate (strm, flush)
  }
  
  /* ========================================================================= */
@@ -1976,7 +1975,7 @@ index eecd925..400cf71 100644
  
      status = strm->state->status;
      if (status != INIT_STATE &&
-@@ -1045,13 +1004,13 @@ int ZEXPORT deflateEnd (strm)
+@@ -1047,13 +1006,13 @@ int ZEXPORT deflateEnd (strm)
      }
  
      /* Deallocate in reverse order of allocations: */
@@ -1996,7 +1995,7 @@ index eecd925..400cf71 100644
  
      return status == BUSY_STATE ? Z_DATA_ERROR : Z_OK;
  }
-@@ -1059,49 +1018,47 @@ int ZEXPORT deflateEnd (strm)
+@@ -1061,49 +1020,47 @@ int ZEXPORT deflateEnd (strm)
  /* =========================================================================
   * Copy the source state to the destination state.
   */
@@ -2067,7 +2066,7 @@ index eecd925..400cf71 100644
  
      ds->l_desc.dyn_tree = ds->dyn_ltree;
      ds->d_desc.dyn_tree = ds->dyn_dtree;
-@@ -1117,20 +1074,20 @@ int ZEXPORT deflateCopy (dest, source)
+@@ -1119,20 +1076,20 @@ int ZEXPORT deflateCopy (dest, source)
   * allocating a large strm->next_in buffer and copying from it.
   * (See also flush_pending()).
   */
@@ -2093,7 +2092,7 @@ index eecd925..400cf71 100644
      {
          memcpy(buf, strm->next_in, len);
          if (strm->state->wrap == 1)
-@@ -1145,9 +1102,9 @@ ZLIB_INTERNAL int read_buf(z_stream *strm, Byte *buf, unsigned size)
+@@ -1147,9 +1104,9 @@ ZLIB_INTERNAL int read_buf(z_stream *strm, Byte *buf, unsigned size)
  /* ===========================================================================
   * Initialize the "longest match" routines for a new zlib stream
   */
@@ -2105,7 +2104,7 @@ index eecd925..400cf71 100644
  
      CLEAR_HASH(s);
  
-@@ -1171,11 +1128,14 @@ local void lm_init (deflate_state *s)
+@@ -1173,11 +1130,14 @@ local void lm_init (deflate_state *s)
  /* ===========================================================================
   * Check that the match at match_start is indeed a match.
   */
@@ -2122,7 +2121,7 @@ index eecd925..400cf71 100644
          fprintf(stderr, " start %u, match %u, length %d\n",
                  start, match, length);
          do {
-@@ -1205,9 +1165,9 @@ local void check_match(deflate_state *s, IPos start, IPos match, int length)
+@@ -1207,9 +1167,9 @@ local void check_match(deflate_state *s, IPos start, IPos match, int length)
  #ifdef X86_SSE2_FILL_WINDOW
  extern void fill_window_sse(deflate_state *s);
  #endif
@@ -2134,7 +2133,7 @@ index eecd925..400cf71 100644
  {
  #ifdef X86_SSE2_FILL_WINDOW
  #ifndef X86_NOCHECK_SSE2
-@@ -1223,24 +1183,24 @@ local void fill_window(deflate_state *s)
+@@ -1225,24 +1185,24 @@ local void fill_window(deflate_state *s)
      fill_window_c(s);
  }
  
@@ -2166,7 +2165,7 @@ index eecd925..400cf71 100644
              s->match_start -= wsize;
              s->strstart    -= wsize; /* we now have strstart >= MAX_DIST */
              s->block_start -= (long) wsize;
-@@ -1255,7 +1215,7 @@ local void fill_window_c(deflate_state *s)
+@@ -1257,7 +1217,7 @@ local void fill_window_c(deflate_state *s)
              p = &s->head[n];
  #ifdef NOT_TWEAK_COMPILER
              do {
@@ -2175,7 +2174,7 @@ index eecd925..400cf71 100644
                  m = *--p;
                  *p = (Pos)(m >= wsize ? m-wsize : NIL);
              } while (--n);
-@@ -1283,7 +1243,7 @@ local void fill_window_c(deflate_state *s)
+@@ -1285,7 +1245,7 @@ local void fill_window_c(deflate_state *s)
              p = &s->prev[n];
  #ifdef NOT_TWEAK_COMPILER
              do {
@@ -2184,7 +2183,7 @@ index eecd925..400cf71 100644
                  m = *--p;
                  *p = (Pos)(m >= wsize ? m-wsize : NIL);
                  /* If n is not on any hash chain, prev[n] is garbage but
-@@ -1323,7 +1283,7 @@ local void fill_window_c(deflate_state *s)
+@@ -1325,7 +1285,7 @@ local void fill_window_c(deflate_state *s)
  
          /* Initialize the hash value now that we have some input: */
          if (s->lookahead + s->insert >= MIN_MATCH) {
@@ -2193,7 +2192,7 @@ index eecd925..400cf71 100644
              s->ins_h = s->window[str];
              if (str >= 1)
                  UPDATE_HASH(s, s->ins_h, str + 1 - (MIN_MATCH-1));
-@@ -1354,8 +1314,8 @@ local void fill_window_c(deflate_state *s)
+@@ -1356,8 +1316,8 @@ local void fill_window_c(deflate_state *s)
       * routines allow scanning to strstart + MAX_MATCH, ignoring lookahead.
       */
      if (s->high_water < s->window_size) {
@@ -2204,7 +2203,7 @@ index eecd925..400cf71 100644
  
          if (s->high_water < curr) {
              /* Previous high water mark below current data -- zero WIN_INIT
-@@ -1364,23 +1324,23 @@ local void fill_window_c(deflate_state *s)
+@@ -1366,23 +1326,23 @@ local void fill_window_c(deflate_state *s)
              init = s->window_size - curr;
              if (init > WIN_INIT)
                  init = WIN_INIT;
@@ -2233,7 +2232,7 @@ index eecd925..400cf71 100644
             "not enough room for search");
  }
  
-@@ -1390,9 +1350,9 @@ local void fill_window_c(deflate_state *s)
+@@ -1392,9 +1352,9 @@ local void fill_window_c(deflate_state *s)
   */
  #define FLUSH_BLOCK_ONLY(s, last) { \
     _tr_flush_block(s, (s->block_start >= 0L ? \
@@ -2246,7 +2245,7 @@ index eecd925..400cf71 100644
                  (last)); \
     s->block_start = s->strstart; \
     flush_pending(s->strm); \
-@@ -1414,13 +1374,14 @@ local void fill_window_c(deflate_state *s)
+@@ -1416,13 +1376,14 @@ local void fill_window_c(deflate_state *s)
   * NOTE: this function should be optimized to avoid extra copying from
   * window to pending_buf.
   */
@@ -2264,7 +2263,7 @@ index eecd925..400cf71 100644
  
      if (max_block_size > s->pending_buf_size - 5) {
          max_block_size = s->pending_buf_size - 5;
-@@ -1446,18 +1407,17 @@ local block_state deflate_stored(deflate_state *s, int flush)
+@@ -1448,18 +1409,17 @@ local block_state deflate_stored(deflate_state *s, int flush)
  
          /* Emit a stored block if pending_buf will be full: */
          max_start = s->block_start + max_block_size;
@@ -2287,7 +2286,7 @@ index eecd925..400cf71 100644
      }
      s->insert = 0;
      if (flush == Z_FINISH) {
-@@ -1476,7 +1436,8 @@ local block_state deflate_stored(deflate_state *s, int flush)
+@@ -1478,7 +1438,8 @@ local block_state deflate_stored(deflate_state *s, int flush)
   * new strings in the dictionary only for unmatched strings or for short
   * matches. It is used only for the fast compression options.
   */
@@ -2297,7 +2296,7 @@ index eecd925..400cf71 100644
  {
      IPos hash_head;       /* head of the hash chain */
      int bflush;           /* set if current block must be flushed */
-@@ -1578,7 +1539,8 @@ local block_state deflate_fast(deflate_state *s, int flush)
+@@ -1580,7 +1541,8 @@ local block_state deflate_fast(deflate_state *s, int flush)
   * evaluation for matches: a match is finally adopted only if there is
   * no better match at the next window position.
   */
@@ -2307,7 +2306,7 @@ index eecd925..400cf71 100644
  {
      IPos hash_head;          /* head of hash chain */
      int bflush;              /* set if current block must be flushed */
-@@ -1637,7 +1599,7 @@ local block_state deflate_slow(deflate_state *s, int flush)
+@@ -1639,7 +1601,7 @@ local block_state deflate_slow(deflate_state *s, int flush)
           * match is not better, output the previous match:
           */
          if (s->prev_length >= MIN_MATCH && s->match_length <= s->prev_length) {
@@ -2316,7 +2315,7 @@ index eecd925..400cf71 100644
              /* Do not insert strings in hash table beyond this. */
  
              check_match(s, s->strstart-1, s->prev_match, s->prev_length);
-@@ -1664,8 +1626,8 @@ local block_state deflate_slow(deflate_state *s, int flush)
+@@ -1666,8 +1628,8 @@ local block_state deflate_slow(deflate_state *s, int flush)
              s->strstart++;
  #else
              {
@@ -2327,7 +2326,7 @@ index eecd925..400cf71 100644
                  if (unlikely(insert_cnt > max_insert - s->strstart))
                      insert_cnt = max_insert - s->strstart;
  
-@@ -1722,11 +1684,12 @@ local block_state deflate_slow(deflate_state *s, int flush)
+@@ -1724,11 +1686,12 @@ local block_state deflate_slow(deflate_state *s, int flush)
   * one.  Do not maintain a hash table.  (It will be regenerated if this run of
   * deflate switches away from Z_RLE.)
   */
@@ -2343,7 +2342,7 @@ index eecd925..400cf71 100644
  
      for (;;) {
          /* Make sure that we always have enough lookahead, except
-@@ -1758,7 +1721,7 @@ local block_state deflate_rle(deflate_state *s, int flush)
+@@ -1760,7 +1723,7 @@ local block_state deflate_rle(deflate_state *s, int flush)
                  if (s->match_length > s->lookahead)
                      s->match_length = s->lookahead;
              }
@@ -2352,7 +2351,7 @@ index eecd925..400cf71 100644
          }
  
          /* Emit match if have run of MIN_MATCH or longer, else emit literal */
-@@ -1793,7 +1756,8 @@ local block_state deflate_rle(deflate_state *s, int flush)
+@@ -1795,7 +1758,8 @@ local block_state deflate_rle(deflate_state *s, int flush)
   * For Z_HUFFMAN_ONLY, do not look for matches.  Do not maintain a hash table.
   * (It will be regenerated if this run of deflate switches away from Huffman.)
   */
@@ -2923,7 +2922,7 @@ index 5bbd15c..5067c57 100644
 +   value -- needed when comparing unsigned to off_t, which is signed. */
 +# define GT_OFF(x) (sizeof(int) == sizeof(off_t) && (x) > INT_MAX)
 diff --git a/gzlib.c b/gzlib.c
-index 028a2d3..ffe504a 100644
+index ce20841..ffe504a 100644
 --- a/gzlib.c
 +++ b/gzlib.c
 @@ -5,73 +5,8 @@
@@ -3148,7 +3147,7 @@ index 028a2d3..ffe504a 100644
  }
  
  /* -- see zlib.h -- */
--#ifdef _WIN32
+-#if defined(_WIN32) || defined(__CYGWIN__)
 -gzFile ZEXPORT gzopen_w(path, mode)
 -    const wchar_t *path;
 -    const char *mode;
@@ -7317,380 +7316,6 @@ index fada0c6..4fd8706 100644
  
      stream.zalloc = (alloc_func)0;
      stream.zfree = (free_func)0;
-diff --git a/zconf.h b/zconf.h
-index 4a4beaf..6b05ec4 100644
---- a/zconf.h
-+++ b/zconf.h
-@@ -8,194 +8,36 @@
- #ifndef ZCONF_H
- #define ZCONF_H
- 
--/*
-- * If you *really* need a unique prefix for all types and library functions,
-- * compile with -DZ_PREFIX. The "standard" zlib should be compiled without it.
-- * Even better than compiling with -DZ_PREFIX would be to use configure to set
-- * this permanently in zconf.h using "./configure --zprefix".
-- */
--#ifdef Z_PREFIX     /* may be set to #if 1 by ./configure */
--#  define Z_PREFIX_SET
--
--/* all linked symbols */
--#  define _dist_code            z__dist_code
--#  define _length_code          z__length_code
--#  define _tr_align             z__tr_align
--#  define _tr_flush_bits        z__tr_flush_bits
--#  define _tr_flush_block       z__tr_flush_block
--#  define _tr_init              z__tr_init
--#  define _tr_stored_block      z__tr_stored_block
--#  define _tr_tally             z__tr_tally
--#  define adler32               z_adler32
--#  define adler32_combine       z_adler32_combine
--#  define adler32_combine64     z_adler32_combine64
--#  ifndef Z_SOLO
--#    define compress              z_compress
--#    define compress2             z_compress2
--#    define compressBound         z_compressBound
--#  endif
--#  define crc32                 z_crc32
--#  define crc32_combine         z_crc32_combine
--#  define crc32_combine64       z_crc32_combine64
--#  define deflate               z_deflate
--#  define deflateBound          z_deflateBound
--#  define deflateCopy           z_deflateCopy
--#  define deflateEnd            z_deflateEnd
--#  define deflateInit2_         z_deflateInit2_
--#  define deflateInit_          z_deflateInit_
--#  define deflateParams         z_deflateParams
--#  define deflatePending        z_deflatePending
--#  define deflatePrime          z_deflatePrime
--#  define deflateReset          z_deflateReset
--#  define deflateResetKeep      z_deflateResetKeep
--#  define deflateSetDictionary  z_deflateSetDictionary
--#  define deflateSetHeader      z_deflateSetHeader
--#  define deflateTune           z_deflateTune
--#  define deflate_copyright     z_deflate_copyright
--#  define get_crc_table         z_get_crc_table
--#  ifndef Z_SOLO
--#    define gz_error              z_gz_error
--#    define gz_intmax             z_gz_intmax
--#    define gz_strwinerror        z_gz_strwinerror
--#    define gzbuffer              z_gzbuffer
--#    define gzclearerr            z_gzclearerr
--#    define gzclose               z_gzclose
--#    define gzclose_r             z_gzclose_r
--#    define gzclose_w             z_gzclose_w
--#    define gzdirect              z_gzdirect
--#    define gzdopen               z_gzdopen
--#    define gzeof                 z_gzeof
--#    define gzerror               z_gzerror
--#    define gzflush               z_gzflush
--#    define gzgetc                z_gzgetc
--#    define gzgetc_               z_gzgetc_
--#    define gzgets                z_gzgets
--#    define gzoffset              z_gzoffset
--#    define gzoffset64            z_gzoffset64
--#    define gzopen                z_gzopen
--#    define gzopen64              z_gzopen64
--#    ifdef _WIN32
--#      define gzopen_w              z_gzopen_w
--#    endif
--#    define gzprintf              z_gzprintf
--#    define gzvprintf             z_gzvprintf
--#    define gzputc                z_gzputc
--#    define gzputs                z_gzputs
--#    define gzread                z_gzread
--#    define gzrewind              z_gzrewind
--#    define gzseek                z_gzseek
--#    define gzseek64              z_gzseek64
--#    define gzsetparams           z_gzsetparams
--#    define gztell                z_gztell
--#    define gztell64              z_gztell64
--#    define gzungetc              z_gzungetc
--#    define gzwrite               z_gzwrite
--#  endif
--#  define inflate               z_inflate
--#  define inflateBack           z_inflateBack
--#  define inflateBackEnd        z_inflateBackEnd
--#  define inflateBackInit_      z_inflateBackInit_
--#  define inflateCopy           z_inflateCopy
--#  define inflateEnd            z_inflateEnd
--#  define inflateGetHeader      z_inflateGetHeader
--#  define inflateInit2_         z_inflateInit2_
--#  define inflateInit_          z_inflateInit_
--#  define inflateMark           z_inflateMark
--#  define inflatePrime          z_inflatePrime
--#  define inflateReset          z_inflateReset
--#  define inflateReset2         z_inflateReset2
--#  define inflateSetDictionary  z_inflateSetDictionary
--#  define inflateGetDictionary  z_inflateGetDictionary
--#  define inflateSync           z_inflateSync
--#  define inflateSyncPoint      z_inflateSyncPoint
--#  define inflateUndermine      z_inflateUndermine
--#  define inflateResetKeep      z_inflateResetKeep
--#  define inflate_copyright     z_inflate_copyright
--#  define inflate_fast          z_inflate_fast
--#  define inflate_table         z_inflate_table
--#  ifndef Z_SOLO
--#    define uncompress            z_uncompress
--#  endif
--#  define zError                z_zError
--#  ifndef Z_SOLO
--#    define zcalloc               z_zcalloc
--#    define zcfree                z_zcfree
--#  endif
--#  define zlibCompileFlags      z_zlibCompileFlags
--#  define zlibVersion           z_zlibVersion
--
--/* all zlib typedefs in zlib.h and zconf.h */
--#  define Byte                  z_Byte
--#  define Bytef                 z_Bytef
--#  define alloc_func            z_alloc_func
--#  define charf                 z_charf
--#  define free_func             z_free_func
--#  ifndef Z_SOLO
--#    define gzFile                z_gzFile
--#  endif
--#  define gz_header             z_gz_header
--#  define gz_headerp            z_gz_headerp
--#  define in_func               z_in_func
--#  define intf                  z_intf
--#  define out_func              z_out_func
--#  define uInt                  z_uInt
--#  define uIntf                 z_uIntf
--#  define uLong                 z_uLong
--#  define uLongf                z_uLongf
--#  define voidp                 z_voidp
--#  define voidpc                z_voidpc
--#  define voidpf                z_voidpf
--
--/* all zlib structs in zlib.h and zconf.h */
--#  define gz_header_s           z_gz_header_s
--#  define internal_state        z_internal_state
--
--#endif
--
--#if defined(_WINDOWS) && !defined(WINDOWS)
--#  define WINDOWS
--#endif
--#if defined(_WIN32) || defined(__WIN32__)
--#  ifndef WIN32
--#    define WIN32
--#  endif
--#endif
--
--#ifdef __STDC_VERSION__
--#  if __STDC_VERSION__ >= 199901L
--#    ifndef STDC99
--#      define STDC99
--#    endif
--#  endif
--#endif
--
--#if defined(ZLIB_CONST) && !defined(z_const)
-+#include <sys/types.h>
-+
-+#include <limits.h>
-+#include <stdarg.h>
-+#include <stddef.h>
-+#include <stdint.h>
-+#include <stdio.h>
-+#include <unistd.h>
-+
-+/* Transition the public interface to const if requested by the application.
-+   libz itself is always built with const. */
-+#ifndef z_const
- #  define z_const const
- #else
- #  define z_const
- #endif
- 
- /* Maximum value for memLevel in deflateInit2 */
--#ifndef MAX_MEM_LEVEL
--#  define MAX_MEM_LEVEL 9
--#endif
-+#define MAX_MEM_LEVEL 9
- 
--/* Maximum value for windowBits in deflateInit2 and inflateInit2.
-- * WARNING: reducing MAX_WBITS makes minigzip unable to extract .gz files
-- * created by gzip. (Files created by minigzip can still be extracted by
-- * gzip.)
-- */
--#ifndef MAX_WBITS
--#  define MAX_WBITS   15 /* 32K LZ77 window */
--#endif
-+/* Maximum value for windowBits in deflateInit2 and inflateInit2. */
-+#define MAX_WBITS   15 /* 32K LZ77 window */
- 
- /* The memory requirements for deflate are (in bytes):
-             (1 << (windowBits+2)) +  (1 << (memLevel+9))
-  that is: 128K for windowBits=15  +  128K for memLevel = 8  (default values)
-  plus a few kilobytes for small objects. For example, if you want to reduce
-- the default memory requirements from 256K to 128K, compile with
--     make CFLAGS="-O -DMAX_WBITS=14 -DMAX_MEM_LEVEL=7"
-- Of course this will generally degrade compression (there's no free lunch).
-+ the default memory requirements from 256K to 128K, define MAX_WBITS to 14 and
-+ define MAX_MEM_LEVEL to 7. Of course this will generally degrade compression
-+ (there's no free lunch).
- 
-    The memory requirements for inflate are (in bytes) 1 << windowBits
-  that is, 32K for windowBits=15 (default value) plus a few kilobytes
-@@ -204,39 +46,17 @@
- 
-                         /* Type declarations */
- 
--/* OF() definition is kept for compatibility purposes */
--#ifndef OF /* function prototypes */
--#  define OF(args)  args
--#endif
--
--#ifndef Z_ARG /* function prototypes for stdarg */
--#  define Z_ARG(args)  args
--#endif
--
--#if defined(WINDOWS) || defined(WIN32)
-+#ifdef _WIN32
-    /* If building or using zlib as a DLL, define ZLIB_DLL.
-     * This is not mandatory, but it offers a little performance increase.
-     */
- #  ifdef ZLIB_DLL
--#    if defined(WIN32) && (!defined(__BORLANDC__) || (__BORLANDC__ >= 0x500))
--#      ifdef ZLIB_INTERNAL
--#        define ZEXTERN extern __declspec(dllexport)
--#      else
--#        define ZEXTERN extern __declspec(dllimport)
--#      endif
-+#    ifdef ZLIB_INTERNAL
-+#      define ZEXTERN extern __declspec(dllexport)
-+#    else
-+#      define ZEXTERN extern __declspec(dllimport)
- #    endif
- #  endif  /* ZLIB_DLL */
--   /* If building or using zlib with the WINAPI/WINAPIV calling convention,
--    * define ZLIB_WINAPI.
--    * Caution: the standard ZLIB1.DLL is NOT compiled using ZLIB_WINAPI.
--    */
--#  ifdef ZLIB_WINAPI
--#    include <windows.h>
--     /* No need for _export, use ZLIB.DEF instead. */
--     /* For complete Windows compatibility, use WINAPI, not __stdcall. */
--#    define ZEXPORT WINAPI
--#    define ZEXPORTVA WINAPIV
--#  endif
- #endif
- 
- #ifndef ZEXTERN
-@@ -249,110 +69,6 @@
- #  define ZEXPORTVA
- #endif
- 
--#if !defined(__MACTYPES__)
--typedef unsigned char  Byte;  /* 8 bits */
--#endif
--typedef unsigned int   uInt;  /* 16 bits or more */
--typedef unsigned long  uLong; /* 32 bits or more */
--
--typedef Byte  Bytef;
--typedef char  charf;
--typedef int   intf;
--typedef uInt  uIntf;
--typedef uLong uLongf;
--
--typedef void const *voidpc;
--typedef void       *voidpf;
--typedef void       *voidp;
--
--#if !defined(Z_U4) && !defined(Z_SOLO)
--#  include <limits.h>
--#  if (UINT_MAX == 0xffffffffUL)
--#    define Z_U4 unsigned
--#  elif (ULONG_MAX == 0xffffffffUL)
--#    define Z_U4 unsigned long
--#  elif (USHRT_MAX == 0xffffffffUL)
--#    define Z_U4 unsigned short
--#  endif
--#endif
--
--#ifdef Z_U4
--   typedef Z_U4 z_crc_t;
--#else
--   typedef unsigned long z_crc_t;
--#endif
--
--#ifdef HAVE_UNISTD_H    /* may be set to #if 1 by ./configure */
--#  define Z_HAVE_UNISTD_H
--#endif
--
--#ifdef HAVE_STDARG_H    /* may be set to #if 1 by ./configure */
--#  define Z_HAVE_STDARG_H
--#endif
--
--#ifndef Z_SOLO
--#  include <sys/types.h>      /* for off_t */
--#  include <stdarg.h>         /* for va_list */
--#endif
--
--#ifdef _WIN32
--#  ifndef Z_SOLO
--#    include <stddef.h>         /* for wchar_t */
--#  endif
--#endif
--
--/* a little trick to accommodate both "#define _LARGEFILE64_SOURCE" and
-- * "#define _LARGEFILE64_SOURCE 1" as requesting 64-bit operations, (even
-- * though the former does not conform to the LFS document), but considering
-- * both "#undef _LARGEFILE64_SOURCE" and "#define _LARGEFILE64_SOURCE 0" as
-- * equivalently requesting no 64-bit operations
-- */
--#if defined(_LARGEFILE64_SOURCE) && -_LARGEFILE64_SOURCE - -1 == 1
--#  undef _LARGEFILE64_SOURCE
--#endif
--
--#ifndef Z_SOLO
--#  if defined(Z_HAVE_UNISTD_H) || defined(_LARGEFILE64_SOURCE)
--#    include <unistd.h>         /* for SEEK_*, off_t, and _LFS64_LARGEFILE */
--#    ifdef VMS
--#      include <unixio.h>       /* for off_t */
--#    endif
--#    ifndef z_off_t
--#      define z_off_t off_t
--#    endif
--#  endif
--#endif
--
--#if defined(_LFS64_LARGEFILE) && _LFS64_LARGEFILE-0
--#  define Z_LFS64
--#endif
--
--#if defined(_LARGEFILE64_SOURCE) && defined(Z_LFS64)
--#  define Z_LARGE64
--#endif
--
--#if defined(_FILE_OFFSET_BITS) && _FILE_OFFSET_BITS-0 == 64 && defined(Z_LFS64)
--#  define Z_WANT64
--#endif
--
--#if !defined(SEEK_SET) && !defined(Z_SOLO)
--#  define SEEK_SET        0       /* Seek from beginning of file.  */
--#  define SEEK_CUR        1       /* Seek from current position.  */
--#  define SEEK_END        2       /* Set file pointer to EOF plus "offset" */
--#endif
--
--#ifndef z_off_t
--#  define z_off_t long
--#endif
--
--#if !defined(_WIN32) && defined(Z_LARGE64)
--#  define z_off64_t off64_t
--#else
--#  if defined(_WIN32) && !defined(__GNUC__) && !defined(Z_SOLO)
--#    define z_off64_t __int64
--#  else
--#    define z_off64_t z_off_t
--#  endif
--#endif
-+typedef uint32_t z_crc_t;
- 
- #endif /* ZCONF_H */
 diff --git a/zconf.h.in b/zconf.h.in
 index 4a4beaf..6b05ec4 100644
 --- a/zconf.h.in
@@ -8066,7 +7691,7 @@ index 4a4beaf..6b05ec4 100644
  
  #endif /* ZCONF_H */
 diff --git a/zlib.h b/zlib.h
-index 5488524..0b8a3ca 100644
+index 5488524..4a11fad 100644
 --- a/zlib.h
 +++ b/zlib.h
 @@ -84,30 +84,30 @@ extern "C" {
@@ -9046,7 +8671,7 @@ index 5488524..0b8a3ca 100644
  #define deflateInit(strm, level) \
          deflateInit_((strm), (level), ZLIB_VERSION, (int)sizeof(z_stream))
  #define inflateInit(strm) \
-@@ -1648,98 +1657,36 @@ ZEXTERN int ZEXPORT inflateBackInit_ (z_stream *strm, int windowBits, unsigned c
+@@ -1648,98 +1657,30 @@ ZEXTERN int ZEXPORT inflateBackInit_ (z_stream *strm, int windowBits, unsigned c
          inflateBackInit_((strm), (windowBits), (window), \
                        ZLIB_VERSION, (int)sizeof(z_stream))
  
@@ -9073,7 +8698,13 @@ index 5488524..0b8a3ca 100644
 -#  define gzgetc(g) \
 -          ((g)->have ? ((g)->have--, (g)->pos++, *((g)->next)++) : gzgetc(g))
 -#endif
--
++ZEXTERN gzFile ZEXPORT gzopen(const char *, const char *);
++ZEXTERN off_t ZEXPORT gzseek(gzFile, off_t, int);
++ZEXTERN off_t ZEXPORT gztell(gzFile);
++ZEXTERN off_t ZEXPORT gzoffset(gzFile);
++ZEXTERN unsigned long ZEXPORT adler32_combine(unsigned long, unsigned long, off_t);
++ZEXTERN unsigned long ZEXPORT crc32_combine(unsigned long, unsigned long, off_t);
+ 
 -/* provide 64-bit offset functions if _LARGEFILE64_SOURCE defined, and/or
 - * change the regular functions to 64 bits if _FILE_OFFSET_BITS is 64 (if
 - * both are true, the application gets the *64 functions, and the regular
@@ -9128,19 +8759,6 @@ index 5488524..0b8a3ca 100644
 -   ZEXTERN uLong ZEXPORT crc32_combine (uLong, uLong, z_off_t);
 -
 -#endif /* !Z_SOLO */
-+// #define gzopen gzopen64
-+// #define gzseek gzseek64
-+// #define gztell gztell64
-+// #define gzoffset gzoffset64
-+// #define adler32_combine adler32_combine64
-+// #define crc32_combine crc32_combine64
-+ZEXTERN gzFile ZEXPORT gzopen(const char *, const char *);
-+ZEXTERN off_t ZEXPORT gzseek(gzFile, off_t, int);
-+ZEXTERN off_t ZEXPORT gztell(gzFile);
-+ZEXTERN off_t ZEXPORT gzoffset(gzFile);
-+ZEXTERN unsigned long ZEXPORT adler32_combine(unsigned long, unsigned long, off_t);
-+ZEXTERN unsigned long ZEXPORT crc32_combine(unsigned long, unsigned long, off_t);
-+
 +ZEXTERN gzFile ZEXPORT gzopen64(const char *, const char *);
 +ZEXTERN off_t ZEXPORT gzseek64(gzFile, off_t, int);
 +ZEXTERN off_t ZEXPORT gztell64(gzFile);
@@ -9352,7 +8970,7 @@ index ada99dd..fffc2c9 100644
 +    strm->zfree(strm->opaque, ptr);
 +}
 diff --git a/zutil.h b/zutil.h
-index ca0d5bc..847a82a 100644
+index 5feddb2..9dcd2fa 100644
 --- a/zutil.h
 +++ b/zutil.h
 @@ -21,34 +21,14 @@
