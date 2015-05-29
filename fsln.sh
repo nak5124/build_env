@@ -46,7 +46,7 @@ ln -fsr ./flex.exe ./flex++.exe
 ln -fsr ./flex.exe ./lex.exe
 
 # gawk
-ln -fsr ./gawk-4.1.2.exe ./gawk.exe
+ln -fsr ./gawk-4.1.3.exe ./gawk.exe
 ln -fsr ./gawk.exe ./awk.exe
 
 # gcc
