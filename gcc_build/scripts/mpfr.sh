@@ -2,24 +2,24 @@
 # Download the src and decompress it.
 function download_mpfr_src() {
     # Download the src.
-    if [ ! -f ${BUILD_DIR}/gcc_libs/mpfr/src/mpfr-${MPFR_VER}.tar.bz2 ]; then
-        printf "===> Downloading MPFR %s...\n" $MPFR_VER
-        pushd ${BUILD_DIR}/gcc_libs/mpfr/src > /dev/null
+    if [ ! -f "${BUILD_DIR}"/gcc_libs/mpfr/src/mpfr-${MPFR_VER}.tar.bz2 ]; then
+        printf "===> Downloading MPFR %s...\n" "${MPFR_VER}"
+        pushd "${BUILD_DIR}"/gcc_libs/mpfr/src > /dev/null
         dl_files http http://www.mpfr.org/mpfr-current/mpfr-${MPFR_VER}.tar.bz2
-        popd > /dev/null
-        echo "done"
+        popd > /dev/null # "${BUILD_DIR}"/gcc_libs/mpfr/src
+        echo 'done'
     fi
 
     # Decompress the src archive.
-    printf "===> Extracting MPFR %s...\n" $MPFR_VER
-    pushd ${BUILD_DIR}/gcc_libs/mpfr/src > /dev/null
-    if [ -d ${BUILD_DIR}/gcc_libs/mpfr/src/mpfr-$MPFR_VER ]; then
+    printf "===> Extracting MPFR %s...\n" "${MPFR_VER}"
+    pushd "${BUILD_DIR}"/gcc_libs/mpfr/src > /dev/null
+    if [ -d "${BUILD_DIR}"/gcc_libs/mpfr/src/mpfr-$MPFR_VER ]; then
         # Redecompress every time.
-        rm -fr ${BUILD_DIR}/gcc_libs/mpfr/src/mpfr-$MPFR_VER
+        rm -fr "${BUILD_DIR}"/gcc_libs/mpfr/src/mpfr-$MPFR_VER
     fi
-    decomp_arch ${BUILD_DIR}/gcc_libs/mpfr/src/mpfr-${MPFR_VER}.tar.bz2
-    popd > /dev/null
-    echo "done"
+    decomp_arch "${BUILD_DIR}"/gcc_libs/mpfr/src/mpfr-${MPFR_VER}.tar.bz2
+    popd > /dev/null # "${BUILD_DIR}"/gcc_libs/mpfr/src
+    echo 'done'
 
     return 0
 }
@@ -27,36 +27,36 @@ function download_mpfr_src() {
 # Download the latest patch, apply it and autoreconf.
 function prepare_mpfr() {
     # Download the latest patch.
-    if [ ! -d ${PATCHES_DIR}/mpfr ]; then
-        mkdir -p ${PATCHES_DIR}/mpfr
+    if [ ! -d "${PATCHES_DIR}"/mpfr ]; then
+        mkdir -p "${PATCHES_DIR}"/mpfr
     fi
-    printf "===> Downloading the latest MPFR %s patch...\n" $MPFR_VER
-    pushd ${PATCHES_DIR}/mpfr > /dev/null
-    if [ -f ${PATCHES_DIR}/mpfr/allpatches ]; then
-        rm -f ${PATCHES_DIR}/mpfr/allpatches
+    printf "===> Downloading the latest MPFR %s patch...\n" "${MPFR_VER}"
+    pushd "${PATCHES_DIR}"/mpfr > /dev/null
+    if [ -f "${PATCHES_DIR}"/mpfr/allpatches ]; then
+        rm -f "${PATCHES_DIR}"/mpfr/allpatches
     fi
     dl_files http http://www.mpfr.org/mpfr-current/allpatches
-    popd > /dev/null
-    echo "done"
+    popd > /dev/null # "${PATCHES_DIR}"/mpfr
+    echo 'done'
 
     # Applay the patch.
-    printf "===> Applaying the patch to MPFR %s...\n" $MPFR_VER
-    pushd ${BUILD_DIR}/gcc_libs/mpfr/src/mpfr-$MPFR_VER > /dev/null
-    patch -p1 -i ${PATCHES_DIR}/mpfr/allpatches > ${LOGS_DIR}/gcc_libs/mpfr/mpfr_patches.log 2>&1 || exit 1
-    echo "done"
+    printf "===> Applaying the patch to MPFR %s...\n" "${MPFR_VER}"
+    pushd "${BUILD_DIR}"/gcc_libs/mpfr/src/mpfr-$MPFR_VER > /dev/null
+    patch -p1 -i "${PATCHES_DIR}"/mpfr/allpatches > "${LOGS_DIR}"/gcc_libs/mpfr/mpfr_patches.log 2>&1 || exit 1
+    echo 'done'
 
     # Autoreconf.
-    printf "===> Autoreconfing MPFR %s...\n" $MPFR_VER
-    autoreconf -fi > /dev/null 2>&1
-    popd > /dev/null
-    echo "done"
+    printf "===> Autoreconfing MPFR %s...\n" "${MPFR_VER}"
+    autoreconf -fis > /dev/null 2>&1
+    popd > /dev/null # "${BUILD_DIR}"/gcc_libs/mpfr/src/mpfr-$MPFR_VER
+    echo 'done'
 
     return 0
 }
 
 # Build and install.
 function build_mpfr() {
-    clear; printf "Build MPFR %s\n" $MPFR_VER
+    clear; printf "Build MPFR %s\n" "${MPFR_VER}"
 
     # Option handling.
     local _rebuild=true
@@ -66,11 +66,11 @@ function build_mpfr() {
     do
         case "${_opt}" in
             --rebuild=* )
-                _rebuild="${_opt#*=}"
+                _rebuild=${_opt#*=}
                 ;;
             * )
-                printf "build_mpfr: Unknown Option: '%s'\n" $_opt
-                echo "...exit"
+                printf "build_mpfr: Unknown Option: '%s'\n" "${_opt}"
+                echo '...exit'
                 exit 1
                 ;;
         esac
@@ -88,58 +88,55 @@ function build_mpfr() {
         local _bitval=$(get_arch_bit ${_arch})
 
         if ${_rebuild}; then
-            cd ${BUILD_DIR}/gcc_libs/mpfr/build_$_arch
+            cd "${BUILD_DIR}"/gcc_libs/mpfr/build_$_arch
             # Cleanup the build dir.
-            rm -fr ${BUILD_DIR}/gcc_libs/mpfr/build_${_arch}/*
+            rm -fr "${BUILD_DIR}"/gcc_libs/mpfr/build_${_arch}/*
 
             # PATH exporting.
-            source cpath $_arch
-            PATH=${DST_DIR}/mingw${_bitval}/bin:$PATH
-            export PATH
+            set_path $_arch
 
             # Configure.
-            printf "===> Configuring MPFR %s...\n" $_arch
-            ../src/mpfr-${MPFR_VER}/configure       \
-                --prefix=/mingw$_bitval             \
-                --build=${_arch}-w64-mingw32        \
-                --host=${_arch}-w64-mingw32         \
-                --disable-silent-rules              \
-                --enable-thread-safe                \
-                --enable-shared                     \
-                --disable-static                    \
-                --enable-fast-install               \
-                --with-gmp=${DST_DIR}/mingw$_bitval \
-                --with-gnu-ld                       \
-                CFLAGS="${CFLAGS_}"                 \
-                LDFLAGS="${LDFLAGS_}"               \
-                CPPFLAGS="${CPPFLAGS_}"             \
-                > ${LOGS_DIR}/gcc_libs/mpfr/mpfr_config_${_arch}.log 2>&1 || exit 1
-            echo "done"
+            printf "===> Configuring MPFR %s...\n" "${_arch}"
+            ../src/mpfr-${MPFR_VER}/configure         \
+                --prefix=/mingw$_bitval               \
+                --build=${_arch}-w64-mingw32          \
+                --host=${_arch}-w64-mingw32           \
+                --disable-silent-rules                \
+                --enable-thread-safe                  \
+                --enable-shared                       \
+                --disable-static                      \
+                --enable-fast-install                 \
+                --with-gmp="${DST_DIR}"/mingw$_bitval \
+                --with-gnu-ld                         \
+                CFLAGS="${CFLAGS_}"                   \
+                LDFLAGS="${LDFLAGS_}"                 \
+                CPPFLAGS="${CPPFLAGS_}"               \
+                > "${LOGS_DIR}"/gcc_libs/mpfr/mpfr_config_${_arch}.log 2>&1 || exit 1
+            echo 'done'
 
             # Make.
-            printf "===> Making MPFR %s...\n" $_arch
-            make $MAKEFLAGS_ > ${LOGS_DIR}/gcc_libs/mpfr/mpfr_make_${_arch}.log 2>&1 || exit 1
-            echo "done"
+            printf "===> Making MPFR %s...\n" "${_arch}"
+            make $MAKEFLAGS_ > "${LOGS_DIR}"/gcc_libs/mpfr/mpfr_make_${_arch}.log 2>&1 || exit 1
+            echo 'done'
 
             # Install.
-            printf "===> Installing MPFR %s...\n" $_arch
-            make DESTDIR=${PREIN_DIR}/gcc_libs/mpfr install \
-                > ${LOGS_DIR}/gcc_libs/mpfr/mpfr_install_${_arch}.log 2>&1 || exit 1
+            printf "===> Installing MPFR %s...\n" "${_arch}"
+            make DESTDIR="${PREIN_DIR}"/gcc_libs/mpfr install \
+                > "${LOGS_DIR}"/gcc_libs/mpfr/mpfr_install_${_arch}.log 2>&1 || exit 1
             # Remove unneeded files.
-            rm -fr ${PREIN_DIR}/gcc_libs/mpfr/mingw${_bitval}/share
-            remove_empty_dirs ${PREIN_DIR}/gcc_libs/mpfr/mingw$_bitval
-            remove_la_files   ${PREIN_DIR}/gcc_libs/mpfr/mingw$_bitval
+            rm -fr "${PREIN_DIR}"/gcc_libs/mpfr/mingw${_bitval}/share
+            remove_la_files   "${PREIN_DIR}"/gcc_libs/mpfr/mingw$_bitval
             # Strip files.
-            strip_files ${PREIN_DIR}/gcc_libs/mpfr/mingw$_bitval
-            echo "done"
+            strip_files "${PREIN_DIR}"/gcc_libs/mpfr/mingw$_bitval
+            echo 'done'
         fi
 
         # Copy to DST_DIR.
-        printf "===> Copying MPFR %s to %s/mingw%s...\n" $_arch $DST_DIR $_bitval
-        cp -fra ${PREIN_DIR}/gcc_libs/mpfr/mingw$_bitval $DST_DIR
-        echo "done"
+        printf "===> Copying MPFR %s to %s/mingw%s...\n" "${_arch}" "${DST_DIR}" "${_bitval}"
+        cp -af "${PREIN_DIR}"/gcc_libs/mpfr/mingw$_bitval "${DST_DIR}"
+        echo 'done'
     done
 
-    cd $ROOT_DIR
+    cd "${ROOT_DIR}"
     return 0
 }

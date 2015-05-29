@@ -1,7 +1,7 @@
-From 66931a85c1b35c399c08d8718dd29a676ab21d8c Mon Sep 17 00:00:00 2001
+From 4b202492f390708ef3880feee7e19fb9c1869462 Mon Sep 17 00:00:00 2001
 From: Yuta NAKAI <nak5124@live.jp>
 Date: Sun, 12 Apr 2015 14:46:07 +0900
-Subject: [PATCH 11/17] MinGW: Enable nxcompat and (HE)ASLR by default.
+Subject: [PATCH 13/18] MinGW: Enable nxcompat and (HE)ASLR by default.
 
 ---
  gcc/config/i386/mingw-w64.h | 17 +++++++++++++++--
@@ -46,7 +46,7 @@ index 3d00bec..cdd3ae2 100644
 +  %{!shared: %{!mdll: %{" SPEC_32 ": --large-address-aware} --tsaware --pic-executable " SUB_PIE_ENTRY " \
 +  %{" SPEC_64 ": --image-base 0x140000000}}}"
 diff --git a/gcc/config/i386/mingw32.h b/gcc/config/i386/mingw32.h
-index 8b24b57..c7083fc 100644
+index c6e9a64..eb58fcc 100644
 --- a/gcc/config/i386/mingw32.h
 +++ b/gcc/config/i386/mingw32.h
 @@ -77,6 +77,22 @@ along with GCC; see the file COPYING3.  If not see
@@ -86,5 +86,5 @@ index 8b24b57..c7083fc 100644
  /* Include in the mingw32 libraries with libgcc */
  #ifdef ENABLE_SHARED_LIBGCC
 -- 
-2.3.5
+2.4.1
 

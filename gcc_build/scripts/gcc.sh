@@ -2,25 +2,25 @@
 # Download the src and decompress it.
 function download_gcc_src() {
     # Download the src.
-    if [ ! -f ${BUILD_DIR}/gcc/src/gcc-${GCC_VER}.tar.bz2 ]; then
-        printf "===> Downloading GCC %s...\n" $GCC_VER
-        pushd ${BUILD_DIR}/gcc/src > /dev/null
+    if [ ! -f "${BUILD_DIR}"/gcc/src/gcc-${GCC_VER}.tar.bz2 ]; then
+        printf "===> Downloading GCC %s...\n" "${GCC_VER}"
+        pushd "${BUILD_DIR}"/gcc/src > /dev/null
         if [ $(echo $GCC_VER | grep RC) ]; then
             dl_files ftp ftp://gcc.gnu.org/pub/gcc/snapshots/${GCC_VER}/gcc-${GCC_VER}.tar.bz2
         else
             dl_files ftp ftp://gcc.gnu.org/pub/gcc/releases/gcc-${GCC_VER}/gcc-${GCC_VER}.tar.bz2
         fi
-        popd > /dev/null
-        echo "done"
+        popd > /dev/null # "${BUILD_DIR}"/gcc/src
+        echo 'done'
     fi
 
     # Decompress the src archive.
-    if [ ! -d ${BUILD_DIR}/gcc/src/gcc-$GCC_VER ]; then
-        printf "===> Extracting GCC %s...\n" $GCC_VER
-        pushd ${BUILD_DIR}/gcc/src > /dev/null
-        decomp_arch ${BUILD_DIR}/gcc/src/gcc-${GCC_VER}.tar.bz2
-        popd > /dev/null
-        echo "done"
+    if [ ! -d "${BUILD_DIR}"/gcc/src/gcc-$GCC_VER ]; then
+        printf "===> Extracting GCC %s...\n" "${GCC_VER}"
+        pushd "${BUILD_DIR}"/gcc/src > /dev/null
+        decomp_arch "${BUILD_DIR}"/gcc/src/gcc-${GCC_VER}.tar.bz2
+        popd > /dev/null # "${BUILD_DIR}"/gcc/src
+        echo 'done'
     fi
 
     return 0
@@ -29,107 +29,116 @@ function download_gcc_src() {
 # Apply patches.
 function prepare_gcc() {
     # Apply patches.
-    printf "===> Applying patches to GCC %s...\n" $GCC_VER
-    pushd ${BUILD_DIR}/gcc/src/gcc-$GCC_VER > /dev/null
-    if [ ! -f ${BUILD_DIR}/gcc/src/gcc-${GCC_VER}/patched_01.marker ]; then
+    printf "===> Applying patches to GCC %s...\n" "${GCC_VER}"
+    pushd "${BUILD_DIR}"/gcc/src/gcc-$GCC_VER > /dev/null
+    if [ ! -f "${BUILD_DIR}"/gcc/src/gcc-${GCC_VER}/patched_00.marker ]; then
+        patch -p1 -i "${PATCHES_DIR}"/gcc/0000-gcc-5-branch.patch > "${LOGS_DIR}"/gcc/gcc_patch.log 2>&1 || exit 1
+        touch "${BUILD_DIR}"/gcc/src/gcc-${GCC_VER}/patched_00.marker
+    fi
+    if [ ! -f "${BUILD_DIR}"/gcc/src/gcc-${GCC_VER}/patched_01.marker ]; then
+        patch -p1 -i "${PATCHES_DIR}"/gcc/0001-Clean-up-detection-of-SJLJ-exceptions-in-target-libr.patch \
+            >> "${LOGS_DIR}"/gcc/gcc_patch.log 2>&1 || exit 1
+        touch "${BUILD_DIR}"/gcc/src/gcc-${GCC_VER}/patched_01.marker
+    fi
+    if [ ! -f "${BUILD_DIR}"/gcc/src/gcc-${GCC_VER}/patched_02.marker ]; then
         # Export _ZTC*.
-        patch -p1 -i ${PATCHES_DIR}/gcc/0001-libstdc-Export-_ZTC.patch > ${LOGS_DIR}/gcc/gcc_patch.log 2>&1 || exit 1
-        touch ${BUILD_DIR}/gcc/src/gcc-${GCC_VER}/patched_01.marker
+        patch -p1 -i "${PATCHES_DIR}"/gcc/0002-libstdc-Export-_ZTC.patch >> "${LOGS_DIR}"/gcc/gcc_patch.log 2>&1 || exit 1
+        touch "${BUILD_DIR}"/gcc/src/gcc-${GCC_VER}/patched_02.marker
     fi
-    if [ ! -f ${BUILD_DIR}/gcc/src/gcc-${GCC_VER}/patched_02.marker ]; then
+    if [ ! -f "${BUILD_DIR}"/gcc/src/gcc-${GCC_VER}/patched_03.marker ]; then
         # Do not install libiberty.
-        patch -p1 -i ${PATCHES_DIR}/gcc/0002-libiberty-Makefile.in-Don-t-install-libiberty.patch \
-            >> ${LOGS_DIR}/gcc/gcc_patch.log 2>&1 || exit 1
-        touch ${BUILD_DIR}/gcc/src/gcc-${GCC_VER}/patched_02.marker
+        patch -p1 -i "${PATCHES_DIR}"/gcc/0003-libiberty-Makefile.in-Don-t-install-libiberty.patch \
+            >> "${LOGS_DIR}"/gcc/gcc_patch.log 2>&1 || exit 1
+        touch "${BUILD_DIR}"/gcc/src/gcc-${GCC_VER}/patched_03.marker
     fi
-    if [ ! -f ${BUILD_DIR}/gcc/src/gcc-${GCC_VER}/patched_03.marker ]; then
-        patch -p1 -i ${PATCHES_DIR}/gcc/0003-gthr-posix.h-std-threads-Add-defined-__MINGW32__-gua.patch \
-            >> ${LOGS_DIR}/gcc/gcc_patch.log 2>&1 || exit 1
-        touch ${BUILD_DIR}/gcc/src/gcc-${GCC_VER}/patched_03.marker
+    if [ ! -f "${BUILD_DIR}"/gcc/src/gcc-${GCC_VER}/patched_04.marker ]; then
+        patch -p1 -i "${PATCHES_DIR}"/gcc/0004-gthr-posix.h-std-threads-Add-defined-__MINGW32__-gua.patch \
+            >> "${LOGS_DIR}"/gcc/gcc_patch.log 2>&1 || exit 1
+        touch "${BUILD_DIR}"/gcc/src/gcc-${GCC_VER}/patched_04.marker
     fi
-    if [ ! -f ${BUILD_DIR}/gcc/src/gcc-${GCC_VER}/patched_04.marker ]; then
+    if [ ! -f "${BUILD_DIR}"/gcc/src/gcc-${GCC_VER}/patched_05.marker ]; then
         # Don't make a lowercase backslashed path from argv[0] that then fail to strcmp with prefix(es) .. they're also ugly.
-        patch -p1 -i ${PATCHES_DIR}/gcc/0004-libiberty-lrealpath.c-Don-t-make-a-lowercase-backsla.patch \
-            >> ${LOGS_DIR}/gcc/gcc_patch.log 2>&1 || exit 1
-        touch ${BUILD_DIR}/gcc/src/gcc-${GCC_VER}/patched_04.marker
+        patch -p1 -i "${PATCHES_DIR}"/gcc/0005-libiberty-lrealpath.c-Don-t-make-a-lowercase-backsla.patch \
+            >> "${LOGS_DIR}"/gcc/gcc_patch.log 2>&1 || exit 1
+        touch "${BUILD_DIR}"/gcc/src/gcc-${GCC_VER}/patched_05.marker
     fi
-    if [ ! -f ${BUILD_DIR}/gcc/src/gcc-${GCC_VER}/patched_05.marker ]; then
+    if [ ! -f "${BUILD_DIR}"/gcc/src/gcc-${GCC_VER}/patched_06.marker ]; then
         # Make Windows behave the same as Posix in the consideration of whether
         # folder "/exists/doesnt-exist/.." is a valid path.. in Posix, it isn't.
-        patch -p1 -i ${PATCHES_DIR}/gcc/0005-libcpp-files.c-Make-Windows-behave-the-same-as-Posix.patch \
-            >> ${LOGS_DIR}/gcc/gcc_patch.log 2>&1 || exit 1
-        touch ${BUILD_DIR}/gcc/src/gcc-${GCC_VER}/patched_05.marker
+        patch -p1 -i "${PATCHES_DIR}"/gcc/0006-libcpp-files.c-Make-Windows-behave-the-same-as-Posix.patch \
+            >> "${LOGS_DIR}"/gcc/gcc_patch.log 2>&1 || exit 1
+        touch "${BUILD_DIR}"/gcc/src/gcc-${GCC_VER}/patched_06.marker
     fi
-    if [ ! -f ${BUILD_DIR}/gcc/src/gcc-${GCC_VER}/patched_06.marker ]; then
-        # http://gcc.gnu.org/bugzilla/show_bug.cgi?id=57440
-        patch -p1 -i ${PATCHES_DIR}/gcc/0006-libgcc-gthr-posix.h-PR57440.patch >> ${LOGS_DIR}/gcc/gcc_patch.log 2>&1 || exit 1
-        touch ${BUILD_DIR}/gcc/src/gcc-${GCC_VER}/patched_06.marker
+    if [ ! -f "${BUILD_DIR}"/gcc/src/gcc-${GCC_VER}/patched_07.marker ]; then
+        patch -p1 -i "${PATCHES_DIR}"/gcc/0007-gcc-Make-xmmintrin-header-cplusplus-compatible.patch \
+            >> "${LOGS_DIR}"/gcc/gcc_patch.log 2>&1 || exit 1
+        touch "${BUILD_DIR}"/gcc/src/gcc-${GCC_VER}/patched_07.marker
     fi
-    if [ ! -f ${BUILD_DIR}/gcc/src/gcc-${GCC_VER}/patched_07.marker ]; then
+    if [ ! -f "${BUILD_DIR}"/gcc/src/gcc-${GCC_VER}/patched_08.marker ]; then
+        patch -p1 -i "${PATCHES_DIR}"/gcc/0008-MinGW-Add-mcrtdll-option-for-msvcrt-stubbing.patch \
+            >> "${LOGS_DIR}"/gcc/gcc_patch.log 2>&1 || exit 1
+        touch "${BUILD_DIR}"/gcc/src/gcc-${GCC_VER}/patched_08.marker
+    fi
+    if [ ! -f "${BUILD_DIR}"/gcc/src/gcc-${GCC_VER}/patched_09.marker ]; then
         # Enable colorizing diagnostics.
-        patch -p1 -i ${PATCHES_DIR}/gcc/0007-gcc-diagnostic-color.c-Enable-color-diagnostic-on-Mi.patch \
-            >> ${LOGS_DIR}/gcc/gcc_patch.log 2>&1 || exit 1
-        touch ${BUILD_DIR}/gcc/src/gcc-${GCC_VER}/patched_07.marker
+        patch -p1 -i "${PATCHES_DIR}"/gcc/0009-gcc-diagnostic-color.c-Enable-color-diagnostic-on-Mi.patch \
+            >> "${LOGS_DIR}"/gcc/gcc_patch.log 2>&1 || exit 1
+        touch "${BUILD_DIR}"/gcc/src/gcc-${GCC_VER}/patched_09.marker
     fi
-    if [ ! -f ${BUILD_DIR}/gcc/src/gcc-${GCC_VER}/patched_08.marker ]; then
+    if [ ! -f "${BUILD_DIR}"/gcc/src/gcc-${GCC_VER}/patched_10.marker ]; then
         # Add /mingw{32,64}/local/{include,lib} to search dirs, and make relocatable perfectly.
-        patch -p1 -i ${PATCHES_DIR}/gcc/0008-Add-mingw-32-64-local-include-lib-to-search-dirs-and.patch \
-            >> ${LOGS_DIR}/gcc/gcc_patch.log 2>&1 || exit 1
-        touch ${BUILD_DIR}/gcc/src/gcc-${GCC_VER}/patched_08.marker
+        patch -p1 -i "${PATCHES_DIR}"/gcc/0010-Add-mingw-32-64-local-include-lib-to-search-dirs-and.patch \
+            >> "${LOGS_DIR}"/gcc/gcc_patch.log 2>&1 || exit 1
+        touch "${BUILD_DIR}"/gcc/src/gcc-${GCC_VER}/patched_10.marker
     fi
-    if [ ! -f ${BUILD_DIR}/gcc/src/gcc-${GCC_VER}/patched_09.marker ]; then
+    if [ ! -f "${BUILD_DIR}"/gcc/src/gcc-${GCC_VER}/patched_11.marker ]; then
         # when building executables, not DLLs. Add --large-address-aware and --tsaware.
-        patch -p1 -i ${PATCHES_DIR}/gcc/0009-MinGW-When-building-executables-not-DLLs.-Add-large-.patch \
-            >> ${LOGS_DIR}/gcc/gcc_patch.log 2>&1 || exit 1
-        touch ${BUILD_DIR}/gcc/src/gcc-${GCC_VER}/patched_09.marker
+        patch -p1 -i "${PATCHES_DIR}"/gcc/0011-MinGW-When-building-executables-not-DLLs.-Add-large-.patch \
+            >> "${LOGS_DIR}"/gcc/gcc_patch.log 2>&1 || exit 1
+        touch "${BUILD_DIR}"/gcc/src/gcc-${GCC_VER}/patched_11.marker
     fi
-    if [ ! -f ${BUILD_DIR}/gcc/src/gcc-${GCC_VER}/patched_10.marker ]; then
+    if [ ! -f "${BUILD_DIR}"/gcc/src/gcc-${GCC_VER}/patched_12.marker ]; then
         # Dynamically linking to libiconv.
-        patch -p1 -i ${PATCHES_DIR}/gcc/0010-mingw-Dynamically-linking-to-libintl-and-libiconv.patch \
-            >> ${LOGS_DIR}/gcc/gcc_patch.log 2>&1 || exit 1
-        touch ${BUILD_DIR}/gcc/src/gcc-${GCC_VER}/patched_10.marker
+        patch -p1 -i "${PATCHES_DIR}"/gcc/0012-mingw-Dynamically-linking-to-libintl-and-libiconv.patch \
+            >> "${LOGS_DIR}"/gcc/gcc_patch.log 2>&1 || exit 1
+        touch "${BUILD_DIR}"/gcc/src/gcc-${GCC_VER}/patched_12.marker
     fi
-    if [ ! -f ${BUILD_DIR}/gcc/src/gcc-${GCC_VER}/patched_11.marker ]; then
+    if [ ! -f "${BUILD_DIR}"/gcc/src/gcc-${GCC_VER}/patched_13.marker ]; then
         # Enable nxcompat and (HE)ASLR by default.
-        patch -p1 -i ${PATCHES_DIR}/gcc/0011-MinGW-Enable-nxcompat-and-HE-ASLR-by-default.patch \
-            >> ${LOGS_DIR}/gcc/gcc_patch.log 2>&1 || exit 1
-        touch ${BUILD_DIR}/gcc/src/gcc-${GCC_VER}/patched_11.marker
+        patch -p1 -i "${PATCHES_DIR}"/gcc/0013-MinGW-Enable-nxcompat-and-HE-ASLR-by-default.patch \
+            >> "${LOGS_DIR}"/gcc/gcc_patch.log 2>&1 || exit 1
+        touch "${BUILD_DIR}"/gcc/src/gcc-${GCC_VER}/patched_13.marker
     fi
-    if [ ! -f ${BUILD_DIR}/gcc/src/gcc-${GCC_VER}/patched_12.marker ]; then
+    if [ ! -f "${BUILD_DIR}"/gcc/src/gcc-${GCC_VER}/patched_14.marker ]; then
         # Assume that target is windows 7 or later. XP has died, and nobody uses vista.
-        patch -p1 -i ${PATCHES_DIR}/gcc/0012-MinGW-w64-Assume-that-target-is-windows-7-or-later.-.patch \
-            >> ${LOGS_DIR}/gcc/gcc_patch.log 2>&1 || exit 1
-        touch ${BUILD_DIR}/gcc/src/gcc-${GCC_VER}/patched_12.marker
+        patch -p1 -i "${PATCHES_DIR}"/gcc/0014-MinGW-w64-Assume-that-target-is-windows-7-or-later.-.patch \
+            >> "${LOGS_DIR}"/gcc/gcc_patch.log 2>&1 || exit 1
+        touch "${BUILD_DIR}"/gcc/src/gcc-${GCC_VER}/patched_14.marker
     fi
-    if [ ! -f ${BUILD_DIR}/gcc/src/gcc-${GCC_VER}/patched_13.marker ]; then
-        patch -p1 -i ${PATCHES_DIR}/gcc/0013-MinGW-Use-__MINGW_PRINTF_FORMAT-for-__USE_MINGW_ANSI.patch \
-            >> ${LOGS_DIR}/gcc/gcc_patch.log 2>&1 || exit 1
-        touch ${BUILD_DIR}/gcc/src/gcc-${GCC_VER}/patched_13.marker
+    if [ ! -f "${BUILD_DIR}"/gcc/src/gcc-${GCC_VER}/patched_15.marker ]; then
+        patch -p1 -i "${PATCHES_DIR}"/gcc/0015-MinGW-Use-__MINGW_PRINTF_FORMAT-for-__USE_MINGW_ANSI.patch \
+            >> "${LOGS_DIR}"/gcc/gcc_patch.log 2>&1 || exit 1
+        touch "${BUILD_DIR}"/gcc/src/gcc-${GCC_VER}/patched_15.marker
     fi
-    if [ ! -f ${BUILD_DIR}/gcc/src/gcc-${GCC_VER}/patched_14.marker ]; then
-        patch -p1 -i ${PATCHES_DIR}/gcc/0014-MinGW-Add-mcrtdll-option-for-msvcrt-stubbing.patch \
-            >> ${LOGS_DIR}/gcc/gcc_patch.log 2>&1 || exit 1
-        touch ${BUILD_DIR}/gcc/src/gcc-${GCC_VER}/patched_14.marker
-    fi
-    if [ ! -f ${BUILD_DIR}/gcc/src/gcc-${GCC_VER}/patched_15.marker ]; then
+    if [ ! -f "${BUILD_DIR}"/gcc/src/gcc-${GCC_VER}/patched_16.marker ]; then
         # Don't search dirs under ${prefix} but ${build_sysroot}.
-        patch -p1 -i ${PATCHES_DIR}/gcc/0015-configure-Search-dirs-under-build_sysroot-instead-of.patch \
-            >> ${LOGS_DIR}/gcc/gcc_patch.log 2>&1 || exit 1
-        touch ${BUILD_DIR}/gcc/src/gcc-${GCC_VER}/patched_15.marker
+        patch -p1 -i "${PATCHES_DIR}"/gcc/0016-configure-Search-dirs-under-build_sysroot-instead-of.patch \
+            >> "${LOGS_DIR}"/gcc/gcc_patch.log 2>&1 || exit 1
+        touch "${BUILD_DIR}"/gcc/src/gcc-${GCC_VER}/patched_16.marker
     fi
-    if [ ! -f ${BUILD_DIR}/gcc/src/gcc-${GCC_VER}/patched_16.marker ]; then
+    if [ ! -f "${BUILD_DIR}"/gcc/src/gcc-${GCC_VER}/patched_17.marker ]; then
         # Disable automatic image base calculation.
-        patch -p1 -i ${PATCHES_DIR}/gcc/0016-MinGW-Disable-automatic-image-base-calculation.patch \
-            >> ${LOGS_DIR}/gcc/gcc_patch.log 2>&1 || exit 1
-        touch ${BUILD_DIR}/gcc/src/gcc-${GCC_VER}/patched_16.marker
+        patch -p1 -i "${PATCHES_DIR}"/gcc/0017-MinGW-Disable-automatic-image-base-calculation.patch \
+            >> "${LOGS_DIR}"/gcc/gcc_patch.log 2>&1 || exit 1
+        touch "${BUILD_DIR}"/gcc/src/gcc-${GCC_VER}/patched_17.marker
     fi
-    if [ ! -f ${BUILD_DIR}/gcc/src/gcc-${GCC_VER}/patched_17.marker ]; then
-        patch -p1 -i ${PATCHES_DIR}/gcc/0017-gcc-Add-prefix-bindir-to-exec_prefix.patch \
-            >> ${LOGS_DIR}/gcc/gcc_patch.log 2>&1 || exit 1
-        touch ${BUILD_DIR}/gcc/src/gcc-${GCC_VER}/patched_17.marker
+    if [ ! -f "${BUILD_DIR}"/gcc/src/gcc-${GCC_VER}/patched_18.marker ]; then
+        patch -p1 -i "${PATCHES_DIR}"/gcc/0018-gcc-Add-prefix-bindir-to-exec_prefix.patch \
+            >> "${LOGS_DIR}"/gcc/gcc_patch.log 2>&1 || exit 1
+        touch "${BUILD_DIR}"/gcc/src/gcc-${GCC_VER}/patched_18.marker
     fi
-    popd > /dev/null
-    echo "done"
+    popd > /dev/null # "${BUILD_DIR}"/gcc/src/gcc-$GCC_VER
+    echo 'done'
 
     return 0
 }
@@ -139,7 +148,7 @@ function symlink_gcc() {
     local _arch=${1}
     local _bitval=$(get_arch_bit ${_arch})
 
-    pushd ${DST_DIR}/mingw${_bitval}/bin > /dev/null
+    pushd "${DST_DIR}"/mingw${_bitval}/bin > /dev/null
     # Symlinking to ${_arch}-w64-mingw32-*.exe.
     find . -type f -a \( -name "cpp*.exe" -o -name "g++*.exe" -o -name "gcc*.exe" -o -name "gcov*.exe" \) -printf '%f\n' | \
         xargs -I% ln -fsr % ./${_arch}-w64-mingw32-%
@@ -162,13 +171,13 @@ function symlink_gcc() {
     ln -fsr ./g++-${GCC_VER/-*}.exe ./${_arch}-w64-mingw32-c++.exe
     # Many packages expect this symlink.
     ln -fsr ./gcc.exe ./cc
-    popd > /dev/null
+    popd > /dev/null # "${DST_DIR}"/mingw${_bitval}/bin
 
-    pushd ${DST_DIR}/mingw${_bitval}/lib/gcc/${_arch}-w64-mingw32/${GCC_VER/-*} > /dev/null
+    pushd "${DST_DIR}"/mingw${_bitval}/lib/gcc/${_arch}-w64-mingw32/${GCC_VER/-*} > /dev/null
     # This is necessary for slim LTO.
-    mkdir -p ${DST_DIR}/mingw${_bitval}/lib/bfd-plugins
+    mkdir -p "${DST_DIR}"/mingw${_bitval}/lib/bfd-plugins
     ln -fsr ./liblto_plugin-*.dll ../../../bfd-plugins
-    popd > /dev/null
+    popd > /dev/null # "${DST_DIR}"/mingw${_bitval}/lib/gcc/${_arch}-w64-mingw32/${GCC_VER/-*}
 
     return 0
 }
@@ -187,7 +196,7 @@ function term_gcc() {
     )
 
     # POSIX conformance launcher scripts for c89, c99 and c11.
-    cat > ${DST_DIR}/mingw${_bitval}/bin/c89 << "__EOF__"
+    cat > "${DST_DIR}"/mingw${_bitval}/bin/c89 << "__EOF__"
 #!/usr/bin/env bash
 fl="-std=c89"
 for opt;
@@ -205,7 +214,7 @@ done
 exec gcc $fl ${1+"$@"}
 __EOF__
 
-    cat > ${DST_DIR}/mingw${_bitval}/bin/c99 << "__EOF__"
+    cat > "${DST_DIR}"/mingw${_bitval}/bin/c99 << "__EOF__"
 #!/usr/bin/env bash
 fl="-std=c99"
 for opt;
@@ -223,7 +232,7 @@ done
 exec gcc $fl ${1+"$@"}
 __EOF__
 
-    cat > ${DST_DIR}/mingw${_bitval}/bin/c11 << "__EOF__"
+    cat > "${DST_DIR}"/mingw${_bitval}/bin/c11 << "__EOF__"
 #!/usr/bin/env bash
 fl="-std=c11"
 for opt;
@@ -245,29 +254,28 @@ __EOF__
     local _dll
     for _dll in ${_dlllist[@]}
     do
-        mv -f ${DST_DIR}/mingw${_bitval}/bin/$_dll ${DST_DIR}/mingw${_bitval}/lib/gcc/${_arch}-w64-mingw32/${GCC_VER/-*}
+        mv -f "${DST_DIR}"/mingw${_bitval}/bin/$_dll "${DST_DIR}"/mingw${_bitval}/lib/gcc/${_arch}-w64-mingw32/${GCC_VER/-*}
     done
     # Remove headers & libs of gcc_libs.
     # GMP
-    rm -f  ${DST_DIR}/mingw${_bitval}/include/gmp.h
-    rm -f  ${DST_DIR}/mingw${_bitval}/lib/libgmp.dll.a
+    rm -f  "${DST_DIR}"/mingw${_bitval}/include/gmp.h
+    rm -f  "${DST_DIR}"/mingw${_bitval}/lib/libgmp.dll.a
     # MPFR
-    rm -f  ${DST_DIR}/mingw${_bitval}/include/mpfr.h
-    rm -f  ${DST_DIR}/mingw${_bitval}/include/mpf2mpfr.h
-    rm -f  ${DST_DIR}/mingw${_bitval}/lib/libmpfr.dll.a
+    rm -f  "${DST_DIR}"/mingw${_bitval}/include/{mpfr,mpf2mpfr}.h
+    rm -f  "${DST_DIR}"/mingw${_bitval}/lib/libmpfr.dll.a
     # MPC
-    rm -f  ${DST_DIR}/mingw${_bitval}/include/mpc.h
-    rm -f  ${DST_DIR}/mingw${_bitval}/lib/libmpc.dll.a
+    rm -f  "${DST_DIR}"/mingw${_bitval}/include/mpc.h
+    rm -f  "${DST_DIR}"/mingw${_bitval}/lib/libmpc.dll.a
     # ISL
-    rm -fr ${DST_DIR}/mingw${_bitval}/include/isl
-    rm -f  ${DST_DIR}/mingw${_bitval}/lib/libisl.dll.a
+    rm -fr "${DST_DIR}"/mingw${_bitval}/include/isl
+    rm -f  "${DST_DIR}"/mingw${_bitval}/lib/libisl.dll.a
 
     return 0
 }
 
 # Build and install.
 function build_gcc() {
-    clear; printf "Build GCC %s\n" $GCC_VER
+    clear; printf "Build GCC %s\n" "${GCC_VER}"
 
     # Option handling.
     local _rebuild=true
@@ -277,11 +285,11 @@ function build_gcc() {
     do
         case "${_opt}" in
             --rebuild=* )
-                _rebuild="${_opt#*=}"
+                _rebuild=${_opt#*=}
                 ;;
             * )
-                printf "build_gcc: Unknown Option: '%s'\n" $_opt
-                echo "...exit"
+                printf "build_gcc: Unknown Option: '%s'\n" "${_opt}"
+                echo '...exit'
                 exit 1
                 ;;
         esac
@@ -299,32 +307,33 @@ function build_gcc() {
         local _bitval=$(get_arch_bit ${_arch})
 
         if ${_rebuild}; then
-            cd ${BUILD_DIR}/gcc/build_$_arch
+            cd "${BUILD_DIR}"/gcc/build_$_arch
             # Cleanup the build dir.
-            rm -fr ${BUILD_DIR}/gcc/build_${_arch}/*
+            rm -fr "${BUILD_DIR}"/gcc/build_${_arch}/*
 
             # PATH exporting.
-            source cpath $_arch
-            PATH=${DST_DIR}/mingw${_bitval}/bin:$PATH
-            export PATH
+            set_path $_arch
 
             # For relocatable.
-            mkdir -p ${BUILD_DIR}/gcc/build_${_arch}/include/../lib
-            ln -fs ${DST_DIR}/mingw${_bitval}/{include,${_arch}-w64-mingw32/include}/* ${BUILD_DIR}/gcc/build_${_arch}/include
-            ln -fs ${DST_DIR}/mingw${_bitval}/{lib,${_arch}-w64-mingw32/lib}/* ${BUILD_DIR}/gcc/build_${_arch}/lib
-            ln -fs /mingw${_bitval}/lib/default-manifest.o ${BUILD_DIR}/gcc/build_${_arch}/lib
+            mkdir -p "${BUILD_DIR}"/gcc/build_${_arch}/include/../lib
+            ln -fs "${DST_DIR}"/mingw${_bitval}/{include,${_arch}-w64-mingw32/include}/* \
+                "${BUILD_DIR}"/gcc/build_${_arch}/include
+            ln -fs "${DST_DIR}"/mingw${_bitval}/{lib,${_arch}-w64-mingw32/lib}/* "${BUILD_DIR}"/gcc/build_${_arch}/lib
+            ln -fs /mingw${_bitval}/lib/default-manifest.o "${BUILD_DIR}"/gcc/build_${_arch}/lib
 
             # Arch specific config option.
-            if [ "${_arch}" = "i686" ]; then
-                local _ehconf="--disable-sjlj-exceptions --with-dwarf2"
-                local _windres_cmd="windres -F pe-i386"
+            if [ "${_arch}" = 'i686' ]; then
+                # See https://gcc.gnu.org/ml/gcc-patches/2015-05/msg01212.html.
+                # local _ehconf='--disable-sjlj-exceptions --with-dwarf2'
+                local _ehconf='--with-dwarf2'
+                local _windres_cmd='windres -F pe-i386'
             else
-                local _ehconf=""
-                local _windres_cmd="windres -F pe-x86-64"
+                local _ehconf=''
+                local _windres_cmd='windres -F pe-x86-64'
             fi
 
             # Don't search build toolchain include dir.
-            local _nshdir="${DST_DIR}/mingw${_bitval}/${_arch}-w64-mingw32/include"
+            local _nshdir="${DST_DIR}"/mingw${_bitval}/${_arch}-w64-mingw32/include
 
             # package version.
             local _pkgver="GCC $GCC_VER Rev.${GCC_PKGREV}, target: ${_arch}-w64-mingw32, built on ${GCC_BUILT_DATE}"
@@ -340,7 +349,7 @@ function build_gcc() {
             fi
 
             # Configure.
-            printf "===> Configuring GCC %s...\n" $_arch
+            printf "===> Configuring GCC %s...\n" "${_arch}"
             ../src/gcc-${GCC_VER}/configure                                       \
                 --prefix=/mingw$_bitval                                           \
                 --libexecdir=/mingw${_bitval}/lib                                 \
@@ -387,24 +396,24 @@ function build_gcc() {
                 --disable-vtable-verify                                           \
                 --with-stage1-ldflags=no                                          \
                 --with-boot-ldflags=no                                            \
-                --with-{mpc,mpfr,gmp,isl}=${DST_DIR}/mingw$_bitval                \
-                --with-build-sysroot=${DST_DIR}/mingw$_bitval                     \
+                --with-{mpc,mpfr,gmp,isl}="${DST_DIR}"/mingw$_bitval              \
+                --with-build-sysroot="${DST_DIR}"/mingw$_bitval                   \
                 --with-gnu-ld                                                     \
                 --with-local-prefix=/mingw${_bitval}/local                        \
                 --with-gxx-include-dir=/mingw${_bitval}/include/c++/${GCC_VER/-*} \
                 --with-gnu-as                                                     \
                 ${_ehconf}                                                        \
-                --with-native-system-header-dir=${_nshdir}                        \
+                --with-native-system-header-dir="${_nshdir}"                      \
                 --with-pkgversion="${_pkgver}"                                    \
-                --with-libiconv-prefix=${DST_DIR}/mingw$_bitval                   \
+                --with-libiconv-prefix="${DST_DIR}"/mingw$_bitval                 \
                 --with-plugin-ld=ld.bfd                                           \
                 --with-system-zlib                                                \
                 --with-diagnostics-color=auto-if-env                              \
                 --with-arch=x86-64                                                \
                 --with-tune=generic                                               \
                 --with-fpmath=sse                                                 \
-                > ${LOGS_DIR}/gcc/gcc_config_${_arch}.log 2>&1 || exit 1
-            echo "done"
+                > "${LOGS_DIR}"/gcc/gcc_config_${_arch}.log 2>&1 || exit 1
+            echo 'done'
 
             # Make.
             printf "===> Making GCC %s...\n" $_arch
@@ -421,33 +430,33 @@ function build_gcc() {
                 LDFLAGS="${LDFLAGS_}"                           \
                 LDFLAGS_FOR_TARGET="${LDFLAGS_}"                \
                 BOOT_LDFLAGS="${LDFLAGS_}"                      \
-                bootstrap > ${LOGS_DIR}/gcc/gcc_make_${_arch}.log 2>&1 || exit 1
-            echo "done"
+                bootstrap > "${LOGS_DIR}"/gcc/gcc_make_${_arch}.log 2>&1 || exit 1
+            echo 'done'
 
             # Install.
-            printf "===> Installing GCC %s...\n" $_arch
-            rm -fr ${PREIN_DIR}/gcc/mingw$_bitval
-            make DESTDIR=${PREIN_DIR}/gcc install > ${LOGS_DIR}/gcc/gcc_install_${_arch}.log 2>&1 || exit 1
+            printf "===> Installing GCC %s...\n" "${_arch}"
+            rm -fr "${PREIN_DIR}"/gcc/mingw$_bitval
+            make DESTDIR="${PREIN_DIR}"/gcc install > "${LOGS_DIR}"/gcc/gcc_install_${_arch}.log 2>&1 || exit 1
             # Move libgcc_s.a to GCC EXEC_PREFIX.
-            mv -f ${PREIN_DIR}/gcc/mingw${_bitval}/lib/gcc/${_arch}-w64-mingw32/lib/libgcc_s.a \
-                ${PREIN_DIR}/gcc/mingw${_bitval}/lib/gcc/${_arch}-w64-mingw32/${GCC_VER/-*}
+            mv -f "${PREIN_DIR}"/gcc/mingw${_bitval}/lib/gcc/${_arch}-w64-mingw32/lib/libgcc_s.a \
+                "${PREIN_DIR}"/gcc/mingw${_bitval}/lib/gcc/${_arch}-w64-mingw32/${GCC_VER/-*}
             # Remove unneeded files.
-            rm -f  ${PREIN_DIR}/gcc/mingw${_bitval}/lib/gcc/${_arch}-w64-mingw32/${GCC_VER/-*}/*.py
-            rm -fr ${PREIN_DIR}/gcc/mingw${_bitval}/share/gcc-${GCC_VER/-*}
-            remove_empty_dirs ${PREIN_DIR}/gcc/mingw$_bitval
-            remove_la_files   ${PREIN_DIR}/gcc/mingw$_bitval
+            rm -f  "${PREIN_DIR}"/gcc/mingw${_bitval}/lib/gcc/${_arch}-w64-mingw32/${GCC_VER/-*}/*.py
+            rm -fr "${PREIN_DIR}"/gcc/mingw${_bitval}/share/gcc-${GCC_VER/-*}
+            remove_la_files   "${PREIN_DIR}"/gcc/mingw$_bitval
+            remove_empty_dirs "${PREIN_DIR}"/gcc/mingw$_bitval
             # Strip files.
-            strip_files ${PREIN_DIR}/gcc/mingw$_bitval
+            strip_files "${PREIN_DIR}"/gcc/mingw$_bitval
             # Modify hard coded file PATH.
             sed -i "s|${DST_DIR//\//\\/}||g" \
-                ${PREIN_DIR}/gcc/mingw${_bitval}/lib/gcc/${_arch}-w64-mingw32/${GCC_VER/-*}/install-tools/mkheaders.conf
-            echo "done"
+                "${PREIN_DIR}"/gcc/mingw${_bitval}/lib/gcc/${_arch}-w64-mingw32/${GCC_VER/-*}/install-tools/mkheaders.conf
+            echo 'done'
 
             # Make default-manifest.o.
-            printf "===> Making windows-default-manifest %s...\n" $_arch
-            mkdir -p ${BUILD_DIR}/gcc/build_${_arch}/build_manifest
-            cd ${BUILD_DIR}/gcc/build_${_arch}/build_manifest
-            cat > ${BUILD_DIR}/gcc/build_${_arch}/build_manifest/default-manifest.rc << "__EOF__"
+            printf "===> Making windows-default-manifest %s...\n" "${_arch}"
+            mkdir -p "${BUILD_DIR}"/gcc/build_${_arch}/build_manifest
+            cd "${BUILD_DIR}"/gcc/build_${_arch}/build_manifest
+            cat > "${BUILD_DIR}"/gcc/build_${_arch}/build_manifest/default-manifest.rc << "__EOF__"
 LANGUAGE 0, 0
 
 /* CREATEPROCESS_MANIFEST_RESOURCE_ID RT_MANIFEST MOVEABLE PURE DISCARDABLE */
@@ -479,12 +488,12 @@ END
 
 __EOF__
             ${_windres_cmd} default-manifest.rc -o default-manifest.o
-            echo "done"
+            echo 'done'
 
             # Install default-manifest.o.
-            printf "===> Installing windows-default-manifest %s...\n" $_arch
-            /usr/bin/install -c -m 644 default-manifest.o ${PREIN_DIR}/gcc/mingw${_bitval}/lib/default-manifest.o
-            echo "done"
+            printf "===> Installing windows-default-manifest %s...\n" "${_arch}"
+            /usr/bin/install -m 644 default-manifest.o "${PREIN_DIR}"/gcc/mingw${_bitval}/lib
+            echo 'done'
 
             # Enable win native symlink.
             MSYS=winsymlinks:nativestrict
@@ -498,22 +507,22 @@ __EOF__
         fi
 
         # Copy to DST_DIR.
-        printf "===> Copying GCC %s to %s/mingw%s...\n" $_arch $DST_DIR $_bitval
-        symcopy ${PREIN_DIR}/gcc/mingw$_bitval $DST_DIR
-        echo "done"
+        printf "===> Copying GCC %s to %s/mingw%s...\n" "${_arch}" "${DST_DIR}" "${_bitval}"
+        symcopy "${PREIN_DIR}"/gcc/mingw$_bitval "${DST_DIR}"
+        echo 'done'
         # Create symlinks.
         if ${create_symlinks:-false}; then
-            rm -f  ${DST_DIR}/mingw${_bitval}/bin/c++-${GCC_VER/-*}.exe
-            printf "===> Creating symlinks %s...\n" $_arch
+            rm -f "${DST_DIR}"/mingw${_bitval}/bin/c++-${GCC_VER/-*}.exe
+            printf "===> Creating symlinks %s...\n" "${_arch}"
             symlink_gcc $_arch
-            echo "done"
+            echo 'done'
         fi
         # Relocate DLLs & cleanup.
-        printf "===> Cleanup GCC %s...\n" $_arch
+        printf "===> Cleanup GCC %s...\n" "${_arch}"
         term_gcc $_arch
-        echo "done"
+        echo 'done'
     done
 
-    cd $ROOT_DIR
+    cd "${ROOT_DIR}"
     return 0
 }

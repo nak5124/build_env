@@ -1,7 +1,7 @@
-From 646dc55dd7b515bd4529327fbdf4dce5608be941 Mon Sep 17 00:00:00 2001
+From 2f9a0ddd5cca465791a67a0b0f41f07518c71196 Mon Sep 17 00:00:00 2001
 From: Yuta NAKAI <nak5124@live.jp>
 Date: Sun, 12 Apr 2015 14:40:59 +0900
-Subject: [PATCH 10/17] mingw: Dynamically linking to libintl and libiconv.
+Subject: [PATCH 12/18] mingw: Dynamically linking to libintl and libiconv.
 
 ---
  gcc/configure          |  8 ++++----
@@ -11,10 +11,10 @@ Subject: [PATCH 10/17] mingw: Dynamically linking to libintl and libiconv.
  4 files changed, 20 insertions(+), 20 deletions(-)
 
 diff --git a/gcc/configure b/gcc/configure
-index 9523773..98bfa54 100755
+index 24e1430..043a3e5 100755
 --- a/gcc/configure
 +++ b/gcc/configure
-@@ -10095,9 +10095,9 @@ fi
+@@ -10104,9 +10104,9 @@ fi
                  found_la="$additional_libdir/lib$name.la"
                fi
              else
@@ -26,7 +26,7 @@ index 9523773..98bfa54 100755
                  if test -f "$additional_libdir/lib$name.la"; then
                    found_la="$additional_libdir/lib$name.la"
                  fi
-@@ -10125,9 +10125,9 @@ fi
+@@ -10134,9 +10134,9 @@ fi
                        found_la="$dir/lib$name.la"
                      fi
                    else
@@ -147,5 +147,5 @@ index f5b28f4..099db53 100755
                          found_la="$dir/lib$name.la"
                        fi
 -- 
-2.3.5
+2.4.1
 

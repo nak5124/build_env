@@ -1,7 +1,7 @@
-From 63c626c46aec3636620b62fb68a0d5b3d62f2896 Mon Sep 17 00:00:00 2001
+From 143f8afa59f83a61a2df216a2c7aab47ab1b663a Mon Sep 17 00:00:00 2001
 From: Yuta NAKAI <nak5124@live.jp>
 Date: Sun, 12 Apr 2015 12:00:35 +0900
-Subject: [PATCH 05/17] libcpp/files.c: Make Windows behave the same as Posix
+Subject: [PATCH 06/18] libcpp/files.c: Make Windows behave the same as Posix
  in the consideration of whether folder "/exists/doesnt-exist/.." is a valid
  path.. in Posix, it isn't.
 
@@ -121,5 +121,5 @@ index 2f49122..3a6996a 100644
    if (file->fd != -1)
      {
 -- 
-2.3.5
+2.4.1
 

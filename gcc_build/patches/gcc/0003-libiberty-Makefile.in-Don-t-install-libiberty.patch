@@ -1,7 +1,7 @@
-From c7f51cd2d65c325be54951560c0146df2c44c52b Mon Sep 17 00:00:00 2001
+From da71b8effc752dde0fe048be941d48dfa357a037 Mon Sep 17 00:00:00 2001
 From: Yuta NAKAI <nak5124@live.jp>
 Date: Sun, 12 Apr 2015 11:44:14 +0900
-Subject: [PATCH 02/17] libiberty/Makefile.in: Don't install libiberty.
+Subject: [PATCH 03/18] libiberty/Makefile.in: Don't install libiberty.
 
 ---
  libiberty/Makefile.in | 2 +-
@@ -21,5 +21,5 @@ index f06cc69..a304eee 100644
  
  .PHONY: install install-strip
 -- 
-2.3.5
+2.4.1
 

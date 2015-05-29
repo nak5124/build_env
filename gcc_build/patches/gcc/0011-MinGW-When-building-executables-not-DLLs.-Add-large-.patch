@@ -1,7 +1,7 @@
-From 14bce4506f07859958864ccc5609e111c8208680 Mon Sep 17 00:00:00 2001
+From 1b227c96cae681457ffaeb130673a903731ae1ff Mon Sep 17 00:00:00 2001
 From: Yuta NAKAI <nak5124@live.jp>
 Date: Sun, 12 Apr 2015 14:38:53 +0900
-Subject: [PATCH 09/17] MinGW: When building executables, not DLLs. Add
+Subject: [PATCH 11/18] MinGW: When building executables, not DLLs. Add
  --large-address-aware and --tsaware.
 
 ---
@@ -21,7 +21,7 @@ index 578a7b7c..3d00bec 100644
 +  %(shared_libgcc_undefs) \
 +  %{!shared: %{!mdll: %{" SPEC_32 ": --large-address-aware} --tsaware}}"
 diff --git a/gcc/config/i386/mingw32.h b/gcc/config/i386/mingw32.h
-index b3942d4..8b24b57 100644
+index fa940b3..c6e9a64 100644
 --- a/gcc/config/i386/mingw32.h
 +++ b/gcc/config/i386/mingw32.h
 @@ -118,7 +118,8 @@ along with GCC; see the file COPYING3.  If not see
@@ -35,5 +35,5 @@ index b3942d4..8b24b57 100644
  /* Include in the mingw32 libraries with libgcc */
  #ifdef ENABLE_SHARED_LIBGCC
 -- 
-2.3.5
+2.4.1
 

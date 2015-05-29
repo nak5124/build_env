@@ -2,46 +2,40 @@
 # Download the src and decompress it.
 function download_zlib_src() {
     # Git clone.
-    if [ ! -d ${BUILD_DIR}/zlib/src/zlib-$ZLIB_VER ]; then
-        echo "===> Cloning zlib git repo..."
-        pushd ${BUILD_DIR}/zlib/src > /dev/null
+    if [ ! -d "${BUILD_DIR}"/zlib/src/zlib-$ZLIB_VER ]; then
+        echo '===> Cloning zlib git repo...'
+        pushd "${BUILD_DIR}"/zlib/src > /dev/null
         dl_files git https://github.com/Dead2/zlib-ng.git zlib-$ZLIB_VER
-        popd > /dev/null
-        echo "done"
+        popd > /dev/null # "${BUILD_DIR}"/zlib/src
+        echo 'done'
     fi
 
     # Git pull.
-    echo "===> Updating zlib git-repo..."
-    pushd ${BUILD_DIR}/zlib/src/zlib-$ZLIB_VER > /dev/null
+    echo '===> Updating zlib git-repo...'
+    pushd "${BUILD_DIR}"/zlib/src/zlib-$ZLIB_VER > /dev/null
     git clean -fdx > /dev/null 2>&1
     git reset --hard > /dev/null 2>&1
     git pull > /dev/null 2>&1
-    git_hash > ${LOGS_DIR}/zlib/zlib.hash 2>&1
-    git_rev >> ${LOGS_DIR}/zlib/zlib.hash 2>&1
-    echo "done"
+    git log -1 --format="%h" > "${LOGS_DIR}"/zlib/zlib.hash 2>&1
+    git rev-list HEAD | wc -l >> "${LOGS_DIR}"/zlib/zlib.hash 2>&1
+    echo 'done'
 
     # Apply patches.
-    printf "===> Applying patches to zlib %s...\n" $ZLIB_VER
-    patch -p1 -i ${PATCHES_DIR}/zlib/0001-configure-Support-MinGW-Cygwin-and-MSYS.patch \
-        >> ${LOGS_DIR}/zlib/zlib_patch.log 2>&1 || exit 1
-    patch -p1 -i ${PATCHES_DIR}/zlib/0002-Fix-compilation-on-MinGW64.patch >> ${LOGS_DIR}/zlib/zlib_patch.log 2>&1 || exit 1
-    patch -p1 -i ${PATCHES_DIR}/zlib/0003-Cleanup.patch >> ${LOGS_DIR}/zlib/zlib_patch.log 2>&1 || exit 1
-    patch -p1 -i ${PATCHES_DIR}/zlib/0004-Add-old-typedef.patch >> ${LOGS_DIR}/zlib/zlib_patch.log 2>&1 || exit 1
-    patch -p1 -i ${PATCHES_DIR}/zlib/0005-Use-version-script-on-MinGW.patch >> ${LOGS_DIR}/zlib/zlib_patch.log 2>&1 || exit 1
-    patch -p1 -i ${PATCHES_DIR}/zlib/0006-Remove-Makefile.patch >> ${LOGS_DIR}/zlib/zlib_patch.log 2>&1 || exit 1
-    patch -p1 -i ${PATCHES_DIR}/zlib/0007-Don-t-build-examples-and-static-lib-when-making-shar.patch \
-        >> ${LOGS_DIR}/zlib/zlib_patch.log 2>&1 || exit 1
-    patch -p1 -i ${PATCHES_DIR}/zlib/0008-Makefile.in-Add-install-shared.patch \
-        >> ${LOGS_DIR}/zlib/zlib_patch.log 2>&1 || exit 1
-    popd > /dev/null
-    echo "done"
+    printf "===> Applying patches to zlib %s...\n" "${ZLIB_VER}"
+    patch -p1 -i "${PATCHES_DIR}"/zlib/0001-Improve-buildsystem-for-MinGW-w64.patch \
+        > "${LOGS_DIR}"/zlib/zlib_patch.log 2>&1 || exit 1
+    patch -p1 -i "${PATCHES_DIR}"/zlib/0002-Fix-LFS-on-MinGW-w64.patch >> "${LOGS_DIR}"/zlib/zlib_patch.log 2>&1 || exit 1
+    patch -p1 -i "${PATCHES_DIR}"/zlib/0003-Use-typedef-instead-of-define.patch \
+        >> "${LOGS_DIR}"/zlib/zlib_patch.log 2>&1 || exit 1
+    popd > /dev/null # "${BUILD_DIR}"/zlib/src/zlib-$ZLIB_VER
+    echo 'done'
 
     return 0
 }
 
 # Build and install.
 function build_zlib() {
-    clear; printf "Build zlib %s\n" $ZLIB_VER
+    clear; printf "Build zlib %s\n" "${ZLIB_VER}"
 
     # Option handling.
     local _rebuild=true
@@ -51,11 +45,11 @@ function build_zlib() {
     do
         case "${_opt}" in
             --rebuild=* )
-                _rebuild="${_opt#*=}"
+                _rebuild=${_opt#*=}
                 ;;
             * )
-                printf "build_zlib: Unknown Option: '%s'\n" $_opt
-                echo "...exit"
+                printf "build_zlib: Unknown Option: '%s'\n" "${_opt}"
+                echo '...exit'
                 exit 1
                 ;;
         esac
@@ -72,44 +66,43 @@ function build_zlib() {
         local _bitval=$(get_arch_bit ${_arch})
 
         if ${_rebuild}; then
-            cd ${BUILD_DIR}/zlib/build_$_arch
+            cd "${BUILD_DIR}"/zlib/build_$_arch
             # Cleanup the build dir.
-            rm -fr ${BUILD_DIR}/zlib/build_${_arch}/*
+            rm -fr "${BUILD_DIR}"/zlib/build_${_arch}/*
 
             # PATH exporting.
-            source cpath $_arch
-            PATH=${DST_DIR}/mingw${_bitval}/bin:$PATH
-            export PATH
+            set_path $_arch
 
             # Configure.
-            printf "===> Configuring zlib %s...\n" $_arch
+            printf "===> Configuring zlib %s...\n" "${_arch}"
             CFLAGS="${CFLAGS_} ${CPPFLAGS_}"  \
             LDFLAGS="${LDFLAGS_}"             \
             ../src/zlib-${ZLIB_VER}/configure \
                 --prefix=/mingw$_bitval       \
-                --shared                      \
-                > ${LOGS_DIR}/zlib/libz_config_${_arch}.log 2>&1 || exit 1
-            echo "done"
+                --enable-shared               \
+                --disable-static              \
+                > "${LOGS_DIR}"/zlib/libz_config_${_arch}.log 2>&1 || exit 1
+            echo 'done'
 
             # Make.
-            printf "===> Making zlib %s...\n" $_arch
-            make $MAKEFLAGS_ shared > ${LOGS_DIR}/zlib/libz_make_${_arch}.log 2>&1 || exit 1
-            echo "done"
+            printf "===> Making zlib %s...\n" "${_arch}"
+            make $MAKEFLAGS_ shared > "${LOGS_DIR}"/zlib/libz_make_${_arch}.log 2>&1 || exit 1
+            echo 'done'
 
             # Install.
-            printf "===> Installing zlib %s...\n" $_arch
-            make DESTDIR=${PREIN_DIR}/zlib install-shared > ${LOGS_DIR}/zlib/libz_install_${_arch}.log 2>&1 || exit 1
+            printf "===> Installing zlib %s...\n" "${_arch}"
+            make DESTDIR="${PREIN_DIR}"/zlib install > "${LOGS_DIR}"/zlib/libz_install_${_arch}.log 2>&1 || exit 1
             # Strip files.
-            strip_files ${PREIN_DIR}/zlib/mingw$_bitval
-            echo "done"
+            strip_files "${PREIN_DIR}"/zlib/mingw$_bitval
+            echo 'done'
         fi
 
         # Copy to DST_DIR.
-        printf "===> Copying zlib %s to %s/mingw%s...\n" $_arch $DST_DIR $_bitval
-        cp -fra ${PREIN_DIR}/zlib/mingw$_bitval $DST_DIR
-        echo "done"
+        printf "===> Copying zlib %s to %s/mingw%s...\n" "${_arch}" "${DST_DIR}" "${_bitval}"
+        cp -af "${PREIN_DIR}"/zlib/mingw$_bitval "${DST_DIR}"
+        echo 'done'
     done
 
-    cd $ROOT_DIR
+    cd "${ROOT_DIR}"
     return 0
 }

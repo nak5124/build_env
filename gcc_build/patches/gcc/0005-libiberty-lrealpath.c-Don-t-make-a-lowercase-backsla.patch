@@ -1,7 +1,7 @@
-From 28fbd84a766280077979f835e8f33cceae237a16 Mon Sep 17 00:00:00 2001
+From 5f2eaebd5e95a2f19f58daa6c3c1f970fe210374 Mon Sep 17 00:00:00 2001
 From: Yuta NAKAI <nak5124@live.jp>
 Date: Sun, 12 Apr 2015 12:03:12 +0900
-Subject: [PATCH 04/17] libiberty/lrealpath.c: Don't make a lowercase
+Subject: [PATCH 05/18] libiberty/lrealpath.c: Don't make a lowercase
  backslashed path from argv[0] that then fail to strcmp with prefix(es) ..
  they're also ugly.
 
@@ -45,5 +45,5 @@ index b27c8de..423d128 100644
        }
    }
 -- 
-2.3.5
+2.4.1
 

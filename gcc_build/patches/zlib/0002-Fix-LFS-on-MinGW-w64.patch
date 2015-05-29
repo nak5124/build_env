@@ -1,0 +1,25 @@
+From a11f767fc776eff7941c381ddfb0cc5a7ecb0486 Mon Sep 17 00:00:00 2001
+From: Yuta NAKAI <nak5124@live.jp>
+Date: Sun, 24 May 2015 22:04:15 +0900
+Subject: [PATCH 2/3] Fix LFS on MinGW-w64.
+
+---
+ zconf.h.in | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/zconf.h.in b/zconf.h.in
+index e919175..e53866f 100644
+--- a/zconf.h.in
++++ b/zconf.h.in
+@@ -147,7 +147,7 @@ typedef void       *voidp;
+ #  define Z_LARGE64
+ #endif
+ 
+-#if defined(_FILE_OFFSET_BITS) && _FILE_OFFSET_BITS-0 == 64 && defined(Z_LFS64)
++#if defined(_FILE_OFFSET_BITS) && _FILE_OFFSET_BITS-0 == 64 && (defined(Z_LFS64) || defined(__MINGW32__))
+ #  define Z_WANT64
+ #endif
+ 
+-- 
+2.4.1
+

@@ -1,7 +1,7 @@
-From e8f47f8656506c9565b96e79202f9441f13cb0f2 Mon Sep 17 00:00:00 2001
+From a0bd395afffbecb1ef0331264136ef47a0052d33 Mon Sep 17 00:00:00 2001
 From: Yuta NAKAI <nak5124@live.jp>
 Date: Sun, 12 Apr 2015 14:25:35 +0900
-Subject: [PATCH 15/17] configure: Search dirs under ${build_sysroot} instead
+Subject: [PATCH 16/18] configure: Search dirs under ${build_sysroot} instead
  of ${prefix}.
 
 ---
@@ -11,7 +11,7 @@ Subject: [PATCH 15/17] configure: Search dirs under ${build_sysroot} instead
  3 files changed, 18 insertions(+), 2 deletions(-)
 
 diff --git a/configure b/configure
-index 7616f88..d05955b 100755
+index a3f66ba..7faf975 100755
 --- a/configure
 +++ b/configure
 @@ -6919,6 +6919,12 @@ esac
@@ -44,7 +44,7 @@ index 7616f88..d05955b 100755
    *-mingw*)
    # MinGW can't be handled as Cygwin above since it does not use newlib.
 diff --git a/gcc/Makefile.in b/gcc/Makefile.in
-index f46af9e..67b3dbe 100644
+index e993a6d..ddb9b4c 100644
 --- a/gcc/Makefile.in
 +++ b/gcc/Makefile.in
 @@ -631,7 +631,7 @@ dollar = @dollar@
@@ -57,7 +57,7 @@ index f46af9e..67b3dbe 100644
  gcc_gxx_include_dir = @gcc_gxx_include_dir@
  gcc_gxx_include_dir_add_sysroot = @gcc_gxx_include_dir_add_sysroot@
 diff --git a/gcc/configure b/gcc/configure
-index 98bfa54..a84b70f 100755
+index 043a3e5..62f4618 100755
 --- a/gcc/configure
 +++ b/gcc/configure
 @@ -668,6 +668,7 @@ all_compilers
@@ -68,7 +68,7 @@ index 98bfa54..a84b70f 100755
  gcc_tooldir
  enable_lto
  DO_LINK_MUTEX
-@@ -7280,9 +7281,11 @@ fi
+@@ -7289,9 +7290,11 @@ fi
  if test "${with_build_sysroot+set}" = set; then :
    withval=$with_build_sysroot; if test x"$withval" != x ; then
       SYSROOT_CFLAGS_FOR_TARGET="--sysroot=$withval"
@@ -81,5 +81,5 @@ index 98bfa54..a84b70f 100755
  
  
 -- 
-2.3.5
+2.4.1
 

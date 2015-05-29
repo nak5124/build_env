@@ -1,7 +1,7 @@
-From 8b40a7ac4d2bacb450c87a98b231fc43cb2c7fd7 Mon Sep 17 00:00:00 2001
+From 006dc27f88841cd7b9afed2983fe5ad6e26807ac Mon Sep 17 00:00:00 2001
 From: Yuta NAKAI <nak5124@live.jp>
 Date: Sun, 26 Apr 2015 09:53:07 +0900
-Subject: [PATCH 07/17] gcc/diagnostic-color.c: Enable color diagnostic on
+Subject: [PATCH 09/18] gcc/diagnostic-color.c: Enable color diagnostic on
  MinGW.
 
 ---
@@ -10,10 +10,10 @@ Subject: [PATCH 07/17] gcc/diagnostic-color.c: Enable color diagnostic on
  2 files changed, 86 insertions(+), 9 deletions(-)
 
 diff --git a/gcc/Makefile.in b/gcc/Makefile.in
-index 4ab7405..d230bf7 100644
+index 07c6f0a..b8237c9 100644
 --- a/gcc/Makefile.in
 +++ b/gcc/Makefile.in
-@@ -1004,10 +1004,11 @@ BUILD_LIBDEPS= $(BUILD_LIBIBERTY)
+@@ -1011,10 +1011,11 @@ BUILD_LIBDEPS= $(BUILD_LIBIBERTY)
  
  # How to link with both our special library facilities
  # and the system's installed libraries.
@@ -141,5 +141,5 @@ index 3fe49b2..9530058 100644
  }
 -#endif
 -- 
-2.3.5
+2.4.1
 
