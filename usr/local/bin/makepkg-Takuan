@@ -59,7 +59,7 @@ else
 fi
 
 readonly ALL_OFF BOLD BLUE GREEN RED YELLOW
-MINGW_INSTALLS="${MINGW_INSTALLS:-mingw64_Takuan mingw32_Takuan}"
+MINGW_INSTALLS="${MINGW_INSTALLS:-mingw64_Takuan}"
 
 for _mingw in ${MINGW_INSTALLS}; do
   if [ ! "${_mingw}" = 'mingw32_Takuan' -a ! "${_mingw}" = 'mingw64_Takuan' ]; then
