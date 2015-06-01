@@ -1,0 +1,26 @@
+From 58338e520d7a3ed2b9dfc967eab339c72cf607c4 Mon Sep 17 00:00:00 2001
+From: Yuta NAKAI <nak5124@live.jp>
+Date: Thu, 25 Jul 2013 03:36:14 +0900
+Subject: [PATCH 54/66] fix compilation on msys2/mingw32* system.
+
+msys2 has cygwin-like PATH system. This needs to use lib.exe correctly.
+---
+ configure | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/configure b/configure
+index fb7ec68..e10a32e 100755
+--- a/configure
++++ b/configure
+@@ -4247,7 +4247,7 @@ case $target_os in
+         SLIBNAME_WITH_MAJOR='$(SLIBPREF)$(FULLNAME)-$(LIBMAJOR)$(SLIBSUF)'
+         dlltool="${cross_prefix}dlltool"
+         if check_cmd lib.exe -list; then
+-            SLIB_EXTRA_CMD=-'sed -e "s/ @[^ ]*//" $$(@:$(SLIBSUF)=.orig.def) > $$(@:$(SLIBSUF)=.def); lib.exe /machine:$(LIBTARGET) /def:$$(@:$(SLIBSUF)=.def) /out:$(SUBDIR)$(SLIBNAME:$(SLIBSUF)=.lib)'
++            SLIB_EXTRA_CMD=-'sed -e "s/ @[^ ]*//" $$(@:$(SLIBSUF)=.orig.def) > $$(@:$(SLIBSUF)=.def); lib.exe -machine:$(LIBTARGET) -def:$$(@:$(SLIBSUF)=.def) -out:$(SUBDIR)$(SLIBNAME:$(SLIBSUF)=.lib)'
+             if enabled x86_64; then
+                 LIBTARGET=x64
+             fi
+-- 
+2.4.1
+

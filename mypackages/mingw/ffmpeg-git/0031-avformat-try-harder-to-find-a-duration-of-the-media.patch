@@ -1,0 +1,30 @@
+From 39efacb491bbca99db708112f6616d64004eda5d Mon Sep 17 00:00:00 2001
+From: Hendrik Leppkes <h.leppkes@gmail.com>
+Date: Sun, 2 Feb 2014 16:53:10 +0100
+Subject: [PATCH 31/66] avformat: try harder to find a duration of the media
+
+This helps finding a duration in files with a lot of garbage data at the
+end, increasing the lookup area from 4MB to 32MB.
+
+There should be no speed loss on files which previously worked fine, since
+it'll stop looking once it found a duration.
+---
+ libavformat/utils.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/libavformat/utils.c b/libavformat/utils.c
+index 7e1eeb7..04ac5b4 100644
+--- a/libavformat/utils.c
++++ b/libavformat/utils.c
+@@ -2394,7 +2394,7 @@ static void estimate_timings_from_bit_rate(AVFormatContext *ic)
+ }
+ 
+ #define DURATION_MAX_READ_SIZE 250000LL
+-#define DURATION_MAX_RETRY 4
++#define DURATION_MAX_RETRY 7
+ 
+ /* only usable for MPEG-PS streams */
+ static void estimate_timings_from_pts(AVFormatContext *ic, int64_t old_offset)
+-- 
+2.4.1
+

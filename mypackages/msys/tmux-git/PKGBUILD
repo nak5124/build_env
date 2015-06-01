@@ -1,7 +1,7 @@
 # Maintainer: Yuta Nakai <nak5124@live.jp>
 
 pkgname=tmux-git
-pkgver=1.9a.5079.8794562
+pkgver=2.0.5122.f538f2a
 pkgrel=1
 pkgdesc='A terminal multiplexer'
 url='http://tmux.sourceforge.net/'

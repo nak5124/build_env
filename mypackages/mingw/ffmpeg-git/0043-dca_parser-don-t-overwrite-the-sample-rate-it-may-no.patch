@@ -1,0 +1,25 @@
+From dc712d3739ea7467fdea17b8a253511593887db5 Mon Sep 17 00:00:00 2001
+From: Hendrik Leppkes <h.leppkes@gmail.com>
+Date: Wed, 18 Mar 2015 11:11:10 +0100
+Subject: [PATCH 43/66] dca_parser: don't overwrite the sample rate, it may not
+ be correct
+
+---
+ libavcodec/dca_parser.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/libavcodec/dca_parser.c b/libavcodec/dca_parser.c
+index c3c5898..c9f3397 100644
+--- a/libavcodec/dca_parser.c
++++ b/libavcodec/dca_parser.c
+@@ -193,7 +193,6 @@ static int dca_parse(AVCodecParserContext *s, AVCodecContext *avctx,
+     /* read the duration and sample rate from the frame header */
+     if (!dca_parse_params(buf, buf_size, &duration, &sample_rate, &pc1->framesize)) {
+         s->duration        = duration;
+-        avctx->sample_rate = sample_rate;
+     } else
+         s->duration = 0;
+ 
+-- 
+2.4.1
+

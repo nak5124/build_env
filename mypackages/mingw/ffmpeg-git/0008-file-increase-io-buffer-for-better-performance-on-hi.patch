@@ -1,0 +1,26 @@
+From 74820a99ecea882849d088ff7c4cc4f71d2d7338 Mon Sep 17 00:00:00 2001
+From: Hendrik Leppkes <h.leppkes@gmail.com>
+Date: Tue, 12 Jun 2012 15:38:28 +0200
+Subject: [PATCH 08/66] file: increase io buffer for better performance on high
+ latency resources
+
+---
+ libavformat/aviobuf.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/libavformat/aviobuf.c b/libavformat/aviobuf.c
+index 9701d74..9d9ef61 100644
+--- a/libavformat/aviobuf.c
++++ b/libavformat/aviobuf.c
+@@ -33,7 +33,7 @@
+ #include "url.h"
+ #include <stdarg.h>
+ 
+-#define IO_BUFFER_SIZE 32768
++#define IO_BUFFER_SIZE 131072
+ 
+ /**
+  * Do seeks within this distance ahead of the current buffer by skipping
+-- 
+2.4.1
+

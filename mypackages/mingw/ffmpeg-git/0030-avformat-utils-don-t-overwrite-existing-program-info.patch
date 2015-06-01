@@ -1,0 +1,37 @@
+From 430b3ceb00c63dbaab492dda48b8296e544bb6f2 Mon Sep 17 00:00:00 2001
+From: Hendrik Leppkes <h.leppkes@gmail.com>
+Date: Fri, 31 Jan 2014 16:16:09 +0100
+Subject: [PATCH 30/66] avformat/utils: don't overwrite existing program infos
+ in av_new_program
+
+---
+ libavformat/utils.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/libavformat/utils.c b/libavformat/utils.c
+index 2b5fae3..7e1eeb7 100644
+--- a/libavformat/utils.c
++++ b/libavformat/utils.c
+@@ -3799,13 +3799,13 @@ AVProgram *av_new_program(AVFormatContext *ac, int id)
+             return NULL;
+         dynarray_add(&ac->programs, &ac->nb_programs, program);
+         program->discard = AVDISCARD_NONE;
+-    }
+-    program->id = id;
+-    program->pts_wrap_reference = AV_NOPTS_VALUE;
+-    program->pts_wrap_behavior = AV_PTS_WRAP_IGNORE;
++        program->id = id;
++        program->pts_wrap_reference = AV_NOPTS_VALUE;
++        program->pts_wrap_behavior = AV_PTS_WRAP_IGNORE;
+ 
+-    program->start_time =
+-    program->end_time   = AV_NOPTS_VALUE;
++        program->start_time =
++        program->end_time   = AV_NOPTS_VALUE;
++    }
+ 
+     return program;
+ }
+-- 
+2.4.1
+

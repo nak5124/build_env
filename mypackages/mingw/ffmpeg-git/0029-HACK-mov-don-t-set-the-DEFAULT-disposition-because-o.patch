@@ -1,0 +1,28 @@
+From 730de817dcadbcc8c89e1e7be84981ac1c0e0d46 Mon Sep 17 00:00:00 2001
+From: Hendrik Leppkes <h.leppkes@gmail.com>
+Date: Thu, 9 Jan 2014 10:04:25 +0100
+Subject: [PATCH 29/66] HACK mov: don't set the DEFAULT disposition because of
+ wrong semantics
+
+The meaning of the DEFAULT flag and movs enabled flag don't match and
+cause playback issues.
+---
+ libavformat/mov.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/libavformat/mov.c b/libavformat/mov.c
+index 21c8349..68f4a62 100644
+--- a/libavformat/mov.c
++++ b/libavformat/mov.c
+@@ -2963,7 +2963,7 @@ static int mov_read_tkhd(MOVContext *c, AVIOContext *pb, MOVAtom atom)
+ 
+     version = avio_r8(pb);
+     flags = avio_rb24(pb);
+-    st->disposition |= (flags & MOV_TKHD_FLAG_ENABLED) ? AV_DISPOSITION_DEFAULT : 0;
++    /* st->disposition |= (flags & MOV_TKHD_FLAG_ENABLED) ? AV_DISPOSITION_DEFAULT : 0; */
+ 
+     if (version == 1) {
+         avio_rb64(pb);
+-- 
+2.4.1
+

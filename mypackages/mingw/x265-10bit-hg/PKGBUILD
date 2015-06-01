@@ -2,7 +2,7 @@
 
 _realname=x265-10bit
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}-hg"
-pkgver=1.6.298.4a7176bab742
+pkgver=1.7.90.12f0ed28ba0e
 pkgrel=1
 pkgdesc='Open Source H265/HEVC video encoder, 10bit-depth (mingw-w64)'
 arch=('any')
@@ -13,7 +13,7 @@ source=("${_realname%-*}"::'hg+https://bitbucket.org/multicoreware/x265'
         '0001-x265-shared-linking-v2.patch'
         '0002-use-win-specific-functions.patch')
 sha512sums=('SKIP'
-            'c9ffe00114f40c46ce186236bee5fa2027b92d6a48701790a9bba41fefcaf0f07e3e633103dbc0c030409c3524570a1e2d8359774b71c685bd9d9f08bffb9934'
+            '5658ecd3cd68c40595e971aa5ea99d4526e8486c0542a6edf41a7af6a0e6bb9adea3b7087534e2588d7c2f06096d98b36690cb756aa736b734b2f297db730765'
             'c5419d67938dc9a6136cb9224dc15e2ad2df2a0f28e5a30fbca123c093ee0542683864ebf2c6963ab398714d7a97784901eeb9a2b35346284de5854d6091e77c')
 
 pkgver() {
@@ -31,6 +31,9 @@ build() {
   cd "${srcdir}"/${_realname%-*}/build/msys
 
   hg purge --all
+  mkdir -p "${srcdir}"/${_realname%-*}/build/msys/{10bit,8bit}
+
+  cd "${srcdir}"/${_realname%-*}/build/msys/10bit
 
   cmake -G 'MSYS Makefiles' \
     -DCMAKE_INSTALL_PREFIX:PATH="${pkgdir}"$MINGW_LOCAL_PREFIX \
@@ -49,17 +52,43 @@ build() {
     -DENABLE_SHARED:BOOL=ON \
     -DENABLE_CLI:BOOL=ON \
     -DENABLE_TESTS:BOOL=OFF \
-    ../../source
+    ../../../source
 
   sed -i 's| -Wl,--out-implib,libx265.dll.a||g' CMakeFiles/cli.dir/build.make
   make $MAKEFLAGS
 
+  cd "${srcdir}"/${_realname%-*}/build/msys/8bit
+
+  cmake -G 'MSYS Makefiles' \
+    -DCMAKE_INSTALL_PREFIX:PATH="${pkgdir}"$MINGW_LOCAL_PREFIX \
+    -DCMAKE_BUILD_TYPE:STRING=Release \
+    -DCMAKE_CXX_FLAGS_RELEASE:STRING="${CXXFLAGS} ${CPPFLAGS}" \
+    -DCMAKE_SHARED_LINKER_FLAGS:STRING="${LDFLAGS}" \
+    -DCMAKE_COLOR_MAKEFILE:BOOL=ON \
+    -DCMAKE_VERBOSE_MAKEFILE:BOOL=ON \
+    -DCHECKED_BUILD:BOOL=OFF \
+    -DENABLE_ASSEMBLY:BOOL=ON \
+    -DHIGH_BIT_DEPTH:BOOL=OFF \
+    -DWARNINGS_AS_ERRORS:BOOL=OFF \
+    -DENABLE_PPA:BOOL=OFF \
+    -DWINXP_SUPPORT:BOOL=OFF \
+    -DENABLE_STATIC:BOOL=OFF \
+    -DENABLE_SHARED:BOOL=ON \
+    -DENABLE_CLI:BOOL=OFF \
+    -DENABLE_TESTS:BOOL=OFF \
+    ../../../source
+
+  make $MAKEFLAGS
 }
 
 package() {
-  cd "${srcdir}"/${_realname%-*}/build/msys
+  cd "${srcdir}"/${_realname%-*}/build/msys/10bit
   make install
+
+  cd "${srcdir}"/${_realname%-*}/build/msys/8bit
+  install -m755 libx265-*.dll "${pkgdir}"${MINGW_LOCAL_PREFIX}/bin/libx265_main.dll
 
   local _pkgdir=$(cygpath -ma ${pkgdir})
   sed -i "s|${_pkgdir}||g" "${pkgdir}"${MINGW_LOCAL_PREFIX}/lib/pkgconfig/x265.pc
+  dos2unix "${pkgdir}"${MINGW_LOCAL_PREFIX}/include/x265_config.h
 }

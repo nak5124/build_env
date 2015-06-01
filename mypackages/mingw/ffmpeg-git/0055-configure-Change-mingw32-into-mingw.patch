@@ -1,0 +1,39 @@
+From 68f52f245bf7b79cf467fba76d9483eef22e489b Mon Sep 17 00:00:00 2001
+From: Yuta NAKAI <nak5124@live.jp>
+Date: Sun, 15 Sep 2013 10:35:05 +0900
+Subject: [PATCH 55/66] configure: Change mingw32* into mingw*.
+
+---
+ configure | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/configure b/configure
+index e10a32e..51f4a95 100755
+--- a/configure
++++ b/configure
+@@ -3196,7 +3196,7 @@ fi
+ 
+ exesuf() {
+     case $1 in
+-        mingw32*|win32|win64|cygwin*|*-dos|freedos|opendos|os/2*|symbian) echo .exe ;;
++        mingw*|win32|win64|cygwin*|*-dos|freedos|opendos|os/2*|symbian) echo .exe ;;
+     esac
+ }
+ 
+@@ -4224,11 +4224,11 @@ case $target_os in
+         enabled_any pic shared x86_64 ||
+             { check_cflags -mdynamic-no-pic && add_asflags -mdynamic-no-pic; }
+         ;;
+-    mingw32*)
++    mingw*)
+         if test $target_os = "mingw32ce"; then
+             disable network
+         else
+-            target_os=mingw32
++            target_os=mingw
+         fi
+         LIBTARGET=i386
+         if enabled x86_64; then
+-- 
+2.4.1
+
