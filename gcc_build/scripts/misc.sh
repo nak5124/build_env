@@ -64,12 +64,12 @@ function dl_files() {
 
     case "${_prtcl}" in
         ftp )
-            local _curl_opt='--fail --continue-at - --ftp-pasv --retry 10 --retry-delay 5 --speed-limit 1 --speed-time 30'
+            local _curl_opt=(--fail --continue-at - --ftp-pasv --retry 10 --retry-delay 5 --speed-limit 1 --speed-time 30)
             _is_curl=true
             ;;
         http | https )
-            local _curl_opt='--fail --location --max-redirs 2 --continue-at - --retry 10 --retry-delay 5 \
-                             --speed-limit 1 --speed-time 30'
+            local _curl_opt=(--fail --location --max-redirs 2 --continue-at - --retry 10 --retry-delay 5
+                             --speed-limit 1 --speed-time 30)
             _is_curl=true
             ;;
         git )
@@ -84,9 +84,9 @@ function dl_files() {
 
     if ${_is_curl}; then
         if [ ! -z "${_oname}" ]; then
-            curl "${_curl_opt}" -o "${_oname}" "${_url}"
+            curl ${_curl_opt[@]} -o "${_oname}" "${_url}"
         else
-            curl "${_curl_opt}" --remote-name "${_url}"
+            curl ${_curl_opt[@]} --remote-name "${_url}"
         fi
     fi
 
