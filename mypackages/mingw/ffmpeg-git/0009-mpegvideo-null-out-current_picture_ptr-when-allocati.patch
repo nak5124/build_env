@@ -17,8 +17,8 @@ index fb8570c..22761cf 100644
  
      pic->f->coded_picture_number = s->coded_picture_number++;
  
--    if (ff_alloc_picture(s, pic, 0) < 0)
-+    if (ff_alloc_picture(s, pic, 0) < 0) {
+-    if (alloc_picture(s, pic, 0) < 0)
++    if (alloc_picture(s, pic, 0) < 0) {
 +        s->current_picture_ptr = NULL;
          return -1;
 +    }

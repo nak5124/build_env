@@ -2,7 +2,7 @@
 
 _realname=x265-10bit
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}-hg"
-pkgver=1.7.90.12f0ed28ba0e
+pkgver=1.7.135.6245476add8f
 pkgrel=1
 pkgdesc='Open Source H265/HEVC video encoder, 10bit-depth (mingw-w64)'
 arch=('any')
@@ -13,7 +13,7 @@ source=("${_realname%-*}"::'hg+https://bitbucket.org/multicoreware/x265'
         '0001-x265-shared-linking-v2.patch'
         '0002-use-win-specific-functions.patch')
 sha512sums=('SKIP'
-            '5658ecd3cd68c40595e971aa5ea99d4526e8486c0542a6edf41a7af6a0e6bb9adea3b7087534e2588d7c2f06096d98b36690cb756aa736b734b2f297db730765'
+            'e6ac6cf135f839e91295942829cb88de9bae06471914361d835f1a6975acd38a8e3c888b9979c385cdca6853787a1efc2a7784025737a92fbada783ba5ff02ca'
             'c5419d67938dc9a6136cb9224dc15e2ad2df2a0f28e5a30fbca123c093ee0542683864ebf2c6963ab398714d7a97784901eeb9a2b35346284de5854d6091e77c')
 
 pkgver() {

@@ -1,7 +1,7 @@
 # Maintainer: Yuta Nakai <nak5124@live.jp>
 
 pkgname=tmux-git
-pkgver=2.0.5122.f538f2a
+pkgver=2.0.173.g0ff172f
 pkgrel=1
 pkgdesc='A terminal multiplexer'
 url='http://tmux.sourceforge.net/'
@@ -11,14 +11,12 @@ provides=('tmux')
 conflicts=('tmux')
 depends=('ncurses' 'libevent')
 makedepends=('git' 'ncurses-devel' 'libevent-devel')
-source=("${pkgname}"::'git+http://git.code.sf.net/p/tmux/tmux-code'
-        'LICENSE'
+source=("${pkgname}"::'git+https://github.com/tmux/tmux.git'
         '0001-msys-platform.patch'
         '0002-use_acs.patch'
         '0003-utf8_width.patch'
         '0004-copy_cursor_width.patch')
 sha512sums=('SKIP'
-            'b03188cd81ffe7443905bb2cd2bb9330a00ddad258eb0f1ad64add09c2c305f1ad6686855986ce6f828a3884bfbaebbd9896e2307e65a47797a628d81c4e3677'
             '322a9c95dec1bad12a147a7b160ace52ba77a0b9873aa9e5c22f6e1f0f6505f57c99d651a47365d0c469e8461b43f13379a825551bde5a9f750ff4f9964dc81c'
             'b00fdfe389410c6dba0f66e251e3fd2bb2e92c215d690087fb148056c880ea5c6daa0071b97f47556915595d5145eab4ffabdb1e820e5b9e7c2b9c14bbb27a58'
             '263662c0476854855e2ecd940c99ea9b6b4388040b1860b6f843f58a0202ee950374794678abcef3d2cd5a507a6dae92606ea0107b5c000d2294b7488cba18c4'
@@ -26,8 +24,7 @@ sha512sums=('SKIP'
 
 pkgver() {
   cd "${srcdir}"/$pkgname
-  local _ver=$(grep 'RELEASE=' configure.ac | sed 's/RELEASE=//g')
-  printf "%s.%s.%s" "${_ver}" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
+  git describe --tags | sed -e 's|-|.|g' -e 's|v||g'
 }
 
 prepare() {
@@ -56,12 +53,15 @@ build() {
 package() {
   cd "${srcdir}"/$pkgname
   make DESTDIR="${pkgdir}" install
-  install -Dm644 "${srcdir}"/LICENSE "${pkgdir}"/usr/share/licenses/tmux/LICENSE
 
-  install -dm755 "${pkgdir}"/usr/share/tmux/
-  install -m644 examples/* "${pkgdir}"/usr/share/tmux/
-  install -Dm644 examples/tmux.vim "${pkgdir}"/usr/share/vim/vimfiles/syntax/tmux.vim
+  install -d "${pkgdir}"/usr/share/licenses/tmux
+  install -m 644 COPYING "${pkgdir}"/usr/share/licenses/tmux
 
-  install -d "${pkgdir}"/usr/share/bash-completion/completions/
+  install -d "${pkgdir}"/usr/share/tmux
+  install -m 644 examples/* "${pkgdir}"/usr/share/tmux
+  install -d "${pkgdir}"/usr/share/vim/vimfiles/syntax
+  install -m 644 examples/tmux.vim "${pkgdir}"/usr/share/vim/vimfiles/syntax
+
+  install -d "${pkgdir}"/usr/share/bash-completion/completions/tmux
   mv "${pkgdir}"/usr/share/tmux/bash_completion_tmux.sh "${pkgdir}"/usr/share/bash-completion/completions/tmux
 }

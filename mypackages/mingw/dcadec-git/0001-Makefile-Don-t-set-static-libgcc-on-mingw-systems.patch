@@ -1,17 +1,17 @@
-From 00576008e57e8c0e60b8f530e39b36f31a6f01a2 Mon Sep 17 00:00:00 2001
+From 8ff23a2f89b94f4038d21d0f3e8c65ce44b1fb09 Mon Sep 17 00:00:00 2001
 From: Yuta NAKAI <nak5124@live.jp>
 Date: Sat, 11 Apr 2015 11:46:04 +0900
-Subject: [PATCH 1/6] Makefile: Don't set -static-libgcc on mingw systems.
+Subject: [PATCH 1/5] Makefile: Don't set -static-libgcc on mingw systems.
 
 ---
  Makefile | 1 -
  1 file changed, 1 deletion(-)
 
 diff --git a/Makefile b/Makefile
-index a207c05..ff2915f 100644
+index a1ffc53..350c338 100644
 --- a/Makefile
 +++ b/Makefile
-@@ -85,7 +85,6 @@ ifdef CONFIG_SHARED
+@@ -104,7 +104,6 @@ ifdef CONFIG_SHARED
          IMP_LIB = libdcadec/libdcadec$(DLLSUF)$(LIBSUF)
          IMP_DEF = libdcadec/libdcadec.def
          EXTRA_LIB = $(IMP_LIB) $(IMP_DEF)
@@ -20,5 +20,5 @@ index a207c05..ff2915f 100644
          LDFLAGS_DLL += -Wl,--output-def,$(IMP_DEF)
          LDFLAGS_DLL += -Wl,--out-implib,$(IMP_LIB)
 -- 
-2.3.7
+2.4.3
 

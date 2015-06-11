@@ -1,7 +1,7 @@
-From 0caeecc9b1af4a209f65cade17013af9acf86ac3 Mon Sep 17 00:00:00 2001
+From 91074e14e4b3321e0a4e23cb340b4d5574b3cb60 Mon Sep 17 00:00:00 2001
 From: Yuta NAKAI <nak5124@live.jp>
 Date: Sat, 11 Apr 2015 12:19:19 +0900
-Subject: [PATCH 4/6] Makefile: On windows, install import library and def
+Subject: [PATCH 3/5] Makefile: On windows, install import library and def
  file.
 
 ---
@@ -9,11 +9,11 @@ Subject: [PATCH 4/6] Makefile: On windows, install import library and def
  1 file changed, 2 insertions(+)
 
 diff --git a/Makefile b/Makefile
-index 01b5f2c..1d689b4 100644
+index 904d229..ca3dc08 100644
 --- a/Makefile
 +++ b/Makefile
-@@ -131,6 +131,8 @@ install: $(OUT_LIB) $(OUT_DEC) dcadec.pc
- 	install -d -m 755 $(DESTDIR)$(LIBDIR) $(DESTDIR)$(LIBDIR)/pkgconfig $(DESTDIR)$(INCLUDEDIR)/libdcadec $(DESTDIR)$(BINDIR)
+@@ -159,6 +159,8 @@ install-lib: $(OUT_LIB) dcadec.pc
+ 	install -d -m 755 $(DESTDIR)$(LIBDIR) $(DESTDIR)$(LIBDIR)/pkgconfig $(DESTDIR)$(INCLUDEDIR)/libdcadec
  ifneq ($(and $(CONFIG_WINDOWS),$(CONFIG_SHARED)),)
  	install -m 644 $(OUT_LIB) $(DESTDIR)$(BINDIR)
 +	install -m 644 $(IMP_LIB) $(DESTDIR)$(LIBDIR)
@@ -22,5 +22,5 @@ index 01b5f2c..1d689b4 100644
  	install -m 644 $(OUT_LIB) $(DESTDIR)$(LIBDIR)
  endif
 -- 
-2.3.7
+2.4.3
 

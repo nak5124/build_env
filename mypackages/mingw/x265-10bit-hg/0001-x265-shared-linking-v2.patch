@@ -2,14 +2,14 @@ diff -r b6f36b277234 source/CMakeLists.txt
 --- a/source/CMakeLists.txt	Fri Feb 06 21:57:45 2015 -0600
 +++ b/source/CMakeLists.txt	Mon Feb 09 00:43:15 2015 +0900
 @@ -22,8 +22,6 @@
-
+ 
  # X265_BUILD must be incremented each time the public API is changed
- set(X265_BUILD 60)
+ set(X265_BUILD 61)
 -configure_file("${PROJECT_SOURCE_DIR}/x265.def.in"
 -               "${PROJECT_BINARY_DIR}/x265.def")
  configure_file("${PROJECT_SOURCE_DIR}/x265_config.h.in"
                 "${PROJECT_BINARY_DIR}/x265_config.h")
-
+ 
 @@ -136,10 +134,6 @@
      if (CC_HAS_NO_ARRAY_BOUNDS)
          add_definitions(-Wno-array-bounds) # these are unhelpful
@@ -23,7 +23,7 @@ diff -r b6f36b277234 source/CMakeLists.txt
          add_definitions(-mstackrealign)
 @@ -268,13 +262,16 @@
  endif()
-
+ 
  source_group(ASM FILES ${YASM_SRCS})
 -add_library(x265-static STATIC $<TARGET_OBJECTS:encoder> $<TARGET_OBJECTS:common> ${YASM_OBJS} ${YASM_SRCS})
 -if(NOT MSVC)
@@ -43,10 +43,10 @@ diff -r b6f36b277234 source/CMakeLists.txt
 +        ARCHIVE DESTINATION ${LIB_INSTALL_DIR})
 +endif(ENABLE_STATIC)
  install(FILES x265.h "${PROJECT_BINARY_DIR}/x265_config.h" DESTINATION include)
-
+ 
  if(CMAKE_RC_COMPILER)
 @@ -299,13 +296,17 @@
-
+ 
  option(ENABLE_SHARED "Build shared library" ON)
  if(ENABLE_SHARED)
 -    add_library(x265-shared SHARED "${PROJECT_BINARY_DIR}/x265.def" ${YASM_OBJS}
@@ -84,5 +84,5 @@ diff -r b6f36b277234 source/cmake/clean-generated.cmake
                "${CMAKE_CURRENT_BINARY_DIR}/x265.pc"
 -              "${CMAKE_CURRENT_BINARY_DIR}/x265.def"
                "${CMAKE_CURRENT_BINARY_DIR}/x265_config.h")
-
+ 
  foreach(file ${generated})

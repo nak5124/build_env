@@ -1,19 +1,19 @@
-From 3a55da34768acd2eaae21dedad72ae4e9747d7b4 Mon Sep 17 00:00:00 2001
+From 30b6713ff7baec8c498822b67c9bf09baf361610 Mon Sep 17 00:00:00 2001
 From: Yuta NAKAI <nak5124@live.jp>
 Date: Sat, 11 Apr 2015 12:21:44 +0900
-Subject: [PATCH 5/6] Makefile: Install windows DLL with mode 755.
+Subject: [PATCH 4/5] Makefile: Install windows DLL with mode 755.
 
 ---
  Makefile | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/Makefile b/Makefile
-index 1d689b4..3820a3f 100644
+index ca3dc08..d22a0c5 100644
 --- a/Makefile
 +++ b/Makefile
-@@ -130,7 +130,7 @@ dcadec.pc: dcadec.pc.in
- install: $(OUT_LIB) $(OUT_DEC) dcadec.pc
- 	install -d -m 755 $(DESTDIR)$(LIBDIR) $(DESTDIR)$(LIBDIR)/pkgconfig $(DESTDIR)$(INCLUDEDIR)/libdcadec $(DESTDIR)$(BINDIR)
+@@ -158,7 +158,7 @@ dcadec.pc: dcadec.pc.in
+ install-lib: $(OUT_LIB) dcadec.pc
+ 	install -d -m 755 $(DESTDIR)$(LIBDIR) $(DESTDIR)$(LIBDIR)/pkgconfig $(DESTDIR)$(INCLUDEDIR)/libdcadec
  ifneq ($(and $(CONFIG_WINDOWS),$(CONFIG_SHARED)),)
 -	install -m 644 $(OUT_LIB) $(DESTDIR)$(BINDIR)
 +	install -m 755 $(OUT_LIB) $(DESTDIR)$(BINDIR)
@@ -21,5 +21,5 @@ index 1d689b4..3820a3f 100644
  	install -m 644 $(IMP_DEF) $(DESTDIR)$(LIBDIR)
  else
 -- 
-2.3.7
+2.4.3
 

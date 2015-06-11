@@ -1,14 +1,14 @@
-From 8ccf70976955ea6b3173af1781dd1d1ac0654ea0 Mon Sep 17 00:00:00 2001
+From 997968aac7191a9f3a52e476aa31afd8184690b1 Mon Sep 17 00:00:00 2001
 From: Yuta NAKAI <nak5124@live.jp>
 Date: Wed, 29 Apr 2015 00:24:00 +0900
-Subject: [PATCH 6/6] Makefile: Add API version suffix to DLL Name.
+Subject: [PATCH 5/5] Makefile: Add API version suffix to DLL Name.
 
 ---
  Makefile | 4 +++-
  1 file changed, 3 insertions(+), 1 deletion(-)
 
 diff --git a/Makefile b/Makefile
-index 3820a3f..7a86bef 100644
+index d22a0c5..2d535bf 100644
 --- a/Makefile
 +++ b/Makefile
 @@ -7,6 +7,8 @@ BINDIR ?= $(PREFIX)/bin
@@ -17,10 +17,10 @@ index 3820a3f..7a86bef 100644
  
 +API_VER=$(shell grep -e '\#define DCADEC_VERSION_MAJOR' libdcadec/dca_context.h | awk '{ printf $$3 }')
 +
- -include .config
- 
- ifdef CONFIG_NDEBUG
-@@ -26,7 +28,7 @@ else
+ SRC_DIR := $(realpath $(dir $(lastword $(MAKEFILE_LIST))))
+ vpath %.c $(SRC_DIR)
+ vpath %.h $(SRC_DIR)
+@@ -33,7 +35,7 @@ else
  endif
  
  ifdef CONFIG_SHARED
@@ -30,5 +30,5 @@ index 3820a3f..7a86bef 100644
      OUT_LIB ?= libdcadec/libdcadec$(LIBSUF)
  endif
 -- 
-2.3.7
+2.4.3
 
