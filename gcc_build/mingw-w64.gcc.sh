@@ -109,7 +109,6 @@ fi
 # Build mingw-w64 toolchain.
 source "${SCRIPTS_DIR}"/libiconv.sh
 source "${SCRIPTS_DIR}"/libintl.sh
-source "${SCRIPTS_DIR}"/bzip2.sh
 source "${SCRIPTS_DIR}"/zlib.sh
 source "${SCRIPTS_DIR}"/mingw-w64.sh
 source "${SCRIPTS_DIR}"/binutils.sh
@@ -123,7 +122,6 @@ fi
 
 if ! ${no_toolchain}; then
     build_iconv --rebuild=${iconv_rebuild:-false}
-    build_bzip2 --rebuild=${bzip2_rebuild:-false}
     build_zlib  --rebuild=${zlib_rebuild:-false}
     if ${update_mingw}; then
         prepare_mingw_w64
@@ -136,7 +134,6 @@ if ! ${no_toolchain}; then
     build_gcc      --rebuild=${gcc_rebuild:-false}
 else
     build_iconv    --rebuild=false
-    build_bzip2    --rebuild=false
     build_zlib     --rebuild=false
     build_headers  --rebuild=false
     build_threads  --rebuild=false

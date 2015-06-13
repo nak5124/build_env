@@ -1,7 +1,7 @@
-From 1b227c96cae681457ffaeb130673a903731ae1ff Mon Sep 17 00:00:00 2001
+From 5fed7632b5494b3fe1ab52b589dc39925fc2d314 Mon Sep 17 00:00:00 2001
 From: Yuta NAKAI <nak5124@live.jp>
 Date: Sun, 12 Apr 2015 14:38:53 +0900
-Subject: [PATCH 11/18] MinGW: When building executables, not DLLs. Add
+Subject: [PATCH 11/21] MinGW: When building executables, not DLLs. Add
  --large-address-aware and --tsaware.
 
 ---
@@ -35,5 +35,5 @@ index fa940b3..c6e9a64 100644
  /* Include in the mingw32 libraries with libgcc */
  #ifdef ENABLE_SHARED_LIBGCC
 -- 
-2.4.1
+2.4.3
 

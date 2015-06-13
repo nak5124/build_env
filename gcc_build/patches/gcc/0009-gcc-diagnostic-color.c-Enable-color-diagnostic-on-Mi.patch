@@ -1,7 +1,7 @@
-From 006dc27f88841cd7b9afed2983fe5ad6e26807ac Mon Sep 17 00:00:00 2001
+From ca0eb90cf16dfbb17de12599fc34c73b5ad78349 Mon Sep 17 00:00:00 2001
 From: Yuta NAKAI <nak5124@live.jp>
 Date: Sun, 26 Apr 2015 09:53:07 +0900
-Subject: [PATCH 09/18] gcc/diagnostic-color.c: Enable color diagnostic on
+Subject: [PATCH 09/21] gcc/diagnostic-color.c: Enable color diagnostic on
  MinGW.
 
 ---
@@ -141,5 +141,5 @@ index 3fe49b2..9530058 100644
  }
 -#endif
 -- 
-2.4.1
+2.4.3
 

@@ -1,7 +1,7 @@
-From 6a2c01b3d84e37b8b07d0dcf487761f44e3aade0 Mon Sep 17 00:00:00 2001
+From ced1823ab113a8cab6750e6fb5ba2621e4284f07 Mon Sep 17 00:00:00 2001
 From: Yuta NAKAI <nak5124@live.jp>
 Date: Sun, 17 May 2015 11:53:37 +0900
-Subject: [PATCH 07/18] gcc: Make xmmintrin header cplusplus compatible.
+Subject: [PATCH 07/21] gcc: Make xmmintrin header cplusplus compatible.
 
 ---
  gcc/config/i386/xmmintrin.h | 8 ++++++++
@@ -34,5 +34,5 @@ index 9cd3fa7..9334f27 100644
  # include <emmintrin.h>
  
 -- 
-2.4.1
+2.4.3
 

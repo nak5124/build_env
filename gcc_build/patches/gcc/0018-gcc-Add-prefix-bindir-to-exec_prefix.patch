@@ -1,7 +1,7 @@
-From 9b6e7663d378ffaaecff4dbc9d12ca0d36c01f65 Mon Sep 17 00:00:00 2001
+From 8cc806e675b499f95d6b63285df018105cb047a9 Mon Sep 17 00:00:00 2001
 From: Yuta NAKAI <nak5124@live.jp>
 Date: Sun, 12 Apr 2015 14:59:10 +0900
-Subject: [PATCH 18/18] gcc: Add prefix/bindir to exec_prefix.
+Subject: [PATCH 18/21] gcc: Add prefix/bindir to exec_prefix.
 
 ---
  gcc/gcc.c | 13 ++++++++++++-
@@ -56,5 +56,5 @@ index 38ae524..b4bada1 100644
  
  #if defined(TARGET_SYSTEM_ROOT_RELOCATABLE) && !defined(VMS)
 -- 
-2.4.1
+2.4.3
 

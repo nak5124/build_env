@@ -1,7 +1,7 @@
-From f7933fb4d44b789291d230bcc5336202f9ed3e69 Mon Sep 17 00:00:00 2001
+From 6a7c6f5196fb9f0d825db95beb302125ba28b396 Mon Sep 17 00:00:00 2001
 From: Yuta NAKAI <nak5124@live.jp>
 Date: Sun, 12 Apr 2015 14:54:20 +0900
-Subject: [PATCH 15/18] MinGW: Use __MINGW_PRINTF_FORMAT for
+Subject: [PATCH 15/21] MinGW: Use __MINGW_PRINTF_FORMAT for
  __USE_MINGW_ANSI_STDIO.
 
 ---
@@ -112,5 +112,5 @@ index 8d957402..cb09f6c 100644
  #else
  #define PRI_LL "ll"
 -- 
-2.4.1
+2.4.3
 

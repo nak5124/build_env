@@ -1,0 +1,150 @@
+From db11004d7945cd758104e5a4ec42cfa8472bef85 Mon Sep 17 00:00:00 2001
+From: Yuta NAKAI <nak5124@live.jp>
+Date: Sat, 13 Jun 2015 16:11:31 +0900
+Subject: [PATCH 21/21] Fix isl 0.15 compilation issue.
+
+---
+ gcc/graphite-dependences.c       | 10 +++++-----
+ gcc/graphite-interchange.c       |  1 +
+ gcc/graphite-isl-ast-to-gimple.c |  2 ++
+ gcc/graphite-optimize-isl.c      |  8 +++++---
+ gcc/graphite-scop-detection.c    |  1 +
+ gcc/graphite.c                   |  1 +
+ 6 files changed, 15 insertions(+), 8 deletions(-)
+
+diff --git a/gcc/graphite-dependences.c b/gcc/graphite-dependences.c
+index edd357d..1055cc5 100644
+--- a/gcc/graphite-dependences.c
++++ b/gcc/graphite-dependences.c
+@@ -227,7 +227,7 @@ scop_get_transformed_schedule (scop_p scop, vec<poly_bb_p> pbbs)
+ /* Helper function used on each MAP of a isl_union_map.  Computes the
+    maximal output dimension.  */
+ 
+-static int
++static isl_stat
+ max_number_of_out_dimensions (__isl_take isl_map *map, void *user)
+ {
+   int global_max = *((int *) user);
+@@ -239,7 +239,7 @@ max_number_of_out_dimensions (__isl_take isl_map *map, void *user)
+ 
+   isl_map_free (map);
+   isl_space_free (space);
+-  return 0;
++  return isl_stat_ok;
+ }
+ 
+ /* Extends the output dimension of MAP to MAX dimensions.  */
+@@ -263,12 +263,12 @@ struct extend_schedule_str {
+ 
+ /* Helper function for extend_schedule.  */
+ 
+-static int
++static isl_stat
+ extend_schedule_1 (__isl_take isl_map *map, void *user)
+ {
+   struct extend_schedule_str *str = (struct extend_schedule_str *) user;
+   str->umap = isl_union_map_add_map (str->umap, extend_map (map, str->max));
+-  return 0;
++  return isl_stat_ok;
+ }
+ 
+ /* Return a relation that has uniform output dimensions.  */
+@@ -277,7 +277,7 @@ __isl_give isl_union_map *
+ extend_schedule (__isl_take isl_union_map *x)
+ {
+   int max = 0;
+-  int res;
++  isl_stat res;
+   struct extend_schedule_str str;
+ 
+   res = isl_union_map_foreach_map (x, max_number_of_out_dimensions, (void *) &max);
+diff --git a/gcc/graphite-interchange.c b/gcc/graphite-interchange.c
+index 8c0d95d..d4bc5d6 100644
+--- a/gcc/graphite-interchange.c
++++ b/gcc/graphite-interchange.c
+@@ -28,6 +28,7 @@ along with GCC; see the file COPYING3.  If not see
+ #include <isl/set.h>
+ #include <isl/map.h>
+ #include <isl/union_map.h>
++#include <isl/constraint.h>
+ #include <isl/ilp.h>
+ #include <isl/val.h>
+ 
+diff --git a/gcc/graphite-isl-ast-to-gimple.c b/gcc/graphite-isl-ast-to-gimple.c
+index 90ce0c6..a1b7739 100644
+--- a/gcc/graphite-isl-ast-to-gimple.c
++++ b/gcc/graphite-isl-ast-to-gimple.c
+@@ -24,6 +24,8 @@ along with GCC; see the file COPYING3.  If not see
+ #include <isl/set.h>
+ #include <isl/map.h>
+ #include <isl/union_map.h>
++#include <isl/union_set.h>
++#include <isl/constraint.h>
+ #include <isl/ast_build.h>
+ 
+ /* Since ISL-0.13, the extern is in val_gmp.h.  */
+diff --git a/gcc/graphite-optimize-isl.c b/gcc/graphite-optimize-isl.c
+index 8bdf744..f50c162 100644
+--- a/gcc/graphite-optimize-isl.c
++++ b/gcc/graphite-optimize-isl.c
+@@ -24,6 +24,8 @@ along with GCC; see the file COPYING3.  If not see
+ #include <isl/set.h>
+ #include <isl/map.h>
+ #include <isl/union_map.h>
++#include <isl/union_set.h>
++#include <isl/constraint.h>
+ #include <isl/schedule.h>
+ #include <isl/band.h>
+ #include <isl/aff.h>
+@@ -530,13 +532,13 @@ getScheduleMap (isl_schedule *Schedule, isl_union_map **map_sepcl)
+   return ScheduleMap;
+ }
+ 
+-static int
++static isl_stat
+ getSingleMap (__isl_take isl_map *map, void *user)
+ {
+   isl_map **singleMap = (isl_map **) user;
+   *singleMap = map;
+ 
+-  return 0;
++  return isl_stat_ok;
+ }
+ 
+ static void
+@@ -608,7 +610,7 @@ optimize_isl (scop_p scop)
+ 
+   isl_options_set_schedule_max_constant_term (scop->ctx, CONSTANT_BOUND);
+   isl_options_set_schedule_maximize_band_depth (scop->ctx, 1);
+-  isl_options_set_schedule_fuse (scop->ctx, ISL_SCHEDULE_FUSE_MIN);
++  isl_options_set_schedule_serialize_sccs (scop->ctx, 1);
+   isl_options_set_on_error (scop->ctx, ISL_ON_ERROR_CONTINUE);
+ 
+ #ifdef HAVE_ISL_SCHED_CONSTRAINTS_COMPUTE_SCHEDULE
+diff --git a/gcc/graphite-scop-detection.c b/gcc/graphite-scop-detection.c
+index 4512fe7..c6816b1 100644
+--- a/gcc/graphite-scop-detection.c
++++ b/gcc/graphite-scop-detection.c
+@@ -25,6 +25,7 @@ along with GCC; see the file COPYING3.  If not see
+ #include <isl/set.h>
+ #include <isl/map.h>
+ #include <isl/union_map.h>
++#include <isl/constraint.h>
+ #endif
+ 
+ #include "system.h"
+diff --git a/gcc/graphite.c b/gcc/graphite.c
+index c8f0617..2195294 100644
+--- a/gcc/graphite.c
++++ b/gcc/graphite.c
+@@ -39,6 +39,7 @@ along with GCC; see the file COPYING3.  If not see
+ #include <isl/map.h>
+ #include <isl/options.h>
+ #include <isl/union_map.h>
++#include <isl/constraint.h>
+ #endif
+ 
+ #include "system.h"
+-- 
+2.4.3
+

@@ -31,6 +31,11 @@ function prepare_isl() {
         patch -p1 -i "${PATCHES_DIR}"/isl/0001-isl-no-undefined.patch > "${LOGS_DIR}"/gcc_libs/isl/isl_patch.log 2>&1 || exit 1
         touch "${BUILD_DIR}"/gcc_libs/isl/src/isl-${ISL_VER}/patched_01.marker
     fi
+    if [ ! -f "${BUILD_DIR}"/gcc_libs/isl/src/isl-${ISL_VER}/patched_02.marker ]; then
+        patch -p1 -i "${PATCHES_DIR}"/isl/0002-Remove-comma-at-end-of-enumerator-list.patch \
+            > "${LOGS_DIR}"/gcc_libs/isl/isl_patch.log 2>&1 || exit 1
+        touch "${BUILD_DIR}"/gcc_libs/isl/src/isl-${ISL_VER}/patched_02.marker
+    fi
     echo 'done'
 
     # Autoreconf.

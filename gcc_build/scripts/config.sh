@@ -3,7 +3,6 @@ declare -ra BUILD_TARGETS=(
     'gcc_libs gmp mpfr mpc isl'
     'libiconv'
     'libintl'
-    'bzip2'
     'zlib'
     'binutils'
     'mingw-w64 headers crt winpthreads crt libmangle tools'
@@ -44,16 +43,15 @@ declare -r MAKEFLAGS_="-j$(($(nproc)+1)) -O"
 declare -r THREAD_MODEL='posix'
 
 # GCC package revision
-declare -r GCC_PKGREV=1
+declare -r GCC_PKGREV=5
 declare -r GCC_BUILT_DATE=$(date +%Y.%m.%d)
 
 # Version
 declare -r GMP_VER='6.0.0'
 declare -r MPFR_VER='3.1.2'
 declare -r MPC_VER='1.0.3'
-declare -r ISL_VER='0.14.1'
+declare -r ISL_VER='0.15'
 declare -r ICONV_VER='1.14'
-declare -r BZIP2_VER='1.0.6'
 declare -r ZLIB_VER='git'
 declare -r MINGW_VER='git'
 declare -r BINUTILS_VER='git'
@@ -74,7 +72,6 @@ declare isl_rebuild=true
 
 # MinGW-w64 toolchain
 declare iconv_rebuild=true
-declare bzip2_rebuild=true
 declare zlib_rebuild=true
 declare headers_rebuild=true
 declare threads_rebuild=true

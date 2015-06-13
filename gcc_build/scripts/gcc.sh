@@ -36,7 +36,7 @@ function prepare_gcc() {
         touch "${BUILD_DIR}"/gcc/src/gcc-${GCC_VER}/patched_00.marker
     fi
     if [ ! -f "${BUILD_DIR}"/gcc/src/gcc-${GCC_VER}/patched_01.marker ]; then
-        patch -p1 -i "${PATCHES_DIR}"/gcc/0001-Clean-up-detection-of-SJLJ-exceptions-in-target-libr.patch \
+        patch -p1 -i "${PATCHES_DIR}"/gcc/0001-config-sjlj.m4-New-file.-libgcc-configure.ac-Include.patch \
             >> "${LOGS_DIR}"/gcc/gcc_patch.log 2>&1 || exit 1
         touch "${BUILD_DIR}"/gcc/src/gcc-${GCC_VER}/patched_01.marker
     fi
@@ -136,6 +136,21 @@ function prepare_gcc() {
         patch -p1 -i "${PATCHES_DIR}"/gcc/0018-gcc-Add-prefix-bindir-to-exec_prefix.patch \
             >> "${LOGS_DIR}"/gcc/gcc_patch.log 2>&1 || exit 1
         touch "${BUILD_DIR}"/gcc/src/gcc-${GCC_VER}/patched_18.marker
+    fi
+    if [ ! -f "${BUILD_DIR}"/gcc/src/gcc-${GCC_VER}/patched_19.marker ]; then
+        patch -p1 -i "${PATCHES_DIR}"/gcc/0019-gcc-Force-linking-to-libgcc_s_dw2-1.dll-on-mingw32-w.patch \
+            >> "${LOGS_DIR}"/gcc/gcc_patch.log 2>&1 || exit 1
+        touch "${BUILD_DIR}"/gcc/src/gcc-${GCC_VER}/patched_19.marker
+    fi
+    if [ ! -f "${BUILD_DIR}"/gcc/src/gcc-${GCC_VER}/patched_20.marker ]; then
+        # https://gcc.gnu.org/bugzilla/show_bug.cgi?id=65882
+        patch -p1 -i "${PATCHES_DIR}"/gcc/0020-PR-c-65882.patch >> "${LOGS_DIR}"/gcc/gcc_patch.log 2>&1 || exit 1
+        touch "${BUILD_DIR}"/gcc/src/gcc-${GCC_VER}/patched_20.marker
+    fi
+    if [ ! -f "${BUILD_DIR}"/gcc/src/gcc-${GCC_VER}/patched_21.marker ]; then
+        patch -p1 -i "${PATCHES_DIR}"/gcc/0021-Fix-isl-0.15-compilation-issue.patch \
+            >> "${LOGS_DIR}"/gcc/gcc_patch.log 2>&1 || exit 1
+        touch "${BUILD_DIR}"/gcc/src/gcc-${GCC_VER}/patched_21.marker
     fi
     popd > /dev/null # "${BUILD_DIR}"/gcc/src/gcc-$GCC_VER
     echo 'done'
