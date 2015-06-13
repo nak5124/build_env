@@ -1,4 +1,4 @@
-From 9a1b2e39ef241b72e2c4f5d62eb42370a996f062 Mon Sep 17 00:00:00 2001
+From ed61594acaa54b648ae0d1bed0b16d86e1fc720e Mon Sep 17 00:00:00 2001
 From: Hendrik Leppkes <h.leppkes@gmail.com>
 Date: Thu, 9 May 2013 20:22:26 +0200
 Subject: [PATCH 17/66] swscale: make sws_getCachedContext properly handle
@@ -9,10 +9,10 @@ Subject: [PATCH 17/66] swscale: make sws_getCachedContext properly handle
  1 file changed, 16 insertions(+), 2 deletions(-)
 
 diff --git a/libswscale/utils.c b/libswscale/utils.c
-index f9f4ec6..76d9cc0 100644
+index de0c7f9..235cfc3 100644
 --- a/libswscale/utils.c
 +++ b/libswscale/utils.c
-@@ -2072,16 +2072,30 @@ struct SwsContext *sws_getCachedContext(struct SwsContext *context, int srcW,
+@@ -2111,16 +2111,30 @@ struct SwsContext *sws_getCachedContext(struct SwsContext *context, int srcW,
      int64_t src_h_chr_pos = -513, dst_h_chr_pos = -513,
              src_v_chr_pos = -513, dst_v_chr_pos = -513;
  
@@ -46,5 +46,5 @@ index f9f4ec6..76d9cc0 100644
           context->param[0]  != param[0]  ||
           context->param[1]  != param[1])) {
 -- 
-2.4.1
+2.4.3
 

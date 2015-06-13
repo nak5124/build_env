@@ -2,8 +2,8 @@
 
 _realname=libvpx
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}-git"
-pkgdesc='The VP8 Codec SDK (mingw-w64)'
-pkgver=1.4.0.13377.be380f2
+pkgdesc='The VP8/VP9 Codec SDK (mingw-w64)'
+pkgver=1.4.0.13515.a4bb5f2
 pkgrel=1
 arch=('any')
 url='http://www.webmproject.org/'
@@ -11,13 +11,11 @@ license=('BSD')
 makedepends=('git')
 depends=("${MINGW_PACKAGE_PREFIX}-toolchain")
 source=("${_realname}"::'git+https://chromium.googlesource.com/webm/libvpx'
-        '0001-enable-shared-mingw.patch'
-        '0002-fix-exports.mingw.patch'
-        '0003-give-preference-win32api-over-pthread.patch')
+        '0001-Support-building-shared-libraries-on-MinGW-w64-GCC.patch'
+        '0002-Give-preference-win32api-over-pthread-on-MinGW-w64.patch')
 sha512sums=('SKIP'
-            '65ab7ef6c9a484ee4e679fa1b420e46d9e21c3bb5d3dcee9fe63f17cebc10a285be587a052bae32ebed3b6d22e0a41f1717b7d40843d6b48d247cdbcaa877515'
-            '69dd57bd50b5dfe37f4e6a7884f39c0b49ea7ca05051dedb51c5be13107866673f55aa5cd42e0d3b39252d77ec78e7ddb0466e11bb4bb3c7d758e8f41eb0ff36'
-            '284ea6f9bfe98605fdf1df28f546db212f494968a1e8282e94a3eb1fc53a385d5eb477863a47ea89de5d9643ea0063c66c0ff3ea151ee094a33c9d6efd76c818')
+            '7da7e487fb5df69efd8f47428b0d76ce698e06dd05e8d193b5d428b9e98e786be15558a490afd78f9db24e1bbbc095d896c080a0c7bf3a1d0bf8c594796ff080'
+            'd1dd5d5c31b43bef811dadc4853ca1450d16aa95a6f0354a92bbd4da003e6c1efe8ea8e150caced023d6917b58bfa439b0ce37b74c116a8727605fff8884e4be')
 
 pkgver() {
   cd "${srcdir}"/$_realname
@@ -28,9 +26,8 @@ pkgver() {
 prepare() {
   cd "${srcdir}"/$_realname
 
-  patch -p1 -i "${srcdir}"/0001-enable-shared-mingw.patch
-  patch -p1 -i "${srcdir}"/0002-fix-exports.mingw.patch
-  patch -p1 -i "${srcdir}"/0003-give-preference-win32api-over-pthread.patch
+  patch -p1 -i "${srcdir}"/0001-Support-building-shared-libraries-on-MinGW-w64-GCC.patch
+  patch -p1 -i "${srcdir}"/0002-Give-preference-win32api-over-pthread-on-MinGW-w64.patch
 }
 
 build() {
@@ -42,6 +39,7 @@ build() {
     local _target=x86-win32-gcc
   fi
 
+  CFLAGS="${CFLAGS} ${CPPFLAGS}"
   ./configure \
     --prefix=$MINGW_LOCAL_PREFIX \
     --target=$_target \
@@ -74,9 +72,10 @@ build() {
     --disable-webm-io \
     --disable-libyuv
   sed -i 's|-O3||g' libs-${_target}.mk
+  sed -i 's|-lpthread||g' libs-${_target}.mk
 
   make clean
-  make $MAKEFLAGS
+  make $MAKEFLAGS V=1
 }
 
 package() {

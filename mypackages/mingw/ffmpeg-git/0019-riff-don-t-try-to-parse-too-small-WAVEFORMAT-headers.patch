@@ -1,4 +1,4 @@
-From 337bc5c8574af4d50585f907f8c3185ce5a60e34 Mon Sep 17 00:00:00 2001
+From 49f05fb1365c8d0698423c2c8a21b0b1d8af4c3a Mon Sep 17 00:00:00 2001
 From: Hendrik Leppkes <h.leppkes@gmail.com>
 Date: Tue, 6 Aug 2013 20:24:31 +0200
 Subject: [PATCH 19/66] riff: don't try to parse too small WAVEFORMAT headers
@@ -26,5 +26,5 @@ index f44df1e..43a8913 100644
      codec->codec_type  = AVMEDIA_TYPE_AUDIO;
      if (!big_endian) {
 -- 
-2.4.1
+2.4.3
 

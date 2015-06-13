@@ -1,4 +1,4 @@
-From 6d178205c1d79c2cc15b65abfe03414d619cd0a5 Mon Sep 17 00:00:00 2001
+From 93464e1ba2aaa758c8d9b03f27fad25ffb7f9cce Mon Sep 17 00:00:00 2001
 From: Yuta NAKAI <nak5124@live.jp>
 Date: Fri, 8 May 2015 20:03:56 +0900
 Subject: [PATCH 64/66] libavcodec/libutvideo{dec,enc}: Fix compilation with
@@ -45,5 +45,5 @@ index cf669d2..11cf668 100644
  
      /* Set flags */
 -- 
-2.4.1
+2.4.3
 

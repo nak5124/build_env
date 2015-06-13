@@ -1,7 +1,7 @@
-From c3f099b4d8e898438fc68ea50584016991c17c92 Mon Sep 17 00:00:00 2001
+From d74fd23556d25be4651a3972fadeae0c7260f3a9 Mon Sep 17 00:00:00 2001
 From: Yuta NAKAI <nak5124@live.jp>
 Date: Mon, 27 Oct 2014 15:14:39 +0900
-Subject: [PATCH 2/7] configure: Check whether SRCDIR is git repo or not.
+Subject: [PATCH 3/8] configure: Check whether SRCDIR is git repo or not.
 
 This is for building from a released tarball.
 ---
@@ -9,10 +9,10 @@ This is for building from a released tarball.
  1 file changed, 7 insertions(+), 2 deletions(-)
 
 diff --git a/configure b/configure
-index 86bcf5f..f59d96d 100755
+index 4f47437..c748300 100755
 --- a/configure
 +++ b/configure
-@@ -365,13 +365,18 @@ done
+@@ -364,13 +364,18 @@ done
  CURDIR="$PWD"
  cd $SRCDIR
  VER=$MAJVER.$MINVER.$MICVER
@@ -34,5 +34,5 @@ index 86bcf5f..f59d96d 100755
  cat >> config.h << EOF
  #define LSMASH_REV "$REV"
 -- 
-2.2.0
+2.4.3
 

@@ -1,4 +1,4 @@
-From 882e171f71f3e6780f1075bea1c7a60a87460631 Mon Sep 17 00:00:00 2001
+From 2797f26d752b1371de90b4957fb86154c1bfae40 Mon Sep 17 00:00:00 2001
 From: Carl Eugen Hoyos <cehoyos@ag.or.at>
 Date: Tue, 1 Apr 2014 16:00:23 +0200
 Subject: [PATCH 32/66] riff: add ProRes FourCCs
@@ -24,5 +24,5 @@ index 4ee5a94..47f5dcf 100644
  };
  
 -- 
-2.4.1
+2.4.3
 

@@ -1,4 +1,4 @@
-From ac6d91ee4e65342c4a1e8bcf0c73afa9f676f3b3 Mon Sep 17 00:00:00 2001
+From 642254a534891837d623b6fb7c027e698fdb84c3 Mon Sep 17 00:00:00 2001
 From: Hendrik Leppkes <h.leppkes@gmail.com>
 Date: Sun, 29 Mar 2015 11:57:12 +0200
 Subject: [PATCH 44/66] dca_parser: fix parsing of dts-hd header sizes on
@@ -51,5 +51,5 @@ index c9f3397..a6bf398 100644
                      pc1->hdframesize = 0;
              }
 -- 
-2.4.1
+2.4.3
 

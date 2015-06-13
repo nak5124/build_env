@@ -1,4 +1,4 @@
-From a7c0a3520aa8b4d55b595fe565d1a8ff6ebeced6 Mon Sep 17 00:00:00 2001
+From 970a5b8bc13586c912812c98dd546ceb4ff1cf06 Mon Sep 17 00:00:00 2001
 From: Javier Cabezas <jcabgz@gmail.com>
 Date: Sat, 25 May 2013 18:51:29 +0200
 Subject: [PATCH 20/66] Fraps: output repeat frames instead of discarding them
@@ -329,5 +329,5 @@ index c49866e..de96773 100644
 +    .init_thread_copy      = ONLY_IF_THREADS_ENABLED(init_thread_copy)
  };
 -- 
-2.4.1
+2.4.3
 

@@ -1,4 +1,4 @@
-From 66f186c383c27f763381d298e262efbc0e9a400c Mon Sep 17 00:00:00 2001
+From 841047380b062331e704023aad3c185e4ffbb490 Mon Sep 17 00:00:00 2001
 From: Hendrik Leppkes <h.leppkes@gmail.com>
 Date: Tue, 20 Dec 2011 20:44:38 +0100
 Subject: [PATCH 04/66] Increase the maximum probe size to 4MB.
@@ -22,5 +22,5 @@ index f90df90..eab4a6a1 100644
  #ifdef DEBUG
  #    define hex_dump_debug(class, buf, size) av_hex_dump_log(class, AV_LOG_DEBUG, buf, size)
 -- 
-2.4.1
+2.4.3
 

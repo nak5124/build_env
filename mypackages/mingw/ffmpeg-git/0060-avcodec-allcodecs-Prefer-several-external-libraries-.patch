@@ -1,4 +1,4 @@
-From ebc8af0ab29011d49c18272a000793356c43e40f Mon Sep 17 00:00:00 2001
+From ea9c826c5691a19eb6bc645c6348591c64f04454 Mon Sep 17 00:00:00 2001
 From: Yuta NAKAI <nak5124@live.jp>
 Date: Wed, 7 Jan 2015 13:14:52 +0900
 Subject: [PATCH 60/66] avcodec/allcodecs: Prefer several external libraries
@@ -9,7 +9,7 @@ Subject: [PATCH 60/66] avcodec/allcodecs: Prefer several external libraries
  1 file changed, 10 insertions(+), 8 deletions(-)
 
 diff --git a/libavcodec/allcodecs.c b/libavcodec/allcodecs.c
-index a94d1dc..5d64c86 100644
+index ce97746..62ea4fb 100644
 --- a/libavcodec/allcodecs.c
 +++ b/libavcodec/allcodecs.c
 @@ -104,6 +104,16 @@ void avcodec_register_all(void)
@@ -29,7 +29,7 @@ index a94d1dc..5d64c86 100644
      /* video codecs */
      REGISTER_ENCODER(A64MULTI,          a64multi);
      REGISTER_ENCODER(A64MULTI5,         a64multi5);
-@@ -521,16 +531,12 @@ void avcodec_register_all(void)
+@@ -519,16 +529,12 @@ void avcodec_register_all(void)
  
      /* external libraries */
      REGISTER_DECODER(LIBCELT,           libcelt);
@@ -46,7 +46,7 @@ index a94d1dc..5d64c86 100644
      REGISTER_ENCDEC (LIBOPUS,           libopus);
      REGISTER_ENCDEC (LIBSCHROEDINGER,   libschroedinger);
      REGISTER_ENCODER(LIBSHINE,          libshine);
-@@ -538,17 +544,13 @@ void avcodec_register_all(void)
+@@ -536,17 +542,13 @@ void avcodec_register_all(void)
      REGISTER_DECODER(LIBSTAGEFRIGHT_H264, libstagefright_h264);
      REGISTER_ENCODER(LIBTHEORA,         libtheora);
      REGISTER_ENCODER(LIBTWOLAME,        libtwolame);
@@ -65,5 +65,5 @@ index a94d1dc..5d64c86 100644
      REGISTER_ENCODER(LIBXAVS,           libxavs);
      REGISTER_ENCODER(LIBXVID,           libxvid);
 -- 
-2.4.1
+2.4.3
 

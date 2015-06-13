@@ -1,4 +1,4 @@
-From 752cbdee36a90331f258ea360caf50f4697b7d97 Mon Sep 17 00:00:00 2001
+From 96e0e19948ef4dd761aeb2244c78130c4e0ae821 Mon Sep 17 00:00:00 2001
 From: Hendrik Leppkes <h.leppkes@gmail.com>
 Date: Mon, 2 Sep 2013 15:54:41 +0200
 Subject: [PATCH 22/66] dca: parse the HD frame size to avoid false positive
@@ -75,5 +75,5 @@ index 9dafe70..c3c5898 100644
                  pc->frame_start_found = 0;
                  pc->state64           = -1;
 -- 
-2.4.1
+2.4.3
 

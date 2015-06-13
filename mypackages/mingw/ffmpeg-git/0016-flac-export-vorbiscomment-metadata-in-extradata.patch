@@ -1,4 +1,4 @@
-From f116cf0213678328e4f1964ef0db3966504c9422 Mon Sep 17 00:00:00 2001
+From 614fc8bbd630c21729745034e643bde85649abbd Mon Sep 17 00:00:00 2001
 From: Hendrik Leppkes <h.leppkes@gmail.com>
 Date: Tue, 30 Apr 2013 15:53:35 +0200
 Subject: [PATCH 16/66] flac: export vorbiscomment metadata in extradata
@@ -67,5 +67,5 @@ index 4207fd2..4e652e3 100644
                  ret = ff_vorbis_comment(s, &s->metadata, buffer, metadata_size, 1);
                  if (ret < 0) {
 -- 
-2.4.1
+2.4.3
 

@@ -1,4 +1,4 @@
-From 53eebb309aa874d7667ab1f5938ca5dd399a5bdd Mon Sep 17 00:00:00 2001
+From 29401d962faf4b78472116e531d93fa7eacb0afe Mon Sep 17 00:00:00 2001
 From: Yuta NAKAI <nak5124@live.jp>
 Date: Sat, 30 May 2015 07:04:05 +0900
 Subject: [PATCH 66/66] ffmpeg: Don't show banner by default.
@@ -47,5 +47,5 @@ index 758dac1..2a10cbb 100644
      { "opencl_bench", OPT_EXIT, {.func_arg = opt_opencl_bench}, "run benchmark on all OpenCL devices and show results" },
      { "opencl_options", HAS_ARG, {.func_arg = opt_opencl},      "set OpenCL environment options" },
 -- 
-2.4.1
+2.4.3
 

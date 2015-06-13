@@ -1,4 +1,4 @@
-From b8da8270ae78bd1aaa3d97d04bbbf05944b17132 Mon Sep 17 00:00:00 2001
+From dfca21c28e928b9cc844e964c3bd7fd71ea58d04 Mon Sep 17 00:00:00 2001
 From: Hendrik Leppkes <h.leppkes@gmail.com>
 Date: Sun, 17 Aug 2014 13:26:23 +0200
 Subject: [PATCH 33/66] hevc: port intrinsic SSE2 IDCT from OpenHEVC
@@ -870,5 +870,5 @@ index ddc876d..a3483de 100644
          if (EXTERNAL_SSSE3(cpu_flags) && ARCH_X86_64) {
              c->hevc_v_loop_filter_luma = ff_hevc_v_loop_filter_luma_12_ssse3;
 -- 
-2.4.1
+2.4.3
 

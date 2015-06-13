@@ -1,4 +1,4 @@
-From f1a85f893036c49e72aedd1f815b144a0f8ec49b Mon Sep 17 00:00:00 2001
+From 039e27b774a420581b0fefca7bff29b6a6d3e7b2 Mon Sep 17 00:00:00 2001
 From: Hendrik Leppkes <h.leppkes@gmail.com>
 Date: Thu, 25 Sep 2014 20:02:47 +0200
 Subject: [PATCH 37/66] hevc: scan for sps/pps/vps more aggressively
@@ -21,5 +21,5 @@ index 3c7c3c3..d38376a 100644
      return 0;
  }
 -- 
-2.4.1
+2.4.3
 

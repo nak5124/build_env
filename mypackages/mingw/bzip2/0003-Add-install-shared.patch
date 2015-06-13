@@ -1,0 +1,32 @@
+--- bzip2-1.0.6/Makefile.in	2014-10-04 01:36:45.184995000 +0900
++++ bzip2-1.0.6/Makefile.in	2015-06-13 10:14:34.068704400 +0900
+@@ -267,6 +267,29 @@
+ 	echo ".so man1/bzmore.1" > ${DESTDIR}${man1dir}/bzless.1
+ 	echo ".so man1/bzdiff.1" > ${DESTDIR}${man1dir}/bzcmp.1
+ 
++install-shared: all-dll-shared ${bindir} ${includedir} ${libdir} ${pkgconfigdir}
++	cp -f ${pkgconfig_DATA} ${DESTDIR}${pkgconfigdir}/${pkgconfig_DATA}
++	if test -f $(DLLNAME)-$(DLLVER).dll; \
++	then \
++	  cp -f $(DLLNAME)-$(DLLVER).dll ${DESTDIR}${bindir}/$(DLLNAME)-$(DLLVER).dll; \
++	  chmod a+rx ${DESTDIR}${bindir}/$(DLLNAME)-$(DLLVER).dll; \
++	fi
++	cp -f ${srcdir}/bzlib.h ${DESTDIR}${includedir}
++	chmod a+r ${DESTDIR}${includedir}/bzlib.h
++	if test -f $(LIBNAME).dll.a; \
++	then \
++	  cp -f $(LIBNAME).dll.a ${DESTDIR}${libdir}/$(LIBNAME).dll.a; \
++	  chmod a+r ${DESTDIR}${libdir}/$(LIBNAME).dll.a; \
++	fi
++	if test -f $(SOFULL); \
++	then \
++	  cp -f $(SOFULL) ${DESTDIR}${libdir}; \
++	  cd ${DESTDIR}${libdir}; rm -f $(SO_NAME).$(SO_AGE) $(SONAME); \
++	  $(LN_S) $(SOFULL) $(SONAME).$(SO_AGE); \
++	  $(LN_S) $(SOFULL) $(SONAME); \
++	  chmod a+r $(SOFULL); \
++	fi
++
+ ldconfig:
+ 	ldconfig -n ${DESTDIR}${libdir}
+ 

@@ -1,7 +1,7 @@
-From 85e2802fa7f1818f6b064bd954079eb283df812a Mon Sep 17 00:00:00 2001
+From d895f1ca69ba253fa7e975d9fb81b4539c772ec1 Mon Sep 17 00:00:00 2001
 From: Yuta NAKAI <nak5124@live.jp>
 Date: Tue, 16 Dec 2014 19:22:41 +0900
-Subject: [PATCH 1/7] .gitignore: Add version script.
+Subject: [PATCH 2/8] .gitignore: Add version script.
 
 ---
  .gitignore | 2 ++
@@ -21,5 +21,5 @@ index d9cf6d5..ae1cc88 100644
  .DS_Store
  config.*
 -- 
-2.2.0
+2.4.3
 

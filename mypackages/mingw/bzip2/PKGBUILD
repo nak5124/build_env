@@ -1,0 +1,50 @@
+# Maintainer: Yuta Nakai <nak5124@live.jp>
+
+_realname=bzip2
+pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
+pkgdesc='A high-quality data compression program (mingw-w64)'
+pkgver=1.0.6
+pkgrel=1
+arch=('any')
+url='http://www.bzip.org/'
+license=('BSD')
+depends=("${MINGW_PACKAGE_PREFIX}-toolchain")
+source=("${url}${pkgver}/${_realname}-${pkgver}.tar.gz"
+        '0001-bzip2-cygming-1.0.6.src.all.patch'
+        '0002-bzip2-buildsystem.all.patch'
+        '0003-Add-install-shared.patch')
+sha512sums=('00ace5438cfa0c577e5f578d8a808613187eff5217c35164ffe044fbafdfec9e98f4192c02a7d67e01e5a5ccced630583ad1003c37697219b0f147343a3fdd12'
+            '0254e9672dc716d2c158c4d3aa31734bff208191f846bb04ce946c2e10175dc7460488c016aa0e04be6125391b57fa1dfedb857afb76c1d37dd2ca2c41a4b5ca'
+            'b42e13ca67c8242addda9012f632fb73bd25069eb23ff230c3ca59a596ba293e9d57bc986fcd14a37f2c632bae399e177cfbdf5397ef7fb9de32fe6aa5a8e67e'
+            'b1fdbd36d99dd6805eb2a541cfe82f7a5f3a9533052159b69258721c2f9eae2cc830d828dbfc2a923a9553b717493484949e76f6ac38afa38450af113789de29')
+
+prepare() {
+  cd "${srcdir}"/${_realname}-$pkgver
+
+  patch -p1 -i "${srcdir}"/0001-bzip2-cygming-1.0.6.src.all.patch
+  patch -p1 -i "${srcdir}"/0002-bzip2-buildsystem.all.patch
+  patch -p1 -i "${srcdir}"/0003-Add-install-shared.patch
+
+  autoreconf -fis
+}
+
+build() {
+  cd "${srcdir}"/${_realname}-$pkgver
+
+  ./configure \
+    --prefix=$MINGW_LOCAL_PREFIX \
+    --build=$MINGW_CHOST \
+    --host=$MINGW_CHOST \
+    --enable-shared \
+    CFLAGS="${CFLAGS} ${CPPFLAGS}"
+
+  make clean
+  make $MAKEFLAGS all-dll-shared
+}
+
+package() {
+  cd "${srcdir}"/${_realname}-$pkgver
+  make DESTDIR="${pkgdir}" install-shared
+
+  install -Dm644 LICENSE "${pkgdir}"${MINGW_LOCAL_PREFIX}/share/licenses/${_realname}/LICENSE
+}

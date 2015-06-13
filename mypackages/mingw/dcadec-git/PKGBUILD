@@ -2,7 +2,7 @@
 
 _realname=dcadec
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}-git"
-pkgdesc='dcadec is a free DTS Coherent Acoustics decoder with support for HD extensions.'
+pkgdesc='dcadec is a free DTS Coherent Acoustics decoder with support for HD extensions (mingw-w64)'
 pkgver=0.0.0.207.2a9186e
 pkgrel=1
 arch=('any')
@@ -13,20 +13,22 @@ depends=("${MINGW_PACKAGE_PREFIX}-toolchain")
 source=("${_realname}"::'git+https://github.com/foo86/dcadec.git'
         '0001-Makefile-Don-t-set-static-libgcc-on-mingw-systems.patch'
         '0002-Makefile-Install-windows-DLL-to-BINDIR.patch'
-        '0003-Makefile-On-windows-install-import-library-and-def-f.patch'
-        '0004-Makefile-Install-windows-DLL-with-mode-755.patch'
-        '0005-Makefile-Add-API-version-suffix-to-DLL-Name.patch')
+        '0003-Makefile-On-windows-install-import-library.patch'
+        '0004-Makefile-Add-API-version-suffix-to-DLL-Name.patch'
+        '0005-Makefile-Add-install-cut.patch')
 sha512sums=('SKIP'
-            '8ccc2ac1ea8639d0cee8538884650d31f0e0dd48d04920be16ee121ca0e33d40ec022ad4fe68f9dd1959cefe1fcacbc46edcab06d791bda84b13f07a1ae96bd8'
-            '75df1ed6d14a75bee6ba0b5459ad6bbf649732bea211c9e55115fa2aef324142558b52933923f29359ca84e614c3114e6e9f70bbf5ed6b226a99e62b3c611b2c'
-            '1f2d7b4be4eaa0b4b25c3d22c884912365165377f74f400a622d864981d8b3711f369d9c62fa788b800eea47e2c964629e8bc13cbfabdc766d7a305790737e7c'
-            '60dcd17210f5e9b21e1f373f5041fe3402d7f57fe354e3c18c6b6e1486cc24033aaf030ff3448e52c6603048d491a49f81b37502005983fb74040956f0e9a3e2'
-            '946f67a52a64dc82738f5c8208092de581584ae2e97361657ae320e91adb9b93fa35ca8d59bd2d656f47599ed266b9a47792b314316738abd704daeae778efca')
+            '80469f7ad04d7c247dda9c56d7aa9771c3b6ddd8aa238604be7b325ae7ac87cbdfa8668d2212adfa69ddaad3bdd7cad631f0b226255fb5cb6b432f66f6dc8de3'
+            'ec11e3a5c300f709f8660c411aaafc98982100a346ad28242640103c2147aaa6dbefdb2a24e5d9198e29111f95fa18faccfd2394a9677c305028e049b4b9879f'
+            'f2f7b99dcaf6f4b9d1ffd2ed0dd6f61c6eaba6ee7425752f428e864cec135fc6a4c6c6cf001bfc598ba4a8a487b85a59cfba93a5f59d71bc4a286400efbea985'
+            '6bebd8dba0d7b6dd39c69cb891e4103a47a006b7ad4ee110e9c81e3af70a3aa42d803744790d7150e701d1ea15851929ec23bc5c958ab69d3543774a8ad4fe83'
+            '9ae1446ac65d635858afa05f90734990d08096758bf03a24b9a74d98255643d90badd905e2718eeb97c4a79375c6714585d43c69f47e573d0d7497cc55dcd018')
 
 pkgver() {
   cd "${srcdir}"/$_realname
-  local _ver=$(grep 'VERSION =' Makefile | awk '{ print $3 }')
-  printf "%s.%s.%s" "${_ver}" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
+  local _major=$(grep -e '\#define DCADEC_VERSION_MAJOR' libdcadec/dca_context.h | awk '{ printf $3 }')
+  local _minor=$(grep -e '\#define DCADEC_VERSION_MINOR' libdcadec/dca_context.h | awk '{ printf $3 }')
+  local _patch=$(grep -e '\#define DCADEC_VERSION_PATCH' libdcadec/dca_context.h | awk '{ printf $3 }')
+  printf "%s.%s.%s.%s.%s" "${_major}" "${_minor}" "${_patch}" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
 }
 
 prepare() {
@@ -34,9 +36,9 @@ prepare() {
 
   patch -p1 -i "${srcdir}"/0001-Makefile-Don-t-set-static-libgcc-on-mingw-systems.patch
   patch -p1 -i "${srcdir}"/0002-Makefile-Install-windows-DLL-to-BINDIR.patch
-  patch -p1 -i "${srcdir}"/0003-Makefile-On-windows-install-import-library-and-def-f.patch
-  patch -p1 -i "${srcdir}"/0004-Makefile-Install-windows-DLL-with-mode-755.patch
-  patch -p1 -i "${srcdir}"/0005-Makefile-Add-API-version-suffix-to-DLL-Name.patch
+  patch -p1 -i "${srcdir}"/0003-Makefile-On-windows-install-import-library.patch
+  patch -p1 -i "${srcdir}"/0004-Makefile-Add-API-version-suffix-to-DLL-Name.patch
+  patch -p1 -i "${srcdir}"/0005-Makefile-Add-install-cut.patch
 }
 
 build() {
@@ -61,7 +63,7 @@ package() {
   CONFIG_SHARED=1 \
   CFLAGS="${CFLAGS} ${CPPFLAGS}" \
   DESTDIR="${pkgdir}" \
-  make install
+  make install install-cut
 
   install -Dm644 COPYING.LGPLv2.1 "${pkgdir}"${MINGW_LOCAL_PREFIX}/share/licenses/${_realname}/LICENSE
 }

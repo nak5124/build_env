@@ -1,4 +1,4 @@
-From dc712d3739ea7467fdea17b8a253511593887db5 Mon Sep 17 00:00:00 2001
+From e37dcc3e3620b891d9ea36de579e42a4f7f7e10c Mon Sep 17 00:00:00 2001
 From: Hendrik Leppkes <h.leppkes@gmail.com>
 Date: Wed, 18 Mar 2015 11:11:10 +0100
 Subject: [PATCH 43/66] dca_parser: don't overwrite the sample rate, it may not
@@ -21,5 +21,5 @@ index c3c5898..c9f3397 100644
          s->duration = 0;
  
 -- 
-2.4.1
+2.4.3
 

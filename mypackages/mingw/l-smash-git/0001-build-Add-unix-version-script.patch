@@ -1,7 +1,7 @@
-From 5bee8e8715048a75c4be75ab344955c71fc794d5 Mon Sep 17 00:00:00 2001
+From d86b97bc3e7fc99ebc1fa0d4df6c1095fce306f2 Mon Sep 17 00:00:00 2001
 From: Derek Buitenhuis <derek.buitenhuis@gmail.com>
 Date: Sun, 7 Dec 2014 12:30:05 -0500
-Subject: [PATCH] build: Add unix version script
+Subject: [PATCH 1/8] build: Add unix version script
 
 Now we only export public symbols.
 
@@ -14,7 +14,7 @@ Signed-off-by: Derek Buitenhuis <derek.buitenhuis@gmail.com>
  create mode 100644 liblsmash.v
 
 diff --git a/Makefile b/Makefile
-index 83ecb0f..cb9ee41 100644
+index 8e565e7..d3c6e3e 100644
 --- a/Makefile
 +++ b/Makefile
 @@ -71,7 +71,7 @@ uninstall:
@@ -93,3 +93,6 @@ index 0000000..2122775
 +            QT_*;
 +    local: *;
 +};
+-- 
+2.4.3
+

@@ -1,4 +1,4 @@
-From cd5d86fae6cfcfa48c84d2972ff0a6abbad9c034 Mon Sep 17 00:00:00 2001
+From 499971fa7b435bdc3d27b1dfb25693ee26d0b065 Mon Sep 17 00:00:00 2001
 From: nu774 <honeycomb77@gmail.com>
 Date: Thu, 9 May 2013 03:36:14 +0900
 Subject: [PATCH 49/66] mp3: enable packed main_data decoding in MP4
@@ -36,10 +36,10 @@ index 1cc5ac4..e00f55c 100644
  
      ret = mp_decode_frame(s, NULL, buf, buf_size);
 diff --git a/libavformat/mov.c b/libavformat/mov.c
-index d79b59f..8c0f23f 100644
+index 5374aca..2a28196 100644
 --- a/libavformat/mov.c
 +++ b/libavformat/mov.c
-@@ -1641,6 +1641,15 @@ static void mov_parse_stsd_audio(MOVContext *c, AVIOContext *pb,
+@@ -1671,6 +1671,15 @@ static void mov_parse_stsd_audio(MOVContext *c, AVIOContext *pb,
                      ff_mov_get_lpcm_codec_id(st->codec->bits_per_coded_sample,
                                               flags);
          }
@@ -55,7 +55,7 @@ index d79b59f..8c0f23f 100644
      }
  
      switch (st->codec->codec_id) {
-@@ -1851,7 +1860,6 @@ static int mov_finalize_stsd_codec(MOVContext *c, AVIOContext *pb,
+@@ -1891,7 +1900,6 @@ static int mov_finalize_stsd_codec(MOVContext *c, AVIOContext *pb,
      case AV_CODEC_ID_MP3:
          /* force type after stsd for m1a hdlr */
          st->codec->codec_type = AVMEDIA_TYPE_AUDIO;
@@ -64,5 +64,5 @@ index d79b59f..8c0f23f 100644
      case AV_CODEC_ID_GSM:
      case AV_CODEC_ID_ADPCM_MS:
 -- 
-2.4.1
+2.4.3
 

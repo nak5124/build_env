@@ -1,4 +1,4 @@
-From 1785b3801711b9f0d8bd827eddf2cd3f0c07ea5d Mon Sep 17 00:00:00 2001
+From 96a781f97f127386f5936e856da556dbebf77901 Mon Sep 17 00:00:00 2001
 From: Hendrik Leppkes <h.leppkes@gmail.com>
 Date: Sat, 7 Jan 2012 02:01:08 +0100
 Subject: [PATCH 05/66] prores: set avtx->pix_fmt based on the fourcc code
@@ -41,5 +41,5 @@ index a1d497f..edbedb7 100644
                                    ctx->prodsp.idct_permutation_type);
  
 -- 
-2.4.1
+2.4.3
 

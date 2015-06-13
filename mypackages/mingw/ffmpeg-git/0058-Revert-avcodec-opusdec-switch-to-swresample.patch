@@ -1,4 +1,4 @@
-From a50c4043e81dc253f8567434ada761b23c68b9c0 Mon Sep 17 00:00:00 2001
+From 71cf73a18778f482a5bb1009e5c0c74330d35b3d Mon Sep 17 00:00:00 2001
 From: Yuta NAKAI <nak5124@live.jp>
 Date: Fri, 31 Oct 2014 21:44:43 +0900
 Subject: [PATCH 58/66] Revert "avcodec/opusdec: switch to swresample"
@@ -14,10 +14,10 @@ Conflicts:
  3 files changed, 31 insertions(+), 30 deletions(-)
 
 diff --git a/configure b/configure
-index 51f4a95..1d34778 100755
+index 00aae1c..91b8cd7 100755
 --- a/configure
 +++ b/configure
-@@ -2246,7 +2246,7 @@ nellymoser_decoder_select="mdct sinewin"
+@@ -2248,7 +2248,7 @@ nellymoser_decoder_select="mdct sinewin"
  nellymoser_encoder_select="audio_frame_queue mdct sinewin"
  nuv_decoder_select="idctdsp lzo"
  on2avc_decoder_select="mdct"
@@ -26,7 +26,7 @@ index 51f4a95..1d34778 100755
  opus_decoder_select="imdct15"
  png_decoder_select="zlib"
  png_encoder_select="huffyuvencdsp zlib"
-@@ -5667,7 +5667,7 @@ enabled uspp_filter         && prepend avfilter_deps "avcodec"
+@@ -5671,7 +5671,7 @@ enabled uspp_filter         && prepend avfilter_deps "avcodec"
  
  enabled lavfi_indev         && prepend avdevice_deps "avfilter"
  
@@ -195,5 +195,5 @@ index 2ee3f2a..09dbccb 100644
          ret = ff_silk_init(avctx, &s->silk, s->output_channels);
          if (ret < 0)
 -- 
-2.4.1
+2.4.3
 

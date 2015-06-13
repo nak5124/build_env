@@ -1,8 +1,19 @@
+From c1d5eba656b89cc6be26603f887fa45121d523fe Mon Sep 17 00:00:00 2001
+From: Yuta NAKAI <nak5124@live.jp>
+Date: Sat, 13 Jun 2015 12:59:31 +0900
+Subject: [PATCH 2/2] Give preference win32api over pthread on MinGW-w64.
+
+---
+ vp9/common/vp9_mvref_common.c | 2 +-
+ vp9/common/vp9_thread.h       | 2 +-
+ vp9/decoder/vp9_dthread.c     | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
+
 diff --git a/vp9/common/vp9_mvref_common.c b/vp9/common/vp9_mvref_common.c
-index 436be6c..bbbba44 100644
+index 5f8ee0f..84c243a 100644
 --- a/vp9/common/vp9_mvref_common.c
 +++ b/vp9/common/vp9_mvref_common.c
-@@ -73,7 +73,7 @@ static void find_mv_refs_idx(const VP9_COMMON *cm, const MACROBLOCKD *xd,
+@@ -74,7 +74,7 @@ static void find_mv_refs_idx(const VP9_COMMON *cm, const MACROBLOCKD *xd,
    // on windows platform. The sync here is unncessary if use_perv_frame_mvs
    // is 0. But after removing it, there will be hang in the unit test on windows
    // due to several threads waiting for a thread's signal.
@@ -37,3 +48,6 @@ index 96a63bd..758d51e 100644
    pthread_cond_signal(&worker_data->stats_cond);
  #else
    pthread_cond_broadcast(&worker_data->stats_cond);
+-- 
+2.4.3
+

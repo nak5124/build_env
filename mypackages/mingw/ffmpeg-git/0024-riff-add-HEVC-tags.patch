@@ -1,4 +1,4 @@
-From 9303526c3cb8ef51b5c2f6351fcbcdc9fc5da7d9 Mon Sep 17 00:00:00 2001
+From 62dc2a36b19cb1a3f2e9ce8067ce52408b3fee50 Mon Sep 17 00:00:00 2001
 From: Hendrik Leppkes <h.leppkes@gmail.com>
 Date: Wed, 23 Oct 2013 09:18:16 +0200
 Subject: [PATCH 24/66] riff: add HEVC tags
@@ -22,5 +22,5 @@ index 8e4e3e4..4ee5a94 100644
  };
  
 -- 
-2.4.1
+2.4.3
 

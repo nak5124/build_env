@@ -1,4 +1,4 @@
-From 1a2137d059d409b99072c4c5de983067909e7a27 Mon Sep 17 00:00:00 2001
+From 2baf4c40e8e01112319494c0b1df326143ec9c8f Mon Sep 17 00:00:00 2001
 From: Hendrik Leppkes <h.leppkes@gmail.com>
 Date: Fri, 17 Aug 2012 20:45:25 +0200
 Subject: [PATCH 10/66] h264: flag interlaced-coded frames as such when
@@ -11,10 +11,10 @@ Not doing so can cause a renderer to assume the frame is progressive and not dei
  1 file changed, 1 insertion(+)
 
 diff --git a/libavcodec/h264.c b/libavcodec/h264.c
-index 9a00214..b468c76 100644
+index 9be317c..e77e7ae 100644
 --- a/libavcodec/h264.c
 +++ b/libavcodec/h264.c
-@@ -759,6 +759,7 @@ static void decode_postinit(H264Context *h, int setup_finished)
+@@ -762,6 +762,7 @@ static void decode_postinit(H264Context *h, int setup_finished)
      if (h->sps.pic_struct_present_flag) {
          switch (h->sei_pic_struct) {
          case SEI_PIC_STRUCT_FRAME:
@@ -23,5 +23,5 @@ index 9a00214..b468c76 100644
          case SEI_PIC_STRUCT_TOP_FIELD:
          case SEI_PIC_STRUCT_BOTTOM_FIELD:
 -- 
-2.4.1
+2.4.3
 

@@ -1,4 +1,4 @@
-From 55340204e78a656edb8f7822555df62201b63ffd Mon Sep 17 00:00:00 2001
+From 1ea602f1a2716153cb5f3d190c45199802d1a5ec Mon Sep 17 00:00:00 2001
 From: Yuta NAKAI <nak5124@live.jp>
 Date: Fri, 29 May 2015 21:07:27 +0900
 Subject: [PATCH 65/66] libavformat/os_support.h: Fix multiple redefinition
@@ -30,5 +30,5 @@ index d034ec3..c44b12a 100644
  #if CONFIG_NETWORK
  #if !HAVE_SOCKLEN_T
 -- 
-2.4.1
+2.4.3
 

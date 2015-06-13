@@ -1,4 +1,4 @@
-From 46bbf4de7579677e6ee4dddf7e6ac747f2c7c07a Mon Sep 17 00:00:00 2001
+From bf0c1a391b704fa2bdb2d906db9b45e0d6332da4 Mon Sep 17 00:00:00 2001
 From: Yuta NAKAI <nak5124@live.jp>
 Date: Sat, 10 Jan 2015 18:02:19 +0900
 Subject: [PATCH 62/66] libutvideodec: Fix bits_per_raw_sample.
@@ -28,5 +28,5 @@ index e4b87a8..802ea63 100644
      /* Is it interlaced? */
      avctx->coded_frame->interlaced_frame = info.flags & 0x800 ? 1 : 0;
 -- 
-2.4.1
+2.4.3
 

@@ -1,4 +1,4 @@
-From f7bf06fae62bdf4383f7633208102b6576841a17 Mon Sep 17 00:00:00 2001
+From 5ba492827deaa6ea6b54783fa197e9cdd1a84e53 Mon Sep 17 00:00:00 2001
 From: Hendrik Leppkes <h.leppkes@gmail.com>
 Date: Tue, 3 Mar 2015 21:08:50 +0100
 Subject: [PATCH 42/66] hevc: ignore overreads in the VPS, its not used in the
@@ -22,5 +22,5 @@ index 217898c..f9d0e26 100644
  
      if (s->vps_list[vps_id] &&
 -- 
-2.4.1
+2.4.3
 

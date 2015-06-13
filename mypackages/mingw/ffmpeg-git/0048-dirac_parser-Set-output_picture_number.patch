@@ -1,4 +1,4 @@
-From 98c7b06f1242890b52324ffd4f25cf2c6848218e Mon Sep 17 00:00:00 2001
+From ea514788160041bc9af3cfbe73279c769ebaebd5 Mon Sep 17 00:00:00 2001
 From: Yusuke Nakamura <muken.the.vfrmaniac@gmail.com>
 Date: Fri, 5 Jul 2013 01:17:14 +0900
 Subject: [PATCH 48/66] dirac_parser: Set output_picture_number.
@@ -45,5 +45,5 @@ index 45ded5a..6b97e3d 100644
                  s->dts = pts - 1;
              else
 -- 
-2.4.1
+2.4.3
 

@@ -1,4 +1,4 @@
-From 85065d24038d797449956d651ab9609cd3e0bf40 Mon Sep 17 00:00:00 2001
+From db0d689010001ae6b38ffcdc960e0fc24e158bff Mon Sep 17 00:00:00 2001
 From: Hendrik Leppkes <h.leppkes@gmail.com>
 Date: Sat, 21 Feb 2015 11:51:28 +0100
 Subject: [PATCH 41/66] hevc_parser: search for a sps/pps combination instead
@@ -38,5 +38,5 @@ index d38376a..a747910 100644
      }
      return 0;
 -- 
-2.4.1
+2.4.3
 

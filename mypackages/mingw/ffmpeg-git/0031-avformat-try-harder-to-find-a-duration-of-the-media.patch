@@ -1,4 +1,4 @@
-From 39efacb491bbca99db708112f6616d64004eda5d Mon Sep 17 00:00:00 2001
+From 12ae705f30404ad44eaa388b494befa11e31863a Mon Sep 17 00:00:00 2001
 From: Hendrik Leppkes <h.leppkes@gmail.com>
 Date: Sun, 2 Feb 2014 16:53:10 +0100
 Subject: [PATCH 31/66] avformat: try harder to find a duration of the media
@@ -13,7 +13,7 @@ it'll stop looking once it found a duration.
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/libavformat/utils.c b/libavformat/utils.c
-index 7e1eeb7..04ac5b4 100644
+index e27a75f..efd77a0 100644
 --- a/libavformat/utils.c
 +++ b/libavformat/utils.c
 @@ -2394,7 +2394,7 @@ static void estimate_timings_from_bit_rate(AVFormatContext *ic)
@@ -26,5 +26,5 @@ index 7e1eeb7..04ac5b4 100644
  /* only usable for MPEG-PS streams */
  static void estimate_timings_from_pts(AVFormatContext *ic, int64_t old_offset)
 -- 
-2.4.1
+2.4.3
 

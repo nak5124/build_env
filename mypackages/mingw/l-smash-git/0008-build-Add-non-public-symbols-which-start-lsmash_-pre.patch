@@ -1,7 +1,7 @@
-From 01bcf3b8e190267aa8b5c588bd93d8423e586951 Mon Sep 17 00:00:00 2001
+From b8f6a6cf891511b1eaa1c62f9f4ce3da869e279e Mon Sep 17 00:00:00 2001
 From: Yuta NAKAI <nak5124@live.jp>
 Date: Thu, 18 Dec 2014 00:21:56 +0900
-Subject: [PATCH 7/7] build: Add non-public symbols which start lsmash_* prefix
+Subject: [PATCH 8/8] build: Add non-public symbols which start lsmash_* prefix
  to local.
 
 ---
@@ -10,10 +10,10 @@ Subject: [PATCH 7/7] build: Add non-public symbols which start lsmash_* prefix
  2 files changed, 15 insertions(+), 1 deletion(-)
 
 diff --git a/configure b/configure
-index 9d42e68..4767d1e 100755
+index 3f24182..10cbdf2 100755
 --- a/configure
 +++ b/configure
-@@ -408,6 +408,20 @@ EOF
+@@ -407,6 +407,20 @@ EOF
  
  
  sed "s/\\\$MAJOR/$MAJVER/" $SRCDIR/liblsmash.v > liblsmash.ver
@@ -46,5 +46,5 @@ index 2122775..bd91fe4 100644
 +    local:  *;
  };
 -- 
-2.2.0
+2.4.3
 

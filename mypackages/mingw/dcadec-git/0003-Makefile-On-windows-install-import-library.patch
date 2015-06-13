@@ -1,23 +1,21 @@
-From 91074e14e4b3321e0a4e23cb340b4d5574b3cb60 Mon Sep 17 00:00:00 2001
+From 0a17a7a87a1a3bb3745f8b1643d170dc7a66ea6c Mon Sep 17 00:00:00 2001
 From: Yuta NAKAI <nak5124@live.jp>
 Date: Sat, 11 Apr 2015 12:19:19 +0900
-Subject: [PATCH 3/5] Makefile: On windows, install import library and def
- file.
+Subject: [PATCH 3/5] Makefile: On windows, install import library.
 
 ---
- Makefile | 2 ++
- 1 file changed, 2 insertions(+)
+ Makefile | 1 +
+ 1 file changed, 1 insertion(+)
 
 diff --git a/Makefile b/Makefile
-index 904d229..ca3dc08 100644
+index 65d68cc..0f4c6c5 100644
 --- a/Makefile
 +++ b/Makefile
-@@ -159,6 +159,8 @@ install-lib: $(OUT_LIB) dcadec.pc
+@@ -159,6 +159,7 @@ install-lib: $(OUT_LIB) dcadec.pc
  	install -d -m 755 $(DESTDIR)$(LIBDIR) $(DESTDIR)$(LIBDIR)/pkgconfig $(DESTDIR)$(INCLUDEDIR)/libdcadec
  ifneq ($(and $(CONFIG_WINDOWS),$(CONFIG_SHARED)),)
- 	install -m 644 $(OUT_LIB) $(DESTDIR)$(BINDIR)
+ 	install -m 755 $(OUT_LIB) $(DESTDIR)$(BINDIR)
 +	install -m 644 $(IMP_LIB) $(DESTDIR)$(LIBDIR)
-+	install -m 644 $(IMP_DEF) $(DESTDIR)$(LIBDIR)
  else
  	install -m 644 $(OUT_LIB) $(DESTDIR)$(LIBDIR)
  endif

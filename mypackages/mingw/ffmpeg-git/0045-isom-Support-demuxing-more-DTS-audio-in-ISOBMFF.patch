@@ -1,4 +1,4 @@
-From a42108985823880c57ccd481b19c8e27ae524b2b Mon Sep 17 00:00:00 2001
+From b87befd3be2ba76917b0cedaf365d5327d23292a Mon Sep 17 00:00:00 2001
 From: Tsukasa OMOTO <henry0312@gmail.com>
 Date: Fri, 4 May 2012 02:32:46 +0900
 Subject: [PATCH 45/66] isom: Support demuxing more DTS audio in ISOBMFF.
@@ -20,5 +20,5 @@ index c99f2dc..90f9b18 100644
      { AV_CODEC_ID_DTS,             MKTAG('d', 't', 's', 'l') }, /* DTS-HD Lossless formats */
      { AV_CODEC_ID_DTS,             MKTAG('D', 'T', 'S', ' ') }, /* non-standard */
 -- 
-2.4.1
+2.4.3
 

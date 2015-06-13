@@ -1,4 +1,4 @@
-From ea847cc4e708105c02a1c2a40e2b10d47d115093 Mon Sep 17 00:00:00 2001
+From 7d1869d6eda36e7d70728dcc0f7ed41a3b2585aa Mon Sep 17 00:00:00 2001
 From: Hendrik Leppkes <h.leppkes@gmail.com>
 Date: Wed, 25 Dec 2013 20:21:51 +0100
 Subject: [PATCH 28/66] h264: don't use deprecated YUVJ pixel formats
@@ -10,10 +10,10 @@ Instead, rely on the color_range, as its supposed to be handled anyway.
  1 file changed, 7 deletions(-)
 
 diff --git a/libavcodec/h264_slice.c b/libavcodec/h264_slice.c
-index 80a387d..11824cf 100644
+index 0c0812f..f84ff5d 100644
 --- a/libavcodec/h264_slice.c
 +++ b/libavcodec/h264_slice.c
-@@ -923,14 +923,9 @@ static enum AVPixelFormat get_pixel_format(H264Context *h, int force_callback)
+@@ -926,14 +926,9 @@ static enum AVPixelFormat get_pixel_format(H264Context *h, int force_callback)
          if (CHROMA444(h)) {
              if (h->avctx->colorspace == AVCOL_SPC_RGB)
                  *fmt++ = AV_PIX_FMT_GBRP;
@@ -28,7 +28,7 @@ index 80a387d..11824cf 100644
                  *fmt++ = AV_PIX_FMT_YUV422P;
          } else {
  #if CONFIG_H264_DXVA2_HWACCEL
-@@ -948,8 +943,6 @@ static enum AVPixelFormat get_pixel_format(H264Context *h, int force_callback)
+@@ -951,8 +946,6 @@ static enum AVPixelFormat get_pixel_format(H264Context *h, int force_callback)
  #endif
              if (h->avctx->codec->pix_fmts)
                  choices = h->avctx->codec->pix_fmts;
@@ -38,5 +38,5 @@ index 80a387d..11824cf 100644
                  *fmt++ = AV_PIX_FMT_YUV420P;
          }
 -- 
-2.4.1
+2.4.3
 

@@ -1,4 +1,4 @@
-From 410e9b457cbb9b686074962c6db2b8947f2dbecc Mon Sep 17 00:00:00 2001
+From 26923085e569c33d8efcd3426b0984310519a8e1 Mon Sep 17 00:00:00 2001
 From: Yuta NAKAI <nak5124@live.jp>
 Date: Mon, 22 Dec 2014 17:54:01 +0900
 Subject: [PATCH 59/66] build: Cleanup version scripts.
@@ -46,5 +46,5 @@ index e90aef7..6f11d60 100644
          local: *;
  };
 -- 
-2.4.1
+2.4.3
 

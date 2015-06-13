@@ -1,7 +1,7 @@
-From 7ad2f7fac19e8bcf2215832299fbd405c262526f Mon Sep 17 00:00:00 2001
+From 2308cc995908379db5b1e3e873d28cc2a2fb5416 Mon Sep 17 00:00:00 2001
 From: Yuta NAKAI <nak5124@live.jp>
 Date: Mon, 27 Oct 2014 16:01:04 +0900
-Subject: [PATCH 4/7] build: Use lib.exe or dlltool when available on mingw.
+Subject: [PATCH 5/8] build: Use lib.exe or dlltool when available on mingw.
 
 ---
  .gitignore |  1 +
@@ -22,7 +22,7 @@ index ae1cc88..c9c71c1 100644
  *.o
  *.orig
 diff --git a/Makefile b/Makefile
-index 7d24d86..9131f85 100644
+index d3c6e3e..6846f2f 100644
 --- a/Makefile
 +++ b/Makefile
 @@ -28,6 +28,9 @@ $(STATICLIBNAME): $(OBJS)
@@ -33,9 +33,9 @@ index 7d24d86..9131f85 100644
 +	$(SLIB_CMD)
 +endif
  ifeq ($(SHAREDLIBNAME), liblsmash.so.$(MAJVER))
- 	ln -s $(SHAREDLIBNAME) liblsmash.so
+ 	ln -sf $(SHAREDLIBNAME) liblsmash.so
  endif
-@@ -59,6 +62,10 @@ ifneq ($(IMPLIB),)
+@@ -56,6 +59,10 @@ ifneq ($(IMPLIB),)
  	install -m 644 $(IMPLIB) $(DESTDIR)$(libdir)
  	install -d $(DESTDIR)$(bindir)
  	install -m 755 $(SHAREDLIB) $(DESTDIR)$(bindir)
@@ -43,10 +43,10 @@ index 7d24d86..9131f85 100644
 +	install -m 644 $(DEFNAME) $(DESTDIR)$(libdir)
 +	install -m 644 lsmash.lib $(DESTDIR)$(bindir)
 +endif
- ifeq ($(SHAREDLIB), liblsmash-$(MAJVER).dll)
- 	ln -fs $(DESTDIR)$(bindir)/$(SHAREDLIB) $(DESTDIR)$(bindir)/liblsmash.dll
- endif
-@@ -77,7 +84,7 @@ uninstall:
+ else
+ 	install -m 644 $(SHAREDLIB) $(DESTDIR)$(libdir)
+ ifeq ($(SHAREDLIB), liblsmash.so.$(MAJVER))
+@@ -71,7 +78,7 @@ uninstall:
  	$(RM) $(addprefix $(DESTDIR)$(bindir)/, $(TOOLS_ALL) $(TOOLS_ALL:%=%.exe) liblsmash.dll cyglsmash.dll)
  
  clean:
@@ -56,7 +56,7 @@ index 7d24d86..9131f85 100644
  distclean: clean
  	$(RM) config.* *.pc
 diff --git a/configure b/configure
-index a3d11ad..9d96bc3 100755
+index 220c8dd..af6aa8f 100755
 --- a/configure
 +++ b/configure
 @@ -56,6 +56,15 @@ cc_check()
@@ -99,7 +99,7 @@ index a3d11ad..9d96bc3 100755
          ;;
      *cygwin*)
          EXT=".exe"
-@@ -427,6 +449,9 @@ CFLAGS = $CFLAGS
+@@ -426,6 +448,9 @@ CFLAGS = $CFLAGS
  LDFLAGS = $LDFLAGS
  SO_LDFLAGS = $SO_LDFLAGS
  LIBS = $LIBS
@@ -110,5 +110,5 @@ index a3d11ad..9d96bc3 100755
  
  cat config.mak
 -- 
-2.2.0
+2.4.3
 

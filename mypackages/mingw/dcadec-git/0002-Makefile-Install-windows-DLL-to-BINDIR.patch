@@ -1,4 +1,4 @@
-From 16fd7a015051e7b10587972a291b6fa8760ecf2f Mon Sep 17 00:00:00 2001
+From 6d5d46985ed50035f1dc77d7669842215a6cb9b3 Mon Sep 17 00:00:00 2001
 From: Yuta NAKAI <nak5124@live.jp>
 Date: Sat, 11 Apr 2015 12:15:19 +0900
 Subject: [PATCH 2/5] Makefile: Install windows DLL to BINDIR.
@@ -8,7 +8,7 @@ Subject: [PATCH 2/5] Makefile: Install windows DLL to BINDIR.
  1 file changed, 4 insertions(+)
 
 diff --git a/Makefile b/Makefile
-index 350c338..904d229 100644
+index 350c338..65d68cc 100644
 --- a/Makefile
 +++ b/Makefile
 @@ -157,7 +157,11 @@ dcadec.pc: dcadec.pc.in
@@ -16,7 +16,7 @@ index 350c338..904d229 100644
  install-lib: $(OUT_LIB) dcadec.pc
  	install -d -m 755 $(DESTDIR)$(LIBDIR) $(DESTDIR)$(LIBDIR)/pkgconfig $(DESTDIR)$(INCLUDEDIR)/libdcadec
 +ifneq ($(and $(CONFIG_WINDOWS),$(CONFIG_SHARED)),)
-+	install -m 644 $(OUT_LIB) $(DESTDIR)$(BINDIR)
++	install -m 755 $(OUT_LIB) $(DESTDIR)$(BINDIR)
 +else
  	install -m 644 $(OUT_LIB) $(DESTDIR)$(LIBDIR)
 +endif

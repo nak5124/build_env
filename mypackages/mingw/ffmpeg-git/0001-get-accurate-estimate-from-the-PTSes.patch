@@ -1,4 +1,4 @@
-From d18542c2a2ac3143eaa4a170ebd191aa4e3e025b Mon Sep 17 00:00:00 2001
+From 102d313fde3210937583b506ab92c196cca3bc00 Mon Sep 17 00:00:00 2001
 From: Cory Fields <theuni-nospam-@xbmc.org>
 Date: Fri, 9 Jul 2010 16:47:58 -0400
 Subject: [PATCH 01/66] get accurate estimate from the PTSes
@@ -8,7 +8,7 @@ Subject: [PATCH 01/66] get accurate estimate from the PTSes
  1 file changed, 42 insertions(+)
 
 diff --git a/libavformat/utils.c b/libavformat/utils.c
-index 7af2aab..a891a93 100644
+index caa15ab..7bc8577 100644
 --- a/libavformat/utils.c
 +++ b/libavformat/utils.c
 @@ -2520,6 +2520,43 @@ static void estimate_timings_from_pts(AVFormatContext *ic, int64_t old_offset)
@@ -68,5 +68,5 @@ index 7af2aab..a891a93 100644
          /* less precise: use bitrate info */
          estimate_timings_from_bit_rate(ic);
 -- 
-2.4.1
+2.4.3
 

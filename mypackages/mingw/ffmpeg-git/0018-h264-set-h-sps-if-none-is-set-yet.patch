@@ -1,4 +1,4 @@
-From 826528d831fe5d927549e0a7af1dc09f1b1f4ab7 Mon Sep 17 00:00:00 2001
+From 88dfd8b52359c7bd07c82194f9319b68e70b159e Mon Sep 17 00:00:00 2001
 From: Hendrik Leppkes <h.leppkes@gmail.com>
 Date: Sat, 11 May 2013 23:19:59 +0200
 Subject: [PATCH 18/66] h264: set h->sps if none is set yet
@@ -23,5 +23,5 @@ index ae1b60a..e5078ef 100644
      return 0;
  
 -- 
-2.4.1
+2.4.3
 

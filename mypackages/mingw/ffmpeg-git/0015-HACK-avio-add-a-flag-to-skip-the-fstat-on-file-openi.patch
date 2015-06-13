@@ -1,4 +1,4 @@
-From 379efba854e89c83f3b97891f41f7f6320ca5cdb Mon Sep 17 00:00:00 2001
+From 54df38f8cbbfca8b14d7140ccbd4698724ef3c27 Mon Sep 17 00:00:00 2001
 From: Hendrik Leppkes <h.leppkes@gmail.com>
 Date: Sun, 28 Apr 2013 12:19:31 +0200
 Subject: [PATCH 15/66] HACK avio: add a flag to skip the fstat on file opening
@@ -10,10 +10,10 @@ Subject: [PATCH 15/66] HACK avio: add a flag to skip the fstat on file opening
  2 files changed, 3 insertions(+), 1 deletion(-)
 
 diff --git a/libavformat/avio.h b/libavformat/avio.h
-index 51913e3..452179f 100644
+index 28997f8..25c4d47 100644
 --- a/libavformat/avio.h
 +++ b/libavformat/avio.h
-@@ -480,6 +480,8 @@ int avio_get_str16be(AVIOContext *pb, int maxlen, char *buf, int buflen);
+@@ -492,6 +492,8 @@ int avio_get_str16be(AVIOContext *pb, int maxlen, char *buf, int buflen);
   */
  #define AVIO_FLAG_DIRECT 0x8000
  
@@ -36,5 +36,5 @@ index 6511328..5a96084 100644
      return 0;
  }
 -- 
-2.4.1
+2.4.3
 

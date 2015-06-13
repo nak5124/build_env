@@ -1,4 +1,4 @@
-From 0db9988b7d11c37ede46b7bc269b4a9b091f456d Mon Sep 17 00:00:00 2001
+From 1381405ed43157b2e6fa27ecf55751141c0e5348 Mon Sep 17 00:00:00 2001
 From: Yusuke Nakamura <muken.the.vfrmaniac@gmail.com>
 Date: Mon, 4 Nov 2013 03:55:20 +0900
 Subject: [PATCH 53/66] h264_ps: Set chroma_sample_location appropriately if
@@ -25,5 +25,5 @@ index e5078ef..abd5008 100644
      if (show_bits1(&h->gb) && get_bits_left(&h->gb) < 10) {
          av_log(h->avctx, AV_LOG_WARNING, "Truncated VUI\n");
 -- 
-2.4.1
+2.4.3
 
