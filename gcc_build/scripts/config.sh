@@ -48,7 +48,7 @@ declare -r GCC_BUILT_DATE=$(date +%Y.%m.%d)
 
 # Version
 declare -r GMP_VER='6.0.0'
-declare -r MPFR_VER='3.1.2'
+declare -r MPFR_VER='3.1.3'
 declare -r MPC_VER='1.0.3'
 declare -r ISL_VER='0.15'
 declare -r ICONV_VER='1.14'

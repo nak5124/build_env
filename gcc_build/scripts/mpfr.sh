@@ -79,7 +79,9 @@ function build_mpfr() {
     # Setup.
     if ${_rebuild}; then
         download_mpfr_src
-        prepare_mpfr
+        if wget --spider --recursive --no-directories  http://www.mpfr.org/mpfr-current/allpatches > /dev/null 2>&1; then
+            prepare_mpfr
+        fi
     fi
 
     local _arch
