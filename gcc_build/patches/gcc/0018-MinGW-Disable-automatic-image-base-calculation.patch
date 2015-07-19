@@ -1,7 +1,7 @@
-From 598b160ed9ea06ec5b12afa8538970111cdcdd7a Mon Sep 17 00:00:00 2001
+From f070c4be4453f5d178a6e0238a67ef5a9da9f585 Mon Sep 17 00:00:00 2001
 From: Yuta NAKAI <nak5124@live.jp>
 Date: Sun, 12 Apr 2015 15:25:08 +0900
-Subject: [PATCH 17/21] MinGW: Disable automatic image base calculation.
+Subject: [PATCH 18/21] MinGW: Disable automatic image base calculation.
 
 ---
  gcc/configure          | 8 ++++----
@@ -12,7 +12,7 @@ Subject: [PATCH 17/21] MinGW: Disable automatic image base calculation.
  5 files changed, 14 insertions(+), 14 deletions(-)
 
 diff --git a/gcc/configure b/gcc/configure
-index 62f4618..73981b1b 100755
+index 45afab2..5d277ec 100755
 --- a/gcc/configure
 +++ b/gcc/configure
 @@ -15910,7 +15910,7 @@ _LT_EOF
@@ -96,10 +96,10 @@ index 332aa2c..a88779b 100755
  	ld_shlibs=no
        fi
 diff --git a/libstdc++-v3/configure b/libstdc++-v3/configure
-index 721a133..bbd68e2 100755
+index d895f0f..28b523d 100755
 --- a/libstdc++-v3/configure
 +++ b/libstdc++-v3/configure
-@@ -9307,7 +9307,7 @@ _LT_EOF
+@@ -9311,7 +9311,7 @@ _LT_EOF
        export_symbols_cmds='$NM $libobjs $convenience | $global_symbol_pipe | $SED -e '\''/^[BCDGRS][ ]/s/.*[ ]\([^ ]*\)/\1 DATA/'\'' | $SED -e '\''/^[AITW][ ]/s/.*[ ]//'\'' | sort | uniq > $export_symbols'
  
        if $LD --help 2>&1 | $GREP 'auto-import' > /dev/null; then
@@ -108,7 +108,7 @@ index 721a133..bbd68e2 100755
  	# If the export-symbols file already is a .def file (1st line
  	# is EXPORTS), use it as is; otherwise, prepend...
  	archive_expsym_cmds='if test "x`$SED 1q $export_symbols`" = xEXPORTS; then
-@@ -9316,7 +9316,7 @@ _LT_EOF
+@@ -9320,7 +9320,7 @@ _LT_EOF
  	  echo EXPORTS > $output_objdir/$soname.def;
  	  cat $export_symbols >> $output_objdir/$soname.def;
  	fi~
@@ -117,7 +117,7 @@ index 721a133..bbd68e2 100755
        else
  	ld_shlibs=no
        fi
-@@ -12560,7 +12560,7 @@ if test -z "$aix_libpath"; then aix_libpath="/usr/lib:/lib"; fi
+@@ -12564,7 +12564,7 @@ if test -z "$aix_libpath"; then aix_libpath="/usr/lib:/lib"; fi
          enable_shared_with_static_runtimes_CXX=yes
  
          if $LD --help 2>&1 | $GREP 'auto-import' > /dev/null; then
@@ -126,7 +126,7 @@ index 721a133..bbd68e2 100755
            # If the export-symbols file already is a .def file (1st line
            # is EXPORTS), use it as is; otherwise, prepend...
            archive_expsym_cmds_CXX='if test "x`$SED 1q $export_symbols`" = xEXPORTS; then
-@@ -12569,7 +12569,7 @@ if test -z "$aix_libpath"; then aix_libpath="/usr/lib:/lib"; fi
+@@ -12573,7 +12573,7 @@ if test -z "$aix_libpath"; then aix_libpath="/usr/lib:/lib"; fi
  	    echo EXPORTS > $output_objdir/$soname.def;
  	    cat $export_symbols >> $output_objdir/$soname.def;
            fi~
@@ -158,5 +158,5 @@ index 2683520..38f531d 100755
  	ld_shlibs=no
        fi
 -- 
-2.4.3
+2.4.5
 

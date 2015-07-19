@@ -36,14 +36,14 @@ declare -r DST_DIR="${ROOT_DIR}"/dst
 declare -r CPPFLAGS_='-D__USE_MINGW_ANSI_STDIO=1 -D_FORTIFY_SOURCE=2 -D__MINGW_USE_VC2005_COMPAT=1 -D_FILE_OFFSET_BITS=64 -DWINVER=0x0601 -D_WIN32_WINNT=0x0601 -D_GNU_SOURCE=1 -D_BSD_SOURCE=1 -D_POSIX_SOURCE=1 -D_POSIX_C_SOURCE=200809L -D_XOPEN_SOURCE=700'
 declare -r CFLAGS_='-pipe -Os -fomit-frame-pointer -foptimize-strlen -fno-fast-math -fno-math-errno -fno-signed-zeros -fno-tree-vectorize'
 declare -r CXXFLAGS_="${CFLAGS_}"
-declare -r LDFLAGS_='-Wl,-O1,--sort-common,--as-needed'
+declare -r LDFLAGS_='-Wl,-O1,--sort-common,--as-needed,--no-undefined,--gc-sections'
 declare -r MAKEFLAGS_="-j$(($(nproc)+1)) -O"
 
 # GCC thread model
 declare -r THREAD_MODEL='posix'
 
 # GCC package revision
-declare -r GCC_PKGREV=5
+declare -r GCC_PKGREV=1
 declare -r GCC_BUILT_DATE=$(date +%Y.%m.%d)
 
 # Version
@@ -55,7 +55,7 @@ declare -r ICONV_VER='1.14'
 declare -r ZLIB_VER='git'
 declare -r MINGW_VER='git'
 declare -r BINUTILS_VER='git'
-declare -r GCC_VER='5.1.0'
+declare -r GCC_VER='5.2.0'
 declare -r NASM_VER='2.11.08'
 # declare -r NASM_SS='20150118'
 declare -r YASM_VER='1.3.0'

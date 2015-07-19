@@ -1,4 +1,4 @@
-From 3002ff70de30195c5d1bc93b2e2cc1db7a82f26e Mon Sep 17 00:00:00 2001
+From 66aa46abd5e5dbbdae4bd712b7357f97b9189c17 Mon Sep 17 00:00:00 2001
 From: Yuta NAKAI <nak5124@live.jp>
 Date: Sun, 19 Apr 2015 21:41:59 +0900
 Subject: [PATCH 1/6] binutils: Check harder for the file in question being
@@ -50,10 +50,10 @@ index 06fbc46..8c8caec 100644
      non_fatal (_("Warning: '%s' has negative size, probably it is too large"),
                 file_name);
 diff --git a/binutils/elfedit.c b/binutils/elfedit.c
-index 5b2bf86..1eb6fa4 100644
+index 02b9c98..fb0eadf 100644
 --- a/binutils/elfedit.c
 +++ b/binutils/elfedit.c
-@@ -441,6 +441,14 @@ static int
+@@ -483,6 +483,14 @@ static int
  check_file (const char *file_name, struct stat *statbuf_p)
  {
    struct stat statbuf;
@@ -68,7 +68,7 @@ index 5b2bf86..1eb6fa4 100644
  
    if (statbuf_p == NULL)
      statbuf_p = &statbuf;
-@@ -455,8 +463,13 @@ check_file (const char *file_name, struct stat *statbuf_p)
+@@ -497,8 +505,13 @@ check_file (const char *file_name, struct stat *statbuf_p)
        return 1;
      }
  
@@ -84,10 +84,10 @@ index 5b2bf86..1eb6fa4 100644
        return 1;
      }
 diff --git a/binutils/readelf.c b/binutils/readelf.c
-index 1533806..22db653 100644
+index 398a165..b20b72a 100644
 --- a/binutils/readelf.c
 +++ b/binutils/readelf.c
-@@ -16121,6 +16121,14 @@ process_file (char * file_name)
+@@ -16356,6 +16356,14 @@ process_file (char * file_name)
    struct stat statbuf;
    char armag[SARMAG];
    int ret;
@@ -102,7 +102,7 @@ index 1533806..22db653 100644
  
    if (stat (file_name, &statbuf) < 0)
      {
-@@ -16132,8 +16140,13 @@ process_file (char * file_name)
+@@ -16367,8 +16375,13 @@ process_file (char * file_name)
        return 1;
      }
  
@@ -118,5 +118,5 @@ index 1533806..22db653 100644
        return 1;
      }
 -- 
-2.3.5
+2.4.5
 

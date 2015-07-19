@@ -1,4 +1,4 @@
-From 0e8e5038842b84919642d193573f0f9bd3b3486c Mon Sep 17 00:00:00 2001
+From fbf93b5ab60aabda02af92e3daeee29e7a711f24 Mon Sep 17 00:00:00 2001
 From: Yuta NAKAI <nak5124@live.jp>
 Date: Sun, 19 Apr 2015 21:45:48 +0900
 Subject: [PATCH 3/6] MinGW: Use __MINGW_PRINTF_FORMAT for
@@ -18,7 +18,7 @@ Subject: [PATCH 3/6] MinGW: Use __MINGW_PRINTF_FORMAT for
  10 files changed, 36 insertions(+), 19 deletions(-)
 
 diff --git a/bfd/bfd-in.h b/bfd/bfd-in.h
-index 2e324cd..f3ab8b9 100644
+index ae99d1e..a20b599 100644
 --- a/bfd/bfd-in.h
 +++ b/bfd/bfd-in.h
 @@ -137,7 +137,7 @@ typedef BFD_HOST_U_64_BIT symvalue;
@@ -31,7 +31,7 @@ index 2e324cd..f3ab8b9 100644
  #else
  #define BFD_VMA_FMT "ll"
 diff --git a/bfd/bfd-in2.h b/bfd/bfd-in2.h
-index 122caa0..53ea954 100644
+index 85f2054..df19c88 100644
 --- a/bfd/bfd-in2.h
 +++ b/bfd/bfd-in2.h
 @@ -144,7 +144,7 @@ typedef BFD_HOST_U_64_BIT symvalue;
@@ -44,7 +44,7 @@ index 122caa0..53ea954 100644
  #else
  #define BFD_VMA_FMT "ll"
 diff --git a/binutils/dwarf.c b/binutils/dwarf.c
-index 5884140..c584d1a 100644
+index c3dc814..27af558 100644
 --- a/binutils/dwarf.c
 +++ b/binutils/dwarf.c
 @@ -164,7 +164,7 @@ get_encoded_value (unsigned char **pdata,
@@ -92,10 +92,10 @@ index 6e2b217..ee58b8b 100644
  	sprintf (buf, "0x%llx", (unsigned long long) vma);
        else if (unsignedp)
 diff --git a/binutils/readelf.c b/binutils/readelf.c
-index 22db653..865d0f5 100644
+index b20b72a..6bd9371 100644
 --- a/binutils/readelf.c
 +++ b/binutils/readelf.c
-@@ -1140,7 +1140,7 @@ dump_relocations (FILE * file,
+@@ -1141,7 +1141,7 @@ dump_relocations (FILE * file,
  		  : "%12.12lx  %12.12lx ",
  		  offset, inf);
  #elif BFD_HOST_64BIT_LONG_LONG
@@ -104,7 +104,7 @@ index 22db653..865d0f5 100644
  	  printf (do_wide
  		  ? "%16.16llx  %16.16llx "
  		  : "%12.12llx  %12.12llx ",
-@@ -11916,7 +11916,7 @@ dump_section_as_strings (Elf_Internal_Shdr * section, FILE * file)
+@@ -12095,7 +12095,7 @@ dump_section_as_strings (Elf_Internal_Shdr * section, FILE * file)
  	{
  	  size_t maxlen = end - data;
  
@@ -145,7 +145,7 @@ index 0e2c9a8..c914a97 100644
  # else
  	        printf ("%7I64x ", (unsigned long long) start);
 diff --git a/gas/as.h b/gas/as.h
-index 6de319e..3e7cb7a 100644
+index 635b2c5..4ab4c2a 100644
 --- a/gas/as.h
 +++ b/gas/as.h
 @@ -449,12 +449,21 @@ typedef struct _pseudo_type pseudo_typeS;
@@ -171,7 +171,7 @@ index 6de319e..3e7cb7a 100644
  #else /* __GNUC__ < 2 || defined(VMS) */
  
 diff --git a/gas/read.c b/gas/read.c
-index 2224c0e..a09d095 100644
+index 816c255..fb19c17 100644
 --- a/gas/read.c
 +++ b/gas/read.c
 @@ -4344,7 +4344,7 @@ emit_expr_with_reloc (expressionS *exp,
@@ -224,5 +224,5 @@ index 6cbea97..4fe8de2 100644
  #  define ATTRIBUTE_NULL_PRINTF(m, n)
  # endif /* GNUC >= 3.3 */
 -- 
-2.3.5
+2.4.5
 

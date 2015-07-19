@@ -1,14 +1,14 @@
-From 3a1f7f2014c52b0b08b1d300dabe4d333d61ee83 Mon Sep 17 00:00:00 2001
+From 37f01abdceeb8b86cb0156cec7c0b04f6711ccd5 Mon Sep 17 00:00:00 2001
 From: Yuta NAKAI <nak5124@live.jp>
 Date: Sun, 12 Apr 2015 11:44:14 +0900
-Subject: [PATCH 03/21] libiberty/Makefile.in: Don't install libiberty.
+Subject: [PATCH 04/21] libiberty/Makefile.in: Don't install libiberty.
 
 ---
  libiberty/Makefile.in | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/libiberty/Makefile.in b/libiberty/Makefile.in
-index f06cc69..a304eee 100644
+index 73d5ab8..b4ac203 100644
 --- a/libiberty/Makefile.in
 +++ b/libiberty/Makefile.in
 @@ -354,7 +354,7 @@ libiberty.html : $(srcdir)/libiberty.texi $(TEXISRC)
@@ -21,5 +21,5 @@ index f06cc69..a304eee 100644
  
  .PHONY: install install-strip
 -- 
-2.4.3
+2.4.5
 

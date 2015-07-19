@@ -31,120 +31,115 @@ function prepare_gcc() {
     # Apply patches.
     printf "===> Applying patches to GCC %s...\n" "${GCC_VER}"
     pushd "${BUILD_DIR}"/gcc/src/gcc-$GCC_VER > /dev/null
-    if [ ! -f "${BUILD_DIR}"/gcc/src/gcc-${GCC_VER}/patched_00.marker ]; then
-        patch -p1 -i "${PATCHES_DIR}"/gcc/0000-gcc-5-branch.patch > "${LOGS_DIR}"/gcc/gcc_patch.log 2>&1 || exit 1
-        touch "${BUILD_DIR}"/gcc/src/gcc-${GCC_VER}/patched_00.marker
-    fi
     if [ ! -f "${BUILD_DIR}"/gcc/src/gcc-${GCC_VER}/patched_01.marker ]; then
-        patch -p1 -i "${PATCHES_DIR}"/gcc/0001-config-sjlj.m4-New-file.-libgcc-configure.ac-Include.patch \
+        patch -p1 -i "${PATCHES_DIR}"/gcc/0001-libiberty-Modify-Makefile-for-mingw-w64.patch \
             >> "${LOGS_DIR}"/gcc/gcc_patch.log 2>&1 || exit 1
         touch "${BUILD_DIR}"/gcc/src/gcc-${GCC_VER}/patched_01.marker
     fi
     if [ ! -f "${BUILD_DIR}"/gcc/src/gcc-${GCC_VER}/patched_02.marker ]; then
-        # Export _ZTC*.
-        patch -p1 -i "${PATCHES_DIR}"/gcc/0002-libstdc-Export-_ZTC.patch >> "${LOGS_DIR}"/gcc/gcc_patch.log 2>&1 || exit 1
+        patch -p1 -i "${PATCHES_DIR}"/gcc/0002-Fixup-for-dw2-eh.patch >> "${LOGS_DIR}"/gcc/gcc_patch.log 2>&1 || exit 1
         touch "${BUILD_DIR}"/gcc/src/gcc-${GCC_VER}/patched_02.marker
     fi
     if [ ! -f "${BUILD_DIR}"/gcc/src/gcc-${GCC_VER}/patched_03.marker ]; then
-        # Do not install libiberty.
-        patch -p1 -i "${PATCHES_DIR}"/gcc/0003-libiberty-Makefile.in-Don-t-install-libiberty.patch \
-            >> "${LOGS_DIR}"/gcc/gcc_patch.log 2>&1 || exit 1
+        # Export _ZTC*.
+        patch -p1 -i "${PATCHES_DIR}"/gcc/0003-libstdc-Export-_ZTC.patch >> "${LOGS_DIR}"/gcc/gcc_patch.log 2>&1 || exit 1
         touch "${BUILD_DIR}"/gcc/src/gcc-${GCC_VER}/patched_03.marker
     fi
     if [ ! -f "${BUILD_DIR}"/gcc/src/gcc-${GCC_VER}/patched_04.marker ]; then
-        patch -p1 -i "${PATCHES_DIR}"/gcc/0004-gthr-posix.h-std-threads-Add-defined-__MINGW32__-gua.patch \
+        # Do not install libiberty.
+        patch -p1 -i "${PATCHES_DIR}"/gcc/0004-libiberty-Makefile.in-Don-t-install-libiberty.patch \
             >> "${LOGS_DIR}"/gcc/gcc_patch.log 2>&1 || exit 1
         touch "${BUILD_DIR}"/gcc/src/gcc-${GCC_VER}/patched_04.marker
     fi
     if [ ! -f "${BUILD_DIR}"/gcc/src/gcc-${GCC_VER}/patched_05.marker ]; then
-        # Don't make a lowercase backslashed path from argv[0] that then fail to strcmp with prefix(es) .. they're also ugly.
-        patch -p1 -i "${PATCHES_DIR}"/gcc/0005-libiberty-lrealpath.c-Don-t-make-a-lowercase-backsla.patch \
+        patch -p1 -i "${PATCHES_DIR}"/gcc/0005-gthr-posix.h-std-threads-Add-defined-__MINGW32__-gua.patch \
             >> "${LOGS_DIR}"/gcc/gcc_patch.log 2>&1 || exit 1
         touch "${BUILD_DIR}"/gcc/src/gcc-${GCC_VER}/patched_05.marker
     fi
     if [ ! -f "${BUILD_DIR}"/gcc/src/gcc-${GCC_VER}/patched_06.marker ]; then
-        # Make Windows behave the same as Posix in the consideration of whether
-        # folder "/exists/doesnt-exist/.." is a valid path.. in Posix, it isn't.
-        patch -p1 -i "${PATCHES_DIR}"/gcc/0006-libcpp-files.c-Make-Windows-behave-the-same-as-Posix.patch \
+        # Don't make a lowercase backslashed path from argv[0] that then fail to strcmp with prefix(es) .. they're also ugly.
+        patch -p1 -i "${PATCHES_DIR}"/gcc/0006-libiberty-lrealpath.c-Don-t-make-a-lowercase-backsla.patch \
             >> "${LOGS_DIR}"/gcc/gcc_patch.log 2>&1 || exit 1
         touch "${BUILD_DIR}"/gcc/src/gcc-${GCC_VER}/patched_06.marker
     fi
     if [ ! -f "${BUILD_DIR}"/gcc/src/gcc-${GCC_VER}/patched_07.marker ]; then
-        patch -p1 -i "${PATCHES_DIR}"/gcc/0007-gcc-Make-xmmintrin-header-cplusplus-compatible.patch \
+        # Make Windows behave the same as Posix in the consideration of whether
+        # folder "/exists/doesnt-exist/.." is a valid path.. in Posix, it isn't.
+        patch -p1 -i "${PATCHES_DIR}"/gcc/0007-libcpp-files.c-Make-Windows-behave-the-same-as-Posix.patch \
             >> "${LOGS_DIR}"/gcc/gcc_patch.log 2>&1 || exit 1
         touch "${BUILD_DIR}"/gcc/src/gcc-${GCC_VER}/patched_07.marker
     fi
     if [ ! -f "${BUILD_DIR}"/gcc/src/gcc-${GCC_VER}/patched_08.marker ]; then
-        patch -p1 -i "${PATCHES_DIR}"/gcc/0008-MinGW-Add-mcrtdll-option-for-msvcrt-stubbing.patch \
+        patch -p1 -i "${PATCHES_DIR}"/gcc/0008-gcc-Make-xmmintrin-header-cplusplus-compatible.patch \
             >> "${LOGS_DIR}"/gcc/gcc_patch.log 2>&1 || exit 1
         touch "${BUILD_DIR}"/gcc/src/gcc-${GCC_VER}/patched_08.marker
     fi
     if [ ! -f "${BUILD_DIR}"/gcc/src/gcc-${GCC_VER}/patched_09.marker ]; then
-        # Enable colorizing diagnostics.
-        patch -p1 -i "${PATCHES_DIR}"/gcc/0009-gcc-diagnostic-color.c-Enable-color-diagnostic-on-Mi.patch \
+        patch -p1 -i "${PATCHES_DIR}"/gcc/0009-MinGW-Add-mcrtdll-option-for-msvcrt-stubbing.patch \
             >> "${LOGS_DIR}"/gcc/gcc_patch.log 2>&1 || exit 1
         touch "${BUILD_DIR}"/gcc/src/gcc-${GCC_VER}/patched_09.marker
     fi
     if [ ! -f "${BUILD_DIR}"/gcc/src/gcc-${GCC_VER}/patched_10.marker ]; then
-        # Add /mingw{32,64}/local/{include,lib} to search dirs, and make relocatable perfectly.
-        patch -p1 -i "${PATCHES_DIR}"/gcc/0010-Add-mingw-32-64-local-include-lib-to-search-dirs-and.patch \
+        # Enable colorizing diagnostics.
+        patch -p1 -i "${PATCHES_DIR}"/gcc/0010-gcc-diagnostic-color.c-Enable-color-diagnostic-on-Mi.patch \
             >> "${LOGS_DIR}"/gcc/gcc_patch.log 2>&1 || exit 1
         touch "${BUILD_DIR}"/gcc/src/gcc-${GCC_VER}/patched_10.marker
     fi
     if [ ! -f "${BUILD_DIR}"/gcc/src/gcc-${GCC_VER}/patched_11.marker ]; then
-        # when building executables, not DLLs. Add --large-address-aware and --tsaware.
-        patch -p1 -i "${PATCHES_DIR}"/gcc/0011-MinGW-When-building-executables-not-DLLs.-Add-large-.patch \
+        # Add /mingw{32,64}/local/{include,lib} to search dirs, and make relocatable perfectly.
+        patch -p1 -i "${PATCHES_DIR}"/gcc/0011-Add-mingw-32-64-local-include-lib-to-search-dirs-and.patch \
             >> "${LOGS_DIR}"/gcc/gcc_patch.log 2>&1 || exit 1
         touch "${BUILD_DIR}"/gcc/src/gcc-${GCC_VER}/patched_11.marker
     fi
     if [ ! -f "${BUILD_DIR}"/gcc/src/gcc-${GCC_VER}/patched_12.marker ]; then
-        # Dynamically linking to libiconv.
-        patch -p1 -i "${PATCHES_DIR}"/gcc/0012-mingw-Dynamically-linking-to-libintl-and-libiconv.patch \
+        # when building executables, not DLLs. Add --large-address-aware and --tsaware.
+        patch -p1 -i "${PATCHES_DIR}"/gcc/0012-MinGW-When-building-executables-not-DLLs.-Add-large-.patch \
             >> "${LOGS_DIR}"/gcc/gcc_patch.log 2>&1 || exit 1
         touch "${BUILD_DIR}"/gcc/src/gcc-${GCC_VER}/patched_12.marker
     fi
     if [ ! -f "${BUILD_DIR}"/gcc/src/gcc-${GCC_VER}/patched_13.marker ]; then
-        # Enable nxcompat and (HE)ASLR by default.
-        patch -p1 -i "${PATCHES_DIR}"/gcc/0013-MinGW-Enable-nxcompat-and-HE-ASLR-by-default.patch \
+        # Dynamically linking to libiconv.
+        patch -p1 -i "${PATCHES_DIR}"/gcc/0013-mingw-Dynamically-linking-to-libintl-and-libiconv.patch \
             >> "${LOGS_DIR}"/gcc/gcc_patch.log 2>&1 || exit 1
         touch "${BUILD_DIR}"/gcc/src/gcc-${GCC_VER}/patched_13.marker
     fi
     if [ ! -f "${BUILD_DIR}"/gcc/src/gcc-${GCC_VER}/patched_14.marker ]; then
-        # Assume that target is windows 7 or later. XP has died, and nobody uses vista.
-        patch -p1 -i "${PATCHES_DIR}"/gcc/0014-MinGW-w64-Assume-that-target-is-windows-7-or-later.-.patch \
+        # Enable nxcompat and (HE)ASLR by default.
+        patch -p1 -i "${PATCHES_DIR}"/gcc/0014-MinGW-Enable-nxcompat-and-HE-ASLR-by-default.patch \
             >> "${LOGS_DIR}"/gcc/gcc_patch.log 2>&1 || exit 1
         touch "${BUILD_DIR}"/gcc/src/gcc-${GCC_VER}/patched_14.marker
     fi
     if [ ! -f "${BUILD_DIR}"/gcc/src/gcc-${GCC_VER}/patched_15.marker ]; then
-        patch -p1 -i "${PATCHES_DIR}"/gcc/0015-MinGW-Use-__MINGW_PRINTF_FORMAT-for-__USE_MINGW_ANSI.patch \
+        # Assume that target is windows 7 or later. XP has died, and nobody uses vista.
+        patch -p1 -i "${PATCHES_DIR}"/gcc/0015-MinGW-w64-Assume-that-target-is-windows-7-or-later.-.patch \
             >> "${LOGS_DIR}"/gcc/gcc_patch.log 2>&1 || exit 1
         touch "${BUILD_DIR}"/gcc/src/gcc-${GCC_VER}/patched_15.marker
     fi
     if [ ! -f "${BUILD_DIR}"/gcc/src/gcc-${GCC_VER}/patched_16.marker ]; then
-        # Don't search dirs under ${prefix} but ${build_sysroot}.
-        patch -p1 -i "${PATCHES_DIR}"/gcc/0016-configure-Search-dirs-under-build_sysroot-instead-of.patch \
+        patch -p1 -i "${PATCHES_DIR}"/gcc/0016-MinGW-Use-__MINGW_PRINTF_FORMAT-for-__USE_MINGW_ANSI.patch \
             >> "${LOGS_DIR}"/gcc/gcc_patch.log 2>&1 || exit 1
         touch "${BUILD_DIR}"/gcc/src/gcc-${GCC_VER}/patched_16.marker
     fi
     if [ ! -f "${BUILD_DIR}"/gcc/src/gcc-${GCC_VER}/patched_17.marker ]; then
-        # Disable automatic image base calculation.
-        patch -p1 -i "${PATCHES_DIR}"/gcc/0017-MinGW-Disable-automatic-image-base-calculation.patch \
+        # Don't search dirs under ${prefix} but ${build_sysroot}.
+        patch -p1 -i "${PATCHES_DIR}"/gcc/0017-configure-Search-dirs-under-build_sysroot-instead-of.patch \
             >> "${LOGS_DIR}"/gcc/gcc_patch.log 2>&1 || exit 1
         touch "${BUILD_DIR}"/gcc/src/gcc-${GCC_VER}/patched_17.marker
     fi
     if [ ! -f "${BUILD_DIR}"/gcc/src/gcc-${GCC_VER}/patched_18.marker ]; then
-        patch -p1 -i "${PATCHES_DIR}"/gcc/0018-gcc-Add-prefix-bindir-to-exec_prefix.patch \
+        # Disable automatic image base calculation.
+        patch -p1 -i "${PATCHES_DIR}"/gcc/0018-MinGW-Disable-automatic-image-base-calculation.patch \
             >> "${LOGS_DIR}"/gcc/gcc_patch.log 2>&1 || exit 1
         touch "${BUILD_DIR}"/gcc/src/gcc-${GCC_VER}/patched_18.marker
     fi
     if [ ! -f "${BUILD_DIR}"/gcc/src/gcc-${GCC_VER}/patched_19.marker ]; then
-        patch -p1 -i "${PATCHES_DIR}"/gcc/0019-gcc-Force-linking-to-libgcc_s_dw2-1.dll-on-mingw32-w.patch \
+        patch -p1 -i "${PATCHES_DIR}"/gcc/0019-gcc-Add-prefix-bindir-to-exec_prefix.patch \
             >> "${LOGS_DIR}"/gcc/gcc_patch.log 2>&1 || exit 1
         touch "${BUILD_DIR}"/gcc/src/gcc-${GCC_VER}/patched_19.marker
     fi
     if [ ! -f "${BUILD_DIR}"/gcc/src/gcc-${GCC_VER}/patched_20.marker ]; then
-        # https://gcc.gnu.org/bugzilla/show_bug.cgi?id=65882
-        patch -p1 -i "${PATCHES_DIR}"/gcc/0020-PR-c-65882.patch >> "${LOGS_DIR}"/gcc/gcc_patch.log 2>&1 || exit 1
+        patch -p1 -i "${PATCHES_DIR}"/gcc/0020-gcc-Force-linking-to-libgcc_s_dw2-1.dll-on-mingw32-w.patch \
+            >> "${LOGS_DIR}"/gcc/gcc_patch.log 2>&1 || exit 1
         touch "${BUILD_DIR}"/gcc/src/gcc-${GCC_VER}/patched_20.marker
     fi
     if [ ! -f "${BUILD_DIR}"/gcc/src/gcc-${GCC_VER}/patched_21.marker ]; then
@@ -338,9 +333,7 @@ function build_gcc() {
 
             # Arch specific config option.
             if [ "${_arch}" = 'i686' ]; then
-                # See https://gcc.gnu.org/ml/gcc-patches/2015-05/msg01212.html.
-                # local _ehconf='--disable-sjlj-exceptions --with-dwarf2'
-                local _ehconf='--with-dwarf2'
+                local _ehconf='--disable-sjlj-exceptions --with-dwarf2'
                 local _windres_cmd='windres -F pe-i386'
             else
                 local _ehconf=''

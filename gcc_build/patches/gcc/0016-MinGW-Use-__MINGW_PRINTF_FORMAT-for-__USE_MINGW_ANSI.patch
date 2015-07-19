@@ -1,16 +1,17 @@
-From 6a7c6f5196fb9f0d825db95beb302125ba28b396 Mon Sep 17 00:00:00 2001
+From 7e3ac331b8cd5398cf47c254589e4134af320b41 Mon Sep 17 00:00:00 2001
 From: Yuta NAKAI <nak5124@live.jp>
 Date: Sun, 12 Apr 2015 14:54:20 +0900
-Subject: [PATCH 15/21] MinGW: Use __MINGW_PRINTF_FORMAT for
+Subject: [PATCH 16/21] MinGW: Use __MINGW_PRINTF_FORMAT for
  __USE_MINGW_ANSI_STDIO.
 
 ---
  gcc/collect-utils.h                  |  4 ++++
+ gcc/genmatch.c                       |  4 ++++
  include/ansidecl.h                   | 22 +++++++++++++++-------
  libgcc/config/libbid/bid_functions.h |  2 +-
  libgcc/libgcov-driver-system.c       |  6 +++++-
  lto-plugin/lto-plugin.c              |  2 +-
- 5 files changed, 26 insertions(+), 10 deletions(-)
+ 6 files changed, 30 insertions(+), 10 deletions(-)
 
 diff --git a/gcc/collect-utils.h b/gcc/collect-utils.h
 index 2b3ed44..79e2789 100644
@@ -28,6 +29,23 @@ index 2b3ed44..79e2789 100644
  extern void fatal_signal (int);
  
  extern struct pex_obj *collect_execute (const char *, char **,
+diff --git a/gcc/genmatch.c b/gcc/genmatch.c
+index 560a371..ab12cf6 100644
+--- a/gcc/genmatch.c
++++ b/gcc/genmatch.c
+@@ -53,8 +53,12 @@ static struct line_maps *line_table;
+ 
+ static bool
+ #if GCC_VERSION >= 4001
++#ifdef __MINGW32__
++__attribute__((format (__MINGW_PRINTF_FORMAT, 6, 0)))
++#else
+ __attribute__((format (printf, 6, 0)))
+ #endif
++#endif
+ error_cb (cpp_reader *, int errtype, int, source_location location,
+ 	  unsigned int, const char *msg, va_list *ap)
+ {
 diff --git a/include/ansidecl.h b/include/ansidecl.h
 index 04d75c3..3d0b61b 100644
 --- a/include/ansidecl.h
@@ -112,5 +130,5 @@ index 8d957402..cb09f6c 100644
  #else
  #define PRI_LL "ll"
 -- 
-2.4.3
+2.4.5
 

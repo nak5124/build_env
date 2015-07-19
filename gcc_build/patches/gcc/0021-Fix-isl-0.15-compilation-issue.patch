@@ -1,4 +1,4 @@
-From db11004d7945cd758104e5a4ec42cfa8472bef85 Mon Sep 17 00:00:00 2001
+From 6657a222a2a7f054de54b3bb667f2507e0c5b05a Mon Sep 17 00:00:00 2001
 From: Yuta NAKAI <nak5124@live.jp>
 Date: Sat, 13 Jun 2015 16:11:31 +0900
 Subject: [PATCH 21/21] Fix isl 0.15 compilation issue.
@@ -146,5 +146,5 @@ index c8f0617..2195294 100644
  
  #include "system.h"
 -- 
-2.4.3
+2.4.5
 

@@ -1,4 +1,4 @@
-From ee46b9d56d15647b159f04a9ca530ad633c94220 Mon Sep 17 00:00:00 2001
+From 5d98688dc9b77371d9b9a9fcfbfe55e0e37527e6 Mon Sep 17 00:00:00 2001
 From: Yuta NAKAI <nak5124@live.jp>
 Date: Sun, 19 Apr 2015 21:59:01 +0900
 Subject: [PATCH 5/6] MinGW: Disable automatic image base calculation.
@@ -13,7 +13,7 @@ Subject: [PATCH 5/6] MinGW: Disable automatic image base calculation.
  6 files changed, 14 insertions(+), 14 deletions(-)
 
 diff --git a/bfd/configure b/bfd/configure
-index be53faf..4e6ed47 100755
+index eeeb89a..4c19cf1 100755
 --- a/bfd/configure
 +++ b/bfd/configure
 @@ -9168,7 +9168,7 @@ _LT_EOF
@@ -101,7 +101,7 @@ index 80c9aaf..a114f76 100755
  	ld_shlibs=no
        fi
 diff --git a/ld/configure b/ld/configure
-index a558d28..b1ded00 100755
+index 8b3dd7b..5741765 100755
 --- a/ld/configure
 +++ b/ld/configure
 @@ -9458,7 +9458,7 @@ _LT_EOF
@@ -141,7 +141,7 @@ index a558d28..b1ded00 100755
            ld_shlibs_CXX=no
          fi
 diff --git a/opcodes/configure b/opcodes/configure
-index f479a0b..86bfbbc 100755
+index 7a016bf..13c6727 100755
 --- a/opcodes/configure
 +++ b/opcodes/configure
 @@ -8891,7 +8891,7 @@ _LT_EOF
@@ -163,5 +163,5 @@ index f479a0b..86bfbbc 100755
  	ld_shlibs=no
        fi
 -- 
-2.3.5
+2.4.5
 

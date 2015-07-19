@@ -36,7 +36,7 @@ function prepare_binutils() {
     patch -p1 -i "${PATCHES_DIR}"/binutils/0005-MinGW-Disable-automatic-image-base-calculation.patch \
         >> "${LOGS_DIR}"/binutils/binutils_patch.log 2>&1 || exit 1
     # Don't make a lowercase backslashed path from argv[0] that then fail to strcmp with prefix(es) .. they're also ugly.
-    patch -p1 -i "${PATCHES_DIR}"/binutils/0006-libiberty-lrealpath.c-Don-t-make-a-lowercase.patch \
+    patch -p1 -i "${PATCHES_DIR}"/binutils/0006-libiberty-lrealpath.c-Don-t-make-a-lowercase-backsla.patch \
         >> "${LOGS_DIR}"/binutils/binutils_patch.log 2>&1 || exit 1
     popd > /dev/null # "${BUILD_DIR}"/binutils/src/binutils-$BINUTILS_VER
     echo 'done'
@@ -91,9 +91,6 @@ function build_binutils() {
         prepare_binutils
     fi
 
-    MSYS2_ARG_CONV_EXCL="LIB_PATH="
-    export MSYS2_ARG_CONV_EXCL
-
     local _arch
     for _arch in ${TARGET_ARCH[@]}
     do
@@ -124,40 +121,40 @@ function build_binutils() {
 
             # Configure.
             printf "===> Configuring Binutils %s...\n" "${_arch}"
-            ../src/binutils-${BINUTILS_VER}/configure                  \
-                --prefix=/mingw$_bitval                                \
-                --build=${_arch}-w64-mingw32                           \
-                --host=${_arch}-w64-mingw32                            \
-                --target=${_arch}-w64-mingw32                          \
-                --enable-ld=default                                    \
-                --enable-lto                                           \
-                --disable-werror                                       \
-                --enable-shared                                        \
-                --disable-static                                       \
-                --enable-fast-install                                  \
-                --enable-plugins                                       \
-                ${_64_bit_bfd}                                         \
-                --enable-secureplt                                     \
-                --enable-install-libbfd                                \
-                --disable-nls                                          \
-                --disable-rpath                                        \
-                --enable-got=target                                    \
-                --disable-multilib                                     \
-                --disable-install-libiberty                            \
-                --disable-gdb                                          \
-                --disable-libdecnumber                                 \
-                --disable-readline                                     \
-                --disable-sim                                          \
-                --with-stage1-ldflags=no                               \
-                --with-build-sysroot="${DST_DIR}"/mingw$_bitval        \
-                --with-gnu-ld                                          \
-                --with-system-zlib                                     \
-                --with-libiconv-prefix="${DST_DIR}"/mingw$_bitval      \
-                --with-lib-path="${_libpath}"                          \
-                --with-sysroot=/mingw$_bitval                          \
-                CFLAGS="${CFLAGS_} ${CPPFLAGS_}"                       \
-                LDFLAGS="${LDFLAGS_}"                                  \
-                CXXFLAGS="${CXXFLAGS_} ${CPPFLAGS_}"                   \
+            ../src/binutils-${BINUTILS_VER}/configure             \
+                --prefix=/mingw$_bitval                           \
+                --build=${_arch}-w64-mingw32                      \
+                --host=${_arch}-w64-mingw32                       \
+                --target=${_arch}-w64-mingw32                     \
+                --enable-ld=default                               \
+                --enable-lto                                      \
+                --disable-werror                                  \
+                --enable-shared                                   \
+                --disable-static                                  \
+                --enable-fast-install                             \
+                --enable-plugins                                  \
+                ${_64_bit_bfd}                                    \
+                --enable-secureplt                                \
+                --enable-install-libbfd                           \
+                --disable-nls                                     \
+                --disable-rpath                                   \
+                --enable-got=target                               \
+                --disable-multilib                                \
+                --disable-install-libiberty                       \
+                --disable-gdb                                     \
+                --disable-libdecnumber                            \
+                --disable-readline                                \
+                --disable-sim                                     \
+                --with-stage1-ldflags=no                          \
+                --with-build-sysroot="${DST_DIR}"/mingw$_bitval   \
+                --with-gnu-ld                                     \
+                --with-system-zlib                                \
+                --with-libiconv-prefix="${DST_DIR}"/mingw$_bitval \
+                --with-lib-path="${_libpath}"                     \
+                --with-sysroot=/mingw$_bitval                     \
+                CFLAGS="${CFLAGS_} ${CPPFLAGS_}"                  \
+                LDFLAGS="${LDFLAGS_}"                             \
+                CXXFLAGS="${CXXFLAGS_} ${CPPFLAGS_}"              \
                 > "${LOGS_DIR}"/binutils/binutils_config_${_arch}.log 2>&1 || exit 1
             echo 'done'
 
@@ -215,8 +212,6 @@ function build_binutils() {
             fi
         fi
     done
-
-    unset MSYS2_ARG_CONV_EXCL
 
     cd "${ROOT_DIR}"
     return 0
