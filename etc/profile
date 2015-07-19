@@ -35,7 +35,7 @@ ACLOCAL_PATH="/usr/share/aclocal"
 if [ -n "${MSYSTEM}" ] ; then
     case "${MSYSTEM}" in
         MINGW32)
-            PATH="/mingw32/local/bin:/mingw32/bin:${HOME}/winn/mercurial:${MSYS2_PATH}:${HOME}/winn/cmake/bin:${CMD_PATH}:${INNO_DIR}:/d/encode/tools"
+            PATH="/mingw32/local/bin:/mingw32/bin:${HOME}/winn/cmake/bin:${HOME}/winn/mercurial:${MSYS2_PATH}:${CMD_PATH}:${INNO_DIR}:/d/encode/tools"
             ACLOCAL_PATH="/mingw32/local/share/aclocal:/mingw32/share/aclocal:${ACLOCAL_PATH}"
             PKG_CONFIG_PATH="/mingw32/local/lib/pkgconfig:/mingw32/lib/pkgconfig"
             MANPATH="/mingw32/share/man:${MANPATH}"
@@ -44,7 +44,7 @@ if [ -n "${MSYSTEM}" ] ; then
             CHOST=${CARCH}-w64-mingw32
             ;;
         MINGW64)
-            PATH="/mingw64/local/bin:/mingw64/bin:${HOME}/winn/mercurial:${MSYS2_PATH}:${HOME}/winn/cmake/bin:${CMD_PATH}:${INNO_DIR}:/d/encode/tools"
+            PATH="/mingw64/local/bin:/mingw64/bin:${HOME}/winn/cmake/bin:${HOME}/winn/mercurial:${MSYS2_PATH}:${CMD_PATH}:${INNO_DIR}:/d/encode/tools"
             ACLOCAL_PATH="/mingw64/local/share/aclocal:/mingw64/share/aclocal:${ACLOCAL_PATH}"
             PKG_CONFIG_PATH="/mingw64/local/lib/pkgconfig:/mingw64/lib/pkgconfig"
             MANPATH="/mingw64/share/man:${MANPATH}"
@@ -53,7 +53,7 @@ if [ -n "${MSYSTEM}" ] ; then
             CHOST=${CARCH}-w64-mingw32
             ;;
         MSYS)
-            PATH="${MSYS2_PATH}:/opt/bin:${HOME}/winn/mercurial:${HOME}/winn/cmake/bin:${CMD_PATH}"
+            PATH="${MSYS2_PATH}:/opt/bin:${HOME}/winn/cmake/bin:${HOME}/winn/mercurial:${CMD_PATH}"
             ACLOCAL_PATH="${ACLOCAL_PATH}"
             PKG_CONFIG_PATH="/usr/local/lib/pkgconfig:/usr/lib/pkgconfig:/lib/pkgconfig"
             MANPATH="${MANPATH}"
