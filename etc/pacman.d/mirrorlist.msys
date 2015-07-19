@@ -5,6 +5,7 @@
 
 ## Primary
 ## Sourceforge.net
+Server = https://www2.futureware.at/~nickoe/msys2-mirror/msys2-$arch
 Server = http://downloads.sourceforge.net/project/msys2/REPOS/MSYS2/$arch
 Server = http://jaist.dl.sourceforge.net/project/msys2/REPOS/MSYS2/$arch
 Server = http://www.mirrorservice.org/sites/download.sourceforge.net/pub/sourceforge/m/ms/msys2/REPOS/MSYS2/$arch

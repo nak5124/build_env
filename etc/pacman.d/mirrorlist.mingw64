@@ -5,6 +5,7 @@
 
 ## Primary
 ## Sourceforge.net
+Server = https://www2.futureware.at/~nickoe/msys2-mirror/mingw64
 Server = http://downloads.sourceforge.net/project/msys2/REPOS/MINGW/x86_64
 Server = http://jaist.dl.sourceforge.net/project/msys2/REPOS/MINGW/x86_64
 Server = http://www.mirrorservice.org/sites/download.sourceforge.net/pub/sourceforge/m/ms/msys2/REPOS/MINGW/x86_64
