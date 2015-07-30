@@ -1,7 +1,7 @@
 From 50df47712d0663a5a97aaee797cb3ef3a6fb620f Mon Sep 17 00:00:00 2001
 From: Yuta NAKAI <nak5124@live.jp>
 Date: Sun, 12 Apr 2015 14:38:53 +0900
-Subject: [PATCH 12/21] MinGW: When building executables, not DLLs. Add
+Subject: [PATCH 12/22] MinGW: When building executables, not DLLs. Add
  --large-address-aware and --tsaware.
 
 ---

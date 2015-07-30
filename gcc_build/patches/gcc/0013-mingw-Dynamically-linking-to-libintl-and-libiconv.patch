@@ -1,7 +1,7 @@
 From 0a23297d659d600a606ba74f0d60fab3bc0853db Mon Sep 17 00:00:00 2001
 From: Yuta NAKAI <nak5124@live.jp>
 Date: Sun, 12 Apr 2015 14:40:59 +0900
-Subject: [PATCH 13/21] mingw: Dynamically linking to libintl and libiconv.
+Subject: [PATCH 13/22] mingw: Dynamically linking to libintl and libiconv.
 
 ---
  gcc/configure          |  8 ++++----

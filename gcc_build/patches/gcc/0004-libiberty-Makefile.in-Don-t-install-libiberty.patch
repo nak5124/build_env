@@ -1,7 +1,7 @@
 From 37f01abdceeb8b86cb0156cec7c0b04f6711ccd5 Mon Sep 17 00:00:00 2001
 From: Yuta NAKAI <nak5124@live.jp>
 Date: Sun, 12 Apr 2015 11:44:14 +0900
-Subject: [PATCH 04/21] libiberty/Makefile.in: Don't install libiberty.
+Subject: [PATCH 04/22] libiberty/Makefile.in: Don't install libiberty.
 
 ---
  libiberty/Makefile.in | 2 +-

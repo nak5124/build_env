@@ -1,7 +1,7 @@
 From 3258e2d13b8d86c4c5c2da7681dde4909ed8feb2 Mon Sep 17 00:00:00 2001
 From: Yuta NAKAI <nak5124@live.jp>
 Date: Mon, 29 Jun 2015 20:55:30 +0900
-Subject: [PATCH 02/21] Fixup for dw2 eh.
+Subject: [PATCH 02/22] Fixup for dw2 eh.
 
 ---
  libgcc/libgcc2.c | 6 +++---

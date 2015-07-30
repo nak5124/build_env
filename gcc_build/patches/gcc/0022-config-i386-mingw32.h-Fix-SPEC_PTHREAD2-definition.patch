@@ -1,0 +1,79 @@
+From e6ae98d60af74e3bc31582528ebcfe306931cf92 Mon Sep 17 00:00:00 2001
+From: Yuta NAKAI <nak5124@live.jp>
+Date: Mon, 20 Jul 2015 15:20:16 +0900
+Subject: [PATCH 22/22] config/i386/mingw32.h: Fix SPEC_PTHREAD2 definition.
+
+---
+ gcc/config/i386/mingw-w64.h |  6 ++----
+ gcc/config/i386/mingw32.h   | 18 ++++++++++--------
+ 2 files changed, 12 insertions(+), 12 deletions(-)
+
+diff --git a/gcc/config/i386/mingw-w64.h b/gcc/config/i386/mingw-w64.h
+index f0cfc2d..2a00493 100644
+--- a/gcc/config/i386/mingw-w64.h
++++ b/gcc/config/i386/mingw-w64.h
+@@ -24,8 +24,7 @@ along with GCC; see the file COPYING3.  If not see
+ #undef CPP_SPEC
+ #define CPP_SPEC "%{posix:-D_POSIX_SOURCE} %{mthreads:-D_MT} " \
+ 		 "%{municode:-DUNICODE} " \
+-		 "%{" SPEC_PTHREAD1 ":-D_REENTRANT} " \
+-		 "%{" SPEC_PTHREAD2 ":-U_REENTRANT} "
++		 PTHREAD_CPP_SPEC
+ 
+ #undef STARTFILE_SPEC
+ #define STARTFILE_SPEC "%{shared|mdll:dllcrt2%O%s} \
+@@ -43,8 +42,7 @@ along with GCC; see the file COPYING3.  If not see
+ #define ASM_SPEC "%{m32:--32} %{m64:--64}"
+ 
+ #undef LIB_SPEC
+-#define LIB_SPEC "%{pg:-lgmon} %{" SPEC_PTHREAD1 ":-lpthread} " \
+-		 "%{" SPEC_PTHREAD2 ": } " \
++#define LIB_SPEC "%{pg:-lgmon} %{" SPEC_PTHREAD ":-lpthread} " \
+ 		 "%{mwindows:-lgdi32 -lcomdlg32} " \
+      "%{fvtable-verify=preinit:-lvtv -lpsapi; \
+         fvtable-verify=std:-lvtv -lpsapi} " \
+diff --git a/gcc/config/i386/mingw32.h b/gcc/config/i386/mingw32.h
+index b15cde0..b040e9a 100644
+--- a/gcc/config/i386/mingw32.h
++++ b/gcc/config/i386/mingw32.h
+@@ -53,12 +53,16 @@ along with GCC; see the file COPYING3.  If not see
+     }								\
+   while (0)
+ 
++#undef PTHREAD_CPP_SPEC
++#undef SPEC_PTHREAD
+ #ifndef TARGET_USE_PTHREAD_BY_DEFAULT
+-#define SPEC_PTHREAD1 "pthread"
+-#define SPEC_PTHREAD2 "!no-pthread"
++#define PTHREAD_CPP_SPEC "%{pthread:-D_REENTRANT} %{!pthread:-U_REENTRANT} \
++  %{no-pthread:-U_REENTRANT}"
++#define SPEC_PTHREAD "pthread"
+ #else
+-#define SPEC_PTHREAD1 "!no-pthread"
+-#define SPEC_PTHREAD2 "pthread"
++#define PTHREAD_CPP_SPEC "%{pthread:-D_REENTRANT} \
++  %{no-pthread:-U_REENTRANT} %{!no-pthread:-D_REENTRANT}"
++#define SPEC_PTHREAD "!no-pthread"
+ #endif
+ 
+ #undef SUB_LINK_ENTRY32
+@@ -98,14 +102,12 @@ along with GCC; see the file COPYING3.  If not see
+ 
+ #undef CPP_SPEC
+ #define CPP_SPEC "%{posix:-D_POSIX_SOURCE} %{mthreads:-D_MT} " \
+-		 "%{" SPEC_PTHREAD1 ":-D_REENTRANT} " \
+-		 "%{" SPEC_PTHREAD2 ": } "
++		 PTHREAD_CPP_SPEC
+ 
+ /* For Windows applications, include more libraries, but always include
+    kernel32.  */
+ #undef LIB_SPEC
+-#define LIB_SPEC "%{pg:-lgmon} %{" SPEC_PTHREAD1 ":-lpthread} " \
+-		 "%{" SPEC_PTHREAD2 ": } " \
++#define LIB_SPEC "%{pg:-lgmon} %{" SPEC_PTHREAD ":-lpthread} " \
+ 		 "%{mwindows:-lgdi32 -lcomdlg32} " \
+      "%{fvtable-verify=preinit:-lvtv -lpsapi; \
+         fvtable-verify=std:-lvtv -lpsapi} " \
+-- 
+2.4.5
+
