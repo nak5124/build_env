@@ -1,7 +1,7 @@
 From 6657a222a2a7f054de54b3bb667f2507e0c5b05a Mon Sep 17 00:00:00 2001
 From: Yuta NAKAI <nak5124@live.jp>
 Date: Sat, 13 Jun 2015 16:11:31 +0900
-Subject: [PATCH 21/22] Fix isl 0.15 compilation issue.
+Subject: [PATCH 21/23] Fix isl 0.15 compilation issue.
 
 ---
  gcc/graphite-dependences.c       | 10 +++++-----
@@ -146,5 +146,5 @@ index c8f0617..2195294 100644
  
  #include "system.h"
 -- 
-2.4.5
+2.5.0
 

@@ -152,6 +152,11 @@ function prepare_gcc() {
             >> "${LOGS_DIR}"/gcc/gcc_patch.log 2>&1 || exit 1
         touch "${BUILD_DIR}"/gcc/src/gcc-${GCC_VER}/patched_22.marker
     fi
+    if [ ! -f "${BUILD_DIR}"/gcc/src/gcc-${GCC_VER}/patched_23.marker ]; then
+        patch -p1 -i "${PATCHES_DIR}"/gcc/0023-gcc-Fix-using-large-pch.patch \
+            >> "${LOGS_DIR}"/gcc/gcc_patch.log 2>&1 || exit 1
+        touch "${BUILD_DIR}"/gcc/src/gcc-${GCC_VER}/patched_23.marker
+    fi
     popd > /dev/null # "${BUILD_DIR}"/gcc/src/gcc-$GCC_VER
     echo 'done'
 

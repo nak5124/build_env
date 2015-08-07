@@ -1,7 +1,7 @@
 From f070c4be4453f5d178a6e0238a67ef5a9da9f585 Mon Sep 17 00:00:00 2001
 From: Yuta NAKAI <nak5124@live.jp>
 Date: Sun, 12 Apr 2015 15:25:08 +0900
-Subject: [PATCH 18/22] MinGW: Disable automatic image base calculation.
+Subject: [PATCH 18/23] MinGW: Disable automatic image base calculation.
 
 ---
  gcc/configure          | 8 ++++----
@@ -158,5 +158,5 @@ index 2683520..38f531d 100755
  	ld_shlibs=no
        fi
 -- 
-2.4.5
+2.5.0
 

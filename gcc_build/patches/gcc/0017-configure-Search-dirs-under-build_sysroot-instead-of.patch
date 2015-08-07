@@ -1,7 +1,7 @@
 From f88252ea370ce0ee6f81670f6cea10a84a3d19cc Mon Sep 17 00:00:00 2001
 From: Yuta NAKAI <nak5124@live.jp>
 Date: Sun, 12 Apr 2015 14:25:35 +0900
-Subject: [PATCH 17/22] configure: Search dirs under ${build_sysroot} instead
+Subject: [PATCH 17/23] configure: Search dirs under ${build_sysroot} instead
  of ${prefix}.
 
 ---
@@ -81,5 +81,5 @@ index 9d73191..45afab2 100755
  
  
 -- 
-2.4.5
+2.5.0
 

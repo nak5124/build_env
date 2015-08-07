@@ -1,7 +1,7 @@
 From e6ae98d60af74e3bc31582528ebcfe306931cf92 Mon Sep 17 00:00:00 2001
 From: Yuta NAKAI <nak5124@live.jp>
 Date: Mon, 20 Jul 2015 15:20:16 +0900
-Subject: [PATCH 22/22] config/i386/mingw32.h: Fix SPEC_PTHREAD2 definition.
+Subject: [PATCH 22/23] config/i386/mingw32.h: Fix SPEC_PTHREAD2 definition.
 
 ---
  gcc/config/i386/mingw-w64.h |  6 ++----
@@ -75,5 +75,5 @@ index b15cde0..b040e9a 100644
       "%{fvtable-verify=preinit:-lvtv -lpsapi; \
          fvtable-verify=std:-lvtv -lpsapi} " \
 -- 
-2.4.5
+2.5.0
 

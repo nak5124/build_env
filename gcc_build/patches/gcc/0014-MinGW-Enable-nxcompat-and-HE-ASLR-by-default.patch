@@ -1,7 +1,7 @@
 From 071294570e695fd80d315ea460f334c5bc8a04cb Mon Sep 17 00:00:00 2001
 From: Yuta NAKAI <nak5124@live.jp>
 Date: Sun, 12 Apr 2015 14:46:07 +0900
-Subject: [PATCH 14/22] MinGW: Enable nxcompat and (HE)ASLR by default.
+Subject: [PATCH 14/23] MinGW: Enable nxcompat and (HE)ASLR by default.
 
 ---
  gcc/config/i386/mingw-w64.h | 17 +++++++++++++++--
@@ -86,5 +86,5 @@ index c6e9a64..eb58fcc 100644
  /* Include in the mingw32 libraries with libgcc */
  #ifdef ENABLE_SHARED_LIBGCC
 -- 
-2.4.5
+2.5.0
 
