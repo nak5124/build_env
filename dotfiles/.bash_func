@@ -1,0 +1,230 @@
+# for makepkg
+function addpkg() {
+    local -r _pkgfile="${1}"
+
+    local -r _pkgname="${_pkgfile##*/}"
+    local -r _MYPKG_PATH="${HOME}"/.mypackages
+
+    if [ -z "${_pkgfile}" ]; then
+        echo 'addpkg: pkgfile is not specified!'
+        return -1
+    fi
+
+    case "${_pkgname}" in
+        mingw32*)
+            mv -f "${_pkgfile}" "${_MYPKG_PATH}"/mingw32
+            repo-add "${_MYPKG_PATH}"/mingw32/mingw32_Takuan.db.tar.xz "${_MYPKG_PATH}"/mingw32/$_pkgname
+            ;;
+        mingw64*)
+            mv -f "${_pkgfile}" "${_MYPKG_PATH}"/mingw64
+            repo-add "${_MYPKG_PATH}"/mingw64/mingw64_Takuan.db.tar.xz "${_MYPKG_PATH}"/mingw64/$_pkgname
+            ;;
+        *)
+            mv -f "${_pkgfile}" "${_MYPKG_PATH}"/msys
+            repo-add "${_MYPKG_PATH}"/msys/msys_Takuan.db.tar.xz "${_MYPKG_PATH}"/msys/$_pkgname
+            ;;
+    esac
+
+    return 0
+}
+
+# ldd for i686
+function ldd32() {
+    /usr/local/bin32/ldd "$@" | sed 's| /cygdrive| |g' | sed 's| /c/msys2| |g'
+}
+
+# git
+function git_sub_update() {
+    git submodule foreach --recursive git clean -fdx
+    git submodule foreach --recursive git reset --hard
+    git submodule foreach --recursive git fetch --tags
+    git submodule update --init --recursive
+}
+
+# bak
+function bak_rename() {
+    if [ ! -f "${1}" -a ! -d "${1}" ]; then
+        printf "%s is not a regular file or directory...\n" "${1}"
+        return -1
+    fi
+
+    mv "${1}" "${1}".bak
+
+    if [ $? != 0 ]; then
+        printf "Error: cannot rename %s...\n" "${1}"
+        return 1
+    fi
+    return 0
+}
+
+function bak_restore() {
+    if [ ! -f "${1}" -a ! -d "${1}" ]; then
+        printf "%s is not a regular file or directory...\n" "${1}"
+        return -1
+    fi
+
+    local -r _ext='.'"${1##*.}"
+    if [ "${_ext}" != '.bak' ]; then
+        printf "filename extension of %s is not .bak\n" "${1}"
+        return 1
+    fi
+
+    mv "${1}" "${1%${_ext}}"
+
+    if [ $? != 0 ]; then
+        printf "Error: cannot rename %s...\n" "${1}"
+        return 2
+    fi
+    return 0
+}
+
+
+# Win32 apps
+
+# TVTest
+function tv_t() {
+    start /d/PT2/TVTest/TVTest.exe //d BonDriver_PT-T.dll
+
+    local _exists=false
+    if [ -f /tmp/win32applist ] ; then
+        local -i i=0
+        local -a list
+        while read line
+        do
+            list[i]=$line
+            i=$((${i} + 1))
+        done < /tmp/win32applist
+        for (( i = 0; i < ${#list[*]}; i++ ))
+        do
+            if [ "${list[${i}]}" = "TVTest" ] ; then
+                _exists=true
+            fi
+        done
+    fi
+    if ! $_exists ; then
+        echo TVTest >> /tmp/win32applist
+    fi
+}
+
+function tv_bs() {
+    start /d/PT2/TVTest/TVTest.exe //d BonDriver_PT-S.dll //chspace 0 //rch 11
+
+    local _exists=false
+    if [ -f /tmp/win32applist ] ; then
+        local -i i=0
+        local -a list
+        while read line
+        do
+            list[i]=$line
+            i=$((${i} + 1))
+        done < /tmp/win32applist
+        for (( i = 0; i < ${#list[*]}; i++ ))
+        do
+            if [ "${list[${i}]}" = "TVTest" ] ; then
+                _exists=true
+            fi
+        done
+    fi
+    if ! $_exists ; then
+        echo TVTest >> /tmp/win32applist
+    fi
+}
+
+function tv_cs() {
+    start /d/PT2/TVTest/TVTest.exe //d BonDriver_PT-S.dll //chspace 1 //rch 330
+
+    local _exists=false
+    if [ -f /tmp/win32applist ] ; then
+        local -i i=0
+        local -a list
+        while read line
+        do
+            list[i]=$line
+            i=$((${i} + 1))
+        done < /tmp/win32applist
+        for (( i = 0; i < ${#list[*]}; i++ ))
+        do
+            if [ "${list[${i}]}" = "TVTest" ] ; then
+                _exists=true
+            fi
+        done
+    fi
+    if ! $_exists ; then
+        echo TVTest >> /tmp/win32applist
+    fi
+}
+
+# firefox
+function firefox() {
+    start /c/firefox/firefox.exe -p nightly_x64
+
+    local _exists=false
+    if [ -f /tmp/win32applist ] ; then
+        local -i i=0
+        local -a list
+        while read line
+        do
+            list[i]=$line
+            i=$((${i} + 1))
+        done < /tmp/win32applist
+        for (( i = 0; i < ${#list[*]}; i++ ))
+        do
+            if [ "${list[${i}]}" = "firefox" ] ; then
+                _exists=true
+            fi
+        done
+    fi
+    if ! $_exists ; then
+        echo firefox >> /tmp/win32applist
+    fi
+}
+
+# mpc-hc
+function play() {
+    start /d/Program_Files_portable/mpc-hc/x64/mpc-hc64.exe "$@"
+
+    local _exists=false
+    if [ -f /tmp/win32applist ] ; then
+        local -i i=0
+        local -a list
+        while read line
+        do
+            list[i]=$line
+            i=$((${i} + 1))
+        done < /tmp/win32applist
+        for (( i = 0; i < ${#list[*]}; i++ ))
+        do
+            if [ "${list[${i}]}" = "mpc-hc" ] ; then
+                _exists=true
+            fi
+        done
+    fi
+    if ! $_exists ; then
+        echo mpc-hc >> /tmp/win32applist
+    fi
+}
+
+# notepad++
+function nppp() {
+    start /c/progra~2/Notepad++/notepad++.exe "$@"
+
+    local _exists=false
+    if [ -f /tmp/win32applist ] ; then
+        local -i i=0
+        local -a list
+        while read line
+        do
+            list[i]=$line
+            i=$((${i} + 1))
+        done < /tmp/win32applist
+        for (( i = 0; i < ${#list[*]}; i++ ))
+        do
+            if [ "${list[${i}]}" = "notepad++" ] ; then
+                _exists=true
+            fi
+        done
+    fi
+    if ! $_exists ; then
+        echo notepad++ >> /tmp/win32applist
+    fi
+}

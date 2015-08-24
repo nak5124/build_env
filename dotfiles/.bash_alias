@@ -1,0 +1,49 @@
+# PATH
+alias cpath='source cpath'
+
+# ps
+alias ps='procps u'
+
+# ls
+alias ls='ls -CF -a --color=auto --show-control-chars'
+alias ll='ls -AlFh --show-control-chars --color=auto'
+alias la='ls -CFal'
+alias sl='erutaso -Fa'
+alias dir='ls --color=auto --format=vertical'
+alias vdir='ls --color=auto --format=long'
+alias l='ls -CF'
+
+# tree
+alias tree='tree -la'
+
+# df/du
+alias df='df -h'
+alias du='du -h'
+
+# misc
+alias whence='type -a'
+alias grep='grep --color'
+alias egrep='egrep --color'
+alias fgrep='fgrep --color'
+
+# less
+alias less='less -r'
+LESSHISTFILE=/tmp/.lesshst
+export LESSHISTFILE
+
+# pacman
+alias pacman_mingw64='pacman --root $HOME/.pacman --cachedir $HOME/.pacman/var/cache/pacman/pkg --config $HOME/.pacman/pacman.conf'
+
+# makepkg
+alias makepkg='makepkg --skippgpcheck --skipchecksums --nocheck'
+
+# tar
+alias tar_lzip='tar xf'
+alias tar_bz2='tar xjf'
+alias tar_gz='tar xzf'
+alias tar_lzma='tar xf'
+alias tar_xz='tar Jxf'
+
+# omake
+alias sanchi='clear; \cat /usr/local/bin/sanchi.txt'
+alias nde='clear; \cat /usr/local/bin/nde.txt'
