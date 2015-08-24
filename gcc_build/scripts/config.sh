@@ -33,7 +33,7 @@ declare -r BUILD_DIR="${ROOT_DIR}"/build
 declare -r DST_DIR="${ROOT_DIR}"/dst
 
 # BUILDFLAGS
-declare -r CPPFLAGS_='-D__MINGW_PRINTF_LOCKING=1 -D__USE_MINGW_ANSI_STDIO=1 -D_FORTIFY_SOURCE=2 -D__MINGW_USE_VC2005_COMPAT=1 -D_FILE_OFFSET_BITS=64 -DWINVER=0x0601 -D_WIN32_WINNT=0x0601 -D_GNU_SOURCE=1 -D_BSD_SOURCE=1 -D_POSIX_SOURCE=1 -D_POSIX_C_SOURCE=200809L -D_XOPEN_SOURCE=700'
+declare -r CPPFLAGS_='-D__USE_MINGW_ANSI_STDIO=1 -D_FORTIFY_SOURCE=2 -D__MINGW_USE_VC2005_COMPAT=1 -D_FILE_OFFSET_BITS=64 -DWINVER=0x0601 -D_WIN32_WINNT=0x0601 -D_GNU_SOURCE=1 -D_BSD_SOURCE=1 -D_POSIX_SOURCE=1 -D_POSIX_C_SOURCE=200809L -D_XOPEN_SOURCE=700'
 declare -r CFLAGS_='-pipe -Os -fomit-frame-pointer -foptimize-strlen -fno-fast-math -fno-math-errno -fno-signed-zeros -fno-tree-vectorize'
 declare -r CXXFLAGS_="${CFLAGS_}"
 declare -r LDFLAGS_='-Wl,-O1,--sort-common,--as-needed,--no-undefined,--gc-sections'
@@ -62,6 +62,7 @@ declare -r YASM_VER='1.3.0'
 declare -r AUTOCONF_VER='2.69'
 declare -r AUTOMAKE_VER='1.15'
 declare -r LIBTOOL_VER='2.4.6'
+declare -r use_win_iconv=true
 
 # Comment out if you don't want to rebuild.
 # prerequisites for GCC

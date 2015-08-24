@@ -1,0 +1,389 @@
+From 4b71b6c93fe7797006f41d2a3979eae8cb5e3651 Mon Sep 17 00:00:00 2001
+From: law <law@138bc75d-0d04-0410-961f-82ee72b054a4>
+Date: Tue, 21 Jul 2015 18:33:35 +0000
+Subject: [PATCH 15/27] 	* configure.ac: Add check for new options in isl-0.15.
+ 	* config.in, configure: Rebuilt. 	* graphite-blocking.c: Include
+ <isl/constraint.h> 	* graphite-interchange.c,  graphite-poly.c: Likewise. 
+ * graphhite-scop-detection.c, graphite-sese-to-poly.c: Likewise. 	*
+ graphite.c: Likewise. 	* graphite-isl-ast-to-gimple.c: Include
+ <isl/constraint.h> and 	<isl/union_set.h>. 	*
+ graphite-dependences.c: Include <isl/constraint.h>. 
+ (max_number_of_out_dimensions): Returns isl_stat. 	(extend_schedule_1):
+ Likewise 	(extend_schedule): Corresponding changes. 	*
+ graphite-optimize-isl.c: Include <isl/constraint.h> and 
+ <isl/union_set.h>. 	(getSingleMap): Change return type of isl_stat. 
+ (optimize_isl): Conditionally use 
+ isl_options_set_schedule_serialize_sccs. 	* graphite-poly.h (isl_stat,
+ isl_stat_ok): Define fallbacks 	if not
+ HAVE_ISL_OPTIONS_SET_SCHEDULE_SERIALIZE_SCCS.
+
+git-svn-id: svn+ssh://gcc.gnu.org/svn/gcc/trunk@226050 138bc75d-0d04-0410-961f-82ee72b054a4
+---
+ gcc/config.in                    |  6 ++++++
+ gcc/configure                    | 31 +++++++++++++++++++++++++++++++
+ gcc/configure.ac                 | 14 ++++++++++++++
+ gcc/graphite-blocking.c          |  4 ++++
+ gcc/graphite-dependences.c       | 18 +++++++++++-------
+ gcc/graphite-interchange.c       |  4 ++++
+ gcc/graphite-isl-ast-to-gimple.c |  5 +++++
+ gcc/graphite-optimize-isl.c      | 13 +++++++++++--
+ gcc/graphite-poly.c              |  4 ++++
+ gcc/graphite-poly.h              |  7 +++++++
+ gcc/graphite-scop-detection.c    |  4 ++++
+ gcc/graphite-sese-to-poly.c      |  4 ++++
+ gcc/graphite.c                   |  4 ++++
+ 13 files changed, 109 insertions(+), 9 deletions(-)
+
+diff --git a/gcc/config.in b/gcc/config.in
+index f2ed301..db8d0ac 100644
+--- a/gcc/config.in
++++ b/gcc/config.in
+@@ -1313,6 +1313,12 @@
+ #endif
+ 
+ 
++/* Define if isl_options_set_schedule_serialize_sccs exists. */
++#ifndef USED_FOR_TARGET
++#undef HAVE_ISL_OPTIONS_SET_SCHEDULE_SERIALIZE_SCCS
++#endif
++
++
+ /* Define if isl_schedule_constraints_compute_schedule exists. */
+ #ifndef USED_FOR_TARGET
+ #undef HAVE_ISL_SCHED_CONSTRAINTS_COMPUTE_SCHEDULE
+diff --git a/gcc/configure b/gcc/configure
+index 1a26165..c36d9f1 100755
+--- a/gcc/configure
++++ b/gcc/configure
+@@ -28245,6 +28245,8 @@ fi
+ 
+ # Check whether isl_schedule_constraints_compute_schedule is available;
+ # it's new in ISL-0.13.
++# Check whether isl_options_set_schedule_serialize_sccs is available;
++# it's new in ISL-0.15.
+ if test "x${ISLLIBS}" != "x" ; then
+   saved_CFLAGS="$CFLAGS"
+   CFLAGS="$CFLAGS $ISLINC"
+@@ -28274,6 +28276,29 @@ rm -f core conftest.err conftest.$ac_objext \
+   { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_has_isl_schedule_constraints_compute_schedule" >&5
+ $as_echo "$ac_has_isl_schedule_constraints_compute_schedule" >&6; }
+ 
++  { $as_echo "$as_me:${as_lineno-$LINENO}: checking Checking for isl_options_set_schedule_serialize_sccs" >&5
++$as_echo_n "checking Checking for isl_options_set_schedule_serialize_sccs... " >&6; }
++  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
++/* end confdefs.h.  */
++#include <isl/schedule.h>
++int
++main ()
++{
++isl_options_set_schedule_serialize_sccs (NULL, 0);
++  ;
++  return 0;
++}
++_ACEOF
++if ac_fn_cxx_try_link "$LINENO"; then :
++  ac_has_isl_options_set_schedule_serialize_sccs=yes
++else
++  ac_has_isl_options_set_schedule_serialize_sccs=no
++fi
++rm -f core conftest.err conftest.$ac_objext \
++    conftest$ac_exeext conftest.$ac_ext
++  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_has_isl_options_set_schedule_serialize_sccs" >&5
++$as_echo "$ac_has_isl_options_set_schedule_serialize_sccs" >&6; }
++
+   LIBS="$saved_LIBS"
+   CFLAGS="$saved_CFLAGS"
+ 
+@@ -28282,6 +28307,12 @@ $as_echo "$ac_has_isl_schedule_constraints_compute_schedule" >&6; }
+ $as_echo "#define HAVE_ISL_SCHED_CONSTRAINTS_COMPUTE_SCHEDULE 1" >>confdefs.h
+ 
+   fi
++
++  if test x"$ac_has_isl_options_set_schedule_serialize_sccs" = x"yes"; then
++
++$as_echo "#define HAVE_ISL_OPTIONS_SET_SCHEDULE_SERIALIZE_SCCS 1" >>confdefs.h
++
++  fi
+ fi
+ 
+ # Check for plugin support
+diff --git a/gcc/configure.ac b/gcc/configure.ac
+index 6f38ba1..ca426fc 100644
+--- a/gcc/configure.ac
++++ b/gcc/configure.ac
+@@ -5693,6 +5693,8 @@ fi
+ 
+ # Check whether isl_schedule_constraints_compute_schedule is available;
+ # it's new in ISL-0.13.
++# Check whether isl_options_set_schedule_serialize_sccs is available;
++# it's new in ISL-0.15.
+ if test "x${ISLLIBS}" != "x" ; then
+   saved_CFLAGS="$CFLAGS"
+   CFLAGS="$CFLAGS $ISLINC"
+@@ -5706,6 +5708,13 @@ if test "x${ISLLIBS}" != "x" ; then
+               [ac_has_isl_schedule_constraints_compute_schedule=no])
+   AC_MSG_RESULT($ac_has_isl_schedule_constraints_compute_schedule)
+ 
++  AC_MSG_CHECKING([Checking for isl_options_set_schedule_serialize_sccs])
++  AC_TRY_LINK([#include <isl/schedule.h>],
++              [isl_options_set_schedule_serialize_sccs (NULL, 0);],
++              [ac_has_isl_options_set_schedule_serialize_sccs=yes],
++              [ac_has_isl_options_set_schedule_serialize_sccs=no])
++  AC_MSG_RESULT($ac_has_isl_options_set_schedule_serialize_sccs)
++
+   LIBS="$saved_LIBS"
+   CFLAGS="$saved_CFLAGS"
+ 
+@@ -5713,6 +5722,11 @@ if test "x${ISLLIBS}" != "x" ; then
+      AC_DEFINE(HAVE_ISL_SCHED_CONSTRAINTS_COMPUTE_SCHEDULE, 1,
+                [Define if isl_schedule_constraints_compute_schedule exists.])
+   fi
++
++  if test x"$ac_has_isl_options_set_schedule_serialize_sccs" = x"yes"; then
++     AC_DEFINE(HAVE_ISL_OPTIONS_SET_SCHEDULE_SERIALIZE_SCCS, 1,
++               [Define if isl_options_set_schedule_serialize_sccs exists.])
++  fi
+ fi
+ 
+ GCC_ENABLE_PLUGINS
+diff --git a/gcc/graphite-blocking.c b/gcc/graphite-blocking.c
+index dd3f03b..3d716be 100644
+--- a/gcc/graphite-blocking.c
++++ b/gcc/graphite-blocking.c
+@@ -24,6 +24,10 @@ along with GCC; see the file COPYING3.  If not see
+ #include "config.h"
+ 
+ #ifdef HAVE_isl
++/* Workaround for GMP 5.1.3 bug, see PR56019.  */
++#include <stddef.h>
++
++#include <isl/constraint.h>
+ #include <isl/set.h>
+ #include <isl/map.h>
+ #include <isl/union_map.h>
+diff --git a/gcc/graphite-dependences.c b/gcc/graphite-dependences.c
+index edd357d..f9d18a8 100644
+--- a/gcc/graphite-dependences.c
++++ b/gcc/graphite-dependences.c
+@@ -22,6 +22,10 @@ along with GCC; see the file COPYING3.  If not see
+ #include "config.h"
+ 
+ #ifdef HAVE_isl
++/* Workaround for GMP 5.1.3 bug, see PR56019.  */
++#include <stddef.h>
++
++#include <isl/constraint.h>
+ #include <isl/set.h>
+ #include <isl/map.h>
+ #include <isl/union_map.h>
+@@ -227,7 +231,7 @@ scop_get_transformed_schedule (scop_p scop, vec<poly_bb_p> pbbs)
+ /* Helper function used on each MAP of a isl_union_map.  Computes the
+    maximal output dimension.  */
+ 
+-static int
++static isl_stat
+ max_number_of_out_dimensions (__isl_take isl_map *map, void *user)
+ {
+   int global_max = *((int *) user);
+@@ -239,7 +243,7 @@ max_number_of_out_dimensions (__isl_take isl_map *map, void *user)
+ 
+   isl_map_free (map);
+   isl_space_free (space);
+-  return 0;
++  return isl_stat_ok;
+ }
+ 
+ /* Extends the output dimension of MAP to MAX dimensions.  */
+@@ -263,12 +267,12 @@ struct extend_schedule_str {
+ 
+ /* Helper function for extend_schedule.  */
+ 
+-static int
++static isl_stat
+ extend_schedule_1 (__isl_take isl_map *map, void *user)
+ {
+   struct extend_schedule_str *str = (struct extend_schedule_str *) user;
+   str->umap = isl_union_map_add_map (str->umap, extend_map (map, str->max));
+-  return 0;
++  return isl_stat_ok;
+ }
+ 
+ /* Return a relation that has uniform output dimensions.  */
+@@ -277,16 +281,16 @@ __isl_give isl_union_map *
+ extend_schedule (__isl_take isl_union_map *x)
+ {
+   int max = 0;
+-  int res;
++  isl_stat res;
+   struct extend_schedule_str str;
+ 
+   res = isl_union_map_foreach_map (x, max_number_of_out_dimensions, (void *) &max);
+-  gcc_assert (res == 0);
++  gcc_assert (res == isl_stat_ok);
+ 
+   str.max = max;
+   str.umap = isl_union_map_empty (isl_union_map_get_space (x));
+   res = isl_union_map_foreach_map (x, extend_schedule_1, (void *) &str);
+-  gcc_assert (res == 0);
++  gcc_assert (res == isl_stat_ok);
+ 
+   isl_union_map_free (x);
+   return str.umap;
+diff --git a/gcc/graphite-interchange.c b/gcc/graphite-interchange.c
+index 8c0d95d..8c220cd 100644
+--- a/gcc/graphite-interchange.c
++++ b/gcc/graphite-interchange.c
+@@ -24,6 +24,10 @@ along with GCC; see the file COPYING3.  If not see
+ #include "config.h"
+ 
+ #ifdef HAVE_isl
++/* Workaround for GMP 5.1.3 bug, see PR56019.  */
++#include <stddef.h>
++
++#include <isl/constraint.h>
+ #include <isl/aff.h>
+ #include <isl/set.h>
+ #include <isl/map.h>
+diff --git a/gcc/graphite-isl-ast-to-gimple.c b/gcc/graphite-isl-ast-to-gimple.c
+index 90ce0c6..daeabea 100644
+--- a/gcc/graphite-isl-ast-to-gimple.c
++++ b/gcc/graphite-isl-ast-to-gimple.c
+@@ -21,7 +21,12 @@ along with GCC; see the file COPYING3.  If not see
+ #include "config.h"
+ 
+ #ifdef HAVE_isl
++/* Workaround for GMP 5.1.3 bug, see PR56019.  */
++#include <stddef.h>
++
++#include <isl/constraint.h>
+ #include <isl/set.h>
++#include <isl/union_set.h>
+ #include <isl/map.h>
+ #include <isl/union_map.h>
+ #include <isl/ast_build.h>
+diff --git a/gcc/graphite-optimize-isl.c b/gcc/graphite-optimize-isl.c
+index 8bdf744..54efe58 100644
+--- a/gcc/graphite-optimize-isl.c
++++ b/gcc/graphite-optimize-isl.c
+@@ -21,7 +21,12 @@ along with GCC; see the file COPYING3.  If not see
+ #include "config.h"
+ 
+ #ifdef HAVE_isl
++/* Workaround for GMP 5.1.3 bug, see PR56019.  */
++#include <stddef.h>
++
++#include <isl/constraint.h>
+ #include <isl/set.h>
++#include <isl/union_set.h>
+ #include <isl/map.h>
+ #include <isl/union_map.h>
+ #include <isl/schedule.h>
+@@ -530,13 +535,13 @@ getScheduleMap (isl_schedule *Schedule, isl_union_map **map_sepcl)
+   return ScheduleMap;
+ }
+ 
+-static int
++static isl_stat
+ getSingleMap (__isl_take isl_map *map, void *user)
+ {
+   isl_map **singleMap = (isl_map **) user;
+   *singleMap = map;
+ 
+-  return 0;
++  return isl_stat_ok;
+ }
+ 
+ static void
+@@ -608,7 +613,11 @@ optimize_isl (scop_p scop)
+ 
+   isl_options_set_schedule_max_constant_term (scop->ctx, CONSTANT_BOUND);
+   isl_options_set_schedule_maximize_band_depth (scop->ctx, 1);
++#ifdef HAVE_ISL_OPTIONS_SET_SCHEDULE_SERIALIZE_SCCS
++  isl_options_set_schedule_serialize_sccs (scop->ctx, 1);
++#else
+   isl_options_set_schedule_fuse (scop->ctx, ISL_SCHEDULE_FUSE_MIN);
++#endif
+   isl_options_set_on_error (scop->ctx, ISL_ON_ERROR_CONTINUE);
+ 
+ #ifdef HAVE_ISL_SCHED_CONSTRAINTS_COMPUTE_SCHEDULE
+diff --git a/gcc/graphite-poly.c b/gcc/graphite-poly.c
+index ae90c29..e0d4238 100644
+--- a/gcc/graphite-poly.c
++++ b/gcc/graphite-poly.c
+@@ -22,6 +22,10 @@ along with GCC; see the file COPYING3.  If not see
+ #include "config.h"
+ 
+ #ifdef HAVE_isl
++/* Workaround for GMP 5.1.3 bug, see PR56019.  */
++#include <stddef.h>
++
++#include <isl/constraint.h>
+ #include <isl/set.h>
+ #include <isl/map.h>
+ #include <isl/union_map.h>
+diff --git a/gcc/graphite-poly.h b/gcc/graphite-poly.h
+index afc0121..7022a1d 100644
+--- a/gcc/graphite-poly.h
++++ b/gcc/graphite-poly.h
+@@ -22,6 +22,13 @@ along with GCC; see the file COPYING3.  If not see
+ #ifndef GCC_GRAPHITE_POLY_H
+ #define GCC_GRAPHITE_POLY_H
+ 
++#include "sese.h"
++
++#ifndef HAVE_ISL_OPTIONS_SET_SCHEDULE_SERIALIZE_SCCS
++# define isl_stat int
++# define isl_stat_ok 0
++#endif
++
+ typedef struct poly_dr *poly_dr_p;
+ 
+ typedef struct poly_bb *poly_bb_p;
+diff --git a/gcc/graphite-scop-detection.c b/gcc/graphite-scop-detection.c
+index 4512fe7..4043ccd 100644
+--- a/gcc/graphite-scop-detection.c
++++ b/gcc/graphite-scop-detection.c
+@@ -22,6 +22,10 @@ along with GCC; see the file COPYING3.  If not see
+ #include "config.h"
+ 
+ #ifdef HAVE_isl
++/* Workaround for GMP 5.1.3 bug, see PR56019.  */
++#include <stddef.h>
++
++#include <isl/constraint.h>
+ #include <isl/set.h>
+ #include <isl/map.h>
+ #include <isl/union_map.h>
+diff --git a/gcc/graphite-sese-to-poly.c b/gcc/graphite-sese-to-poly.c
+index 8b64501..79fc3e9 100644
+--- a/gcc/graphite-sese-to-poly.c
++++ b/gcc/graphite-sese-to-poly.c
+@@ -21,6 +21,10 @@ along with GCC; see the file COPYING3.  If not see
+ #include "config.h"
+ 
+ #ifdef HAVE_isl
++/* Workaround for GMP 5.1.3 bug, see PR56019.  */
++#include <stddef.h>
++
++#include <isl/constraint.h>
+ #include <isl/set.h>
+ #include <isl/map.h>
+ #include <isl/union_map.h>
+diff --git a/gcc/graphite.c b/gcc/graphite.c
+index c8f0617..c134ef9 100644
+--- a/gcc/graphite.c
++++ b/gcc/graphite.c
+@@ -35,6 +35,10 @@ along with GCC; see the file COPYING3.  If not see
+ #include "config.h"
+ 
+ #ifdef HAVE_isl
++/* Workaround for GMP 5.1.3 bug, see PR56019.  */
++#include <stddef.h>
++
++#include <isl/constraint.h>
+ #include <isl/set.h>
+ #include <isl/map.h>
+ #include <isl/options.h>
+-- 
+2.5.0
+

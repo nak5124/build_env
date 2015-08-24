@@ -1,0 +1,90 @@
+From 57b06304bd7e5071fc6530b542a40c7a244070aa Mon Sep 17 00:00:00 2001
+From: Yuta NAKAI <nak5124@live.jp>
+Date: Sun, 12 Apr 2015 14:46:07 +0900
+Subject: [PATCH 22/27] MinGW: Enable nxcompat and (HE)ASLR by default.
+
+---
+ gcc/config/i386/mingw-w64.h | 17 +++++++++++++++--
+ gcc/config/i386/mingw32.h   | 21 +++++++++++++++++++--
+ 2 files changed, 34 insertions(+), 4 deletions(-)
+
+diff --git a/gcc/config/i386/mingw-w64.h b/gcc/config/i386/mingw-w64.h
+index 3d00bec..cdd3ae2 100644
+--- a/gcc/config/i386/mingw-w64.h
++++ b/gcc/config/i386/mingw-w64.h
+@@ -69,10 +69,21 @@ along with GCC; see the file COPYING3.  If not see
+ #define SUB_LINK_ENTRY64 "-e DllMainCRTStartup"
+ #endif
+ 
++#undef SUB_PIE_ENTRY32
++#undef SUB_PIE_ENTRY64
++#define SUB_PIE_ENTRY32 "-e _mainCRTStartup"
++#if defined(USE_MINGW64_LEADING_UNDERSCORES)
++#define SUB_PIE_ENTRY64 "-e _mainCRTStartup"
++#else
++#define SUB_PIE_ENTRY64 "-e mainCRTStartup"
++#endif
++
+ #undef SUB_LINK_SPEC
+ #undef SUB_LINK_ENTRY
++#undef SUB_PIE_ENTRY
+ #define SUB_LINK_SPEC "%{" SPEC_64 ":-m i386pep} %{" SPEC_32 ":-m i386pe}"
+ #define SUB_LINK_ENTRY "%{" SPEC_64 ":" SUB_LINK_ENTRY64 "} %{" SPEC_32 ":" SUB_LINK_ENTRY32 "}"
++#define SUB_PIE_ENTRY "%{" SPEC_64 ":" SUB_PIE_ENTRY64 "} %{" SPEC_32 ":" SUB_PIE_ENTRY32 "}"
+ 
+ #undef MULTILIB_DEFAULTS
+ #if TARGET_64BIT_DEFAULT
+@@ -87,6 +98,8 @@ along with GCC; see the file COPYING3.  If not see
+   %{shared: %{mdll: %eshared and mdll are not compatible}} \
+   %{shared: --shared} %{mdll:--dll} \
+   %{static:-Bstatic} %{!static:-Bdynamic} \
+-  %{shared|mdll: " SUB_LINK_ENTRY " --enable-auto-image-base} \
++  --nxcompat --dynamicbase %{" SPEC_64 ": --high-entropy-va} \
++  %{shared|mdll: " SUB_LINK_ENTRY " %{" SPEC_64 ": --image-base 0x180000000} --disable-auto-image-base} \
+   %(shared_libgcc_undefs) \
+-  %{!shared: %{!mdll: %{" SPEC_32 ": --large-address-aware} --tsaware}}"
++  %{!shared: %{!mdll: %{" SPEC_32 ": --large-address-aware} --tsaware --pic-executable " SUB_PIE_ENTRY " \
++  %{" SPEC_64 ": --image-base 0x140000000}}}"
+diff --git a/gcc/config/i386/mingw32.h b/gcc/config/i386/mingw32.h
+index 68a736c..067dd09 100644
+--- a/gcc/config/i386/mingw32.h
++++ b/gcc/config/i386/mingw32.h
+@@ -77,6 +77,22 @@ along with GCC; see the file COPYING3.  If not see
+ #define SUB_LINK_ENTRY SUB_LINK_ENTRY32
+ #endif
+ 
++#undef SUB_PIE_ENTRY32
++#undef SUB_PIE_ENTRY64
++#define SUB_PIE_ENTRY32 "-e _mainCRTStartup"
++#if defined(USE_MINGW64_LEADING_UNDERSCORES)
++#define SUB_PIE_ENTRY64 "-e _mainCRTStartup"
++#else
++#define SUB_PIE_ENTRY64 "-e mainCRTStartup"
++#endif
++
++#undef SUB_PIE_ENTRY
++#if TARGET_64BIT_DEFAULT
++#define SUB_PIE_ENTRY SUB_PIE_ENTRY64
++#else
++#define SUB_PIE_ENTRY SUB_PIE_ENTRY32
++#endif
++
+ #undef NATIVE_SYSTEM_HEADER_COMPONENT
+ #define NATIVE_SYSTEM_HEADER_COMPONENT "MINGW"
+ 
+@@ -117,9 +133,10 @@ along with GCC; see the file COPYING3.  If not see
+   %{shared: %{mdll: %eshared and mdll are not compatible}} \
+   %{shared: --shared} %{mdll:--dll} \
+   %{static:-Bstatic} %{!static:-Bdynamic} \
+-  %{shared|mdll: " SUB_LINK_ENTRY " --enable-auto-image-base} \
++  --nxcompat --dynamicbase \
++  %{shared|mdll: " SUB_LINK_ENTRY " --disable-auto-image-base} \
+   %(shared_libgcc_undefs) \
+-  %{!shared: %{!mdll: --large-address-aware --tsaware}}"
++  %{!shared: %{!mdll: --large-address-aware --tsaware --pic-executable " SUB_PIE_ENTRY "}}"
+ 
+ /* There is a bug when building i686 dw-2 exceptions
+    where gcc_s gets stripped which this works around */
+-- 
+2.5.0
+

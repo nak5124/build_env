@@ -1,22 +1,33 @@
 # libiconv: Libiconv is a conversion library
 # Download the src and decompress it.
 function download_iconv_src() {
-    # Download the src.
-    if [ ! -f "${BUILD_DIR}"/libiconv/src/libiconv-${ICONV_VER}.tar.gz ]; then
-        printf "===> Downloading libiconv %s...\n" "${ICONV_VER}"
-        pushd "${BUILD_DIR}"/libiconv/src > /dev/null
-        dl_files http http://ftp.gnu.org/gnu/libiconv/libiconv-${ICONV_VER}.tar.gz
-        popd > /dev/null # "${BUILD_DIR}"/libiconv/src
-        echo 'done'
-    fi
+    if ! ${use_win_iconv}; then
+        # Download the src.
+        if [ ! -f "${BUILD_DIR}"/libiconv/src/libiconv-${ICONV_VER}.tar.gz ]; then
+            printf "===> Downloading libiconv %s...\n" "${ICONV_VER}"
+            pushd "${BUILD_DIR}"/libiconv/src > /dev/null
+            dl_files http http://ftp.gnu.org/gnu/libiconv/libiconv-${ICONV_VER}.tar.gz
+            popd > /dev/null # "${BUILD_DIR}"/libiconv/src
+            echo 'done'
+        fi
 
-    # Decompress the src archive.
-    if [ ! -d "${BUILD_DIR}"/libiconv/src/libiconv-$ICONV_VER ]; then
-        printf "===> Extracting libiconv %s...\n" "${ICONV_VER}"
-        pushd "${BUILD_DIR}"/libiconv/src > /dev/null
-        decomp_arch "${BUILD_DIR}"/libiconv/src/libiconv-${ICONV_VER}.tar.gz
-        popd > /dev/null # "${BUILD_DIR}"/libiconv/src
-        echo 'done'
+        # Decompress the src archive.
+        if [ ! -d "${BUILD_DIR}"/libiconv/src/libiconv-$ICONV_VER ]; then
+            printf "===> Extracting libiconv %s...\n" "${ICONV_VER}"
+            pushd "${BUILD_DIR}"/libiconv/src > /dev/null
+            decomp_arch "${BUILD_DIR}"/libiconv/src/libiconv-${ICONV_VER}.tar.gz
+            popd > /dev/null # "${BUILD_DIR}"/libiconv/src
+            echo 'done'
+        fi
+    else
+        # Git clone.
+        if [ ! -d "${BUILD_DIR}"/libiconv/src/win-iconv ]; then
+            echo '===> Cloning win-iconv git repo...'
+            pushd "${BUILD_DIR}"/libiconv/src > /dev/null
+            dl_files git https://github.com/win-iconv/win-iconv.git win-iconv
+            popd > /dev/null # "${BUILD_DIR}"/libiconv/src
+            echo 'done'
+        fi
     fi
 
     return 0
@@ -82,7 +93,9 @@ function build_iconv() {
     # Setup.
     if ${_rebuild}; then
         download_iconv_src
-        prepare_iconv
+        if ! ${use_win_iconv}; then
+            prepare_iconv
+        fi
     fi
 
     local _arch
@@ -98,43 +111,47 @@ function build_iconv() {
             # PATH exporting.
             set_path $_arch
 
-            # Configure.
-            printf "===> Configuring libiconv %s...\n" "${_arch}"
-            ../src/libiconv-${ICONV_VER}/configure \
-                --prefix=/mingw$_bitval            \
-                --build=${_arch}-w64-mingw32       \
-                --host=${_arch}-w64-mingw32        \
-                --enable-relocatable               \
-                --enable-extra-encodings           \
-                --disable-static                   \
-                --enable-shared                    \
-                --enable-fast-install              \
-                --disable-rpath                    \
-                --disable-nls                      \
-                --with-gnu-ld                      \
-                CFLAGS="${CFLAGS_}"                \
-                LDFLAGS="${LDFLAGS_}"              \
-                CPPFLAGS="${CPPFLAGS_}"            \
-                > "${LOGS_DIR}"/libiconv/libiconv_config_${_arch}.log 2>&1 || exit 1
-            echo 'done'
+            if ! ${use_win_iconv}; then
+                # Configure.
+                printf "===> Configuring libiconv %s...\n" "${_arch}"
+                ../src/libiconv-${ICONV_VER}/configure \
+                    --prefix=/mingw$_bitval            \
+                    --build=${_arch}-w64-mingw32       \
+                    --host=${_arch}-w64-mingw32        \
+                    --enable-relocatable               \
+                    --enable-extra-encodings           \
+                    --disable-static                   \
+                    --enable-shared                    \
+                    --enable-fast-install              \
+                    --disable-rpath                    \
+                    --disable-nls                      \
+                    --with-gnu-ld                      \
+                    CFLAGS="${CFLAGS_}"                \
+                    LDFLAGS="${LDFLAGS_}"              \
+                    CPPFLAGS="${CPPFLAGS_}"            \
+                    > "${LOGS_DIR}"/libiconv/libiconv_config_${_arch}.log 2>&1 || exit 1
+                echo 'done'
 
-            # Make.
-            printf "===> Making libiconv %s...\n" "${_arch}"
-            make $MAKEFLAGS_ > "${LOGS_DIR}"/libiconv/libiconv_make_${_arch}.log 2>&1 || exit 1
-            echo 'done'
+                # Make.
+                printf "===> Making libiconv %s...\n" "${_arch}"
+                make $MAKEFLAGS_ > "${LOGS_DIR}"/libiconv/libiconv_make_${_arch}.log 2>&1 || exit 1
+                echo 'done'
 
-            # Install.
-            printf "===> Installing libiconv %s...\n" "${_arch}"
-            make DESTDIR="${PREIN_DIR}"/libiconv install > "${LOGS_DIR}"/libiconv/libiconv_install_${_arch}.log 2>&1 || exit 1
-            # Remove unneeded files.
-            rm -f "${PREIN_DIR}"/libiconv/mingw${_bitval}/bin/libcharset-*.dll
-            rm -f "${PREIN_DIR}"/libiconv/mingw${_bitval}/include/libcharset.h
-            rm -f "${PREIN_DIR}"/libiconv/mingw${_bitval}/lib/libcharset.dll.a
-            rm -f "${PREIN_DIR}"/libiconv/mingw${_bitval}/lib/charset.alias
-            remove_la_files   "${PREIN_DIR}"/libiconv/mingw$_bitval
-            # Strip files.
-            strip_files "${PREIN_DIR}"/libiconv/mingw$_bitval
-            echo 'done'
+                # Install.
+                printf "===> Installing libiconv %s...\n" "${_arch}"
+                make DESTDIR="${PREIN_DIR}"/libiconv install > "${LOGS_DIR}"/libiconv/libiconv_install_${_arch}.log 2>&1 || exit 1
+                # Remove unneeded files.
+                rm -f "${PREIN_DIR}"/libiconv/mingw${_bitval}/bin/libcharset-*.dll
+                rm -f "${PREIN_DIR}"/libiconv/mingw${_bitval}/include/libcharset.h
+                rm -f "${PREIN_DIR}"/libiconv/mingw${_bitval}/lib/libcharset.dll.a
+                rm -f "${PREIN_DIR}"/libiconv/mingw${_bitval}/lib/charset.alias
+                remove_la_files   "${PREIN_DIR}"/libiconv/mingw$_bitval
+                # Strip files.
+                strip_files "${PREIN_DIR}"/libiconv/mingw$_bitval
+                echo 'done'
+            else
+:
+            fi
         fi
 
         # Copy to DST_DIR.

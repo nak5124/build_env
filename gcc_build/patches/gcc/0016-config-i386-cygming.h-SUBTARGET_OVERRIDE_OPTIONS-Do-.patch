@@ -1,0 +1,39 @@
+From 5bd37049d7c0937c7d27fc2617ad893070660070 Mon Sep 17 00:00:00 2001
+From: Paolo Bonzini <bonzini@gnu.org>
+Date: Mon, 24 Aug 2015 23:14:11 +0900
+Subject: [PATCH 16/27] config/i386/cygming.h (SUBTARGET_OVERRIDE_OPTIONS): Do
+ not warn.
+
+---
+ gcc/config/i386/cygming.h | 15 +--------------
+ 1 file changed, 1 insertion(+), 14 deletions(-)
+
+diff --git a/gcc/config/i386/cygming.h b/gcc/config/i386/cygming.h
+index fda59fb..71506ec 100644
+--- a/gcc/config/i386/cygming.h
++++ b/gcc/config/i386/cygming.h
+@@ -198,20 +198,7 @@ along with GCC; see the file COPYING3.  If not see
+ #undef  SUBTARGET_OVERRIDE_OPTIONS
+ #define SUBTARGET_OVERRIDE_OPTIONS					\
+ do {									\
+-  if (TARGET_64BIT && flag_pic != 1)					\
+-    {									\
+-      if (flag_pic > 1)							\
+-        warning (0,							\
+-	         "-fPIC ignored for target (all code is position independent)"\
+-                 );                         				\
+-      flag_pic = 1;							\
+-    }									\
+-  else if (!TARGET_64BIT && flag_pic)					\
+-    {									\
+-      warning (0, "-f%s ignored for target (all code is position independent)",\
+-	       (flag_pic > 1) ? "PIC" : "pic");				\
+-      flag_pic = 0;							\
+-    }									\
++  flag_pic = TARGET_64BIT ? 1 : 0;                                      \
+ } while (0)
+ 
+ /* Define this macro if references to a symbol must be treated
+-- 
+2.5.0
+
