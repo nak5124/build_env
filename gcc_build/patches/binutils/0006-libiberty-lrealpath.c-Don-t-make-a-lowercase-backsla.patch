@@ -1,4 +1,4 @@
-From 076c2a42efa2977469c6e472182d0c37ca050601 Mon Sep 17 00:00:00 2001
+From 22d70f5af43dccb7439ad0798433e81724f61779 Mon Sep 17 00:00:00 2001
 From: Yuta NAKAI <nak5124@live.jp>
 Date: Sun, 19 Apr 2015 22:01:33 +0900
 Subject: [PATCH 6/6] libiberty/lrealpath.c: Don't make a lowercase backslashed
@@ -45,5 +45,5 @@ index b27c8de..423d128 100644
        }
    }
 -- 
-2.4.5
+2.5.0
 

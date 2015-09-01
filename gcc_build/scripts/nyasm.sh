@@ -1,13 +1,13 @@
 # NASM: An 80x86 assembler designed for portability and modularity
+declare _nasm_ver
+if [ ! -z "${NASM_SS}" ]; then
+    _nasm_ver=${NASM_VER}-$NASM_SS
+else
+    _nasm_ver=$NASM_VER
+fi
+
 # Download the src and decompress it.
 function download_nasm_src() {
-    local _nasm_ver
-    if [ ! -z "${NASM_SS}" ]; then
-        _nasm_ver=${NASM_VER}-$NASM_SS
-    else
-        _nasm_ver=$NASM_VER
-    fi
-
     # Download the src.
     if [ ! -f "${BUILD_DIR}"/nyasm/nasm/src/nasm-${NASM_VER}.tar.xz ]; then
         printf "===> Downloading NASM %s...\n" "${NASM_VER}"
@@ -34,21 +34,17 @@ function download_nasm_src() {
 }
 
 # Apply patches.
+function apply_patch_nasm() {
+    apply_patch "${1}" "${BUILD_DIR}"/nyasm/nasm/src/nasm-$_nasm_ver "${LOGS_DIR}"/nyasm/nasm/nasm_patch.log "${2}"
+}
+
 function prepare_nasm() {
     # Apply patches.
     printf "===> Applying patches to NASM %s...\n" "${NASM_VER}"
-    local _nasm_ver
-    if [ ! -z "${NASM_SS}" ]; then
-        _nasm_ver=${NASM_VER}-$NASM_SS
-    else
-        _nasm_ver=$NASM_VER
-    fi
-    pushd "${BUILD_DIR}"/nyasm/nasm/src/nasm-$_nasm_ver > /dev/null
-    if [ ! -f "${BUILD_DIR}"/nyasm/nasm/src/nasm-${_nasm_ver}/patched_01.marker ]; then
-        patch -p1 -i "${PATCHES_DIR}"/nasm/0001-mingw-printf.patch > "${LOGS_DIR}"/nyasm/nasm/nasm_patch.log 2>&1 || exit 1
-        touch "${BUILD_DIR}"/nyasm/nasm/src/nasm-${_nasm_ver}/patched_01.marker
-    fi
-    popd > /dev/null # "${BUILD_DIR}"/nyasm/nasm/src/nasm-$_nasm_ver
+
+    # Shut up GCC -Wformat.
+    apply_patch_nasm "${PATCHES_DIR}"/nasm/0001-mingw-printf.patch true
+
     echo 'done'
 
     return 0
@@ -80,13 +76,6 @@ function build_nasm() {
     if ${_rebuild}; then
         download_nasm_src
         prepare_nasm
-    fi
-
-    local _nasm_ver
-    if [ ! -z "${NASM_SS}" ]; then
-        _nasm_ver=${NASM_VER}-$NASM_SS
-    else
-        _nasm_ver=$NASM_VER
     fi
 
     local _arch

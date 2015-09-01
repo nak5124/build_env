@@ -1,4 +1,4 @@
-From 66aa46abd5e5dbbdae4bd712b7357f97b9189c17 Mon Sep 17 00:00:00 2001
+From ef6b9cc32525f723a8ecc1294fe12f1326f2f5e1 Mon Sep 17 00:00:00 2001
 From: Yuta NAKAI <nak5124@live.jp>
 Date: Sun, 19 Apr 2015 21:41:59 +0900
 Subject: [PATCH 1/6] binutils: Check harder for the file in question being
@@ -11,10 +11,10 @@ Subject: [PATCH 1/6] binutils: Check harder for the file in question being
  3 files changed, 46 insertions(+), 5 deletions(-)
 
 diff --git a/binutils/bucomm.c b/binutils/bucomm.c
-index 06fbc46..8c8caec 100644
+index b8deff5..864ab96 100644
 --- a/binutils/bucomm.c
 +++ b/binutils/bucomm.c
-@@ -574,7 +574,15 @@ off_t
+@@ -570,7 +570,15 @@ off_t
  get_file_size (const char * file_name)
  {
    struct stat statbuf;
@@ -31,7 +31,7 @@ index 06fbc46..8c8caec 100644
    if (stat (file_name, &statbuf) < 0)
      {
        if (errno == ENOENT)
-@@ -583,8 +591,15 @@ get_file_size (const char * file_name)
+@@ -579,8 +587,15 @@ get_file_size (const char * file_name)
  	non_fatal (_("Warning: could not locate '%s'.  reason: %s"),
  		   file_name, strerror (errno));
      }  
@@ -50,10 +50,10 @@ index 06fbc46..8c8caec 100644
      non_fatal (_("Warning: '%s' has negative size, probably it is too large"),
                 file_name);
 diff --git a/binutils/elfedit.c b/binutils/elfedit.c
-index 02b9c98..fb0eadf 100644
+index 5f21382..553d634 100644
 --- a/binutils/elfedit.c
 +++ b/binutils/elfedit.c
-@@ -483,6 +483,14 @@ static int
+@@ -441,6 +441,14 @@ static int
  check_file (const char *file_name, struct stat *statbuf_p)
  {
    struct stat statbuf;
@@ -68,7 +68,7 @@ index 02b9c98..fb0eadf 100644
  
    if (statbuf_p == NULL)
      statbuf_p = &statbuf;
-@@ -497,8 +505,13 @@ check_file (const char *file_name, struct stat *statbuf_p)
+@@ -455,8 +463,13 @@ check_file (const char *file_name, struct stat *statbuf_p)
        return 1;
      }
  
@@ -84,10 +84,10 @@ index 02b9c98..fb0eadf 100644
        return 1;
      }
 diff --git a/binutils/readelf.c b/binutils/readelf.c
-index 398a165..b20b72a 100644
+index 59d3381..af92d5b 100644
 --- a/binutils/readelf.c
 +++ b/binutils/readelf.c
-@@ -16356,6 +16356,14 @@ process_file (char * file_name)
+@@ -15561,6 +15561,14 @@ process_file (char * file_name)
    struct stat statbuf;
    char armag[SARMAG];
    int ret;
@@ -102,7 +102,7 @@ index 398a165..b20b72a 100644
  
    if (stat (file_name, &statbuf) < 0)
      {
-@@ -16367,8 +16375,13 @@ process_file (char * file_name)
+@@ -15572,8 +15580,13 @@ process_file (char * file_name)
        return 1;
      }
  
@@ -118,5 +118,5 @@ index 398a165..b20b72a 100644
        return 1;
      }
 -- 
-2.4.5
+2.5.0
 

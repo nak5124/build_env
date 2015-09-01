@@ -34,35 +34,28 @@ function download_iconv_src() {
 }
 
 # Apply patches and libtoolize.
+function apply_patch_iconv() {
+    apply_patch "${1}" "${BUILD_DIR}"/libiconv/src/libiconv-$ICONV_VER "${LOGS_DIR}"/libiconv/libiconv_patch.log "${2}"
+}
+
 function prepare_iconv() {
     # Apply patches.
     printf "===> Applying patches to libiconv %s...\n" "${ICONV_VER}"
-    pushd "${BUILD_DIR}"/libiconv/src/libiconv-$ICONV_VER > /dev/null
-    if [ ! -f "${BUILD_DIR}"/libiconv/src/libiconv-${ICONV_VER}/patched_01.marker ]; then
-        # http://apolloron.org/software/libiconv-1.14-ja/
-        patch -p1 -i "${PATCHES_DIR}"/libiconv/0001-libiconv-1.14-ja-1.patch \
-            > "${LOGS_DIR}"/libiconv/libiconv_patch.log 2>&1 || exit 1
-        touch "${BUILD_DIR}"/libiconv/src/libiconv-${ICONV_VER}/patched_01.marker
-    fi
-    if [ ! -f "${BUILD_DIR}"/libiconv/src/libiconv-${ICONV_VER}/patched_02.marker ]; then
-        # For --enable-relocatable.
-        patch -p1 -i "${PATCHES_DIR}"/libiconv/0002-compile-relocatable-in-gnulib.mingw.patch \
-            >> "${LOGS_DIR}"/libiconv/libiconv_patch.log 2>&1 || exit 1
-        touch "${BUILD_DIR}"/libiconv/src/libiconv-${ICONV_VER}/patched_02.marker
-    fi
-    if [ ! -f "${BUILD_DIR}"/libiconv/src/libiconv-${ICONV_VER}/patched_03.marker ]; then
-        patch -p1 -i "${PATCHES_DIR}"/libiconv/0003-fix-cr-for-awk-in-configure.all.patch \
-            >> "${LOGS_DIR}"/libiconv/libiconv_patch.log 2>&1 || exit 1
-        touch "${BUILD_DIR}"/libiconv/src/libiconv-${ICONV_VER}/patched_03.marker
-    fi
-    if [ ! -f "${BUILD_DIR}"/libiconv/src/libiconv-${ICONV_VER}/patched_04.marker ]; then
-        patch -p1 -i "${PATCHES_DIR}"/libiconv/0004-use-GetConsoleOutputCP.patch \
-            >> "${LOGS_DIR}"/libiconv/libiconv_patch.log 2>&1 || exit 1
-        touch "${BUILD_DIR}"/libiconv/src/libiconv-${ICONV_VER}/patched_04.marker
-    fi
+
+    # http://apolloron.org/software/libiconv-1.14-ja/
+    apply_patch_iconv "${PATCHES_DIR}"/libiconv/0001-libiconv-1.14-ja-1.patch            true
+    # For --enable-relocatable.
+    apply_patch_iconv "${PATCHES_DIR}"/libiconv/0002-compile-relocatable-in-gnulib.patch false
+    # Remove CR.
+    apply_patch_iconv "${PATCHES_DIR}"/libiconv/0003-fix-cr-for-awk-in-configure.patch   false
+    # GetACP -> GetConsoleOutputCP.
+    apply_patch_iconv "${PATCHES_DIR}"/libiconv/0004-use-GetConsoleOutputCP.patch        false
+
     # Disable automatic image base calculation.
+    pushd "${BUILD_DIR}"/libiconv/src/libiconv-$ICONV_VER > /dev/null
     sed -i 's/enable-auto-image-base/disable-auto-image-base/g' {.,preload,libcharset}/configure
     popd > /dev/null # "${BUILD_DIR}"/libiconv/src/libiconv-$ICONV_VER
+
     echo 'done'
 
     return 0

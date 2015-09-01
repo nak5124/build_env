@@ -39,6 +39,7 @@ if [ ! -d ${HOME}/gcc_build/scripts ] ; then
 fi
 ln -sf ${shdir}/gcc_build/*.sh ${HOME}/gcc_build
 ln -sf ${shdir}/gcc_build/scripts/* ${HOME}/gcc_build/scripts
+rm -fr ${HOME}/gcc_build/patches
 for dname in ${mg_patches[@]}
 do
     if [ ! -d ${HOME}/gcc_build/patches/$dname ] ; then

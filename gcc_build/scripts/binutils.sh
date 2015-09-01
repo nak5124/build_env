@@ -1,5 +1,9 @@
 # Binutils: A set of programs to assemble and manipulate binary and object files
 # Clone git repo, git pull and apply patches.
+function apply_patch_bu() {
+    apply_patch "${1}" "${BUILD_DIR}"/binutils/src/binutils-$BINUTILS_VER "${LOGS_DIR}"/binutils/binutils_patch.log "${2}"
+}
+
 function prepare_binutils() {
     # Git clone.
     if [ ! -d "${BUILD_DIR}"/binutils/src/binutils-$BINUTILS_VER ]; then
@@ -22,22 +26,20 @@ function prepare_binutils() {
 
     # Apply patches.
     printf "===> Applying patches to Binutils %s...\n" "${BINUTILS_VER}"
-    patch -p1 -i "${PATCHES_DIR}"/binutils/0001-binutils-Check-harder-for-the-file-in-question-being.patch \
-        > "${LOGS_DIR}"/binutils/binutils_patch.log 2>&1 || exit 1
+
+    # /dev/null -> nul
+    apply_patch_bu "${PATCHES_DIR}"/binutils/0001-binutils-Check-harder-for-the-file-in-question-being.patch true
     # For --enable-shared.
-    patch -p1 -i "${PATCHES_DIR}"/binutils/0002-Enable-shared-on-MinGW.patch \
-        >> "${LOGS_DIR}"/binutils/binutils_patch.log 2>&1 || exit 1
-    patch -p1 -i "${PATCHES_DIR}"/binutils/0003-MinGW-Use-__MINGW_PRINTF_FORMAT-for-__USE_MINGW_ANSI.patch \
-        >> "${LOGS_DIR}"/binutils/binutils_patch.log 2>&1 || exit 1
+    apply_patch_bu "${PATCHES_DIR}"/binutils/0002-Enable-shared-on-MinGW.patch                               false
+    # Shut up GCC -Wformat.
+    apply_patch_bu "${PATCHES_DIR}"/binutils/0003-MinGW-Use-__MINGW_PRINTF_FORMAT-for-__USE_MINGW_ANSI.patch false
     # Don't search dirs under ${prefix} but ${build_sysroot}.
-    patch -p1 -i "${PATCHES_DIR}"/binutils/0004-configure-Search-dirs-under-build_sysroot-instead-of.patch \
-        >> "${LOGS_DIR}"/binutils/binutils_patch.log 2>&1 || exit 1
+    apply_patch_bu "${PATCHES_DIR}"/binutils/0004-configure-Search-dirs-under-build_sysroot-instead-of.patch false
     # Disable automatic image base calculation.
-    patch -p1 -i "${PATCHES_DIR}"/binutils/0005-MinGW-Disable-automatic-image-base-calculation.patch \
-        >> "${LOGS_DIR}"/binutils/binutils_patch.log 2>&1 || exit 1
+    apply_patch_bu "${PATCHES_DIR}"/binutils/0005-MinGW-Disable-automatic-image-base-calculation.patch       false
     # Don't make a lowercase backslashed path from argv[0] that then fail to strcmp with prefix(es) .. they're also ugly.
-    patch -p1 -i "${PATCHES_DIR}"/binutils/0006-libiberty-lrealpath.c-Don-t-make-a-lowercase-backsla.patch \
-        >> "${LOGS_DIR}"/binutils/binutils_patch.log 2>&1 || exit 1
+    apply_patch_bu "${PATCHES_DIR}"/binutils/0006-libiberty-lrealpath.c-Don-t-make-a-lowercase-backsla.patch false
+
     popd > /dev/null # "${BUILD_DIR}"/binutils/src/binutils-$BINUTILS_VER
     echo 'done'
 

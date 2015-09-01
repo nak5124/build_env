@@ -23,23 +23,24 @@ function download_isl_src() {
 }
 
 # Apply patches and autoreconf.
+function apply_patch_isl() {
+    apply_patch "${1}" "${BUILD_DIR}"/gcc_libs/isl/src/isl-$ISL_VER "${LOGS_DIR}"/gcc_libs/isl/isl_patch.log "${2}"
+}
+
 function prepare_isl() {
     # Apply patches.
     printf "===> Applying patches to ISL %s...\n" "${ISL_VER}"
-    pushd "${BUILD_DIR}"/gcc_libs/isl/src/isl-$ISL_VER > /dev/null
-    if [ ! -f "${BUILD_DIR}"/gcc_libs/isl/src/isl-${ISL_VER}/patched_01.marker ]; then
-        patch -p1 -i "${PATCHES_DIR}"/isl/0001-isl-no-undefined.patch > "${LOGS_DIR}"/gcc_libs/isl/isl_patch.log 2>&1 || exit 1
-        touch "${BUILD_DIR}"/gcc_libs/isl/src/isl-${ISL_VER}/patched_01.marker
-    fi
-    if [ ! -f "${BUILD_DIR}"/gcc_libs/isl/src/isl-${ISL_VER}/patched_02.marker ]; then
-        patch -p1 -i "${PATCHES_DIR}"/isl/0002-Remove-comma-at-end-of-enumerator-list.patch \
-            > "${LOGS_DIR}"/gcc_libs/isl/isl_patch.log 2>&1 || exit 1
-        touch "${BUILD_DIR}"/gcc_libs/isl/src/isl-${ISL_VER}/patched_02.marker
-    fi
+
+    # Add -no-undefined to libisl_la_LDFLAGS.
+    apply_patch_isl "${PATCHES_DIR}"/isl/0001-isl-no-undefined.patch                       true
+    # Shut up GCC warning.
+    apply_patch_isl "${PATCHES_DIR}"/isl/0002-Remove-comma-at-end-of-enumerator-list.patch false
+
     echo 'done'
 
     # Autoreconf.
     printf "===> Autoreconfing ISL %s...\n" "${ISL_VER}"
+    pushd "${BUILD_DIR}"/gcc_libs/isl/src/isl-$ISL_VER > /dev/null
     autoreconf -fis > /dev/null 2>&1
     popd > /dev/null # "${BUILD_DIR}"/gcc_libs/isl/src/isl-$ISL_VER
     echo 'done'

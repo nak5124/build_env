@@ -62,7 +62,7 @@ declare -r YASM_VER='1.3.0'
 declare -r AUTOCONF_VER='2.69'
 declare -r AUTOMAKE_VER='1.15'
 declare -r LIBTOOL_VER='2.4.6'
-declare -r use_win_iconv=true
+declare -r use_win_iconv=false
 
 # Comment out if you don't want to rebuild.
 # prerequisites for GCC

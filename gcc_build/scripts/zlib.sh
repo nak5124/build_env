@@ -1,5 +1,9 @@
 # zlib: Compression library implementing the deflate compression method found in gzip and PKZIP
 # Download the src and decompress it.
+function apply_patch_z() {
+    apply_patch "${1}" "${BUILD_DIR}"/zlib/src/zlib-$ZLIB_VER "${LOGS_DIR}"/zlib/zlib_patch.log "${2}"
+}
+
 function download_zlib_src() {
     # Git clone.
     if [ ! -d "${BUILD_DIR}"/zlib/src/zlib-$ZLIB_VER ]; then
@@ -22,11 +26,14 @@ function download_zlib_src() {
 
     # Apply patches.
     printf "===> Applying patches to zlib %s...\n" "${ZLIB_VER}"
-    patch -p1 -i "${PATCHES_DIR}"/zlib/0001-Improve-buildsystem-for-MinGW-w64.patch \
-        > "${LOGS_DIR}"/zlib/zlib_patch.log 2>&1 || exit 1
-    patch -p1 -i "${PATCHES_DIR}"/zlib/0002-Fix-LFS-on-MinGW-w64.patch >> "${LOGS_DIR}"/zlib/zlib_patch.log 2>&1 || exit 1
-    patch -p1 -i "${PATCHES_DIR}"/zlib/0003-Use-typedef-instead-of-define.patch \
-        >> "${LOGS_DIR}"/zlib/zlib_patch.log 2>&1 || exit 1
+
+    # Buildsystem of zlib-ng is useless.
+    apply_patch_z "${PATCHES_DIR}"/zlib/0001-Improve-buildsystem-for-MinGW-w64.patch true
+    # LFS
+    apply_patch_z "${PATCHES_DIR}"/zlib/0002-Fix-LFS-on-MinGW-w64.patch              false
+    # To build toolchain.
+    apply_patch_z "${PATCHES_DIR}"/zlib/0003-Use-typedef-instead-of-define.patch     false
+
     popd > /dev/null # "${BUILD_DIR}"/zlib/src/zlib-$ZLIB_VER
     echo 'done'
 

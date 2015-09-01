@@ -1,4 +1,4 @@
-From fbf93b5ab60aabda02af92e3daeee29e7a711f24 Mon Sep 17 00:00:00 2001
+From 49a62beabf7ea25aef261dcfe23b6e9458e1ea01 Mon Sep 17 00:00:00 2001
 From: Yuta NAKAI <nak5124@live.jp>
 Date: Sun, 19 Apr 2015 21:45:48 +0900
 Subject: [PATCH 3/6] MinGW: Use __MINGW_PRINTF_FORMAT for
@@ -18,7 +18,7 @@ Subject: [PATCH 3/6] MinGW: Use __MINGW_PRINTF_FORMAT for
  10 files changed, 36 insertions(+), 19 deletions(-)
 
 diff --git a/bfd/bfd-in.h b/bfd/bfd-in.h
-index ae99d1e..a20b599 100644
+index 1607872..26e7e28 100644
 --- a/bfd/bfd-in.h
 +++ b/bfd/bfd-in.h
 @@ -137,7 +137,7 @@ typedef BFD_HOST_U_64_BIT symvalue;
@@ -31,7 +31,7 @@ index ae99d1e..a20b599 100644
  #else
  #define BFD_VMA_FMT "ll"
 diff --git a/bfd/bfd-in2.h b/bfd/bfd-in2.h
-index 85f2054..df19c88 100644
+index bca5181..4bb33d5 100644
 --- a/bfd/bfd-in2.h
 +++ b/bfd/bfd-in2.h
 @@ -144,7 +144,7 @@ typedef BFD_HOST_U_64_BIT symvalue;
@@ -44,7 +44,7 @@ index 85f2054..df19c88 100644
  #else
  #define BFD_VMA_FMT "ll"
 diff --git a/binutils/dwarf.c b/binutils/dwarf.c
-index c3dc814..27af558 100644
+index a04adec..ad851f9 100644
 --- a/binutils/dwarf.c
 +++ b/binutils/dwarf.c
 @@ -164,7 +164,7 @@ get_encoded_value (unsigned char **pdata,
@@ -57,7 +57,7 @@ index c3dc814..27af558 100644
  #  define DWARF_VMA_FMT_LONG	"%16.16llx"
  # else
 diff --git a/binutils/nm.c b/binutils/nm.c
-index a8f2f70..2dc5a72 100644
+index ed1ed12..9704f92 100644
 --- a/binutils/nm.c
 +++ b/binutils/nm.c
 @@ -162,7 +162,7 @@ static char value_format_32bit[] = "%08lx";
@@ -79,7 +79,7 @@ index a8f2f70..2dc5a72 100644
  #else
        value_format_64bit[7] = *radix;
 diff --git a/binutils/prdbg.c b/binutils/prdbg.c
-index 6e2b217..ee58b8b 100644
+index b43030b..3131818 100644
 --- a/binutils/prdbg.c
 +++ b/binutils/prdbg.c
 @@ -502,7 +502,7 @@ print_vma (bfd_vma vma, char *buf, bfd_boolean unsignedp, bfd_boolean hexp)
@@ -92,10 +92,10 @@ index 6e2b217..ee58b8b 100644
  	sprintf (buf, "0x%llx", (unsigned long long) vma);
        else if (unsignedp)
 diff --git a/binutils/readelf.c b/binutils/readelf.c
-index b20b72a..6bd9371 100644
+index af92d5b..8e4f627 100644
 --- a/binutils/readelf.c
 +++ b/binutils/readelf.c
-@@ -1141,7 +1141,7 @@ dump_relocations (FILE * file,
+@@ -1123,7 +1123,7 @@ dump_relocations (FILE * file,
  		  : "%12.12lx  %12.12lx ",
  		  offset, inf);
  #elif BFD_HOST_64BIT_LONG_LONG
@@ -104,7 +104,7 @@ index b20b72a..6bd9371 100644
  	  printf (do_wide
  		  ? "%16.16llx  %16.16llx "
  		  : "%12.12llx  %12.12llx ",
-@@ -12095,7 +12095,7 @@ dump_section_as_strings (Elf_Internal_Shdr * section, FILE * file)
+@@ -11552,7 +11552,7 @@ dump_section_as_strings (Elf_Internal_Shdr * section, FILE * file)
  	{
  	  size_t maxlen = end - data;
  
@@ -114,7 +114,7 @@ index b20b72a..6bd9371 100644
               around bugs in the Solaris 8 implementation of printf.  */
  	  printf ("  [%6tx]  ", data - start);
 diff --git a/binutils/strings.c b/binutils/strings.c
-index 0e2c9a8..c914a97 100644
+index 224f870..9a3caf8 100644
 --- a/binutils/strings.c
 +++ b/binutils/strings.c
 @@ -582,7 +582,7 @@ print_strings (const char *filename, FILE *stream, file_ptr address,
@@ -145,7 +145,7 @@ index 0e2c9a8..c914a97 100644
  # else
  	        printf ("%7I64x ", (unsigned long long) start);
 diff --git a/gas/as.h b/gas/as.h
-index 635b2c5..4ab4c2a 100644
+index df04dce..c66f8bb 100644
 --- a/gas/as.h
 +++ b/gas/as.h
 @@ -449,12 +449,21 @@ typedef struct _pseudo_type pseudo_typeS;
@@ -171,10 +171,10 @@ index 635b2c5..4ab4c2a 100644
  #else /* __GNUC__ < 2 || defined(VMS) */
  
 diff --git a/gas/read.c b/gas/read.c
-index 816c255..fb19c17 100644
+index 6e441da..a303ceb 100644
 --- a/gas/read.c
 +++ b/gas/read.c
-@@ -4344,7 +4344,7 @@ emit_expr_with_reloc (expressionS *exp,
+@@ -4322,7 +4322,7 @@ emit_expr_with_reloc (expressionS *exp,
  	      || (get & hibit) == 0))
  	{		/* Leading bits contain both 0s & 1s.  */
  #if defined (BFD64) && BFD_HOST_64BIT_LONG_LONG
@@ -184,10 +184,10 @@ index 816c255..fb19c17 100644
  		   (unsigned long long) get, (unsigned long long) use);
  #else
 diff --git a/include/ansidecl.h b/include/ansidecl.h
-index 6cbea97..4fe8de2 100644
+index 0fb23bb..d55c1ed 100644
 --- a/include/ansidecl.h
 +++ b/include/ansidecl.h
-@@ -195,12 +195,16 @@ So instead we use the macro below and test it against specific values.  */
+@@ -197,12 +197,16 @@ So instead we use the macro below and test it against specific values.  */
     before GCC 3.3, but as of 3.3 we need to add the `nonnull'
     attribute to retain this behavior.  */
  #ifndef ATTRIBUTE_PRINTF
@@ -210,7 +210,7 @@ index 6cbea97..4fe8de2 100644
  #endif /* ATTRIBUTE_PRINTF */
  
  /* Use ATTRIBUTE_FPTR_PRINTF when the format attribute is to be set on
-@@ -223,7 +227,11 @@ So instead we use the macro below and test it against specific values.  */
+@@ -225,7 +229,11 @@ So instead we use the macro below and test it against specific values.  */
     NULL format specifier was allowed as of gcc 3.3.  */
  #ifndef ATTRIBUTE_NULL_PRINTF
  # if (GCC_VERSION >= 3003)
@@ -224,5 +224,5 @@ index 6cbea97..4fe8de2 100644
  #  define ATTRIBUTE_NULL_PRINTF(m, n)
  # endif /* GNUC >= 3.3 */
 -- 
-2.4.5
+2.5.0
 

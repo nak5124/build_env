@@ -23,93 +23,29 @@ function download_autoconf_src() {
 }
 
 # Apply patches.
+function apply_patch_ac() {
+    apply_patch "${1}" "${BUILD_DIR}"/autotools/autoconf/src/autoconf-$AUTOCONF_VER \
+        "${LOGS_DIR}"/autotools/autoconf/autoconf_patch.log "${2}"
+}
+
 function prepare_autoconf() {
-    if [ "${AUTOCONF_VER}" = 'git' ]; then
-        # Git clone.
-        if [ ! -d "${BUILD_DIR}"/autotools/autoconf/src/autoconf-$AUTOCONF_VER ]; then
-            echo '===> Cloning Autoconf git repo...'
-            pushd "${BUILD_DIR}"/autotools/autoconf/src > /dev/null
-            dl_files git git://git.sv.gnu.org/autoconf.git autoconf-$AUTOCONF_VER
-            popd > /dev/null # "${BUILD_DIR}"/autotools/autoconf/src
-            echo 'done'
-        fi
+    # Apply patches.
+    printf "===> Applying patches to Autoconf %s...\n" "${AUTOCONF_VER}"
 
-        # Git pull.
-        echo '===> Updating Autoconf git repo...'
-        pushd "${BUILD_DIR}"/autotools/autoconf/src/autoconf-$AUTOCONF_VER > /dev/null
-        git clean -fdx > /dev/null 2>&1
-        git reset --hard > /dev/null 2>&1
-        git pull > /dev/null 2>&1
-        git log -1 --format="%h" > "${LOGS_DIR}"/autotools/autoconf/autoconf.hash 2>&1
-        git rev-list HEAD | wc -l >> "${LOGS_DIR}"/autotools/autoconf/autoconf.hash 2>&1
-        echo 'done'
+    # http://lists.gnu.org/archive/html/autoconf-patches/2008-08/msg00032.html
+    apply_patch_ac "${PATCHES_DIR}"/autoconf/0001-atomic.all.patch                             true
+    # http://lists.gnu.org/archive/html/autoconf/2006-05/msg00127.html
+    apply_patch_ac "${PATCHES_DIR}"/autoconf/0002-stricter-versioning.all.patch                false
+    # Add space between chr and bracket.
+    apply_patch_ac "${PATCHES_DIR}"/autoconf/0003-m4sh.m4.all.patch                            false
+    # Fix texinfo.
+    apply_patch_ac "${PATCHES_DIR}"/autoconf/0004-autoconf-ga357718.all.patch                  false
+    # For MSYS=winsymlinks:nativestrict.
+    apply_patch_ac "${PATCHES_DIR}"/autoconf/0005-allow-lns-on-msys2.all.patch                 false
+    # Remove CR.
+    apply_patch_ac "${PATCHES_DIR}"/autoconf/0006-fix-cr-for-awk-in-configure-and-status.patch false
 
-        # Apply patches.
-        printf "===> Applying patches to Autoconf %s...\n" "${AUTOCONF_VER}"
-        patch -p1 -i "${PATCHES_DIR}"/autoconf/0001-atomic.all.patch \
-            > "${LOGS_DIR}"/autotools/autoconf/autoconf_patch.log 2>&1 || exit 1
-        patch -p1 -i "${PATCHES_DIR}"/autoconf/0002-stricter-versioning.all.patch \
-            >> "${LOGS_DIR}"/autotools/autoconf/autoconf_patch.log 2>&1 || exit 1
-        patch -p1 -i "${PATCHES_DIR}"/autoconf/0003-m4sh.m4.all.patch \
-            >> "${LOGS_DIR}"/autotools/autoconf/autoconf_patch.log 2>&1 || exit 1
-        patch -p1 -i "${PATCHES_DIR}"/autoconf/0006-allow-lns-on-msys2.all.patch \
-            >> "${LOGS_DIR}"/autotools/autoconf/autoconf_patch.log 2>&1 || exit 1
-        patch -p1 -i "${PATCHES_DIR}"/autoconf/0008-fix-cr-for-awk-in-status.all.patch \
-            >> "${LOGS_DIR}"/autotools/autoconf/autoconf_patch.log 2>&1 || exit 1
-        echo 'done'
-
-        # Autoreconf.
-        printf "===> Autoreconfing Autoconf %s...\n" "${AUTOCONF_VER}"
-        autoreconf -fis > /dev/null 2>&1
-        popd > /dev/null # "${BUILD_DIR}"/autotools/autoconf/src/autoconf-$AUTOCONF_VER
-        echo 'done'
-    else
-        # Apply patches.
-        printf "===> Applying patches to Autoconf %s...\n" "${AUTOCONF_VER}"
-        pushd "${BUILD_DIR}"/autotools/autoconf/src/autoconf-$AUTOCONF_VER > /dev/null
-        if [ ! -f "${BUILD_DIR}"/autotools/autoconf/src/autoconf-${AUTOCONF_VER}/patched_01.marker ]; then
-            patch -p1 -i "${PATCHES_DIR}"/autoconf/0001-atomic.all.patch \
-                > "${LOGS_DIR}"/autotools/autoconf/autoconf_patch.log 2>&1 || exit 1
-            touch "${BUILD_DIR}"/autotools/autoconf/src/autoconf-${AUTOCONF_VER}/patched_01.marker
-        fi
-        if [ ! -f "${BUILD_DIR}"/autotools/autoconf/src/autoconf-${AUTOCONF_VER}/patched_02.marker ]; then
-            patch -p1 -i "${PATCHES_DIR}"/autoconf/0002-stricter-versioning.all.patch \
-                >> "${LOGS_DIR}"/autotools/autoconf/autoconf_patch.log 2>&1 || exit 1
-            touch "${BUILD_DIR}"/autotools/autoconf/src/autoconf-${AUTOCONF_VER}/patched_02.marker
-        fi
-        if [ ! -f "${BUILD_DIR}"/autotools/autoconf/src/autoconf-${AUTOCONF_VER}/patched_03.marker ]; then
-            patch -p1 -i "${PATCHES_DIR}"/autoconf/0003-m4sh.m4.all.patch \
-                >> "${LOGS_DIR}"/autotools/autoconf/autoconf_patch.log 2>&1 || exit 1
-            touch "${BUILD_DIR}"/autotools/autoconf/src/autoconf-${AUTOCONF_VER}/patched_03.marker
-        fi
-        if [ ! -f "${BUILD_DIR}"/autotools/autoconf/src/autoconf-${AUTOCONF_VER}/patched_04.marker ]; then
-            patch -p1 -i "${PATCHES_DIR}"/autoconf/0004-autoconf2.5-2.69-1.src.all.patch \
-                >> "${LOGS_DIR}"/autotools/autoconf/autoconf_patch.log 2>&1 || exit 1
-            touch "${BUILD_DIR}"/autotools/autoconf/src/autoconf-${AUTOCONF_VER}/patched_04.marker
-        fi
-        if [ ! -f "${BUILD_DIR}"/autotools/autoconf/src/autoconf-${AUTOCONF_VER}/patched_05.marker ]; then
-            patch -p1 -i "${PATCHES_DIR}"/autoconf/0005-autoconf-ga357718.all.patch \
-                >> "${LOGS_DIR}"/autotools/autoconf/autoconf_patch.log 2>&1 || exit 1
-            touch "${BUILD_DIR}"/autotools/autoconf/src/autoconf-${AUTOCONF_VER}/patched_05.marker
-        fi
-        if [ ! -f "${BUILD_DIR}"/autotools/autoconf/src/autoconf-${AUTOCONF_VER}/patched_06.marker ]; then
-            patch -p1 -i "${PATCHES_DIR}"/autoconf/0006-allow-lns-on-msys2.all.patch \
-                >> "${LOGS_DIR}"/autotools/autoconf/autoconf_patch.log 2>&1 || exit 1
-            touch "${BUILD_DIR}"/autotools/autoconf/src/autoconf-${AUTOCONF_VER}/patched_06.marker
-        fi
-        if [ ! -f "${BUILD_DIR}"/autotools/autoconf/src/autoconf-${AUTOCONF_VER}/patched_07.marker ]; then
-            patch -p1 -i "${PATCHES_DIR}"/autoconf/0007-fix-cr-for-awk-in-configure.all.patch \
-                >> "${LOGS_DIR}"/autotools/autoconf/autoconf_patch.log 2>&1 || exit 1
-            touch "${BUILD_DIR}"/autotools/autoconf/src/autoconf-${AUTOCONF_VER}/patched_07.marker
-        fi
-        if [ ! -f "${BUILD_DIR}"/autotools/autoconf/src/autoconf-${AUTOCONF_VER}/patched_08.marker ]; then
-            patch -p1 -i "${PATCHES_DIR}"/autoconf/0008-fix-cr-for-awk-in-status.all.patch \
-                >> "${LOGS_DIR}"/autotools/autoconf/autoconf_patch.log 2>&1 || exit 1
-            touch "${BUILD_DIR}"/autotools/autoconf/src/autoconf-${AUTOCONF_VER}/patched_08.marker
-        fi
-        popd > /dev/null # "${BUILD_DIR}"/autotools/autoconf/src/autoconf-$AUTOCONF_VER
-        echo 'done'
-    fi
+    echo 'done'
 
     return 0
 }
@@ -138,9 +74,7 @@ function build_autoconf() {
 
     # Setup.
     if ${_rebuild}; then
-        if [ "${AUTOCONF_VER}" != 'git' ]; then
-            download_autoconf_src
-        fi
+        download_autoconf_src
         prepare_autoconf
     fi
 
@@ -215,44 +149,19 @@ function download_automake_src() {
 }
 
 # Apply patches.
+function apply_patch_am() {
+    apply_patch "${1}" "${BUILD_DIR}"/autotools/automake/src/automake-$AUTOMAKE_VER \
+        "${LOGS_DIR}"/autotools/automake/automake_patch.log "${2}"
+}
+
 function prepare_automake() {
-    if [ "${AUTOMAKE_VER}" = 'git' ]; then
-        # Git clone.
-        if [ ! -d "${BUILD_DIR}"/autotools/automake/src/automake-$AUTOMAKE_VER ]; then
-            echo '===> Cloning Automake git repo...'
-            pushd "${BUILD_DIR}"/autotools/automake/src > /dev/null
-            dl_files git git://git.sv.gnu.org/automake.git automake-$AUTOMAKE_VER
-            popd > /dev/null # "${BUILD_DIR}"/autotools/automake/src
-            echo 'done'
-        fi
+    # Apply patches.
+    printf "===> Applying patches to Automake %s...\n" "${AUTOMAKE_VER}"
 
-        # Git pull.
-        echo '===> Updating Automake git repo...'
-        pushd "${BUILD_DIR}"/autotools/automake/src/automake-$AUTOMAKE_VER > /dev/null
-        git clean -fdx > /dev/null 2>&1
-        git reset --hard > /dev/null 2>&1
-        git pull > /dev/null 2>&1
-        git log -1 --format="%h" > "${LOGS_DIR}"/autotools/automake/automake.hash 2>&1
-        git rev-list HEAD | wc -l >> "${LOGS_DIR}"/autotools/automake/automake.hash 2>&1
-        echo 'done'
+    # Remove CR.
+    apply_patch_am "${PATCHES_DIR}"/automake/0001-fix-cr-for-awk-in-configure.patch true
 
-        # Bootstrap.
-        printf "===> Bootstraping Automake %s...\n" "${AUTOCONF_VER}"
-        ./bootstrap.sh > /dev/null 2>&1
-        popd > /dev/null # "${BUILD_DIR}"/autotools/automake/src/automake-$AUTOMAKE_VER
-        echo 'done'
-    else
-        # Apply patches.
-        printf "===> Applying patches to Automake %s...\n" "${AUTOMAKE_VER}"
-        pushd "${BUILD_DIR}"/autotools/automake/src/automake-$AUTOMAKE_VER > /dev/null
-        if [ ! -f "${BUILD_DIR}"/autotools/automake/src/automake-${AUTOMAKE_VER}/patched_01.marker ]; then
-            patch -p1 -i "${PATCHES_DIR}"/automake/0001-fix-cr-for-awk-in-configure.all.patch \
-                > "${LOGS_DIR}"/autotools/automake/automake_patch.log 2>&1 || exit 1
-            touch "${BUILD_DIR}"/autotools/automake/src/automake-${AUTOMAKE_VER}/patched_01.marker
-        fi
-        popd > /dev/null # "${BUILD_DIR}"/autotools/automake/src/automake-$AUTOMAKE_VER
-        echo 'done'
-    fi
+    echo 'done'
 
     return 0
 }
@@ -280,9 +189,7 @@ function build_automake() {
 
     # Setup.
     if ${_rebuild}; then
-        if [ "${AUTOMAKE_VER}" != 'git' ]; then
-            download_automake_src
-        fi
+        download_automake_src
         prepare_automake
     fi
 
@@ -326,16 +233,14 @@ function build_automake() {
         printf "===> Copying Automake %s to %s/mingw%s...\n" "${_arch}" "${DST_DIR}" "${_bitval}"
         cp -af "${PREIN_DIR}"/autotools/automake/mingw$_bitval "${DST_DIR}"
         # Create symlinks.
-        if [ "${AUTOMAKE_VER}" != 'git' ]; then
-            if ${create_symlinks:-false}; then
-                printf "===> Creating symlinks %s...\n" "${_arch}"
-                pushd "${DST_DIR}"/mingw${_bitval}/bin > /dev/null
-                ln -fsr ./automake-$AUTOMAKE_VER ./automake
-                ln -fsr ./aclocal-$AUTOMAKE_VER ./aclocal
-                popd > /dev/null # "${DST_DIR}"/mingw${_bitval}/bin
-            else
-                rm -f "${DST_DIR}"/mingw${_bitval}/bin/{aclocal,automake}
-            fi
+        if ${create_symlinks:-false}; then
+            printf "===> Creating symlinks %s...\n" "${_arch}"
+            pushd "${DST_DIR}"/mingw${_bitval}/bin > /dev/null
+            ln -fsr ./automake-$AUTOMAKE_VER ./automake
+            ln -fsr ./aclocal-$AUTOMAKE_VER ./aclocal
+            popd > /dev/null # "${DST_DIR}"/mingw${_bitval}/bin
+        else
+            rm -f "${DST_DIR}"/mingw${_bitval}/bin/{aclocal,automake}
         fi
         echo 'done'
     done
@@ -370,79 +275,32 @@ function download_libtool_src() {
 }
 
 # Apply patches.
+function apply_patch_lt() {
+    apply_patch "${1}" "${BUILD_DIR}"/autotools/libtool/src/libtool-$LIBTOOL_VER \
+        "${LOGS_DIR}"/autotools/libtool/libtool_patch.log "${2}"
+}
+
 function prepare_libtool() {
-    if [ "${LIBTOOL_VER}" = 'git' ]; then
-        # Git clone.
-        if [ ! -d "${BUILD_DIR}"/autotools/libtool/src/libtool-$LIBTOOL_VER ]; then
-            echo '===> Cloning Libtool git repo...'
-            pushd "${BUILD_DIR}"/autotools/libtool/src > /dev/null
-            dl_files git git://git.sv.gnu.org/libtool.git libtool-$LIBTOOL_VER
-            popd > /dev/null # "${BUILD_DIR}"/autotools/libtool/src
-            echo 'done'
-        fi
+    # Apply patches.
+    printf "===> Applying patches to Libtool %s...\n" "${LIBTOOL_VER}"
 
-        # Git pull.
-        echo '===> Updating Libtool git repo...'
-        pushd "${BUILD_DIR}"/autotools/libtool/src/libtool-$LIBTOOL_VER > /dev/null
-        git clean -fdx > /dev/null 2>&1
-        git reset --hard > /dev/null 2>&1
-        git pull > /dev/null 2>&1
-        git log -1 --format="%h" > "${LOGS_DIR}"/autotools/libtool/libtool.hash 2>&1
-        git rev-list HEAD | wc -l >> "${LOGS_DIR}"/autotools/libtool/libtool.hash 2>&1
-        echo 'done'
+    # Emit Win32 UAC manifest.
+    apply_patch_lt "${PATCHES_DIR}"/libtool/0001-cygwin-mingw-Create-UAC-manifest-files.patch    true
+    # Pass the -shared-libgcc and -static-lib* flags along to GCC.
+    apply_patch_lt "${PATCHES_DIR}"/libtool/0002-Pass-various-runtime-library-flags-to-GCC.patch false
+    # Compare files by inode to fix "seems to be moved" warning.
+    apply_patch_lt "${PATCHES_DIR}"/libtool/0003-Fix-seems-to-be-moved.patch                     false
+    # Also check for _POSIX as well as __STRICT_ANSI__ to avoid re-definitions.
+    apply_patch_lt "${PATCHES_DIR}"/libtool/0004-Fix-strict-ansi-vs-posix.patch                  false
+    # Remove CR.
+    apply_patch_lt "${PATCHES_DIR}"/libtool/0005-fix-cr-for-awk-in-configure.patch               false
 
-        # Apply patches.
-        printf "===> Applying patches to Libtool %s...\n" "${LIBTOOL_VER}"
-        patch -p1 -i "${PATCHES_DIR}"/libtool/0001-cygwin-mingw-Create-UAC-manifest-files.mingw.patch \
-            > "${LOGS_DIR}"/autotools/libtool/libtool_patch.log 2>&1 || exit 1
-        patch -p1 -i "${PATCHES_DIR}"/libtool/0002-Pass-various-runtime-library-flags-to-GCC.mingw.patch \
-            >> "${LOGS_DIR}"/autotools/libtool/libtool_patch.log 2>&1 || exit 1
-        patch -p1 -i "${PATCHES_DIR}"/libtool/0003-Fix-seems-to-be-moved.patch \
-            >> "${LOGS_DIR}"/autotools/libtool/libtool_patch.log 2>&1 || exit 1
-        patch -p1 -i "${PATCHES_DIR}"/libtool/0004-Fix-strict-ansi-vs-posix.patch \
-            >> "${LOGS_DIR}"/autotools/libtool/libtool_patch.log 2>&1 || exit 1
-        echo 'done'
+    # Disable automatic image base calculation.
+    sed -i 's/enable-auto-image-base/disable-auto-image-base/g' \
+        "${BUILD_DIR}"/autotools/libtool/src/libtool-${LIBTOOL_VER}/{configure,m4/libtool.m4}
+    perl -pi -e 's/_stat\n/_stat64\n/g' "${BUILD_DIR}"/autotools/libtool/src/libtool-${LIBTOOL_VER}/build-aux/ltmain.in
 
-        # Bootstrap.
-        printf "===> Bootstraping Libtool %s...\n" "${LIBTOOL_VER}"
-        ./bootstrap > /dev/null 2>&1
-        popd > /dev/null # "${BUILD_DIR}"/autotools/libtool/src/libtool-$LIBTOOL_VER
-        echo 'done'
-    else
-        # Apply patches.
-        printf "===> Applying patches to Libtool %s...\n" "${LIBTOOL_VER}"
-        pushd "${BUILD_DIR}"/autotools/libtool/src/libtool-$LIBTOOL_VER > /dev/null
-        if [ ! -f "${BUILD_DIR}"/autotools/libtool/src/libtool-${LIBTOOL_VER}/patched_01.marker ]; then
-            patch -p1 -i "${PATCHES_DIR}"/libtool/0001-cygwin-mingw-Create-UAC-manifest-files.mingw.patch \
-                > "${LOGS_DIR}"/autotools/libtool/libtool_patch.log 2>&1 || exit 1
-            touch "${BUILD_DIR}"/autotools/libtool/src/libtool-${LIBTOOL_VER}/patched_01.marker
-        fi
-        if [ ! -f "${BUILD_DIR}"/autotools/libtool/src/libtool-${LIBTOOL_VER}/patched_02.marker ]; then
-            patch -p1 -i "${PATCHES_DIR}"/libtool/0002-Pass-various-runtime-library-flags-to-GCC.mingw.patch \
-                >> "${LOGS_DIR}"/autotools/libtool/libtool_patch.log 2>&1 || exit 1
-            touch "${BUILD_DIR}"/autotools/libtool/src/libtool-${LIBTOOL_VER}/patched_02.marker
-        fi
-        if [ ! -f "${BUILD_DIR}"/autotools/libtool/src/libtool-${LIBTOOL_VER}/patched_03.marker ]; then
-            patch -p1 -i "${PATCHES_DIR}"/libtool/0003-Fix-seems-to-be-moved.patch \
-                >> "${LOGS_DIR}"/autotools/libtool/libtool_patch.log 2>&1 || exit 1
-            touch "${BUILD_DIR}"/autotools/libtool/src/libtool-${LIBTOOL_VER}/patched_03.marker
-        fi
-        if [ ! -f "${BUILD_DIR}"/autotools/libtool/src/libtool-${LIBTOOL_VER}/patched_04.marker ]; then
-            patch -p1 -i "${PATCHES_DIR}"/libtool/0004-Fix-strict-ansi-vs-posix.patch \
-                >> "${LOGS_DIR}"/autotools/libtool/libtool_patch.log 2>&1 || exit 1
-            touch "${BUILD_DIR}"/autotools/libtool/src/libtool-${LIBTOOL_VER}/patched_04.marker
-        fi
-        if [ ! -f "${BUILD_DIR}"/autotools/libtool/src/libtool-${LIBTOOL_VER}/patched_05.marker ]; then
-            patch -p1 -i "${PATCHES_DIR}"/libtool/0005-fix-cr-for-awk-in-configure.all.patch \
-                >> "${LOGS_DIR}"/autotools/libtool/libtool_patch.log 2>&1 || exit 1
-            touch "${BUILD_DIR}"/autotools/libtool/src/libtool-${LIBTOOL_VER}/patched_05.marker
-        fi
-        # Disable automatic image base calculation.
-        sed -i 's/enable-auto-image-base/disable-auto-image-base/g' {configure,m4/libtool.m4}
-        perl -pi -e 's/_stat\n/_stat64\n/g' build-aux/ltmain.in
-        popd > /dev/null # "${BUILD_DIR}"/autotools/libtool/src/libtool-$LIBTOOL_VER
-        echo 'done'
-    fi
+    echo 'done'
 
     return 0
 }
@@ -470,9 +328,7 @@ function build_libtool() {
 
     # Setup.
     if ${_rebuild}; then
-        if [ "${LIBTOOL_VER}" != 'git' ]; then
-            download_libtool_src
-        fi
+        download_libtool_src
         prepare_libtool
     fi
 

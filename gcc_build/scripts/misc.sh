@@ -156,3 +156,71 @@ function check_cpath() {
         exit 1
     fi
 }
+
+function apply_patch() {
+    local -r _patch_file="${1}"
+    local _src_dir="${2}"
+    local -r _log_file="${3}"
+    local _new_log="${4}"
+
+    if [ -z "${_patch_file}" ]; then
+        echo 'apply_patch: ${1} should be specified!'
+        echo '...exit'
+        exit 1
+    elif [ ! -f "${_patch_file}" ]; then
+        echo 'apply_patch: ${1} does not exist or is not a regular file!'
+        echo '...exit'
+        exit 2
+    fi
+
+    local -r _patch_name="${_patch_file##*/}"
+    local -r _prefix_num="${_patch_name%%-*.patch}"
+    if [ -z "${_prefix_num}" ]; then
+        echo 'apply_patch: malformed patch name!'
+        echo '...exit'
+        exit 3
+    fi
+
+    if [ -z "${_src_dir}" ]; then
+        echo 'apply_patch: ${2} should be specified!'
+        echo '...exit'
+        exit 4
+    elif [ ! -d "${_src_dir}" ]; then
+        echo 'apply_patch: ${2} does not exist or is not a directory!'
+        echo '...exit'
+        exit 5
+    fi
+
+    if [ "${_src_dir:${#_src_dir}}" != '/' ]; then
+        _src_dir="${_src_dir}"'/'
+    fi
+
+    if [ -z "${_log_file}" ]; then
+        echo 'apply_patch: ${3} should be specified!'
+        echo '...exit'
+        exit 6
+    elif [ ! -f "${_log_file}" ]; then
+        echo 'apply_patch: ${3} does not exist or is not a regular file!'
+        echo '...exit'
+        exit 7
+    fi
+
+    if [ -z "${_new_log}" ]; then
+        _new_log=false
+    fi
+    local _rd
+    if ${_new_log}; then
+        _rd='>'
+    else
+        _rd='>>'
+    fi
+
+    if [ ! -f "${_src_dir}"patched_${_prefix_num}.marker ]; then
+        pushd "${_src_dir}" > /dev/null
+        eval patch -p1 -i "${_patch_file}" $_rd "${_log_file}" 2>&1 || exit -1
+        touch "${_src_dir}"patched_${_prefix_num}.marker
+        popd > /dev/null
+    fi
+
+    return 0
+}
