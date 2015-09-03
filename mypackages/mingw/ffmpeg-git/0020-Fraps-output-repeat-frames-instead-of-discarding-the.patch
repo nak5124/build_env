@@ -1,7 +1,7 @@
-From 970a5b8bc13586c912812c98dd546ceb4ff1cf06 Mon Sep 17 00:00:00 2001
+From 792b4c941457466840f50b49b8fa9393a2b7a87b Mon Sep 17 00:00:00 2001
 From: Javier Cabezas <jcabgz@gmail.com>
 Date: Sat, 25 May 2013 18:51:29 +0200
-Subject: [PATCH 20/66] Fraps: output repeat frames instead of discarding them
+Subject: [PATCH 20/63] Fraps: output repeat frames instead of discarding them
 
 Signed-off-by: Javier Cabezas <jcabgz@gmail.com>
 Signed-off-by: Hendrik Leppkes <h.leppkes@gmail.com>
@@ -10,7 +10,7 @@ Signed-off-by: Hendrik Leppkes <h.leppkes@gmail.com>
  1 file changed, 158 insertions(+), 19 deletions(-)
 
 diff --git a/libavcodec/fraps.c b/libavcodec/fraps.c
-index c49866e..de96773 100644
+index 2d4d5c4..fc3a0f2 100644
 --- a/libavcodec/fraps.c
 +++ b/libavcodec/fraps.c
 @@ -48,10 +48,14 @@
@@ -77,7 +77,7 @@ index c49866e..de96773 100644
      return 0;
  }
  
-@@ -127,6 +167,38 @@ static int fraps2_decode_plane(FrapsContext *s, uint8_t *dst, int stride, int w,
+@@ -129,6 +169,38 @@ static int fraps2_decode_plane(FrapsContext *s, uint8_t *dst, int stride, int w,
      return 0;
  }
  
@@ -116,7 +116,7 @@ index c49866e..de96773 100644
  static int decode_frame(AVCodecContext *avctx,
                          void *data, int *got_frame,
                          AVPacket *avpkt)
-@@ -134,15 +206,15 @@ static int decode_frame(AVCodecContext *avctx,
+@@ -136,15 +208,15 @@ static int decode_frame(AVCodecContext *avctx,
      FrapsContext * const s = avctx->priv_data;
      const uint8_t *buf     = avpkt->data;
      int buf_size           = avpkt->size;
@@ -135,7 +135,7 @@ index c49866e..de96773 100644
      const int planes = 3;
      uint8_t *out;
  
-@@ -151,6 +223,10 @@ static int decode_frame(AVCodecContext *avctx,
+@@ -153,6 +225,10 @@ static int decode_frame(AVCodecContext *avctx,
          return AVERROR_INVALIDDATA;
      }
  
@@ -146,7 +146,7 @@ index c49866e..de96773 100644
      header      = AV_RL32(buf);
      version     = header & 0xff;
      header_size = (header & (1<<30))? 8 : 4; /* bit 30 means pad to 8 bytes */
-@@ -169,22 +245,16 @@ static int decode_frame(AVCodecContext *avctx,
+@@ -171,22 +247,16 @@ static int decode_frame(AVCodecContext *avctx,
          if (version == 0) needed_size /= 2;
          needed_size += header_size;
          /* bit 31 means same as previous pic */
@@ -173,7 +173,7 @@ index c49866e..de96773 100644
          if (AV_RL32(buf) != FPS_TAG || buf_size < planes*1024 + 24) {
              av_log(avctx, AV_LOG_ERROR, "Fraps: error in data stream\n");
              return AVERROR_INVALIDDATA;
-@@ -202,19 +272,43 @@ static int decode_frame(AVCodecContext *avctx,
+@@ -204,19 +274,43 @@ static int decode_frame(AVCodecContext *avctx,
              if (!s->tmpbuf)
                  return AVERROR(ENOMEM);
          }
@@ -220,7 +220,7 @@ index c49866e..de96773 100644
      switch (version) {
      case 0:
      default:
-@@ -240,6 +334,7 @@ static int decode_frame(AVCodecContext *avctx,
+@@ -242,6 +336,7 @@ static int decode_frame(AVCodecContext *avctx,
                  *cb++    = *buf32++;
              }
          }
@@ -228,7 +228,7 @@ index c49866e..de96773 100644
          break;
  
      case 1:
-@@ -248,6 +343,7 @@ static int decode_frame(AVCodecContext *avctx,
+@@ -250,6 +345,7 @@ static int decode_frame(AVCodecContext *avctx,
                  memcpy(&f->data[0][(avctx->height - y - 1) * f->linesize[0]],
                         &buf[y * avctx->width * 3],
                         3 * avctx->width);
@@ -236,7 +236,7 @@ index c49866e..de96773 100644
          break;
  
      case 2:
-@@ -264,8 +360,13 @@ static int decode_frame(AVCodecContext *avctx,
+@@ -266,8 +362,13 @@ static int decode_frame(AVCodecContext *avctx,
                                             buf + offs[i], offs[i + 1] - offs[i],
                                             is_chroma, 1)) < 0) {
                  av_log(avctx, AV_LOG_ERROR, "Error decoding plane %i\n", i);
@@ -252,7 +252,7 @@ index c49866e..de96773 100644
          }
          break;
      case 3:
-@@ -276,7 +377,10 @@ static int decode_frame(AVCodecContext *avctx,
+@@ -278,7 +379,10 @@ static int decode_frame(AVCodecContext *avctx,
                                             -f->linesize[0], avctx->width, avctx->height,
                                             buf + offs[i], offs[i + 1] - offs[i], 0, 3)) < 0) {
                  av_log(avctx, AV_LOG_ERROR, "Error decoding plane %i\n", i);
@@ -264,7 +264,7 @@ index c49866e..de96773 100644
              }
          }
          out = f->data[0];
-@@ -290,14 +394,39 @@ static int decode_frame(AVCodecContext *avctx,
+@@ -292,14 +396,39 @@ static int decode_frame(AVCodecContext *avctx,
              }
              out += f->linesize[0] - 3*avctx->width;
          }
@@ -304,7 +304,7 @@ index c49866e..de96773 100644
  
  /**
   * closes decoder
-@@ -307,8 +436,16 @@ static int decode_frame(AVCodecContext *avctx,
+@@ -309,8 +438,16 @@ static int decode_frame(AVCodecContext *avctx,
  static av_cold int decode_end(AVCodecContext *avctx)
  {
      FrapsContext *s = (FrapsContext*)avctx->priv_data;
@@ -321,13 +321,13 @@ index c49866e..de96773 100644
      return 0;
  }
  
-@@ -323,4 +460,6 @@ AVCodec ff_fraps_decoder = {
+@@ -325,4 +462,6 @@ AVCodec ff_fraps_decoder = {
      .close          = decode_end,
      .decode         = decode_frame,
-     .capabilities   = CODEC_CAP_DR1 | CODEC_CAP_FRAME_THREADS,
+     .capabilities   = AV_CODEC_CAP_DR1 | AV_CODEC_CAP_FRAME_THREADS,
 +    .update_thread_context = ONLY_IF_THREADS_ENABLED(update_thread_context),
-+    .init_thread_copy      = ONLY_IF_THREADS_ENABLED(init_thread_copy)
++    .init_thread_copy      = ONLY_IF_THREADS_ENABLED(init_thread_copy),
  };
 -- 
-2.4.3
+2.5.0
 

@@ -1,13 +1,16 @@
 # Maintainer: Yuta Nakai <nak5124@live.jp>
 
 _realname=speex
+pkgbase=mingw-w64-$_realname
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}-git"
 pkgdesc='A free codec for free speech (mingw-w64)'
-pkgver=1.2rc2.1952.ecc63b3
+pkgver=1.2rc2.1957.338d893
 pkgrel=1
 arch=('any')
 url='http://www.speex.org/'
 license=('BSD')
+provides=("${MINGW_PACKAGE_PREFIX}-${_realname}")
+conflicts=("${MINGW_PACKAGE_PREFIX}-${_realname}")
 makedepends=('git')
 depends=("${MINGW_PACKAGE_PREFIX}-toolchain")
 source=("${_realname}"::'git://git.xiph.org/speex.git')

@@ -1,7 +1,7 @@
-From a040308b861fd119a1c59c07e913b6a1077b61f0 Mon Sep 17 00:00:00 2001
+From c333d8677ea09eb46d56fc54503efe74bf20054b Mon Sep 17 00:00:00 2001
 From: Hendrik Leppkes <h.leppkes@gmail.com>
 Date: Mon, 18 Aug 2014 09:44:50 +0200
-Subject: [PATCH 34/66] hevc: port intra pred SIMD from OpenHEVC
+Subject: [PATCH 34/63] hevc: port intra pred SIMD from OpenHEVC
 
 ---
  libavcodec/hevcpred.c                 |   2 +
@@ -37,10 +37,10 @@ index eb17663..57e233d 100644
  
  #endif /* AVCODEC_HEVCPRED_H */
 diff --git a/libavcodec/x86/Makefile b/libavcodec/x86/Makefile
-index 0857fb2..f291397 100644
+index 401d51f..1abf0ac 100644
 --- a/libavcodec/x86/Makefile
 +++ b/libavcodec/x86/Makefile
-@@ -138,7 +138,8 @@ YASM-OBJS-$(CONFIG_HEVC_DECODER)       += x86/hevc_mc.o                 \
+@@ -142,7 +142,8 @@ YASM-OBJS-$(CONFIG_HEVC_DECODER)       += x86/hevc_mc.o                 \
                                            x86/hevc_idct.o               \
                                            x86/hevc_res_add.o            \
                                            x86/hevc_sao.o                \
@@ -48,8 +48,8 @@ index 0857fb2..f291397 100644
 +                                          x86/hevc_idct_intrinsic.o     \
 +                                          x86/hevc_intra_intrinsic.o
  
+ YASM-OBJS-$(CONFIG_JPEG2000_DECODER)   += x86/jpeg2000dsp.o
  YASM-OBJS-$(CONFIG_MLP_DECODER)        += x86/mlpdsp.o
- YASM-OBJS-$(CONFIG_MPEG4_DECODER)      += x86/xvididct.o
 diff --git a/libavcodec/x86/hevc_intra_intrinsic.c b/libavcodec/x86/hevc_intra_intrinsic.c
 new file mode 100644
 index 0000000..40e44d9
@@ -1050,5 +1050,5 @@ index 0000000..d26e5bf
 +#endif // AVCODEC_X86_HEVCPRED_H
 \ No newline at end of file
 -- 
-2.4.3
+2.5.0
 

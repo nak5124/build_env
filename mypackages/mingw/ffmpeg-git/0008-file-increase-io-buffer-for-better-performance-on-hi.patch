@@ -1,7 +1,7 @@
-From 3a1530f57d9e4f11dbabbb12a406d927668ae94d Mon Sep 17 00:00:00 2001
+From ed0ba11bdf1203945c7780c99142c71aca3e3f03 Mon Sep 17 00:00:00 2001
 From: Hendrik Leppkes <h.leppkes@gmail.com>
 Date: Tue, 12 Jun 2012 15:38:28 +0200
-Subject: [PATCH 08/66] file: increase io buffer for better performance on high
+Subject: [PATCH 08/63] file: increase io buffer for better performance on high
  latency resources
 
 ---
@@ -9,7 +9,7 @@ Subject: [PATCH 08/66] file: increase io buffer for better performance on high
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/libavformat/aviobuf.c b/libavformat/aviobuf.c
-index dfefe62..abc52ad 100644
+index 1b3d5f5..9fd5ecf 100644
 --- a/libavformat/aviobuf.c
 +++ b/libavformat/aviobuf.c
 @@ -33,7 +33,7 @@
@@ -22,5 +22,5 @@ index dfefe62..abc52ad 100644
  /**
   * Do seeks within this distance ahead of the current buffer by skipping
 -- 
-2.4.3
+2.5.0
 

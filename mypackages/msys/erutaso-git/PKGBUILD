@@ -1,14 +1,16 @@
 # Maintainer: Yuta Nakai <nak5124@live.jp>
 
 pkgname=erutaso-git
-pkgver=9.ed5b15f
-pkgrel=1
 pkgdesc='Cure your bad habit of mistyping, えるたそ～'
-url='https://github.com/sgymtic/sl'
+pkgver=9.ed5b15f
+pkgrel=2
 arch=('i686' 'x86_64')
+url='https://github.com/sgymtic/sl'
 license=('Custom')
-depends=('ncurses')
+provides=('erutaso')
+conflicts=('erutaso')
 makedepends=('git' 'ncurses-devel')
+depends=('ncurses')
 source=("${pkgname}"::'git+https://github.com/sgymtic/sl.git')
 sha512sums=('SKIP')
 

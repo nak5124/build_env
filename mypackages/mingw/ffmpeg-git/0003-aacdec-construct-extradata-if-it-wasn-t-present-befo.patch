@@ -1,33 +1,25 @@
-From 8903c2cf54cdf211e5bd7229a8e09662edce475a Mon Sep 17 00:00:00 2001
+From 2ae2d36af5a93ee3a3df1a93854ce590230cabf3 Mon Sep 17 00:00:00 2001
 From: Hendrik Leppkes <h.leppkes@gmail.com>
 Date: Sat, 10 Sep 2011 12:10:05 +0200
-Subject: [PATCH 03/66] aacdec: construct extradata if it wasn't present
+Subject: [PATCH 03/63] aacdec: construct extradata if it wasn't present
  before.
 
 ---
- libavcodec/aacdec.c | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+ libavcodec/aacdec_template.c | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
-diff --git a/libavcodec/aacdec.c b/libavcodec/aacdec.c
-index 622cc5c..4ca4df8 100644
---- a/libavcodec/aacdec.c
-+++ b/libavcodec/aacdec.c
-@@ -86,6 +86,7 @@
- #include "avcodec.h"
- #include "internal.h"
- #include "get_bits.h"
-+#include "put_bits.h"
- #include "fft.h"
- #include "imdct15.h"
- #include "lpc.h"
-@@ -3207,6 +3208,21 @@ static av_cold int aac_decode_close(AVCodecContext *avctx)
+diff --git a/libavcodec/aacdec_template.c b/libavcodec/aacdec_template.c
+index c2d7d05..98502f4 100644
+--- a/libavcodec/aacdec_template.c
++++ b/libavcodec/aacdec_template.c
+@@ -3156,6 +3156,21 @@ static av_cold int aac_decode_close(AVCodecContext *avctx)
      AACContext *ac = avctx->priv_data;
      int i, type;
  
 +    if (!avctx->extradata_size && ac->oc[1].m4ac.object_type && ac->oc[1].m4ac.chan_config) {
 +        PutBitContext pb;
 +
-+        avctx->extradata = av_mallocz(2);
++        avctx->extradata = av_mallocz(2 + FF_INPUT_BUFFER_PADDING_SIZE);
 +        avctx->extradata_size = 2;
 +        init_put_bits(&pb, avctx->extradata, avctx->extradata_size);
 +        put_bits(&pb, 5, ac->oc[1].m4ac.object_type);
@@ -43,5 +35,5 @@ index 622cc5c..4ca4df8 100644
          for (type = 0; type < 4; type++) {
              if (ac->che[type][i])
 -- 
-2.4.3
+2.5.0
 

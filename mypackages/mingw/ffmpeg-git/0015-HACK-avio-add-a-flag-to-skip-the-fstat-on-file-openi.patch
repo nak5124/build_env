@@ -1,7 +1,7 @@
-From 54df38f8cbbfca8b14d7140ccbd4698724ef3c27 Mon Sep 17 00:00:00 2001
+From 7d8f1ee3749eafd732233694b44d6b88f53e112f Mon Sep 17 00:00:00 2001
 From: Hendrik Leppkes <h.leppkes@gmail.com>
 Date: Sun, 28 Apr 2013 12:19:31 +0200
-Subject: [PATCH 15/66] HACK avio: add a flag to skip the fstat on file opening
+Subject: [PATCH 15/63] HACK avio: add a flag to skip the fstat on file opening
  for performance reasons
 
 ---
@@ -10,10 +10,10 @@ Subject: [PATCH 15/66] HACK avio: add a flag to skip the fstat on file opening
  2 files changed, 3 insertions(+), 1 deletion(-)
 
 diff --git a/libavformat/avio.h b/libavformat/avio.h
-index 28997f8..25c4d47 100644
+index 06dd7f5..37aa8d0 100644
 --- a/libavformat/avio.h
 +++ b/libavformat/avio.h
-@@ -492,6 +492,8 @@ int avio_get_str16be(AVIOContext *pb, int maxlen, char *buf, int buflen);
+@@ -511,6 +511,8 @@ int avio_get_str16be(AVIOContext *pb, int maxlen, char *buf, int buflen);
   */
  #define AVIO_FLAG_DIRECT 0x8000
  
@@ -23,10 +23,10 @@ index 28997f8..25c4d47 100644
   * Create and initialize a AVIOContext for accessing the
   * resource indicated by url.
 diff --git a/libavformat/file.c b/libavformat/file.c
-index 6511328..5a96084 100644
+index b855f56..843e370 100644
 --- a/libavformat/file.c
 +++ b/libavformat/file.c
-@@ -161,7 +161,7 @@ static int file_open(URLContext *h, const char *filename, int flags)
+@@ -221,7 +221,7 @@ static int file_open(URLContext *h, const char *filename, int flags)
          return AVERROR(errno);
      c->fd = fd;
  
@@ -36,5 +36,5 @@ index 6511328..5a96084 100644
      return 0;
  }
 -- 
-2.4.3
+2.5.0
 

@@ -1,13 +1,16 @@
 # Maintainer: Yuta Nakai <nak5124@live.jp>
 
 _realname=opus
+pkgbase=mingw-w64-$_realname
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}-git"
 pkgdesc='Codec designed for interactive speech and audio transmission over the Internet (mingw-w64)'
-pkgver=1.1.1.3363.5b20cb0
+pkgver=1.1.1.3375.56d8504
 pkgrel=1
 arch=('any')
 url='http://www.opus-codec.org/'
 license=('BSD')
+provides=("${MINGW_PACKAGE_PREFIX}-${_realname}")
+conflicts=("${MINGW_PACKAGE_PREFIX}-${_realname}")
 makedepends=('git' 'pkgconf')
 depends=("${MINGW_PACKAGE_PREFIX}-toolchain")
 source=("${_realname}"::'git://git.xiph.org/opus.git')

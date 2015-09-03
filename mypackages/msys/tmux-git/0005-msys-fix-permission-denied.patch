@@ -1,0 +1,13 @@
+diff --git a/tmux.c b/tmux.c
+index 62f8a80..7437c42 100644
+--- a/tmux.c
++++ b/tmux.c
+@@ -149,7 +149,7 @@ makesocketpath(const char *label)
+ 		errno = ENOTDIR;
+ 		return (NULL);
+ 	}
+-	if (sb.st_uid != uid || (sb.st_mode & S_IRWXO) != 0) {
++	if (sb.st_uid != uid /*|| (sb.st_mode & S_IRWXO) != 0*/) {
+ 		errno = EACCES;
+ 		return (NULL);
+ 	}

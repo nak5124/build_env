@@ -1,18 +1,21 @@
 # Maintainer: Yuta Nakai <nak5124@live.jp>
 
 _realname=opus-tools
+pkgbase=mingw-w64-$_realname
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}-git"
 pkgdesc='Collection of tools for Opus audio codec (mingw-w64)'
 pkgver=0.1.9.324.f2a2e88
-pkgrel=2
+pkgrel=3
 arch=('any')
 url='http://wiki.xiph.org/Opus-tools'
 license=('BSD')
+provides=("${MINGW_PACKAGE_PREFIX}-${_realname}")
+conflicts=("${MINGW_PACKAGE_PREFIX}-${_realname}")
 makedepends=('git' 'pkgconf')
 depends=("${MINGW_PACKAGE_PREFIX}-toolchain"
-         "${MINGW_PACKAGE_PREFIX}-flac-git"
-         "${MINGW_PACKAGE_PREFIX}-libogg-svn"
-         "${MINGW_PACKAGE_PREFIX}-opus-git")
+         "${MINGW_PACKAGE_PREFIX}-flac"
+         "${MINGW_PACKAGE_PREFIX}-libogg"
+         "${MINGW_PACKAGE_PREFIX}-opus")
 source=("${_realname}"::'git://git.xiph.org/opus-tools.git')
 sha512sums=('SKIP')
 

@@ -1,10 +1,11 @@
 # Maintainer: Yuta Nakai <nak5124@live.jp>
 
 _realname=toolchain
+pkgbase=mingw-w64-$_realname
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
 pkgdesc='MinGW-w64/GCC toolchain'
-pkgver=5.1.0
-pkgrel=5
+pkgver=5.2.0
+pkgrel=3
 arch=('any')
 options=('!strip' 'staticlibs' 'emptydirs')
 install=toolchain-${MINGW_CARCH}.install

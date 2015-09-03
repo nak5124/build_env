@@ -1,0 +1,43 @@
+From 3b12ffe09cd1a2e23e72383348ca206f60bb2aa1 Mon Sep 17 00:00:00 2001
+From: Yuta NAKAI <nak5124@live.jp>
+Date: Sat, 24 Jan 2015 02:16:23 +0900
+Subject: [PATCH 1/2] build: Use version script.
+
+---
+ build/platform-mingw_nt.mk |  2 +-
+ libopenh264.ver            | 10 ++++++++++
+ 2 files changed, 11 insertions(+), 1 deletion(-)
+ create mode 100644 libopenh264.ver
+
+diff --git a/build/platform-mingw_nt.mk b/build/platform-mingw_nt.mk
+index b9af5d5..f654661 100644
+--- a/build/platform-mingw_nt.mk
++++ b/build/platform-mingw_nt.mk
+@@ -3,7 +3,7 @@ SHAREDLIB_DIR = $(PREFIX)/bin
+ SHAREDLIBSUFFIX = dll
+ SHAREDLIBSUFFIXVER=$(SHAREDLIBSUFFIX)
+ EXTRA_LIBRARY=$(LIBPREFIX)$(PROJECT_NAME).dll.a
+-SHLDFLAGS = -Wl,--out-implib,$(EXTRA_LIBRARY)
++SHLDFLAGS = -Wl,--out-implib,$(EXTRA_LIBRARY) -Wl,--version-script,libopenh264.ver
+ CFLAGS += -MMD -MP
+ LDFLAGS +=
+ ifeq ($(ARCH), x86_64)
+diff --git a/libopenh264.ver b/libopenh264.ver
+new file mode 100644
+index 0000000..f37964f
+--- /dev/null
++++ b/libopenh264.ver
+@@ -0,0 +1,10 @@
++LIBOPENH264_1 {
++    global: WelsCreateDecoder;
++            WelsDestroyDecoder;
++            WelsCreateSVCEncoder;
++            WelsDestroySVCEncoder;
++            WelsGetCodecVersion;
++            WelsGetCodecVersionEx;
++    local:  *;
++};
++
+-- 
+2.5.0
+

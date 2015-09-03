@@ -1,0 +1,43 @@
+# Maintainer: Yuta Nakai <nak5124@live.jp>
+
+pkgname=pkgconf-git
+pkgdesc='pkg-config compatible utility which does not depend on glib'
+pkgver=0.9.12.544.d67a040
+pkgrel=2
+arch=('i686' 'x86_64')
+url='https://github.com/nenolod/pkgconf'
+license=('ISC')
+provides=('pkg-config' 'pkgconf')
+conflicts=('pkg-config' 'pkgconf')
+replaces=('pkg-config' 'pkgconf')
+source=("${pkgname}"::'git+https://github.com/pkgconf/pkgconf.git')
+sha512sums=('SKIP')
+
+pkgver() {
+  cd "${srcdir}"/$pkgname
+  local _ver=$(grep AC_INIT configure.ac | sed -e "s/^.*pkgconf\], \[\(.*\)\], \[http.*$/\1/")
+  printf "%s.%s.%s" "${_ver}" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
+}
+
+prepare() {
+  cd "${srcdir}"/$pkgname
+  ./autogen.sh
+}
+
+build() {
+  cd "${srcdir}"/$pkgname
+  ./configure \
+    --prefix=/usr \
+    --sysconfdir=/etc \
+    --mandir=/usr/share/man \
+    --infodir=/usr/share/info \
+    --localstatedir=/var
+
+  make
+}
+
+package() {
+  cd "${srcdir}"/$pkgname
+  make DESTDIR="${pkgdir}" install
+  cp "${pkgdir}"/usr/bin/pkgconf "${pkgdir}"/usr/bin/pkg-config
+}

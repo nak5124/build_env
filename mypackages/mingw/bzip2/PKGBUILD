@@ -1,10 +1,11 @@
 # Maintainer: Yuta Nakai <nak5124@live.jp>
 
 _realname=bzip2
+pkgbase=mingw-w64-$_realname
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
 pkgdesc='A high-quality data compression program (mingw-w64)'
 pkgver=1.0.6
-pkgrel=1
+pkgrel=2
 arch=('any')
 url='http://www.bzip.org/'
 license=('BSD')
@@ -31,12 +32,13 @@ prepare() {
 build() {
   cd "${srcdir}"/${_realname}-$pkgver
 
+  CFLAGS+=" ${CPPFLAGS}"
+
   ./configure \
     --prefix=$MINGW_LOCAL_PREFIX \
     --build=$MINGW_CHOST \
     --host=$MINGW_CHOST \
-    --enable-shared \
-    CFLAGS="${CFLAGS} ${CPPFLAGS}"
+    --enable-shared
 
   make clean
   make $MAKEFLAGS all-dll-shared

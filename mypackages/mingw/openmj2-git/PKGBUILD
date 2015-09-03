@@ -1,0 +1,74 @@
+# Maintainer: Yuta Nakai <nak5124@live.jp>
+
+_realname=openmj2
+_reponame=openjpeg
+pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}-git"
+pkgdesc='An open source JPEG 2000 codec, version 2, libopenmj2 only (mingw-w64)'
+pkgver=2.1.0.1980.2eb97a8
+pkgrel=1
+arch=('any')
+url='http://www.openjpeg.org'
+license=('BSD')
+provides=("${MINGW_PACKAGE_PREFIX}-${_realname}")
+conflicts=("${MINGW_PACKAGE_PREFIX}-${_realname}")
+replaces=("${MINGW_PACKAGE_PREFIX}-${_realname}-svn")
+makedepends=('git')
+depends=("${MINGW_PACKAGE_PREFIX}-toolchain")
+source=("${_reponame}"::'git+https://github.com/uclouvain/openjpeg.git'
+        '0001-fix-install-for-dlls.all.patch'
+        '0002-versioned-dlls.mingw.patch'
+        '0003-cdecl.patch')
+sha512sums=('SKIP'
+            '8b60e1998c61e83ed88c9b6ad7b39fdd0884c1337e0b523a9b8f6e301502c5ba8589952ffc062e0b75f30127c0e25f70e9bf569284a6623674a5b47ff60f5075'
+            'd48baf4ab184bdba0b3caad8076c1153f669e15354d326d88bd5f2cd909289627fe2f7c30c05070f9724fa62ed3685dfd8b68832bdfc8927a15ad7142c828248'
+            '79625d06cb5f187e8fd25e244f78b5763920af1e2202f08e4a8ca9b8542ab9c3cdac9e306ab9d2aadfd4a020c743f427209297e05d6609ee600ac59d1af72639')
+
+pkgver() {
+  cd "${srcdir}"/$_reponame
+  local _major=$(grep 'set(OPENJPEG_VERSION_MAJOR' CMakeLists.txt | awk '{ print $2}' | sed 's|)||g')
+  local _minor=$(grep 'set(OPENJPEG_VERSION_MINOR' CMakeLists.txt | awk '{ print $2}' | sed 's|)||g')
+  local _micro=$(grep 'set(OPENJPEG_VERSION_BUILD' CMakeLists.txt | awk '{ print $2}' | sed 's|)||g')
+  printf "%s.%s.%s.%s.%s" "${_major}" "${_minor}" "${_micro}" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
+}
+
+prepare() {
+  cd "${srcdir}"/$_reponame
+
+  patch -p1 -i "${srcdir}"/0001-fix-install-for-dlls.all.patch
+  patch -p1 -i "${srcdir}"/0002-versioned-dlls.mingw.patch
+  patch -p1 -i "${srcdir}"/0003-cdecl.patch
+}
+
+build() {
+  cd "${srcdir}"/$_reponame
+
+  MSYS2_ARG_CONV_EXCL="-DCMAKE_INSTALL_PREFIX=" \
+  cmake -G 'MSYS Makefiles' \
+    -DCMAKE_INSTALL_PREFIX=$MINGW_LOCAL_PREFIX \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DBUILD_SHARED_LIBS:bool=ON \
+    -DBUILD_DOC:bool=ON \
+    -DBUILD_MJ2:bool=ON \
+    -DBUILD_JPWL:bool=OFF \
+    -DBUILD_JPIP:bool=OFF \
+    -DBUILD_JPIP_SERVER:bool=OFF \
+    -DBUILD_JP3D:bool=OFF \
+    -DBUILD_JAVA:bool=OFF \
+    -DBUILD_TESTING:BOOL=OFF \
+    -DCMAKE_SYSTEM_PREFIX_PATH=$MINGW_SYS_PREFIX \
+    -DCMAKE_C_FLAGS_RELEASE:STRING="${CFLAGS} ${CPPFLAGS}" \
+    -DCMAKE_SHARED_LINKER_FLAGS:STRING="${LDFLAGS}" \
+    -DCMAKE_VERBOSE_MAKEFILE:bool=ON
+
+  make clean
+  make openmj2
+}
+
+package() {
+  cd "${srcdir}"/$_reponame
+  pushd src/lib/openmj2 > /dev/null
+  make DESTDIR="${pkgdir}" install
+  popd > /dev/null
+
+  install -Dm644 src/lib/openmj2/openjpeg.h "${pkgdir}"${MINGW_LOCAL_PREFIX}/include/openjpeg.h
+}

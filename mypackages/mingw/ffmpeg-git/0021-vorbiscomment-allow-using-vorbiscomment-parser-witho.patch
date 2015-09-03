@@ -1,7 +1,7 @@
-From dd4b004a01285e6fae1d9a55b5ef8bef19773fb3 Mon Sep 17 00:00:00 2001
+From 38b5c262cca66fbbef090a9f389ced7c4955451a Mon Sep 17 00:00:00 2001
 From: Hendrik Leppkes <h.leppkes@gmail.com>
 Date: Tue, 13 Aug 2013 13:47:34 +0200
-Subject: [PATCH 21/66] vorbiscomment: allow using vorbiscomment parser without
+Subject: [PATCH 21/63] vorbiscomment: allow using vorbiscomment parser without
  input context
 
 ---
@@ -9,7 +9,7 @@ Subject: [PATCH 21/66] vorbiscomment: allow using vorbiscomment parser without
  1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/libavformat/oggparsevorbis.c b/libavformat/oggparsevorbis.c
-index dd44337..467270e 100644
+index 59e7b75..faeba8b 100644
 --- a/libavformat/oggparsevorbis.c
 +++ b/libavformat/oggparsevorbis.c
 @@ -161,7 +161,7 @@ int ff_vorbis_comment(AVFormatContext *as, AVDictionary **m,
@@ -31,5 +31,5 @@ index dd44337..467270e 100644
                  if (av_dict_get(*m, tt, NULL, 0)) {
                      av_dict_set(m, tt, ";", AV_DICT_APPEND);
 -- 
-2.4.3
+2.5.0
 

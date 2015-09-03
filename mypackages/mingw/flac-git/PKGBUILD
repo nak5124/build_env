@@ -1,16 +1,19 @@
 # Maintainer: Yuta Nakai <nak5124@live.jp>
 
 _realname=flac
+pkgbase=mingw-w64-$_realname
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}-git"
 pkgdesc='Free Lossless Audio Codec (mingw-w64)'
-pkgver=1.3.1.3513.bc1f15d
+pkgver=1.3.1.3549.e48ca8d
 pkgrel=1
 arch=('any')
 url='https://xiph.org/flac/'
 license=('custom:Xiph' 'LGPL' 'GPL' 'FDL')
+provides=("${MINGW_PACKAGE_PREFIX}-${_realname}")
+conflicts=("${MINGW_PACKAGE_PREFIX}-${_realname}")
 makedepends=('git' 'doxygen' 'pkgconf')
 depends=("${MINGW_PACKAGE_PREFIX}-toolchain"
-         "${MINGW_PACKAGE_PREFIX}-libogg-svn")
+         "${MINGW_PACKAGE_PREFIX}-libogg")
 source=("${_realname}"::'git://git.xiph.org/flac.git')
 sha512sums=('SKIP')
 

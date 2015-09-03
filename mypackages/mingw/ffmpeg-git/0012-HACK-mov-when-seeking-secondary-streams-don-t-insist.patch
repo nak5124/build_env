@@ -1,7 +1,7 @@
-From 56d47eab57e2b717ae9ffe86ec6084f5ab3cc87d Mon Sep 17 00:00:00 2001
+From 4feb0bac9e896320e33f0d0b7bf12d7f2a95ce77 Mon Sep 17 00:00:00 2001
 From: Hendrik Leppkes <h.leppkes@gmail.com>
 Date: Tue, 27 Nov 2012 18:00:52 +0100
-Subject: [PATCH 12/66] HACK: mov: when seeking secondary streams, don't insist
+Subject: [PATCH 12/63] HACK: mov: when seeking secondary streams, don't insist
  on key-frames.
 
 ---
@@ -9,10 +9,10 @@ Subject: [PATCH 12/66] HACK: mov: when seeking secondary streams, don't insist
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/libavformat/mov.c b/libavformat/mov.c
-index 5ea6932..198a26b 100644
+index 764a7b1..4576c76 100644
 --- a/libavformat/mov.c
 +++ b/libavformat/mov.c
-@@ -4483,7 +4483,7 @@ static int mov_read_seek(AVFormatContext *s, int stream_index, int64_t sample_ti
+@@ -4688,7 +4688,7 @@ static int mov_read_seek(AVFormatContext *s, int stream_index, int64_t sample_ti
                  continue;
  
              timestamp = av_rescale_q(seek_timestamp, s->streams[stream_index]->time_base, st->time_base);
@@ -22,5 +22,5 @@ index 5ea6932..198a26b 100644
      } else {
          for (i = 0; i < s->nb_streams; i++) {
 -- 
-2.4.3
+2.5.0
 

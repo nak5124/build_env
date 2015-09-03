@@ -1,14 +1,14 @@
-From 88dfd8b52359c7bd07c82194f9319b68e70b159e Mon Sep 17 00:00:00 2001
+From 955a666e0864f3d6afe68a7cd720946283177e09 Mon Sep 17 00:00:00 2001
 From: Hendrik Leppkes <h.leppkes@gmail.com>
 Date: Sat, 11 May 2013 23:19:59 +0200
-Subject: [PATCH 18/66] h264: set h->sps if none is set yet
+Subject: [PATCH 18/63] h264: set h->sps if none is set yet
 
 ---
  libavcodec/h264_ps.c | 4 ++++
  1 file changed, 4 insertions(+)
 
 diff --git a/libavcodec/h264_ps.c b/libavcodec/h264_ps.c
-index ae1b60a..e5078ef 100644
+index 52d235c..0346069 100644
 --- a/libavcodec/h264_ps.c
 +++ b/libavcodec/h264_ps.c
 @@ -554,6 +554,10 @@ int ff_h264_decode_seq_parameter_set(H264Context *h, int ignore_truncation)
@@ -23,5 +23,5 @@ index ae1b60a..e5078ef 100644
      return 0;
  
 -- 
-2.4.3
+2.5.0
 

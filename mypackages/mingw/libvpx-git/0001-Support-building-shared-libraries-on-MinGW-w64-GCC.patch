@@ -1,7 +1,7 @@
-From c9cfaaf7565cb973622763805bdf009b3c56a93c Mon Sep 17 00:00:00 2001
+From 3d310bc7a55124edfed9dd7b4750365587238137 Mon Sep 17 00:00:00 2001
 From: Yuta NAKAI <nak5124@live.jp>
 Date: Sat, 13 Jun 2015 12:51:30 +0900
-Subject: [PATCH 1/2] Support building shared libraries on MinGW-w64 GCC.
+Subject: [PATCH 1/3] Support building shared libraries on MinGW-w64 GCC.
 
 ---
  .gitignore              |  2 ++
@@ -13,7 +13,7 @@ Subject: [PATCH 1/2] Support building shared libraries on MinGW-w64 GCC.
  6 files changed, 57 insertions(+), 6 deletions(-)
 
 diff --git a/.gitignore b/.gitignore
-index dce4cfa..2f9dd0f 100644
+index 901e8c3..2830260 100644
 --- a/.gitignore
 +++ b/.gitignore
 @@ -2,10 +2,12 @@
@@ -30,10 +30,10 @@ index dce4cfa..2f9dd0f 100644
  .project
  .settings
 diff --git a/build/make/Makefile b/build/make/Makefile
-index b56b490..86bc067 100644
+index f1b1cca..6da5c3d 100644
 --- a/build/make/Makefile
 +++ b/build/make/Makefile
-@@ -316,12 +316,24 @@ define dll_template
+@@ -321,12 +321,24 @@ define dll_template
  # for creating them.
  $(1):
  	$(if $(quiet),@echo "    [LD] $$@")
@@ -59,7 +59,7 @@ index b56b490..86bc067 100644
  #
  # Get current configuration
  #
-@@ -379,7 +391,10 @@ LIBS=$(call enabled,LIBS)
+@@ -384,7 +396,10 @@ LIBS=$(call enabled,LIBS)
  $(foreach lib,$(filter %_g.a,$(LIBS)),$(eval $(call archive_template,$(lib))))
  $(foreach lib,$(filter %so.$(SO_VERSION_MAJOR).$(SO_VERSION_MINOR).$(SO_VERSION_PATCH),$(LIBS)),$(eval $(call so_template,$(lib))))
  $(foreach lib,$(filter %$(SO_VERSION_MAJOR).dylib,$(LIBS)),$(eval $(call dl_template,$(lib))))
@@ -72,7 +72,7 @@ index b56b490..86bc067 100644
  INSTALL-LIBS=$(call cond_enabled,CONFIG_INSTALL_LIBS,INSTALL-LIBS)
  ifeq ($(MAKECMDGOALS),dist)
 diff --git a/build/make/configure.sh b/build/make/configure.sh
-index c5bed61..24ee693 100644
+index 907b473..9b3bc48 100644
 --- a/build/make/configure.sh
 +++ b/build/make/configure.sh
 @@ -553,6 +553,9 @@ process_common_cmdline() {
@@ -109,10 +109,10 @@ index c5bed61..24ee693 100644
      die "Libdir ${libdir} must be a subdirectory of ${prefix}"
    fi
 diff --git a/configure b/configure
-index 6cac15a..cdd3d11 100755
+index 30a5c11..8165a15 100755
 --- a/configure
 +++ b/configure
-@@ -462,6 +462,7 @@ DIST_DIR?=${DIST_DIR}
+@@ -474,6 +474,7 @@ DIST_DIR?=${DIST_DIR}
  else
  DIST_DIR?=\$(DESTDIR)${prefix}
  endif
@@ -120,7 +120,7 @@ index 6cac15a..cdd3d11 100755
  LIBSUBDIR=${libdir##${prefix}/}
  
  VERSION_STRING=${VERSION_STRING}
-@@ -496,9 +497,13 @@ process_detect() {
+@@ -508,9 +509,13 @@ process_detect() {
          # magic happens after the command line has been parsed.
          if ! enabled linux && ! enabled os2; then
              if enabled gnu; then
@@ -137,10 +137,10 @@ index 6cac15a..cdd3d11 100755
          fi
      fi
 diff --git a/examples.mk b/examples.mk
-index fad02cf..f7b3c85 100644
+index dfa5a65..126b3f5 100644
 --- a/examples.mk
 +++ b/examples.mk
-@@ -284,6 +284,10 @@ CODEC_LIB=$(if $(CONFIG_DEBUG_LIBS),vpx_g,vpx)
+@@ -285,6 +285,10 @@ CODEC_LIB=$(if $(CONFIG_DEBUG_LIBS),vpx_g,vpx)
  ifneq ($(filter darwin%,$(TGT_OS)),)
  SHARED_LIB_SUF=.dylib
  else
@@ -152,10 +152,10 @@ index fad02cf..f7b3c85 100644
  SHARED_LIB_SUF=_dll.a
  else
 diff --git a/libs.mk b/libs.mk
-index 0ca8379..2488d8f 100644
+index 811a6e5..fb70d71 100644
 --- a/libs.mk
 +++ b/libs.mk
-@@ -126,6 +126,7 @@ endif
+@@ -163,6 +163,7 @@ endif
  # tree to locations in the source/build trees.
  INSTALL_MAPS += include/vpx/% $(SRC_PATH_BARE)/vpx/%
  INSTALL_MAPS += include/vpx/% $(SRC_PATH_BARE)/vpx_ports/%
@@ -163,7 +163,7 @@ index 0ca8379..2488d8f 100644
  INSTALL_MAPS += $(LIBSUBDIR)/%     %
  INSTALL_MAPS += src/%     $(SRC_PATH_BARE)/%
  ifeq ($(CONFIG_MSVS),yes)
-@@ -162,6 +163,9 @@ INSTALL-LIBS-$(CONFIG_SHARED) += $(foreach p,$(VS_PLATFORMS),$(LIBSUBDIR)/$(p)/v
+@@ -199,6 +200,9 @@ INSTALL-LIBS-$(CONFIG_SHARED) += $(foreach p,$(VS_PLATFORMS),$(LIBSUBDIR)/$(p)/v
  INSTALL-LIBS-$(CONFIG_SHARED) += $(foreach p,$(VS_PLATFORMS),$(LIBSUBDIR)/$(p)/vpx.exp)
  endif
  else
@@ -173,7 +173,7 @@ index 0ca8379..2488d8f 100644
  INSTALL-LIBS-$(CONFIG_STATIC) += $(LIBSUBDIR)/libvpx.a
  INSTALL-LIBS-$(CONFIG_DEBUG_LIBS) += $(LIBSUBDIR)/libvpx_g.a
  endif
-@@ -233,6 +237,14 @@ EXPORT_FILE             := libvpx.syms
+@@ -270,6 +274,14 @@ EXPORT_FILE             := libvpx.syms
  LIBVPX_SO_SYMLINKS      := $(addprefix $(LIBSUBDIR)/, \
                               libvpx.dylib  )
  else
@@ -188,7 +188,7 @@ index 0ca8379..2488d8f 100644
  ifeq ($(filter os2%,$(TGT_OS)),$(TGT_OS))
  LIBVPX_SO               := libvpx$(SO_VERSION_MAJOR).dll
  SHARED_LIB_SUF          := _dll.a
-@@ -248,10 +260,11 @@ LIBVPX_SO_SYMLINKS      := $(addprefix $(LIBSUBDIR)/, \
+@@ -285,10 +297,11 @@ LIBVPX_SO_SYMLINKS      := $(addprefix $(LIBSUBDIR)/, \
                               libvpx.so.$(SO_VERSION_MAJOR).$(SO_VERSION_MINOR))
  endif
  endif
@@ -201,7 +201,7 @@ index 0ca8379..2488d8f 100644
  $(BUILD_PFX)$(LIBVPX_SO): $(LIBVPX_OBJS) $(EXPORT_FILE)
  $(BUILD_PFX)$(LIBVPX_SO): extralibs += -lm
  $(BUILD_PFX)$(LIBVPX_SO): SONAME = libvpx.so.$(SO_VERSION_MAJOR)
-@@ -298,7 +311,11 @@ $(eval $(call libvpx_symlink_template,\
+@@ -335,7 +348,11 @@ $(eval $(call libvpx_symlink_template,\
  
  
  INSTALL-LIBS-$(CONFIG_SHARED) += $(LIBVPX_SO_SYMLINKS)
@@ -214,5 +214,5 @@ index 0ca8379..2488d8f 100644
  
  
 -- 
-2.4.3
+2.5.0
 

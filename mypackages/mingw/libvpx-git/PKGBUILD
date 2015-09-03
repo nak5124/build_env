@@ -1,21 +1,26 @@
 # Maintainer: Yuta Nakai <nak5124@live.jp>
 
 _realname=libvpx
+pkgbase=mingw-w64-$_realname
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}-git"
 pkgdesc='The VP8/VP9 Codec SDK (mingw-w64)'
-pkgver=1.4.0.13515.a4bb5f2
+pkgver=1.4.0.14197.9a9b1cf
 pkgrel=1
 arch=('any')
 url='http://www.webmproject.org/'
 license=('BSD')
+provides=("${MINGW_PACKAGE_PREFIX}-${_realname}")
+conflicts=("${MINGW_PACKAGE_PREFIX}-${_realname}")
 makedepends=('git')
 depends=("${MINGW_PACKAGE_PREFIX}-toolchain")
 source=("${_realname}"::'git+https://chromium.googlesource.com/webm/libvpx'
         '0001-Support-building-shared-libraries-on-MinGW-w64-GCC.patch'
-        '0002-Give-preference-win32api-over-pthread-on-MinGW-w64.patch')
+        '0002-Give-preference-win32api-over-pthread-on-MinGW-w64.patch'
+        '0003-Fix-VPXMAX-declaration.patch')
 sha512sums=('SKIP'
-            '7da7e487fb5df69efd8f47428b0d76ce698e06dd05e8d193b5d428b9e98e786be15558a490afd78f9db24e1bbbc095d896c080a0c7bf3a1d0bf8c594796ff080'
-            'd1dd5d5c31b43bef811dadc4853ca1450d16aa95a6f0354a92bbd4da003e6c1efe8ea8e150caced023d6917b58bfa439b0ce37b74c116a8727605fff8884e4be')
+            'e88262f37b18cecde928f93f4a1129105bbdb72407b29a8450b0c56c709967aa559408d57f0e1ffefa706223f08d372cb554c6b6ccb95e7c41d1fffd7e6be8af'
+            '5ebf6a8613096c47ce581e2654dcb0158700d266daea212b62df3e1ae5dae4fcd8bbfd06031771f796d3b93e74de5b26795e97eba0aed29681ca3dc3582b4181'
+            '1aa767a5cf3213f8a975b7d8a8102ed4d567d891532c9f23f46615e6f4020a5b347fff0d36787bfb5f693a0be12cefd92fd33eaef3f4e6fc8108dda6221854dc')
 
 pkgver() {
   cd "${srcdir}"/$_realname
@@ -28,6 +33,7 @@ prepare() {
 
   patch -p1 -i "${srcdir}"/0001-Support-building-shared-libraries-on-MinGW-w64-GCC.patch
   patch -p1 -i "${srcdir}"/0002-Give-preference-win32api-over-pthread-on-MinGW-w64.patch
+  patch -p1 -i "${srcdir}"/0003-Fix-VPXMAX-declaration.patch
 }
 
 build() {
@@ -60,6 +66,7 @@ build() {
     --enable-vp9-highbitdepth \
     --enable-vp8 \
     --enable-vp9 \
+    --enable-vp10 \
     --disable-postproc \
     --disable-vp9-postproc \
     --enable-multithread \

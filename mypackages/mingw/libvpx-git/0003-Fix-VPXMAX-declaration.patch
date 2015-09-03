@@ -1,0 +1,24 @@
+From f81132e98db867101a889df4641cf0e6fa7908ec Mon Sep 17 00:00:00 2001
+From: Yuta Nakai <nak5124@live.jp>
+Date: Tue, 1 Sep 2015 21:19:27 +0900
+Subject: [PATCH 3/3] Fix VPXMAX declaration.
+
+---
+ vp8/encoder/mr_dissim.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/vp8/encoder/mr_dissim.c b/vp8/encoder/mr_dissim.c
+index 7d05d93..4bf36e8 100644
+--- a/vp8/encoder/mr_dissim.c
++++ b/vp8/encoder/mr_dissim.c
+@@ -16,6 +16,7 @@
+ #include "vpx_mem/vpx_mem.h"
+ #include "rdopt.h"
+ #include "vp8/common/common.h"
++#include "vpx_dsp/vpx_dsp_common.h"
+ 
+ void vp8_cal_low_res_mb_cols(VP8_COMP *cpi)
+ {
+-- 
+2.5.0
+

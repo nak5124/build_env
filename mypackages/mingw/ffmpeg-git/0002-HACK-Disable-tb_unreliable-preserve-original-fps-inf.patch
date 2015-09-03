@@ -1,7 +1,7 @@
-From 9fbe8701e4a4064b8dd0da280b7e40b48e685ae1 Mon Sep 17 00:00:00 2001
+From dd2214e955df9cd6cc6673a652f7342664e1b46c Mon Sep 17 00:00:00 2001
 From: Hendrik Leppkes <h.leppkes@gmail.com>
 Date: Fri, 15 Apr 2011 18:09:48 +0200
-Subject: [PATCH 02/66] HACK: Disable tb_unreliable, preserve original fps
+Subject: [PATCH 02/63] HACK: Disable tb_unreliable, preserve original fps
  information.
 
 ---
@@ -9,10 +9,10 @@ Subject: [PATCH 02/66] HACK: Disable tb_unreliable, preserve original fps
  1 file changed, 4 insertions(+), 4 deletions(-)
 
 diff --git a/libavformat/utils.c b/libavformat/utils.c
-index 7bc8577..f303c47 100644
+index 022bed3..9a5ea74 100644
 --- a/libavformat/utils.c
 +++ b/libavformat/utils.c
-@@ -2891,14 +2891,14 @@ static int get_std_framerate(int i)
+@@ -2951,14 +2951,14 @@ static int get_std_framerate(int i)
  static int tb_unreliable(AVCodecContext *c)
  {
      if (c->time_base.den >= 101LL * c->time_base.num ||
@@ -32,5 +32,5 @@ index 7bc8577..f303c47 100644
      return 0;
  }
 -- 
-2.4.3
+2.5.0
 

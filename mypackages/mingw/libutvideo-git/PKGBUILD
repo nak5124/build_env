@@ -1,13 +1,16 @@
 # Maintainer: Yuta Nakai <nak5124@live.jp>
 
 _realname=libutvideo
+pkgbase=mingw-w64-$_realname
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}-git"
 pkgdesc='Library of Ut Video Codec Suite (mingw-w64)'
 pkgver=15.2.0.15.eb9a23e
-pkgrel=1
+pkgrel=2
 arch=('any')
 url='http://umezawa.dyndns.info/wordpress/?cat=28'
 license=('GPL')
+provides=("${MINGW_PACKAGE_PREFIX}-${_realname}")
+conflicts=("${MINGW_PACKAGE_PREFIX}-${_realname}")
 makedepends=('git')
 depends=("${MINGW_PACKAGE_PREFIX}-toolchain")
 source=("${_realname}"::'git+https://github.com/nak5124/libutvideo-mingw-w64.git')

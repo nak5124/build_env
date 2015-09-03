@@ -1,13 +1,16 @@
 # Maintainer: Yuta Nakai <nak5124@live.jp>
 
 _realname=liblzma
+pkgbase=mingw-w64-$_realname
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}-git"
 pkgdesc='Library for LZMA compressed files (mingw-w64)'
-pkgver=5.3.0.1067.5b2458c
+pkgver=5.3.0.1080.397fcc0
 pkgrel=1
 arch=('any')
 url='http://tukaani.org/xz/'
 license=('LGPL')
+provides=("${MINGW_PACKAGE_PREFIX}-${_realname}")
+conflicts=("${MINGW_PACKAGE_PREFIX}-${_realname}")
 makedepends=('git')
 depends=("${MINGW_PACKAGE_PREFIX}-toolchain")
 source=("${_realname}"::'git+http://git.tukaani.org/xz.git')

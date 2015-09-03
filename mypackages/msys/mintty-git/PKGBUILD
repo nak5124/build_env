@@ -1,0 +1,41 @@
+# Maintainer: Yuta Nakai <nak5124@live.jp>
+
+pkgname=mintty-git
+pkgdesc='Terminal emulator with native Windows look and feel'
+pkgver=2.1.5.791.731793d
+pkgrel=2
+arch=('i686' 'x86_64')
+url='http://mintty.github.io/'
+license=('GPL3')
+provides=('mintty')
+conflicts=('mintty')
+makedepends=('git')
+depends=('sh')
+source=("${pkgname}"::'git+https://github.com/mintty/mintty.git')
+sha512sums=('SKIP')
+
+pkgver() {
+  cd "${srcdir}"/$pkgname
+  local _major=$(grep -e '\#define MAJOR_VERSION' src/appinfo.h | awk '{ printf $3 }')
+  local _minor=$(grep -e '\#define MINOR_VERSION' src/appinfo.h | awk '{ printf $3 }')
+  local _patch=$(grep -e '\#define PATCH_NUMBER' src/appinfo.h | awk '{ printf $3 }')
+  printf "%s.%s.%s.%s.%s" "${_major}" "${_minor}" "${_patch}" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
+}
+
+prepare() {
+  cd "${srcdir}"/$pkgname
+}
+
+build() {
+  cd "${srcdir}"/$pkgname
+  make
+}
+
+package() {
+  cd "${srcdir}"/$pkgname
+  mkdir -p "${pkgdir}"/usr/{bin,share}
+  mkdir -p "${pkgdir}"/usr/share/man/man1
+
+  install -m755 src/mintty.exe "${pkgdir}"/usr/bin/mintty.exe
+  install -m644 docs/mintty.1 "${pkgdir}"/usr/share/man/man1/mintty.1
+}

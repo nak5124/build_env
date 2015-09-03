@@ -1,7 +1,7 @@
-From 614fc8bbd630c21729745034e643bde85649abbd Mon Sep 17 00:00:00 2001
+From d5cb2bd2b7c311928afd78e2e481d4916073e732 Mon Sep 17 00:00:00 2001
 From: Hendrik Leppkes <h.leppkes@gmail.com>
 Date: Tue, 30 Apr 2013 15:53:35 +0200
-Subject: [PATCH 16/66] flac: export vorbiscomment metadata in extradata
+Subject: [PATCH 16/63] flac: export vorbiscomment metadata in extradata
 
 It can contain special metadata that informs us about the desired channel
 layout for non-standard layouts, which means its crucial for correct
@@ -11,7 +11,7 @@ playback.
  1 file changed, 22 insertions(+), 6 deletions(-)
 
 diff --git a/libavformat/flacdec.c b/libavformat/flacdec.c
-index 4207fd2..4e652e3 100644
+index 4c1f943..b3e8c27 100644
 --- a/libavformat/flacdec.c
 +++ b/libavformat/flacdec.c
 @@ -32,7 +32,7 @@ static int flac_read_header(AVFormatContext *s)
@@ -67,5 +67,5 @@ index 4207fd2..4e652e3 100644
                  ret = ff_vorbis_comment(s, &s->metadata, buffer, metadata_size, 1);
                  if (ret < 0) {
 -- 
-2.4.3
+2.5.0
 

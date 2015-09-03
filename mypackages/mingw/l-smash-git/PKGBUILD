@@ -1,13 +1,16 @@
 # Maintainer: Yuta Nakai <nak5124@live.jp>
 
 _realname=l-smash
+pkgbase=mingw-w64-$_realname
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}-git"
 pkgdesc='Loyal to Spec of Mpeg4 and Ad-hoc Simple Hackwork. Yet another opensource mp4 handler (mingw-w64)'
-pkgver=2.9.0.1357.eed0345
-pkgrel=2
+pkgver=2.10.0.1366.d5c54a9
+pkgrel=1
 arch=('any')
 url='http://l-smash.github.io/l-smash/'
 license=('ISC')
+provides=("${MINGW_PACKAGE_PREFIX}-${_realname}")
+conflicts=("${MINGW_PACKAGE_PREFIX}-${_realname}")
 makedepends=('git')
 depends=("${MINGW_PACKAGE_PREFIX}-toolchain")
 source=("${_realname}"::'git+https://github.com/l-smash/l-smash.git'
