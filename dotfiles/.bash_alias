@@ -31,6 +31,11 @@ alias less='less -r'
 LESSHISTFILE=/tmp/.lesshst
 export LESSHISTFILE
 
+# strip
+alias strip_exe='strip --preserve-dates --strip-all'
+alias strip_dll='strip --preserve-dates --strip-unneeded'
+alias strip_lib='strip --preserve-dates --strip-debug'
+
 # pacman
 alias pacman_mingw64='pacman --root $HOME/.pacman --cachedir $HOME/.pacman/var/cache/pacman/pkg --config $HOME/.pacman/pacman.conf'
 
