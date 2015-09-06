@@ -17,6 +17,7 @@ declare no_2nd_rebuild=false
 declare no_map=false
 declare no_nyasm=false
 declare no_autotools=false
+declare force_2nd=false
 declare opt
 for opt in "${@}"
 do
@@ -73,6 +74,10 @@ do
         at )
             no_autotools=false
             ;;
+        f2nd )
+            no_2nd_rebuild=false
+            force_2nd=true
+            ;;
         * )
             printf "%s, Unknown Option: '%s'\n" "$(basename $BASH_SOURCE)" "${opt}"
             echo '...exit'
@@ -80,7 +85,7 @@ do
             ;;
     esac
 done
-if ${no_toolchain}; then
+if ${no_toolchain} && ! ${force_2nd}; then
     no_2nd_rebuild=true
 fi
 

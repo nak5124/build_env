@@ -1,7 +1,7 @@
 From 6b93f2683ea569b79d5ec8983ec0dc5f2839cb5e Mon Sep 17 00:00:00 2001
 From: Yuta Nakai <nak5124@live.jp>
 Date: Mon, 24 Aug 2015 22:06:04 +0900
-Subject: [PATCH 01/27] {libiberty, gcc}/configure: hack! - some configure
+Subject: [PATCH 01/28] {libiberty, gcc}/configure: hack! - some configure
  tests for header files using "$CPP $CPPFLAGS"
 
 ---
@@ -321,5 +321,5 @@ index b06cab2..bfec5b6 100755
  ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
  ac_compiler_gnu=$ac_cv_c_compiler_gnu
 -- 
-2.5.0
+2.5.1
 

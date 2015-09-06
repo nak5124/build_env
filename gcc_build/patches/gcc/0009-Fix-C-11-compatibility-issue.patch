@@ -1,7 +1,7 @@
 From 5f1baf6dd4a0e81e26f887e3c53743b3c7306c6b Mon Sep 17 00:00:00 2001
 From: miyuki <miyuki@138bc75d-0d04-0410-961f-82ee72b054a4>
 Date: Sun, 31 May 2015 08:12:55 +0000
-Subject: [PATCH 09/27] Fix C++11 compatibility issue
+Subject: [PATCH 09/28] Fix C++11 compatibility issue
 
 	* config/cris/cris.h (CRIS_ARCH_CPP_DEFAULT): Fix C++11 compatibility
 	issue (add space between string literal and macro).
@@ -40,5 +40,5 @@ index 0950304..47e12e7 100644
  
  #undef STARTFILE_SPEC
 -- 
-2.5.0
+2.5.1
 

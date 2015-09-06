@@ -91,8 +91,12 @@ function prepare_gcc() {
     apply_patch_gcc "${PATCHES_DIR}"/gcc/0026-config-i386-mingw32.h-Fix-SPEC_PTHREAD2-definition.patch   false
     # Enable colorizing diagnostics.
     apply_patch_gcc "${PATCHES_DIR}"/gcc/0027-gcc-diagnostic-color.c-Enable-color-diagnostic-on-Mi.patch false
+    # PR65704 (https://gcc.gnu.org/bugzilla/show_bug.cgi?id=65704).
+    apply_patch_gcc "${PATCHES_DIR}"/gcc/0028-gcc-master-Cherry-pick-adace2e-and-26befab.patch           false
 
     echo 'done'
+
+    echo "${GCC_VER/-*}" > "${BUILD_DIR}"/gcc/src/gcc-${GCC_VER}/gcc/BASE-VER
 
     return 0
 }

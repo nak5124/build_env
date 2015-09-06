@@ -1,7 +1,7 @@
 From 14ff3aa4e79c069d0fe2a5305819989597b565e8 Mon Sep 17 00:00:00 2001
 From: Yuta NAKAI <nak5124@live.jp>
 Date: Sun, 2 Aug 2015 12:20:17 +0900
-Subject: [PATCH 12/27] gcc: Fix using large pch.
+Subject: [PATCH 12/28] gcc: Fix using large pch.
 
 ---
  gcc/config/i386/host-mingw32.c | 10 ++-------
@@ -133,5 +133,5 @@ index 03fbe7d..6bc99ac 100644
    ggc_pch_read (f, mmi.preferred_base);
  
 -- 
-2.5.0
+2.5.1
 

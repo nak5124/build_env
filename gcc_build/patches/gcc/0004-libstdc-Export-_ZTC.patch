@@ -1,7 +1,7 @@
 From b1da9ee9f651c17705ac9fd834ac39e7c3469270 Mon Sep 17 00:00:00 2001
 From: Yuta NAKAI <nak5124@live.jp>
 Date: Sun, 12 Apr 2015 11:40:44 +0900
-Subject: [PATCH 04/27] libstdc++: Export _ZTC*.
+Subject: [PATCH 04/28] libstdc++: Export _ZTC*.
 
 ---
  libstdc++-v3/config/abi/pre/gnu.ver | 2 ++
@@ -21,5 +21,5 @@ index 120b133..80e5b23 100644
  
  CXXABI_1.3.7 {
 -- 
-2.5.0
+2.5.1
 

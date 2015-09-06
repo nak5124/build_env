@@ -1,4 +1,4 @@
-From 1d4164bcf7cda1a3fcf1bf85d270c8aede0ccd82 Mon Sep 17 00:00:00 2001
+From add0190038800e27451f85da191ba993dcd0e0ef Mon Sep 17 00:00:00 2001
 From: Yuta NAKAI <nak5124@live.jp>
 Date: Sun, 19 Apr 2015 21:48:21 +0900
 Subject: [PATCH 4/6] configure: Search dirs under ${build_sysroot} instead of
@@ -9,10 +9,10 @@ Subject: [PATCH 4/6] configure: Search dirs under ${build_sysroot} instead of
  1 file changed, 8 insertions(+), 1 deletion(-)
 
 diff --git a/configure b/configure
-index 87677bc..d411396 100755
+index 6d7152e..47bbc33 100755
 --- a/configure
 +++ b/configure
-@@ -7659,7 +7659,14 @@ case "$target" in
+@@ -7578,7 +7578,14 @@ case "$target" in
    x86_64-*mingw* | *-w64-mingw*)
    # MinGW-w64 does not use newlib, nor does it use winsup. It may,
    # however, use a symlink named 'mingw' in ${prefix} .
@@ -29,5 +29,5 @@ index 87677bc..d411396 100755
    *-mingw*)
    # MinGW can't be handled as Cygwin above since it does not use newlib.
 -- 
-2.5.0
+2.5.1
 

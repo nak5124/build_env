@@ -40,6 +40,8 @@ function prepare_binutils() {
     # Don't make a lowercase backslashed path from argv[0] that then fail to strcmp with prefix(es) .. they're also ugly.
     apply_patch_bu "${PATCHES_DIR}"/binutils/0006-libiberty-lrealpath.c-Don-t-make-a-lowercase-backsla.patch false
 
+    perl -pi -e 's/_stat\n/_stat64\n/g' "${BUILD_DIR}"/binutils/src/binutils-${BINUTILS_VER}/ltmain.sh
+
     popd > /dev/null # "${BUILD_DIR}"/binutils/src/binutils-$BINUTILS_VER
     echo 'done'
 
@@ -155,7 +157,7 @@ function build_binutils() {
                 --with-lib-path="${_libpath}"                     \
                 --with-sysroot=/mingw$_bitval                     \
                 CFLAGS="${CFLAGS_} ${CPPFLAGS_}"                  \
-                LDFLAGS="${LDFLAGS_}"                             \
+                LDFLAGS="${LDFLAGS_/,--gc-sections/}"             \
                 CXXFLAGS="${CXXFLAGS_} ${CPPFLAGS_}"              \
                 > "${LOGS_DIR}"/binutils/binutils_config_${_arch}.log 2>&1 || exit 1
             echo 'done'
@@ -197,7 +199,7 @@ function build_binutils() {
             rm -f  "${PREIN_DIR}"/binutils_ld/mingw${_bitval}/bin/ld.exe
             rm -fr "${PREIN_DIR}"/binutils_ld/mingw${_bitval}/share
             # Strip files.
-            strip_files ${PREIN_DIR}/binutils_ld/mingw$_bitval
+            strip_files "${PREIN_DIR}"/binutils_ld/mingw$_bitval
             echo "done"
         fi
 

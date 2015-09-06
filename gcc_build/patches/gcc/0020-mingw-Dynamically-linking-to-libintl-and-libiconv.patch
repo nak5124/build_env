@@ -1,7 +1,7 @@
 From 6a88c5264781189af466467469b1f8b3e1cc1c0a Mon Sep 17 00:00:00 2001
 From: Yuta NAKAI <nak5124@live.jp>
 Date: Sun, 12 Apr 2015 14:40:59 +0900
-Subject: [PATCH 20/27] mingw: Dynamically linking to libintl and libiconv.
+Subject: [PATCH 20/28] mingw: Dynamically linking to libintl and libiconv.
 
 ---
  gcc/configure          |  8 ++++----
@@ -147,5 +147,5 @@ index ccdbaa4..d5af1ec 100755
                          found_la="$dir/lib$name.la"
                        fi
 -- 
-2.5.0
+2.5.1
 

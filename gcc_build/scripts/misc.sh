@@ -39,9 +39,9 @@ function remove_la_files() {
 function strip_files() {
     # $1: target dir
 
-    find "${1}" -type f -name "*.exe"                       | xargs -rl1 strip --preserve-dates --strip-all
-    find "${1}" -type f -name "*.dll"                       | xargs -rl1 strip --preserve-dates --strip-unneeded
-    find "${1}" -type f -a \( -name "*.a" -o -name "*.o" \) | xargs -rl1 strip --preserve-dates --strip-debug
+    find "${1}" -type f -name "*.exe"                       | xargs -rl1 /usr/bin/strip --preserve-dates --strip-all
+    find "${1}" -type f -name "*.dll"                       | xargs -rl1 /usr/bin/strip --preserve-dates --strip-unneeded
+    find "${1}" -type f -a \( -name "*.a" -o -name "*.o" \) | xargs -rl1 /usr/bin/strip --preserve-dates --strip-debug
 }
 
 # Download files.

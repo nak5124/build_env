@@ -1,7 +1,7 @@
 From 57b06304bd7e5071fc6530b542a40c7a244070aa Mon Sep 17 00:00:00 2001
 From: Yuta NAKAI <nak5124@live.jp>
 Date: Sun, 12 Apr 2015 14:46:07 +0900
-Subject: [PATCH 22/27] MinGW: Enable nxcompat and (HE)ASLR by default.
+Subject: [PATCH 22/28] MinGW: Enable nxcompat and (HE)ASLR by default.
 
 ---
  gcc/config/i386/mingw-w64.h | 17 +++++++++++++++--
@@ -86,5 +86,5 @@ index 68a736c..067dd09 100644
  /* There is a bug when building i686 dw-2 exceptions
     where gcc_s gets stripped which this works around */
 -- 
-2.5.0
+2.5.1
 

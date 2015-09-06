@@ -1,4 +1,4 @@
-From c930c9614916ac44c2dacbb6e1df9b917a0d3853 Mon Sep 17 00:00:00 2001
+From acd2f16afa829e2c09bc065a694adf88f033d7b6 Mon Sep 17 00:00:00 2001
 From: Yuta NAKAI <nak5124@live.jp>
 Date: Sun, 19 Apr 2015 21:59:01 +0900
 Subject: [PATCH 5/6] MinGW: Disable automatic image base calculation.
@@ -13,10 +13,10 @@ Subject: [PATCH 5/6] MinGW: Disable automatic image base calculation.
  6 files changed, 14 insertions(+), 14 deletions(-)
 
 diff --git a/bfd/configure b/bfd/configure
-index 0b842c1..7783340 100755
+index a17e936..397a333 100755
 --- a/bfd/configure
 +++ b/bfd/configure
-@@ -9166,7 +9166,7 @@ _LT_EOF
+@@ -9168,7 +9168,7 @@ _LT_EOF
        export_symbols_cmds='$NM $libobjs $convenience | $global_symbol_pipe | $SED -e '\''/^[BCDGRS][ ]/s/.*[ ]\([^ ]*\)/\1 DATA/'\'' | $SED -e '\''/^[AITW][ ]/s/.*[ ]//'\'' | sort | uniq > $export_symbols'
  
        if $LD --help 2>&1 | $GREP 'auto-import' > /dev/null; then
@@ -25,7 +25,7 @@ index 0b842c1..7783340 100755
  	# If the export-symbols file already is a .def file (1st line
  	# is EXPORTS), use it as is; otherwise, prepend...
  	archive_expsym_cmds='if test "x`$SED 1q $export_symbols`" = xEXPORTS; then
-@@ -9175,7 +9175,7 @@ _LT_EOF
+@@ -9177,7 +9177,7 @@ _LT_EOF
  	  echo EXPORTS > $output_objdir/$soname.def;
  	  cat $export_symbols >> $output_objdir/$soname.def;
  	fi~
@@ -35,10 +35,10 @@ index 0b842c1..7783340 100755
  	ld_shlibs=no
        fi
 diff --git a/binutils/configure b/binutils/configure
-index 408d30f..711f571 100755
+index 0656546..ed14191 100755
 --- a/binutils/configure
 +++ b/binutils/configure
-@@ -8964,7 +8964,7 @@ _LT_EOF
+@@ -8966,7 +8966,7 @@ _LT_EOF
        export_symbols_cmds='$NM $libobjs $convenience | $global_symbol_pipe | $SED -e '\''/^[BCDGRS][ ]/s/.*[ ]\([^ ]*\)/\1 DATA/'\'' | $SED -e '\''/^[AITW][ ]/s/.*[ ]//'\'' | sort | uniq > $export_symbols'
  
        if $LD --help 2>&1 | $GREP 'auto-import' > /dev/null; then
@@ -47,7 +47,7 @@ index 408d30f..711f571 100755
  	# If the export-symbols file already is a .def file (1st line
  	# is EXPORTS), use it as is; otherwise, prepend...
  	archive_expsym_cmds='if test "x`$SED 1q $export_symbols`" = xEXPORTS; then
-@@ -8973,7 +8973,7 @@ _LT_EOF
+@@ -8975,7 +8975,7 @@ _LT_EOF
  	  echo EXPORTS > $output_objdir/$soname.def;
  	  cat $export_symbols >> $output_objdir/$soname.def;
  	fi~
@@ -57,10 +57,10 @@ index 408d30f..711f571 100755
  	ld_shlibs=no
        fi
 diff --git a/gas/configure b/gas/configure
-index b11b6c0..4279b8d 100755
+index 62bf039..b5d64f8 100755
 --- a/gas/configure
 +++ b/gas/configure
-@@ -8712,7 +8712,7 @@ _LT_EOF
+@@ -8714,7 +8714,7 @@ _LT_EOF
        export_symbols_cmds='$NM $libobjs $convenience | $global_symbol_pipe | $SED -e '\''/^[BCDGRS][ ]/s/.*[ ]\([^ ]*\)/\1 DATA/'\'' | $SED -e '\''/^[AITW][ ]/s/.*[ ]//'\'' | sort | uniq > $export_symbols'
  
        if $LD --help 2>&1 | $GREP 'auto-import' > /dev/null; then
@@ -69,7 +69,7 @@ index b11b6c0..4279b8d 100755
  	# If the export-symbols file already is a .def file (1st line
  	# is EXPORTS), use it as is; otherwise, prepend...
  	archive_expsym_cmds='if test "x`$SED 1q $export_symbols`" = xEXPORTS; then
-@@ -8721,7 +8721,7 @@ _LT_EOF
+@@ -8723,7 +8723,7 @@ _LT_EOF
  	  echo EXPORTS > $output_objdir/$soname.def;
  	  cat $export_symbols >> $output_objdir/$soname.def;
  	fi~
@@ -79,7 +79,7 @@ index b11b6c0..4279b8d 100755
  	ld_shlibs=no
        fi
 diff --git a/gprof/configure b/gprof/configure
-index bcf1e71..e74905b 100755
+index cdd2e3a..9396e5c 100755
 --- a/gprof/configure
 +++ b/gprof/configure
 @@ -8642,7 +8642,7 @@ _LT_EOF
@@ -101,10 +101,10 @@ index bcf1e71..e74905b 100755
  	ld_shlibs=no
        fi
 diff --git a/ld/configure b/ld/configure
-index d242d6d..36d7dc3 100755
+index 1249852..6476b96 100755
 --- a/ld/configure
 +++ b/ld/configure
-@@ -9457,7 +9457,7 @@ _LT_EOF
+@@ -9458,7 +9458,7 @@ _LT_EOF
        export_symbols_cmds='$NM $libobjs $convenience | $global_symbol_pipe | $SED -e '\''/^[BCDGRS][ ]/s/.*[ ]\([^ ]*\)/\1 DATA/'\'' | $SED -e '\''/^[AITW][ ]/s/.*[ ]//'\'' | sort | uniq > $export_symbols'
  
        if $LD --help 2>&1 | $GREP 'auto-import' > /dev/null; then
@@ -113,7 +113,7 @@ index d242d6d..36d7dc3 100755
  	# If the export-symbols file already is a .def file (1st line
  	# is EXPORTS), use it as is; otherwise, prepend...
  	archive_expsym_cmds='if test "x`$SED 1q $export_symbols`" = xEXPORTS; then
-@@ -9466,7 +9466,7 @@ _LT_EOF
+@@ -9467,7 +9467,7 @@ _LT_EOF
  	  echo EXPORTS > $output_objdir/$soname.def;
  	  cat $export_symbols >> $output_objdir/$soname.def;
  	fi~
@@ -122,7 +122,7 @@ index d242d6d..36d7dc3 100755
        else
  	ld_shlibs=no
        fi
-@@ -12677,7 +12677,7 @@ if test -z "$aix_libpath"; then aix_libpath="/usr/lib:/lib"; fi
+@@ -12678,7 +12678,7 @@ if test -z "$aix_libpath"; then aix_libpath="/usr/lib:/lib"; fi
          enable_shared_with_static_runtimes_CXX=yes
  
          if $LD --help 2>&1 | $GREP 'auto-import' > /dev/null; then
@@ -131,7 +131,7 @@ index d242d6d..36d7dc3 100755
            # If the export-symbols file already is a .def file (1st line
            # is EXPORTS), use it as is; otherwise, prepend...
            archive_expsym_cmds_CXX='if test "x`$SED 1q $export_symbols`" = xEXPORTS; then
-@@ -12686,7 +12686,7 @@ if test -z "$aix_libpath"; then aix_libpath="/usr/lib:/lib"; fi
+@@ -12687,7 +12687,7 @@ if test -z "$aix_libpath"; then aix_libpath="/usr/lib:/lib"; fi
  	    echo EXPORTS > $output_objdir/$soname.def;
  	    cat $export_symbols >> $output_objdir/$soname.def;
            fi~
@@ -141,7 +141,7 @@ index d242d6d..36d7dc3 100755
            ld_shlibs_CXX=no
          fi
 diff --git a/opcodes/configure b/opcodes/configure
-index 8186770..0ceac5b 100755
+index a034862..70beede 100755
 --- a/opcodes/configure
 +++ b/opcodes/configure
 @@ -8891,7 +8891,7 @@ _LT_EOF
@@ -163,5 +163,5 @@ index 8186770..0ceac5b 100755
  	ld_shlibs=no
        fi
 -- 
-2.5.0
+2.5.1
 
