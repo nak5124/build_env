@@ -1,0 +1,22 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index c8a1aa7..d588a8f 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -38,7 +38,7 @@ endif(NOT WINCE)
+ if(BUILD_SHARED)
+     add_library(iconv SHARED win_iconv.c iconv.def)
+     set_target_properties(iconv PROPERTIES COMPILE_FLAGS "-DMAKE_DLL"
+-                                           PREFIX "")
++                                           PREFIX "lib" RUNTIME_OUTPUT_NAME "iconv-2")
+     if(WINCE)
+         target_link_libraries(iconv ${WCECOMPAT_LIBRARIES})
+     endif(WINCE)
+@@ -49,7 +49,7 @@ endif(BUILD_SHARED)
+ 
+ if(BUILD_EXECUTABLE)
+     add_executable(win_iconv win_iconv.c)
+-    set_target_properties(win_iconv PROPERTIES COMPILE_FLAGS "-DMAKE_EXE")
++    set_target_properties(win_iconv PROPERTIES COMPILE_FLAGS "-DMAKE_EXE" OUTPUT_NAME "iconv")
+     if(WINCE)
+         target_link_libraries(win_iconv ${WCECOMPAT_LIBRARIES})
+     endif(WINCE)

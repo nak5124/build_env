@@ -87,6 +87,11 @@ function init_dirs() {
             fi
         fi
     done
+    if ${use_win_iconv}; then
+        if [ ! -d "${PREIN_DIR}"/win-iconv ]; then
+            mkdir -p "${PREIN_DIR}"/win-iconv
+        fi
+    fi
 
     # DST_DIR
     local _bitval

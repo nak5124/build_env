@@ -37,26 +37,51 @@ function download_iconv_src() {
 function apply_patch_iconv() {
     apply_patch "${1}" "${BUILD_DIR}"/libiconv/src/libiconv-$ICONV_VER "${LOGS_DIR}"/libiconv/libiconv_patch.log "${2}"
 }
+function apply_patch_winiconv() {
+    apply_patch "${1}" "${BUILD_DIR}"/libiconv/src/win-iconv "${LOGS_DIR}"/libiconv/win-iconv_patch.log "${2}"
+}
 
 function prepare_iconv() {
-    # Apply patches.
-    printf "===> Applying patches to libiconv %s...\n" "${ICONV_VER}"
+    if ! ${use_win_iconv}; then
+        # Apply patches.
+        printf "===> Applying patches to libiconv %s...\n" "${ICONV_VER}"
+    
+        # http://apolloron.org/software/libiconv-1.14-ja/
+        apply_patch_iconv "${PATCHES_DIR}"/libiconv/0001-libiconv-1.14-ja-1.patch            true
+        # For --enable-relocatable.
+        apply_patch_iconv "${PATCHES_DIR}"/libiconv/0002-compile-relocatable-in-gnulib.patch false
+        # Remove CR.
+        apply_patch_iconv "${PATCHES_DIR}"/libiconv/0003-fix-cr-for-awk-in-configure.patch   false
+        # GetACP -> GetConsoleOutputCP.
+        apply_patch_iconv "${PATCHES_DIR}"/libiconv/0004-use-GetConsoleOutputCP.patch        false
+    
+        # Disable automatic image base calculation.
+        pushd "${BUILD_DIR}"/libiconv/src/libiconv-$ICONV_VER > /dev/null
+        sed -i 's/enable-auto-image-base/disable-auto-image-base/g' {.,preload,libcharset}/configure
+        popd > /dev/null # "${BUILD_DIR}"/libiconv/src/libiconv-$ICONV_VER
+    
+        echo 'done'
+    else
+        # Git pull.
+        echo '===> Updating win-iconv git-repo...'
+        pushd "${BUILD_DIR}"/libiconv/src/win-iconv > /dev/null
+        git clean -fdx > /dev/null 2>&1
+        git reset --hard > /dev/null 2>&1
+        git pull > /dev/null 2>&1
+        git log -1 --format="%h" > "${LOGS_DIR}"/libiconv/win-iconv.hash 2>&1
+        git rev-list HEAD | wc -l >> "${LOGS_DIR}"/libiconv/win-iconv.hash 2>&1
+        echo 'done'
 
-    # http://apolloron.org/software/libiconv-1.14-ja/
-    apply_patch_iconv "${PATCHES_DIR}"/libiconv/0001-libiconv-1.14-ja-1.patch            true
-    # For --enable-relocatable.
-    apply_patch_iconv "${PATCHES_DIR}"/libiconv/0002-compile-relocatable-in-gnulib.patch false
-    # Remove CR.
-    apply_patch_iconv "${PATCHES_DIR}"/libiconv/0003-fix-cr-for-awk-in-configure.patch   false
-    # GetACP -> GetConsoleOutputCP.
-    apply_patch_iconv "${PATCHES_DIR}"/libiconv/0004-use-GetConsoleOutputCP.patch        false
+        # Apply patches.
+        echo '===> Applying patches to win-iconv...'
 
-    # Disable automatic image base calculation.
-    pushd "${BUILD_DIR}"/libiconv/src/libiconv-$ICONV_VER > /dev/null
-    sed -i 's/enable-auto-image-base/disable-auto-image-base/g' {.,preload,libcharset}/configure
-    popd > /dev/null # "${BUILD_DIR}"/libiconv/src/libiconv-$ICONV_VER
+        # cmake hack!
+        apply_patch_winiconv "${PATCHES_DIR}"/libiconv/0001-change-bins-name-to-match-gnu.patch true
 
-    echo 'done'
+        dos2unix "${BUILD_DIR}"/libiconv/src/win-iconv/iconv.h > /dev/null 2>&1
+
+        popd > /dev/null # "${BUILD_DIR}"/libiconv/src/win-iconv
+        echo 'done'
 
     return 0
 }
@@ -138,18 +163,58 @@ function build_iconv() {
                 rm -f "${PREIN_DIR}"/libiconv/mingw${_bitval}/include/libcharset.h
                 rm -f "${PREIN_DIR}"/libiconv/mingw${_bitval}/lib/libcharset.dll.a
                 rm -f "${PREIN_DIR}"/libiconv/mingw${_bitval}/lib/charset.alias
-                remove_la_files   "${PREIN_DIR}"/libiconv/mingw$_bitval
+                remove_la_files   "${PRIN_DIR}"/libiconv/mingw$_bitval
                 # Strip files.
                 strip_files "${PREIN_DIR}"/libiconv/mingw$_bitval
                 echo 'done'
             else
-:
+                local _dlls='libiconv.dll,libiconv-2.dll,iconv.dll'
+
+                # Configure.
+                printf "===> Configuring win-iconv %s...\n" "${_arch}"
+                MSYS2_ARG_CONV_EXCL='-DCMAKE_INSTALL_PREFIX:PATH='           \
+                cmake -G 'MSYS Makefiles'                                    \
+                    -DCMAKE_INSTALL_PREFIX:PATH=/mingw$_bitval               \
+                    -DCMAKE_SYSTEM_PREFIX_PATH:PATH=/mingw$_bitval           \
+                    -DCMAKE_BUILD_TYPE:STRING=Release                        \
+                    -DCMAKE_C_FLAGS_RELEASE:STRING="${CFLAGS_} ${CPPFLAGS_}" \
+                    -DCMAKE_SHARED_LINKER_FLAGS:STRING="${LDFLAGS_}"         \
+                    -DCMAKE_VERBOSE_MAKEFILE:BOOL=ON                         \
+                    -DBUILD_TEST:BOOL=OFF                                    \
+                    -DBUILD_STATIC:BOOL=OFF                                  \
+                    -DBUILD_SHARED:BOOL=ON                                   \
+                    -DBUILD_EXECUTABLE:BOOL=ON                               \
+                    -DDEFAULT_LIBICONV_DLL:STRING=\"${_dlls}\"               \
+                    ../src/win-iconv                                         \
+                    > "${LOGS_DIR}"/libiconv/win-iconv_config_${_arch}.log 2>&1 || exit 1
+                # fuck you cmake
+                sed -i 's| -Wl,--out-implib,libiconv.dll.a||g' \
+                    "${BUILD_DIR}"/libiconv/build_${_arch}/CMakeFiles/win_iconv.dir/build.make
+                echo 'done'
+
+                # Make.
+                printf "===> Making win-iconv %s...\n" "${_arch}"
+                make $MAKEFLAGS_ > "${LOGS_DIR}"/libiconv/win-iconv_make_${_arch}.log 2>&1 || exit 1
+                echo 'done'
+
+                # Install.
+                printf "===> Installing win-iconv %s...\n" "${_arch}"
+                make DESTDIR="${PREIN_DIR}"/win-iconv install \
+                    > "${LOGS_DIR}"/libiconv/win-iconv_install_${_arch}.log 2>&1 || exit 1
+                # Strip files.
+                strip_files "${PREIN_DIR}"/win-iconv/mingw$_bitval
+                echo 'done'
             fi
         fi
 
         # Copy to DST_DIR.
-        printf "===> Copying libiconv %s to %s/mingw%s...\n" "${_arch}" "${DST_DIR}" "${_bitval}"
-        cp -af "${PREIN_DIR}"/libiconv/mingw$_bitval "${DST_DIR}"
+        if ! ${use_win_iconv}; then
+            printf "===> Copying libiconv %s to %s/mingw%s...\n" "${_arch}" "${DST_DIR}" "${_bitval}"
+            cp -af "${PREIN_DIR}"/libiconv/mingw$_bitval "${DST_DIR}"
+        else
+            printf "===> Copying win-iconv %s to %s/mingw%s...\n" "${_arch}" "${DST_DIR}" "${_bitval}"
+            cp -af "${PREIN_DIR}"/win-iconv/mingw$_bitval "${DST_DIR}"
+        fi
         echo 'done'
     done
 
