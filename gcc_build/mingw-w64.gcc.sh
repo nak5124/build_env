@@ -113,7 +113,6 @@ fi
 
 # Build mingw-w64 toolchain.
 source "${SCRIPTS_DIR}"/libiconv.sh
-source "${SCRIPTS_DIR}"/libintl.sh
 source "${SCRIPTS_DIR}"/zlib.sh
 source "${SCRIPTS_DIR}"/mingw-w64.sh
 source "${SCRIPTS_DIR}"/binutils.sh

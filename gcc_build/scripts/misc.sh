@@ -200,9 +200,7 @@ function apply_patch() {
         echo '...exit'
         exit 6
     elif [ ! -f "${_log_file}" ]; then
-        echo 'apply_patch: ${3} does not exist or is not a regular file!'
-        echo '...exit'
-        exit 7
+        touch "${_log_file}"
     fi
 
     if [ -z "${_new_log}" ]; then

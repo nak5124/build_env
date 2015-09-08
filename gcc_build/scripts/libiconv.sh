@@ -82,6 +82,7 @@ function prepare_iconv() {
 
         popd > /dev/null # "${BUILD_DIR}"/libiconv/src/win-iconv
         echo 'done'
+    fi
 
     return 0
 }
@@ -111,9 +112,7 @@ function build_iconv() {
     # Setup.
     if ${_rebuild}; then
         download_iconv_src
-        if ! ${use_win_iconv}; then
-            prepare_iconv
-        fi
+        prepare_iconv
     fi
 
     local _arch
@@ -194,7 +193,7 @@ function build_iconv() {
 
                 # Make.
                 printf "===> Making win-iconv %s...\n" "${_arch}"
-                make $MAKEFLAGS_ > "${LOGS_DIR}"/libiconv/win-iconv_make_${_arch}.log 2>&1 || exit 1
+                make > "${LOGS_DIR}"/libiconv/win-iconv_make_${_arch}.log 2>&1 || exit 1
                 echo 'done'
 
                 # Install.
