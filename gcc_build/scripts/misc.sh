@@ -199,7 +199,7 @@ function apply_patch() {
         echo 'apply_patch: ${3} should be specified!'
         echo '...exit'
         exit 6
-    elif [ ! -f "${_log_file}" ]; then
+    elif [ ! -f "${_log_file}" -a "${_log_file}" != '/dev/null' ]; then
         touch "${_log_file}"
     fi
 

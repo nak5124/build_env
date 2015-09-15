@@ -1,0 +1,62 @@
+From c595c5e331d18050d55d086ef87ba9eb6edf98d7 Mon Sep 17 00:00:00 2001
+From: Yuta Nakai <nak5124@live.jp>
+Date: Mon, 14 Sep 2015 22:12:12 +0900
+Subject: [PATCH] config.guess: Improve detection of mingw.
+
+---
+ config.guess | 38 +++++++++++++++++++++++++++++++++-----
+ 1 file changed, 33 insertions(+), 5 deletions(-)
+
+diff --git a/config.guess b/config.guess
+index 3c022c5..aaf20a8 100755
+--- a/config.guess
++++ b/config.guess
+@@ -838,12 +838,40 @@ EOF
+     i*:CYGWIN*:*)
+ 	echo ${UNAME_MACHINE}-pc-cygwin
+ 	exit ;;
+-    *:MINGW64*:*)
+-	echo ${UNAME_MACHINE}-pc-mingw64
+-	exit ;;
+     *:MINGW*:*)
+-	echo ${UNAME_MACHINE}-pc-mingw32
+-	exit ;;
++	eval $set_cc_for_build
++	sed 's/^	//' << EOF >$dummy.c
++	#include <_mingw_mac.h>
++	#undef VENDOR
++	#ifdef __MINGW64_VERSION_MAJOR
++	VENDOR=w64
++	#else
++	VENDOR=pc
++	#endif
++EOF
++	eval `$CC_FOR_BUILD -E $dummy.c 2>/dev/null | grep '^VENDOR'`
++	case ${UNAME_MACHINE} in
++		i*86 | x86 | x86_64 | amd64 | arm*)
++		eval $set_cc_for_build
++		cat <<-EOF >$dummy.c
++		#undef UNAME_MACHINE
++		#if defined(_X86_)
++		UNAME_MACHINE=i686
++		#elif defined(__x86_64)
++		UNAME_MACHINE=x86_64
++		#elif defined(__ia64__)
++		UNAME_MACHINE=ia64
++		#elif defined(__arm__)
++		UNAME_MACHINE=arm
++		#else
++		UNAME_MACHINE=
++		#endif
++EOF
++		eval `$CC_FOR_BUILD -E $dummy.c 2>/dev/null | grep '^UNAME_MACHINE'`
++		;;
++	esac
++	test x"${UNAME_MACHINE}" != x && test x"${VENDOR}" != x && { echo "${UNAME_MACHINE}-${VENDOR}-mingw32"; exit; }
++	;;
+     *:MSYS*:*)
+ 	echo ${UNAME_MACHINE}-pc-msys
+ 	exit ;;
+-- 
+2.5.2
+

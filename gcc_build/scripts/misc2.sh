@@ -71,6 +71,10 @@ function replace_config() {
     git pull > /dev/null 2>&1
     echo 'done'
 
+    # Apply patch.
+    apply_patch "${PATCHES_DIR}"/config/0001-config.guess-Improve-detection-of-mingw.patch \
+        "${BUILD_DIR}"/autotools/config/src/config /dev/null true
+
     # Replace.
     echo '===> Copy newer configs...'
     local _arch
