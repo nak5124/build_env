@@ -3,7 +3,6 @@
 
 # DO NOT REMOVE NEXT LINE. It remove cygdrive prefix from path
 none / cygdrive binary,posix=0,noacl,user 0 0
-
-# MSYS style fstab
-# Win32_Path		Mount_Point
-z:/temp		/tmp
+none /tmp usertemp binary,posix=0,noacl,user 0 0
+/usr/lib /lib none bind
+f:/OneDrive/Nukadoko/msys2/var /var ntfs binary,posix=0,noacl,user 0 0
