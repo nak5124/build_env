@@ -18,6 +18,7 @@ if has('vim_starting')
   call neobundle#end()
 endif
 
+call neobundle#begin(expand('$HOME/.vim/bundle/'))
 NeoBundle 'Shougo/neobundle.vim'
 NeoBundle 'Shougo/unite.vim'
 NeoBundle 'Shougo/vimproc'
@@ -36,6 +37,7 @@ NeoBundle 'grep.vim'
 NeoBundle 'drillbits/nyan-modoki.vim'
 
 NeoBundleCheck
+call neobundle#end()
 
 " vimshell
 let g:vimshell_prompt_expr = 'getcwd()." > "'
