@@ -1635,7 +1635,7 @@ strip_file() {
 			objcopy --remove-section=.gnu_debuglink "$binary"
 
 			# strip debug-info from the original file
-			/usr/bin/objcopy --strip-debug "$binary"
+			objcopy --strip-debug "$binary"
 			msg2 "Creating (again) a debuginfo link to $dbgdir/$binary.debug in $binary"
 			objcopy --add-gnu-debuglink="$dbgdir/${binary#/}.debug" "$binary"
 			# This way dbg file gets a .gnu_debuglink section (doesn't matter where
@@ -1653,7 +1653,7 @@ strip_file() {
 		;;
 	esac
 
-	/usr/bin/strip $@ "$binary"
+	strip $@ "$binary"
 }
 
 find_libdepends() {

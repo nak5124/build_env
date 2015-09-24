@@ -1,7 +1,7 @@
-From 5cb09ff085693b0b355a1ef83c0014d6acfd375f Mon Sep 17 00:00:00 2001
+From 1d0da9520eb13a64605be5545dc5660e49433659 Mon Sep 17 00:00:00 2001
 From: Yuta Nakai <nak5124@live.jp>
 Date: Fri, 28 Aug 2015 22:23:44 +0900
-Subject: [PATCH 2/6] Enable shared on MinGW.
+Subject: [PATCH 2/7] Enable shared on MinGW.
 
 ---
  bfd/Makefile.am        |  7 +++++--
@@ -413,7 +413,7 @@ index a29690b..944857b 100644
  bootstrap: ld3$(EXEEXT)
  	cmp ld2$(EXEEXT) ld3$(EXEEXT)
 diff --git a/libiberty/Makefile.in b/libiberty/Makefile.in
-index 7d7e2f4..137ef7d 100644
+index 7d7e2f4..e66fef1 100644
 --- a/libiberty/Makefile.in
 +++ b/libiberty/Makefile.in
 @@ -131,7 +131,7 @@ CFILES = alloca.c argv.c asprintf.c atexit.c				\
@@ -430,7 +430,7 @@ index 7d7e2f4..137ef7d 100644
  	 strverscmp.c timeval-utils.c tmpnam.c				\
  	unlink-if-ordinary.c						\
 -	vasprintf.c vfork.c vfprintf.c vprintf.c vprintf-support.c	\
-+	vasprintf.c vfprintf.c vprintf.c vsnprintf.c vsprintf.c	\
++	vasprintf.c vfprintf.c vprintf.c vprintf-support.c	\
  	 vsnprintf.c vsprintf.c						\
 -	waitpid.c							\
 +	msdos.c							\
@@ -635,5 +635,5 @@ index 07e3162..d8aa347 100644
  	SHARED_LIBADD="$SHARED_LIBADD $LIBM"
        fi
 -- 
-2.5.1
+2.5.2
 
