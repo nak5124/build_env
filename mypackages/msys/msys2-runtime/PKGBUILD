@@ -1,0 +1,156 @@
+# Maintainer: Yuta Nakai <nak5124@live.jp>
+
+pkgbase=msys2-runtime
+pkgname=('msys2-runtime' 'msys2-runtime-devel')
+pkgdesc="Cygwin POSIX emulation engine"
+pkgver=2.3.0.16655.6ecd782
+pkgrel=1
+arch=('i686' 'x86_64')
+url=""
+license=('GPL')
+groups=('base')
+makedepends=('cocom'
+             'git'
+             'perl'
+             'gcc'
+             'make'
+             'mingw-w64-cross-gcc'
+             'mingw-w64-cross-zlib'
+             'zlib-devel'
+             'gettext-devel'
+             'libiconv-devel'
+             'diffutils')
+# options=('debug' '!strip')
+source=('msys2-runtime'::'git+https://github.com/Alexpux/Cygwin.git#branch=msys2-master'
+        '0001-dcrt0.cc-Untangle-allow_glob-from-winshell.patch'
+        '0002-dcrt0.cc-globify-Don-t-quote-literal-strings-differe.patch'
+        '0003-strace.cc-Don-t-set-MSYS-noglob.patch'
+        '0004-Add-debugging-for-build_argv.patch'
+        '0005-Add-debugging-for-strace-make_command_line.patch'
+        '0006-Pass-the-TZ-variable-to-non-MSys2-programs-if-it-is-.patch'
+        '0007-Stop-assuming-that-there-are-no-spaces-in-POSIX-styl.patch'
+        '0008-Pass-environment-variables-with-empty-values.patch'
+        '0009-Handle-8-bit-characters-under-LOCALE-C.patch'
+        '0010-Avoid-unnecessary-recursion-in-find_path_start_and_t.patch'
+        '0011-Leave-arguments-starting-with-a-tilde-or-quote-alone.patch'
+        '0012-Leave-Git-s-name-and-message-arguments-alone-please.patch'
+        '0013-Leave-paths-containing-any-special-characters-alone.patch'
+        '0014-Leave-paths-containing-alone.patch'
+        '0015-Skip-posix-to-windows-conversion-when-is-seen.patch'
+        '0016-Also-leave-Git-s-rev-.-name-syntax-alone.patch'
+        '0017-Arguments-starting-with-are-no-paths.patch'
+        '0018-Prevent-scp-style-arguments-from-being-mangled.patch'
+        '0019-Fixed-path-converting-with-non-ascii-char.patch'
+        '0020-path-conversion-Introduce-ability-to-switch-off-conv.patch'
+        '0021-Kill-also-children-of-the-process-to-be-killed-via-C.patch'
+        '0022-Export-the-kill_process_tree-function.patch'
+        '0023-kill-Handle-Win32-console-processes-children-too.patch'
+        '0024-Allow-overriding-the-home-directory-via-the-HOME-var.patch'
+        '0025-Allow-native-symlinks-to-non-existing-targets-in-nat.patch'
+        '0026-Introduce-the-usertemp-filesystem-type.patch')
+sha512sums=('SKIP'
+            'dcad87b4c24c824e535fb60b8421c4e1fa909cccd6d91adc7e5692c86bb5a3e94d7116a7aa8b25008154e80cb5309f40595ffbce6d5453897e30b3b8d5769562'
+            'ed27aafa9f7665f98223969e6465968b178cb2a37ad5f5b1b60c5eefe827a03bdc98b3965506685c29bcd0c23c343fbc6a995b5ef627d9658d566db1b411b84d'
+            '1235e644fde6ae60689ce40cb34a2ffc531c8eaad53b147afd8008e24ed673898b598cd59ad929c1c4727ba0af0f9df88f1eba2334432995cd43774b99198f94'
+            'ef91c3822fa7bcf0295600c1683b2d0b6ed717d506ef9a63f198218e266c36dc84c363aeb6ddf46dd89001474650d0acf700f965ad92b12f0a99ae07c2ffd612'
+            'f3a1398bb70256b5dce2d5761cc03467712406ee238ac703faa09fbe8b1134856c38dd8f75a96fe97d85808d3ea61fe0907d43515bea89b824b251369e363a58'
+            '7401cc3c2d6bad8e1a4a844c60c6ff045a5cb9b322358cde991c64068f1f1ec6c79cdeb0b30d5a7db0c5f7acc16920d19a16bd97790817db9574eb22dec863fa'
+            '8b24af60260cdd5bcc65b6a9d3f1633199080fec77e7613bd11aa243c8ca430b20b1f6652aca8b975990bb843a6a01d916dfd221ed24c0cd9b6178d1e76cebdb'
+            '2580cb84bf0a559e06a3c9117dccee5c3329d2c854357a6e3a3b8882e13612acad6c8c8007d9110df37787c6484defddc1bab15d97dc88822ec43063ba8c6f56'
+            'e77f2d5a9c89d70679386384d1c93bc79ce6bc6a85af440fbc25948ad88214ef1a6a32ea68790b35f3659cdcdca1340a8400e8aa4e139bfd17a06bd5227595eb'
+            'fa0f4e1345c9598436d15da47090a45150ed43f4200554760b0dd963c6d5050892a5edcecf6a8dc6268bf6e5006ce240aa145fd3b9704bec1ed92b6415d5de62'
+            '1d31d60d3cb54514121c952c0cfc39020061b4e26c1d3bb29634618f5652315263ae643be09f7873db0cdb51837ffac36d8ddbaa21fe4c8b50f2557900b4fcd8'
+            'b04692f37914e5a93d46c0cc0a1f64ae206ff1b92141d83c26473f33184e5b8780e1710e6ede0548042ef98e42d8cc36415010c729e9c8ea87468bcf0100b3dd'
+            '8ab641697ab25aa5810113d9c4bc409e71ec8357b7498b982219aa9cc3e5ac0616efe92cb6bdf377aa7f1f80fe2b138dbfceabb6f9cc70deb585ba67c8f59b85'
+            '77d2e973d225eb106078ea12a8aabb46f42369d9d745a9be25ba558037a76a246ea1425d732814a98e22e7cacc02ea2d9a72829e448bdf357a526e425ba4a3fc'
+            'edc04597004b452359e169be0815e1680ad69b92605c5a13e4e73d73308899951a54d53f4280a48723af06c09f1fe25dcc87daceaf4a4577b0b025f923d95167'
+            '5aa2ee608578b7c4d1a693f06ec0fb7fb356cf2d1badd6412c8fd9972e389a2249f9a216df504ca22438bffec688047b00a0da45ace841744ad6a3d3610f4b8d'
+            '04749b31d2d5219ba7597edc16cbff54af549bbbf0d98e22b891f7ee571c9720b579ce86311ba0062376f61ca17c4aa09ba49d7e45dac924181dabfa12c12423'
+            '0b3fed4db31b6e1bce86392040e291bb3c25dc7ab81abab7cff2174f1966be3d2aaaae4eaeb8fde41cb65dd78d9241189ae65d18f22eccd1c05b339ef432dd67'
+            'dcc6b5ca57a71224dff27fcf2e7eecbe6ad29615dbde57fc3a49e4f3b34fce262fb274395752de5b27d6afe8c1830a8e3a074dfcf31539d399de722d3b9d2636'
+            '5ce263db43ad6783ec508f34ac25ea421f8cd9e4cc6473e082e963e78d4c9f764c79bdd742fc5c7a464a616b7f645b3262694210ddd2723ae22ac1b726cb72a6'
+            '94f62ba2c4836f6364beb43a7cf812e0770ac0740b7aad4178bd3459977004f2c939be0fc06936a4bc81aa722da67945190eda0aecd2c7b67d25afcf4e1991b6'
+            '14f59861bd60d1b87cbe885a9b5a49b89a95b72023f06bac152eaf284cd541afd4b6e25f966c951a9000726ee0ed938cc952e650a32a985a8624e435c1763397'
+            '99ab52d41a08a9e968791461d0b7d045fc351c334af00d5a53216290447a57f945b3ccd763722b3ee12f6732305aebd5821124d16b936a2d9af4b528d567ce20'
+            '72072ac08b0dce6cd7f62c63902554316dd512ca7849bc8a173ce3d631fb1a01b763a524b4fbf9e399692de31a6e63fa4ead423a7112fe539383dd94f08d5278'
+            '17a2c1342dc1e8e3be9fbd66275ba8609a468ac12301a5721cf82e91222892279cfac9b0941548dd6abeccfff58c6b4f7bbde59b9add0b854953c9674d0be005'
+            '0cd0484e9cf01699a2440bdfe936ea4c7c3c21555e2b6ebb36b80df328fdafb45dcfcca587f48c48b0949805c1c5dfe50cadb34044e573242056abf72cfbc23f')
+
+pkgver() {
+  cd "${srcdir}"/msys2-runtime
+  local -ra _cygver=($(ls winsup/cygwin/release))
+  printf "%s.%s.%s" "${_cygver[((${#_cygver[@]}-1))]}" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
+}
+
+prepare() {
+  cd "${srcdir}"/msys2-runtime
+  local -i _N=26
+  local -i _i
+  local _num
+  msg2 'Apply patches'
+  for _i in $(seq 1 ${_N})
+  do
+    _num=$(printf "%04d" ${_i})
+    git am "${srcdir}"/${_num}*.patch
+  done
+  sed -i s/-Werror//g winsup/cygwin/Makefile.in
+}
+
+build() {
+  [[ -d "${srcdir}"/build-${CHOST} ]] && rm -rf "${srcdir}"/build-${CHOST}
+  mkdir -p "${srcdir}"/build-${CHOST} && cd "${srcdir}"/build-${CHOST}
+
+  # Gives more verbose compile output when debugging.
+  local -a extra_config
+  if check_option "debug" "y"; then
+    export CCWRAP_VERBOSE=1
+    OPTIM="-O0"
+    extra_config+=(--enable-debugging)
+  else
+    OPTIM="-Os"
+  fi
+
+  CFLAGS="$OPTIM -pipe"
+  CXXFLAGS="$OPTIM -pipe"
+
+  "${srcdir}"/msys2-runtime/configure \
+    --prefix=/usr \
+    --build=${CHOST} \
+    --sysconfdir=/etc \
+    "${extra_config[@]}"
+  LC_ALL=C make
+  LC_ALL=C make -j1 DESTDIR="${srcdir}"/dest install
+
+  rm -rf "${srcdir}"/dest/etc
+}
+
+package_msys2-runtime() {
+  pkgdesc="Posix emulation engine for Windows"
+  groups=('base')
+  options=('!strip')
+
+  mkdir -p "${pkgdir}"/usr
+  cp -rf "${srcdir}"/dest/usr/bin "${pkgdir}"/usr/
+  rm -f "${pkgdir}"/usr/bin/msys-2.0.dbg
+  rm -f "${pkgdir}"/usr/bin/cyglsa-config
+  rm -f "${pkgdir}"/usr/bin/cyglsa.dll
+  rm -f "${pkgdir}"/usr/bin/cyglsa64.dll
+  rm -f "${pkgdir}"/usr/bin/cygserver-config
+  cp -rf "${srcdir}"/dest/usr/share "${pkgdir}"/usr/
+}
+
+package_msys2-runtime-devel() {
+  pkgdesc="MSYS2 headers and libraries"
+  groups=('MSYS2-devel')
+  depends=("msys2-runtime=${pkgver}")
+  options=('staticlibs' '!strip')
+
+  mkdir -p "${pkgdir}"/usr/bin
+  cp -rLf "${srcdir}"/dest/usr/${CHOST}/include "${pkgdir}"/usr/
+  rm -f "${pkgdir}"/usr/include/iconv.h
+  rm -f "${pkgdir}"/usr/include/unctrl.h
+  # provided by libtirpc
+  rm -fr "${pkgdir}"/usr/include/rpc/
+
+  cp -rLf "${srcdir}"/dest/usr/${CHOST}/lib "${pkgdir}"/usr/
+}

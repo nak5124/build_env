@@ -1,0 +1,59 @@
+From 074d21600c30f2fac28292d8dfc4a664745fffdf Mon Sep 17 00:00:00 2001
+From: Johannes Schindelin <johannes.schindelin@gmx.de>
+Date: Wed, 20 May 2015 17:46:25 +0000
+Subject: [PATCH 26/26] Introduce the 'usertemp' filesystem type
+
+In the context of Git for Windows, the MSys2 root lives inside
+%PROGRAMFILES% which is typically write-protected for mere mortals' user
+accounts. In particular for /tmp/, this is a problem, because many
+scripts assume that writing to /tmp/ is fair game.
+
+MSys1 used to mount /tmp/ automatically, pointing to the current user's
+temporary directory.
+
+Let's recreate that functionality in a slightly different way: we now
+interpret the filesystem type "usertemp" in the /etc/fstab file. To make
+/tmp/ point to the temporary directory of the current user, as per the
+%TMP% environment variable, just add this line to /etc/fstab:
+
+	none /tmp usertemp binary,posix=0 0 0
+
+Signed-off-by: Johannes Schindelin <johannes.schindelin@gmx.de>
+---
+ winsup/cygwin/mount.cc | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
+
+diff --git a/winsup/cygwin/mount.cc b/winsup/cygwin/mount.cc
+index 1d49e18..eef8457 100644
+--- a/winsup/cygwin/mount.cc
++++ b/winsup/cygwin/mount.cc
+@@ -1148,6 +1148,8 @@ mount_info::from_fstab_line (char *line, bool user)
+   unsigned mount_flags = MOUNT_SYSTEM | MOUNT_BINARY;
+   if (!strcmp (fs_type, "cygdrive"))
+     mount_flags |= MOUNT_NOPOSIX;
++  if (!strcmp (fs_type, "usertemp"))
++    mount_flags |= MOUNT_IMMUTABLE;
+   if (!fstab_read_flags (&c, mount_flags, false))
+     return true;
+   if (mount_flags & MOUNT_BIND)
+@@ -1172,6 +1174,17 @@ mount_info::from_fstab_line (char *line, bool user)
+       slashify (posix_path, cygdrive, 1);
+       cygdrive_len = strlen (cygdrive);
+     }
++  else if (!strcmp (fs_type, "usertemp"))
++    {
++      char tmp[MAX_PATH];
++      GetEnvironmentVariable ("TMP", tmp, sizeof(tmp));
++      if (*tmp)
++	{
++	  int res = mount_table->add_item (tmp, posix_path, mount_flags);
++	  if (res && get_errno () == EMFILE)
++	    return false;
++	}
++    }
+   else
+     {
+       int res = mount_table->add_item (native_path, posix_path, mount_flags);
+-- 
+2.5.2
+

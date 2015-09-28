@@ -2,8 +2,8 @@
 
 pkgname=tmux-git
 pkgdesc='A terminal multiplexer'
-pkgver=2.0.280.g2c6ea70
-pkgrel=2
+pkgver=2.0.334.g9833576
+pkgrel=1
 arch=('i686' 'x86_64')
 url='http://tmux.sourceforge.net/'
 license=('BSD')

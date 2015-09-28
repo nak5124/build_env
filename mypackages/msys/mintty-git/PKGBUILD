@@ -2,8 +2,8 @@
 
 pkgname=mintty-git
 pkgdesc='Terminal emulator with native Windows look and feel'
-pkgver=2.1.5.791.731793d
-pkgrel=2
+pkgver=2.1.5.829.ce49bbf
+pkgrel=1
 arch=('i686' 'x86_64')
 url='http://mintty.github.io/'
 license=('GPL3')

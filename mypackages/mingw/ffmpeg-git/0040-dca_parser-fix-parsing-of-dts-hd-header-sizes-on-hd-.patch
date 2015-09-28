@@ -1,0 +1,55 @@
+From ebe06a0ac877b1fddc04969c802a503d2ae9e4ff Mon Sep 17 00:00:00 2001
+From: Hendrik Leppkes <h.leppkes@gmail.com>
+Date: Sun, 29 Mar 2015 11:57:12 +0200
+Subject: [PATCH 40/60] dca_parser: fix parsing of dts-hd header sizes on
+ hd-only streams
+
+Previously it would always parse the size of the next frame, which
+resulted on broken playback as two frames were packed into one AVPacket.
+---
+ libavcodec/dca_parser.c | 12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
+
+diff --git a/libavcodec/dca_parser.c b/libavcodec/dca_parser.c
+index 7d7868f..3abc952 100644
+--- a/libavcodec/dca_parser.c
++++ b/libavcodec/dca_parser.c
+@@ -60,10 +60,10 @@ static int dca_parse_hd_framesize(const uint8_t *buf, int buf_size, int *framesi
+ 
+     if (get_bits1(&gb)) {
+         skip_bits(&gb, 12);
+-        *framesize = get_bits(&gb, 20);
++        *framesize = get_bits(&gb, 20) + 1;
+     } else {
+         skip_bits(&gb, 8);
+-        *framesize = get_bits(&gb, 16);
++        *framesize = get_bits(&gb, 16) + 1;
+     }
+ 
+     return 0;
+@@ -93,9 +93,11 @@ static int dca_find_frame_end(DCAParseContext *pc1, const uint8_t *buf,
+                     pc1->lastmarker == CORE_MARKER(state) ||
+                     pc1->lastmarker == DCA_SYNCWORD_SUBSTREAM) {
+                     start_found = 1;
+-                    if (IS_EXSS_MARKER(state))
++                    if (IS_EXSS_MARKER(state)) {
+                         pc1->lastmarker = EXSS_MARKER(state);
+-                    else
++                        if (dca_parse_hd_framesize(&buf[i + 1], buf_size - (i + 1), &pc1->hdframesize) < 0)
++                            pc1->hdframesize = 0;
++                    } else
+                         pc1->lastmarker = CORE_MARKER(state);
+                     i++;
+                     break;
+@@ -107,7 +109,7 @@ static int dca_find_frame_end(DCAParseContext *pc1, const uint8_t *buf,
+         for (; i < buf_size; i++) {
+             pc1->size++;
+             state = (state << 8) | buf[i];
+-            if (EXSS_MARKER(state) == DCA_SYNCWORD_SUBSTREAM && pc1->size >= pc1->framesize && !pc1->hdframesize) {
++            if (EXSS_MARKER(state) == DCA_SYNCWORD_SUBSTREAM && pc1->lastmarker != DCA_SYNCWORD_SUBSTREAM && pc1->size >= pc1->framesize && !pc1->hdframesize) {
+                 if (dca_parse_hd_framesize(&buf[i+1], buf_size - (i+1), &pc1->hdframesize) < 0)
+                     pc1->hdframesize = 0;
+             }
+-- 
+2.5.2
+

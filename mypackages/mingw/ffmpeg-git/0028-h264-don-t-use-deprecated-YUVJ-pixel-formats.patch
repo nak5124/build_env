@@ -1,7 +1,7 @@
-From 012815497a13d2fb129231921d723611b0e5876e Mon Sep 17 00:00:00 2001
+From 81fbb4fd6cb0f4c7840a747c6aea8be7ba06bfda Mon Sep 17 00:00:00 2001
 From: Hendrik Leppkes <h.leppkes@gmail.com>
 Date: Wed, 25 Dec 2013 20:21:51 +0100
-Subject: [PATCH 28/63] h264: don't use deprecated YUVJ pixel formats
+Subject: [PATCH 28/60] h264: don't use deprecated YUVJ pixel formats
 
 A change in pixel format cause a full decoder re-init, which can lead to dropped frames.
 Instead, rely on the color_range, as its supposed to be handled anyway.
@@ -38,5 +38,5 @@ index a346ccb..d3a8b43 100644
                  *fmt++ = AV_PIX_FMT_YUV420P;
          }
 -- 
-2.5.0
+2.5.2
 

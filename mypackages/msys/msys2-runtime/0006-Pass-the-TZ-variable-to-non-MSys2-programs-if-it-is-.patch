@@ -1,0 +1,59 @@
+From 9db56f1170e448beaad4c2a708598bca52db11b2 Mon Sep 17 00:00:00 2001
+From: Karsten Blees <blees@dcon.de>
+Date: Sun, 15 Feb 2015 15:43:04 +0000
+Subject: [PATCH 06/26] Pass the TZ variable to non-MSys2 programs if it is
+ standard-compliant
+
+Native Windows programs (linked to MSVCRT) understand a subset of the TZ
+environment variable syntax [1], namely "std offset dst" (e.g."CET-1CEST"
+for central european time, see _tzset() MSDN documentation [2]).
+
+Implementation-defined forms (starting with ':') and rules when to switch
+to DST are not supported by MSVCRT.
+
+MSYS2 uses a non-standard TZ format (e.g. "TZ=Europe/Berlin", without ':').
+
+When preparing the environment for non-msys programs, pass the TZ variable
+on if it looks standard-compliant (as recognized by MSVCRT). Otherwise
+drop the variable and let MSVCRT determine system timezone settings via
+native Windows APIs.
+
+This allows us to use standard-compliant TZ settings that also affect
+non-msys programs, as needed e.g. by the git test suite.
+
+[1] http://pubs.opengroup.org/onlinepubs/009695399/basedefs/xbd_chap08.html
+[2] https://msdn.microsoft.com/library/90s5c885.aspx
+
+Signed-off-by: Karsten Blees <blees@dcon.de>
+Signed-off-by: Johannes Schindelin <johannes.schindelin@gmx.de>
+---
+ winsup/cygwin/environ.cc | 12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
+
+diff --git a/winsup/cygwin/environ.cc b/winsup/cygwin/environ.cc
+index 1252e0a..fb6de9b 100644
+--- a/winsup/cygwin/environ.cc
++++ b/winsup/cygwin/environ.cc
+@@ -1148,9 +1148,17 @@ build_env (const char * const *envp, PWCHAR &envblock, int &envc,
+     {
+       bool calc_tl = !no_envblock;
+ #ifdef __MSYS__
+-      /* Don't pass timezone environment to non-msys applications */
++      /* Don't pass non-standard timezone to non-msys applications */
+       if (!keep_posix && ascii_strncasematch(*srcp, "TZ=", 3))
+-        goto next1;
++        {
++	  const char *v = *srcp + 3;
++	  if (*v == ':')
++	    goto next1;
++	  for (; *v; v++)
++	    if (!isalpha(*v) && !isdigit(*v) &&
++	        *v != '-' && *v != '+' && *v != ':')
++	      goto next1;
++        }
+ #endif
+       /* Look for entries that require special attention */
+       for (unsigned i = 0; i < SPENVS_SIZE; i++)
+-- 
+2.5.2
+

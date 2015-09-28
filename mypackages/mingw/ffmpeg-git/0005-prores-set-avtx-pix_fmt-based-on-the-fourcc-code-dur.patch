@@ -1,7 +1,7 @@
-From d9e494ab714c0d41ca2b6e698c1a7e0e763bf9cf Mon Sep 17 00:00:00 2001
+From 1769880c37e5545e9c1682ce16e05975db833172 Mon Sep 17 00:00:00 2001
 From: Hendrik Leppkes <h.leppkes@gmail.com>
 Date: Sat, 7 Jan 2012 02:01:08 +0100
-Subject: [PATCH 05/63] prores: set avtx->pix_fmt based on the fourcc code
+Subject: [PATCH 05/60] prores: set avtx->pix_fmt based on the fourcc code
  during init
 
 ---
@@ -9,7 +9,7 @@ Subject: [PATCH 05/63] prores: set avtx->pix_fmt based on the fourcc code
  1 file changed, 21 insertions(+)
 
 diff --git a/libavcodec/proresdec2.c b/libavcodec/proresdec2.c
-index 932f85f..9d63651 100644
+index 932f85f..973dcec 100644
 --- a/libavcodec/proresdec2.c
 +++ b/libavcodec/proresdec2.c
 @@ -54,6 +54,27 @@ static av_cold int decode_init(AVCodecContext *avctx)
@@ -18,19 +18,19 @@ index 932f85f..9d63651 100644
  
 +    switch (avctx->codec_tag) {
 +    case MKTAG('a', 'p', 'c', 'h'):
-+        avctx->pix_fmt = PIX_FMT_YUV422P10;
++        avctx->pix_fmt = AV_PIX_FMT_YUV422P10;
 +        break;
 +    case MKTAG('a', 'p', 'c', 'n'):
-+        avctx->pix_fmt = PIX_FMT_YUV422P10;
++        avctx->pix_fmt = AV_PIX_FMT_YUV422P10;
 +        break;
 +    case MKTAG('a', 'p', 'c', 's'):
-+        avctx->pix_fmt = PIX_FMT_YUV422P10;
++        avctx->pix_fmt = AV_PIX_FMT_YUV422P10;
 +        break;
 +    case MKTAG('a', 'p', 'c', 'o'):
-+        avctx->pix_fmt = PIX_FMT_YUV422P10;
++        avctx->pix_fmt = AV_PIX_FMT_YUV422P10;
 +        break;
 +    case MKTAG('a', 'p', '4', 'h'):
-+        avctx->pix_fmt = PIX_FMT_YUV444P10;
++        avctx->pix_fmt = AV_PIX_FMT_YUV444P10;
 +        break;
 +    default:
 +        av_log(avctx, AV_LOG_WARNING, "Unknown ProRes FOURCC provided (%08X)\n",
@@ -41,5 +41,5 @@ index 932f85f..9d63651 100644
                                    ctx->prodsp.idct_permutation_type);
  
 -- 
-2.5.0
+2.5.2
 

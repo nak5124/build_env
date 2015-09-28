@@ -1,7 +1,7 @@
-From be7582ce1b0adbd8e446c905be4078c22598f371 Mon Sep 17 00:00:00 2001
+From f706d40bb52160ca1d51b9d9154e61fe4814dc71 Mon Sep 17 00:00:00 2001
 From: Hendrik Leppkes <h.leppkes@gmail.com>
 Date: Tue, 20 Dec 2011 20:44:38 +0100
-Subject: [PATCH 04/63] Increase the maximum probe size to 4MB.
+Subject: [PATCH 04/60] Increase the maximum probe size to 4MB.
 
 This allows detection of some files with corruption within the first few MB and should not have a speed impact on previous functional files.
 ---
@@ -22,5 +22,5 @@ index bd8a0bc..3ffa539 100644
  #define MAX_PROBE_PACKETS 2500
  
 -- 
-2.5.0
+2.5.2
 

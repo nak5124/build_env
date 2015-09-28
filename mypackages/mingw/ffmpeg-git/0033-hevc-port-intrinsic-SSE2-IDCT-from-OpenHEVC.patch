@@ -1,7 +1,7 @@
-From f8a68441a1adae4d35813a620a69fe91ffaf0e68 Mon Sep 17 00:00:00 2001
+From 13b71c66234ec7333b874a89110b58ec58a0acff Mon Sep 17 00:00:00 2001
 From: Hendrik Leppkes <h.leppkes@gmail.com>
 Date: Sun, 17 Aug 2014 13:26:23 +0200
-Subject: [PATCH 33/63] hevc: port intrinsic SSE2 IDCT from OpenHEVC
+Subject: [PATCH 33/60] hevc: port intrinsic SSE2 IDCT from OpenHEVC
 
 ---
  libavcodec/x86/Makefile              |   4 +-
@@ -12,10 +12,10 @@ Subject: [PATCH 33/63] hevc: port intrinsic SSE2 IDCT from OpenHEVC
  create mode 100644 libavcodec/x86/hevc_idct_intrinsic.c
 
 diff --git a/libavcodec/x86/Makefile b/libavcodec/x86/Makefile
-index c403770..401d51f 100644
+index b3cfb0b..7eea6a1 100644
 --- a/libavcodec/x86/Makefile
 +++ b/libavcodec/x86/Makefile
-@@ -141,7 +141,9 @@ YASM-OBJS-$(CONFIG_HEVC_DECODER)       += x86/hevc_mc.o                 \
+@@ -140,7 +140,9 @@ YASM-OBJS-$(CONFIG_HEVC_DECODER)       += x86/hevc_mc.o                 \
                                            x86/hevc_deblock.o            \
                                            x86/hevc_idct.o               \
                                            x86/hevc_res_add.o            \
@@ -870,5 +870,5 @@ index ddc876d..a3483de 100644
          if (EXTERNAL_SSSE3(cpu_flags) && ARCH_X86_64) {
              c->hevc_v_loop_filter_luma = ff_hevc_v_loop_filter_luma_12_ssse3;
 -- 
-2.5.0
+2.5.2
 

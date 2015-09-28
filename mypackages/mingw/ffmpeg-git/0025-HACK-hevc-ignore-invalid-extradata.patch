@@ -1,17 +1,17 @@
-From 44c4081620b4f3e12ad25317d438149bfc5f6609 Mon Sep 17 00:00:00 2001
+From d3d4efb65ba5e783b36045a599537645e08ed987 Mon Sep 17 00:00:00 2001
 From: Hendrik Leppkes <h.leppkes@gmail.com>
 Date: Wed, 23 Oct 2013 09:53:39 +0200
-Subject: [PATCH 25/63] HACK: hevc: ignore invalid extradata
+Subject: [PATCH 25/60] HACK: hevc: ignore invalid extradata
 
 ---
  libavcodec/hevc.c | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/libavcodec/hevc.c b/libavcodec/hevc.c
-index e7ac50e..cfa62b6 100644
+index 02869a0..2f5fd47 100644
 --- a/libavcodec/hevc.c
 +++ b/libavcodec/hevc.c
-@@ -3248,8 +3248,8 @@ static av_cold int hevc_decode_init(AVCodecContext *avctx)
+@@ -3254,8 +3254,8 @@ static av_cold int hevc_decode_init(AVCodecContext *avctx)
      if (avctx->extradata_size > 0 && avctx->extradata) {
          ret = hevc_decode_extradata(s);
          if (ret < 0) {
@@ -23,5 +23,5 @@ index e7ac50e..cfa62b6 100644
      }
  
 -- 
-2.5.0
+2.5.2
 

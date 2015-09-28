@@ -1,7 +1,7 @@
-From 7d8f1ee3749eafd732233694b44d6b88f53e112f Mon Sep 17 00:00:00 2001
+From 9d65eb1f8008ba0508a198f8459ce5b5e221abb9 Mon Sep 17 00:00:00 2001
 From: Hendrik Leppkes <h.leppkes@gmail.com>
 Date: Sun, 28 Apr 2013 12:19:31 +0200
-Subject: [PATCH 15/63] HACK avio: add a flag to skip the fstat on file opening
+Subject: [PATCH 15/60] HACK avio: add a flag to skip the fstat on file opening
  for performance reasons
 
 ---
@@ -23,7 +23,7 @@ index 06dd7f5..37aa8d0 100644
   * Create and initialize a AVIOContext for accessing the
   * resource indicated by url.
 diff --git a/libavformat/file.c b/libavformat/file.c
-index b855f56..843e370 100644
+index d59aa42..f837dd7 100644
 --- a/libavformat/file.c
 +++ b/libavformat/file.c
 @@ -221,7 +221,7 @@ static int file_open(URLContext *h, const char *filename, int flags)
@@ -36,5 +36,5 @@ index b855f56..843e370 100644
      return 0;
  }
 -- 
-2.5.0
+2.5.2
 

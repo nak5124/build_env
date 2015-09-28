@@ -1,7 +1,7 @@
-From 2ae2d36af5a93ee3a3df1a93854ce590230cabf3 Mon Sep 17 00:00:00 2001
+From ac56bdb902f2681733818b14ef1dfe9bcb12337e Mon Sep 17 00:00:00 2001
 From: Hendrik Leppkes <h.leppkes@gmail.com>
 Date: Sat, 10 Sep 2011 12:10:05 +0200
-Subject: [PATCH 03/63] aacdec: construct extradata if it wasn't present
+Subject: [PATCH 03/60] aacdec: construct extradata if it wasn't present
  before.
 
 ---
@@ -35,5 +35,5 @@ index c2d7d05..98502f4 100644
          for (type = 0; type < 4; type++) {
              if (ac->che[type][i])
 -- 
-2.5.0
+2.5.2
 

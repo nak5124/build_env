@@ -2,8 +2,8 @@
 
 pkgname=pkgconf-git
 pkgdesc='pkg-config compatible utility which does not depend on glib'
-pkgver=0.9.12.544.d67a040
-pkgrel=2
+pkgver=1.582.6a66b52
+pkgrel=1
 arch=('i686' 'x86_64')
 url='https://github.com/nenolod/pkgconf'
 license=('ISC')

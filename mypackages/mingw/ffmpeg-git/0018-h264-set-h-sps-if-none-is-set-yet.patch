@@ -1,7 +1,7 @@
-From 955a666e0864f3d6afe68a7cd720946283177e09 Mon Sep 17 00:00:00 2001
+From c886cc6539e9053bfb75301b34b43937307d5246 Mon Sep 17 00:00:00 2001
 From: Hendrik Leppkes <h.leppkes@gmail.com>
 Date: Sat, 11 May 2013 23:19:59 +0200
-Subject: [PATCH 18/63] h264: set h->sps if none is set yet
+Subject: [PATCH 18/60] h264: set h->sps if none is set yet
 
 ---
  libavcodec/h264_ps.c | 4 ++++
@@ -23,5 +23,5 @@ index 52d235c..0346069 100644
      return 0;
  
 -- 
-2.5.0
+2.5.2
 

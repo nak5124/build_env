@@ -4,7 +4,7 @@ _realname=x265
 pkgbase=mingw-w64-$_realname
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}-hg"
 pkgdesc='Open Source H265/HEVC video encoder (mingw-w64)'
-pkgver=1.7.470.86e9bd7dd192
+pkgver=1.7.509.f4c267f28487
 pkgrel=1
 arch=('any')
 license=('GPL')
@@ -17,7 +17,7 @@ source=("${_realname}"::'hg+https://bitbucket.org/multicoreware/x265'
         '0001-x265-shared-linking-v2.patch'
         '0002-use-win-specific-functions.patch')
 sha512sums=('SKIP'
-            '34c8510357b1060cb751a151cb7dee45eae17b31392a07e4ac6e67f43c32af30e9eac528ae9d152f111fb97cef1664428976c4a9997deabf1ba6ef9cd64bd7e8'
+            '1cf952fcdbed96177153542f49df96dd951b51f141b43537ac6bc3d5df271d907fc22ab3e4ea71c4f1470cec5191c51779c35ab901d8dbd010ef2b8f5ecc1f7a'
             'ade4dc818a28d2eac16dd1fdab747a4c0347dacd29802e75f13df7940848f7bd0eaa013b863a92c2da6ecd97b7b2dd8f913b90396fa700a6a13b440b71e6f3ed')
 
 pkgver() {
