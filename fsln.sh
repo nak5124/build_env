@@ -66,6 +66,7 @@ rm -f ./msys-gfortran-*.dll
 
 # git
 ln -fsr ../lib/git-core/git.exe ../lib/git-core/git-bisect--helper.exe
+ln -fsr ../lib/git-core/git.exe ../lib/git-core/git-am.exe
 ln -fsr ../lib/git-core/git.exe ../lib/git-core/git-apply.exe
 ln -fsr ../lib/git-core/git.exe ../lib/git-core/git-archive.exe
 ln -fsr ../lib/git-core/git.exe ../lib/git-core/git-blame.exe
@@ -137,6 +138,7 @@ ln -fsr ../lib/git-core/git.exe ../lib/git-core/git-pack-refs.exe
 ln -fsr ../lib/git-core/git.exe ../lib/git-core/git-patch-id.exe
 ln -fsr ../lib/git-core/git.exe ../lib/git-core/git-prune-packed.exe
 ln -fsr ../lib/git-core/git.exe ../lib/git-core/git-prune.exe
+ln -fsr ../lib/git-core/git.exe ../lib/git-core/git-pull.exe
 ln -fsr ../lib/git-core/git.exe ../lib/git-core/git-push.exe
 ln -fsr ../lib/git-core/git.exe ../lib/git-core/git-read-tree.exe
 ln -fsr ../lib/git-core/git.exe ../lib/git-core/git-receive-pack.exe
@@ -173,6 +175,7 @@ ln -fsr ../lib/git-core/git.exe ../lib/git-core/git-verify-commit.exe
 ln -fsr ../lib/git-core/git.exe ../lib/git-core/git-verify-pack.exe
 ln -fsr ../lib/git-core/git.exe ../lib/git-core/git-verify-tag.exe
 ln -fsr ../lib/git-core/git.exe ../lib/git-core/git-whatchanged.exe
+ln -fsr ../lib/git-core/git.exe ../lib/git-core/git-worktree.exe
 ln -fsr ../lib/git-core/git.exe ../lib/git-core/git-write-tree.exe
 ln -fsr ../lib/git-core/git.exe ./git-receive-pack.exe
 ln -fsr ../lib/git-core/git.exe ./git-upload-archive.exe
