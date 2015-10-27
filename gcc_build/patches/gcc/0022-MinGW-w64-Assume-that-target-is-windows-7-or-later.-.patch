@@ -1,7 +1,7 @@
-From 72a3546aa1e82219b29cc94939075b51a4bffddd Mon Sep 17 00:00:00 2001
+From 92ff77585e5c96ea12349f54ed958b93f0fc3cb3 Mon Sep 17 00:00:00 2001
 From: Yuta NAKAI <nak5124@live.jp>
 Date: Sun, 12 Apr 2015 14:49:31 +0900
-Subject: [PATCH 23/28] MinGW-w64: Assume that target is windows 7 or later. XP
+Subject: [PATCH 22/27] MinGW-w64: Assume that target is windows 7 or later. XP
  has died, and nobody uses vista.
 
 ---
@@ -20,5 +20,5 @@ index cdd3ae2..f0cfc2d 100644
 +  %{" SPEC_64 ": --image-base 0x140000000}}} \
 +  --major-os-version 6 --major-subsystem-version 6 --minor-os-version 1 --minor-subsystem-version 1"
 -- 
-2.5.1
+2.6.2
 

@@ -35,7 +35,7 @@ function prepare_gcc() {
     # Apply patches.
     printf "===> Applying patches to GCC %s...\n" "${GCC_VER}"
 
-    # Merge gcc-5-branch (275ab00).
+    # Merge gcc-5-branch (ffb2c26).
     apply_patch_gcc "${PATCHES_DIR}"/gcc/0000-merge-gcc-5-branch.patch                                   true
     # hack! - some configure tests for header files using "$CPP $CPPFLAGS"
     apply_patch_gcc "${PATCHES_DIR}"/gcc/0001-libiberty-gcc-configure-hack-some-configure-tests-fo.patch false
@@ -65,34 +65,32 @@ function prepare_gcc() {
     apply_patch_gcc "${PATCHES_DIR}"/gcc/0013-gcc-Force-linking-to-libgcc_s_dw2-1.dll-on-mingw32-w.patch false
     # Fix clone_function_name stdcall suffix handling.
     apply_patch_gcc "${PATCHES_DIR}"/gcc/0014-clone_function_name_1-Retain-any-stdcall-suffix.patch      false
-    # To build with ISL 0.15.
-    apply_patch_gcc "${PATCHES_DIR}"/gcc/0015-configure.ac-Add-check-for-new-options-in-isl-0.15.patch   false
     # Remove pointless -fPIC warning on Windows platforms.
-    apply_patch_gcc "${PATCHES_DIR}"/gcc/0016-config-i386-cygming.h-SUBTARGET_OVERRIDE_OPTIONS-Do-.patch false
+    apply_patch_gcc "${PATCHES_DIR}"/gcc/0015-config-i386-cygming.h-SUBTARGET_OVERRIDE_OPTIONS-Do-.patch false
     # Add /mingw{32,64}/local/{include,lib} to search dirs, and make relocatable perfectly.
-    apply_patch_gcc "${PATCHES_DIR}"/gcc/0017-Add-mingw-32-64-local-include-lib-to-search-dirs-and.patch false
+    apply_patch_gcc "${PATCHES_DIR}"/gcc/0016-Add-mingw-32-64-local-include-lib-to-search-dirs-and.patch false
     # Don't search dirs under ${prefix} but ${build_sysroot}.
-    apply_patch_gcc "${PATCHES_DIR}"/gcc/0018-configure-Search-dirs-under-build_sysroot-instead-of.patch false
+    apply_patch_gcc "${PATCHES_DIR}"/gcc/0017-configure-Search-dirs-under-build_sysroot-instead-of.patch false
     # When binutils's prefix == tooldir, gcc -print-prog-name=ld returns correct result.
-    apply_patch_gcc "${PATCHES_DIR}"/gcc/0019-gcc-Add-prefix-bindir-to-exec_prefix.patch                 false
+    apply_patch_gcc "${PATCHES_DIR}"/gcc/0018-gcc-Add-prefix-bindir-to-exec_prefix.patch                 false
     # Dynamically linking to libiconv.
-    apply_patch_gcc "${PATCHES_DIR}"/gcc/0020-mingw-Dynamically-linking-to-libintl-and-libiconv.patch    false
+    apply_patch_gcc "${PATCHES_DIR}"/gcc/0019-mingw-Dynamically-linking-to-libintl-and-libiconv.patch    false
     # when building executables, not DLLs. Add --large-address-aware and --tsaware.
-    apply_patch_gcc "${PATCHES_DIR}"/gcc/0021-MinGW-When-building-executables-not-DLLs.-Add-large-.patch false
+    apply_patch_gcc "${PATCHES_DIR}"/gcc/0020-MinGW-When-building-executables-not-DLLs.-Add-large-.patch false
     # Enable nxcompat and (HE)ASLR by default.
-    apply_patch_gcc "${PATCHES_DIR}"/gcc/0022-MinGW-Enable-nxcompat-and-HE-ASLR-by-default.patch         false
+    apply_patch_gcc "${PATCHES_DIR}"/gcc/0021-MinGW-Enable-nxcompat-and-HE-ASLR-by-default.patch         false
     # Assume that target is windows 7 or later. XP has died, and nobody uses vista.
-    apply_patch_gcc "${PATCHES_DIR}"/gcc/0023-MinGW-w64-Assume-that-target-is-windows-7-or-later.-.patch false
+    apply_patch_gcc "${PATCHES_DIR}"/gcc/0022-MinGW-w64-Assume-that-target-is-windows-7-or-later.-.patch false
     # Disable automatic image base calculation.
-    apply_patch_gcc "${PATCHES_DIR}"/gcc/0024-MinGW-Disable-automatic-image-base-calculation.patch       false
+    apply_patch_gcc "${PATCHES_DIR}"/gcc/0023-MinGW-Disable-automatic-image-base-calculation.patch       false
     # Shut up GCC -Wformat.
-    apply_patch_gcc "${PATCHES_DIR}"/gcc/0025-MinGW-Use-__MINGW_PRINTF_FORMAT-for-__USE_MINGW_ANSI.patch false
+    apply_patch_gcc "${PATCHES_DIR}"/gcc/0024-MinGW-Use-__MINGW_PRINTF_FORMAT-for-__USE_MINGW_ANSI.patch false
     # https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=792909
-    apply_patch_gcc "${PATCHES_DIR}"/gcc/0026-config-i386-mingw32.h-Fix-SPEC_PTHREAD2-definition.patch   false
+    apply_patch_gcc "${PATCHES_DIR}"/gcc/0025-config-i386-mingw32.h-Fix-SPEC_PTHREAD2-definition.patch   false
     # Enable colorizing diagnostics.
-    apply_patch_gcc "${PATCHES_DIR}"/gcc/0027-gcc-diagnostic-color.c-Enable-color-diagnostic-on-Mi.patch false
+    apply_patch_gcc "${PATCHES_DIR}"/gcc/0026-gcc-diagnostic-color.c-Enable-color-diagnostic-on-Mi.patch false
     # PR65704 (https://gcc.gnu.org/bugzilla/show_bug.cgi?id=65704).
-    apply_patch_gcc "${PATCHES_DIR}"/gcc/0028-gcc-master-Cherry-pick-adace2e-and-26befab.patch           false
+    apply_patch_gcc "${PATCHES_DIR}"/gcc/0027-gcc-master-Cherry-pick-adace2e-and-26befab.patch           false
 
     echo 'done'
 

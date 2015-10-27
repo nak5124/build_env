@@ -75,25 +75,34 @@ function build_gmp() {
             # PATH exporting.
             set_path $_arch
 
+            # MPN_PATH
+            local _mpn_path
+            if [ "${_arch}" = 'i686' ]; then
+                _mpn_path=' x86/coreisbr x86/p6/sse2 x86/p6/p3mmx x86/p6/mmx x86/p6 x86/mmx x86/fat x86 generic'
+            else
+                _mpn_path=' x86_64/coreisbr x86_64/coreinhm x86_64/core2 x86_64/fastsse x86_64/fat x86_64 generic'
+            fi
+
             # Configure.
             printf "===> Configuring GMP %s...\n" "${_arch}"
-            ../src/gmp-${GMP_VER}/configure  \
-                --prefix=/mingw$_bitval      \
-                --build=${_arch}-w64-mingw32 \
-                --host=${_arch}-w64-mingw32  \
-                --disable-silent-rules       \
-                --disable-cxx                \
-                --enable-assembly            \
-                --enable-fft                 \
-                --enable-fat                 \
-                --enable-shared              \
-                --disable-static             \
-                --enable-fast-install        \
-                --with-gnu-ld                \
-                CFLAGS="${CFLAGS_}"          \
-                LDFLAGS="${LDFLAGS_}"        \
-                CPPFLAGS="${CPPFLAGS_}"      \
-                CXXFLAGS="${CXXFLAGS_}"      \
+            ../src/gmp-${GMP_VER}/configure           \
+                --prefix=/mingw$_bitval               \
+                --build=${_arch}-w64-mingw32          \
+                --host=${_arch}-w64-mingw32           \
+                --disable-silent-rules                \
+                --disable-cxx                         \
+                --enable-assembly                     \
+                --enable-fft                          \
+                --enable-fat                          \
+                --enable-shared                       \
+                --disable-static                      \
+                --enable-fast-install                 \
+                --with-gnu-ld                         \
+                CFLAGS="${CFLAGS_}"                   \
+                LDFLAGS="${LDFLAGS_/,--gc-sections/}" \
+                CPPFLAGS="${CPPFLAGS_}"               \
+                CXXFLAGS="${CXXFLAGS_}"               \
+                MPN_PATH="${_mpn_path}"               \
                 > "${LOGS_DIR}"/gcc_libs/gmp/gmp_config_${_arch}.log 2>&1 || exit 1
             echo 'done'
 

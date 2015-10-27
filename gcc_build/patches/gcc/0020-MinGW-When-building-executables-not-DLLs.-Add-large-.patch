@@ -1,7 +1,7 @@
-From 7f457e4f30013f795b5d0f22d528c3996359ef50 Mon Sep 17 00:00:00 2001
+From 3399ad02a8ea875d62ee1c4e0ffbdeb9e5a246c6 Mon Sep 17 00:00:00 2001
 From: Yuta NAKAI <nak5124@live.jp>
 Date: Sun, 12 Apr 2015 14:38:53 +0900
-Subject: [PATCH 21/28] MinGW: When building executables, not DLLs. Add
+Subject: [PATCH 20/27] MinGW: When building executables, not DLLs. Add
  --large-address-aware and --tsaware.
 
 ---
@@ -35,5 +35,5 @@ index a8b2df4..68a736c 100644
  /* There is a bug when building i686 dw-2 exceptions
     where gcc_s gets stripped which this works around */
 -- 
-2.5.1
+2.6.2
 

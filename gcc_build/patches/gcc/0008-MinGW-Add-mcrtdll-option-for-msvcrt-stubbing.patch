@@ -1,7 +1,7 @@
-From 3787d2caf6ec6b7a8aabcf92f2bfec59ac1f3e55 Mon Sep 17 00:00:00 2001
+From 8eadf1a9706923e37877c8d43a8e1b65e47e350c Mon Sep 17 00:00:00 2001
 From: Yuta NAKAI <nak5124@live.jp>
 Date: Sun, 12 Apr 2015 15:00:20 +0900
-Subject: [PATCH 08/28] MinGW: Add --mcrtdll option for msvcrt stubbing.
+Subject: [PATCH 08/27] MinGW: Add --mcrtdll option for msvcrt stubbing.
 
 ---
  gcc/config/i386/cygming.opt | 3 +++
@@ -36,5 +36,5 @@ index f139761..0950304 100644
  #undef STARTFILE_SPEC
  #define STARTFILE_SPEC "%{shared|mdll:dllcrt2%O%s} \
 -- 
-2.5.1
+2.6.2
 

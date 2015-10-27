@@ -43,7 +43,7 @@ declare -r MAKEFLAGS_=" -j$(($(nproc)+1)) -O"
 declare -r THREAD_MODEL='posix'
 
 # GCC package revision
-declare -r GCC_PKGREV=4
+declare -r GCC_PKGREV=5
 declare -r GCC_BUILT_DATE=$(date +%Y.%m.%d)
 
 # Version

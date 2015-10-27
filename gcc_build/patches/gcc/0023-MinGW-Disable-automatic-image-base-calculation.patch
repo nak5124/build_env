@@ -1,7 +1,7 @@
-From 5025890f2ca7a7d6a68f986972dfd3b9163b36c4 Mon Sep 17 00:00:00 2001
+From 095c5ac6afa6fac64298ac2b74b1be275101223f Mon Sep 17 00:00:00 2001
 From: Yuta NAKAI <nak5124@live.jp>
 Date: Sun, 12 Apr 2015 15:25:08 +0900
-Subject: [PATCH 24/28] MinGW: Disable automatic image base calculation.
+Subject: [PATCH 23/27] MinGW: Disable automatic image base calculation.
 
 ---
  gcc/configure          | 8 ++++----
@@ -12,7 +12,7 @@ Subject: [PATCH 24/28] MinGW: Disable automatic image base calculation.
  5 files changed, 14 insertions(+), 14 deletions(-)
 
 diff --git a/gcc/configure b/gcc/configure
-index bcdc1b2..6a67865 100755
+index b69292b..39e0232 100755
 --- a/gcc/configure
 +++ b/gcc/configure
 @@ -15910,7 +15910,7 @@ _LT_EOF
@@ -96,7 +96,7 @@ index 332aa2c..a88779b 100755
  	ld_shlibs=no
        fi
 diff --git a/libstdc++-v3/configure b/libstdc++-v3/configure
-index d5af1ec..c1a4757 100755
+index c452f46..9e2ce95 100755
 --- a/libstdc++-v3/configure
 +++ b/libstdc++-v3/configure
 @@ -9316,7 +9316,7 @@ _LT_EOF
@@ -158,5 +158,5 @@ index 2683520..38f531d 100755
  	ld_shlibs=no
        fi
 -- 
-2.5.1
+2.6.2
 

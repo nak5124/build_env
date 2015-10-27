@@ -1,7 +1,7 @@
-From de79262c3233907f03285a4c594c9cdad0e7e0c5 Mon Sep 17 00:00:00 2001
+From cafa96b560b5ad202bf62fd19db3916758a89ef5 Mon Sep 17 00:00:00 2001
 From: Yuta Nakai <nak5124@live.jp>
 Date: Sun, 6 Sep 2015 09:43:11 +0900
-Subject: [PATCH 28/28] gcc-master: Cherry pick adace2e and 26befab.
+Subject: [PATCH 27/27] gcc-master: Cherry pick adace2e and 26befab.
 
 Add portable timed_mutex and recursive_timed_mutex.
 ---
@@ -1012,5 +1012,5 @@ index deb85df..28395e4 100644
    template<typename _Lock>
      inline unique_lock<_Lock>
 -- 
-2.5.1
+2.6.2
 

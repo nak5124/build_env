@@ -1,7 +1,7 @@
-From 1d5b0ce06774cb3c5485421897773f43eb5e3cbf Mon Sep 17 00:00:00 2001
+From 46a1d056bfbf5e849846a660e8b6137c7b601b6d Mon Sep 17 00:00:00 2001
 From: Yuta NAKAI <nak5124@live.jp>
 Date: Sun, 19 Apr 2015 21:45:48 +0900
-Subject: [PATCH 3/7] MinGW: Use __MINGW_PRINTF_FORMAT for
+Subject: [PATCH 3/6] MinGW: Use __MINGW_PRINTF_FORMAT for
  __USE_MINGW_ANSI_STDIO.
 
 ---
@@ -31,7 +31,7 @@ index ae99d1e..a20b599 100644
  #else
  #define BFD_VMA_FMT "ll"
 diff --git a/bfd/bfd-in2.h b/bfd/bfd-in2.h
-index f06d76e..35ab706 100644
+index 9345e88..740ea0f 100644
 --- a/bfd/bfd-in2.h
 +++ b/bfd/bfd-in2.h
 @@ -144,7 +144,7 @@ typedef BFD_HOST_U_64_BIT symvalue;
@@ -92,10 +92,10 @@ index 6e2b217..ee58b8b 100644
  	sprintf (buf, "0x%llx", (unsigned long long) vma);
        else if (unsignedp)
 diff --git a/binutils/readelf.c b/binutils/readelf.c
-index 9e4b976..f6cfafe 100644
+index a51869f..eec3a52 100644
 --- a/binutils/readelf.c
 +++ b/binutils/readelf.c
-@@ -1147,7 +1147,7 @@ dump_relocations (FILE * file,
+@@ -1150,7 +1150,7 @@ dump_relocations (FILE * file,
  		  : "%12.12lx  %12.12lx ",
  		  offset, inf);
  #elif BFD_HOST_64BIT_LONG_LONG
@@ -104,7 +104,7 @@ index 9e4b976..f6cfafe 100644
  	  printf (do_wide
  		  ? "%16.16llx  %16.16llx "
  		  : "%12.12llx  %12.12llx ",
-@@ -12131,7 +12131,7 @@ dump_section_as_strings (Elf_Internal_Shdr * section, FILE * file)
+@@ -12204,7 +12204,7 @@ dump_section_as_strings (Elf_Internal_Shdr * section, FILE * file)
  	{
  	  size_t maxlen = end - data;
  
@@ -171,7 +171,7 @@ index 635b2c5..4ab4c2a 100644
  #else /* __GNUC__ < 2 || defined(VMS) */
  
 diff --git a/gas/read.c b/gas/read.c
-index a3e83c3..22dbc82 100644
+index 53440de..dcba1a3 100644
 --- a/gas/read.c
 +++ b/gas/read.c
 @@ -4352,7 +4352,7 @@ emit_expr_with_reloc (expressionS *exp,
@@ -224,5 +224,5 @@ index 6e4bfc2..caae0be 100644
  #  define ATTRIBUTE_NULL_PRINTF(m, n)
  # endif /* GNUC >= 3.3 */
 -- 
-2.5.2
+2.6.2
 

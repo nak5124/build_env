@@ -1,7 +1,7 @@
-From fccac596799b46f1f3ec22a7ca55e57e783ffbe2 Mon Sep 17 00:00:00 2001
+From 8caefb78450c6fb38fa3565a1a2892b7cad9646d Mon Sep 17 00:00:00 2001
 From: Yuta NAKAI <nak5124@live.jp>
 Date: Sun, 12 Apr 2015 14:25:35 +0900
-Subject: [PATCH 18/28] configure: Search dirs under ${build_sysroot} instead
+Subject: [PATCH 17/27] configure: Search dirs under ${build_sysroot} instead
  of ${prefix}.
 
 ---
@@ -57,7 +57,7 @@ index 776a021..ef1aee3 100644
  gcc_gxx_include_dir = @gcc_gxx_include_dir@
  gcc_gxx_include_dir_add_sysroot = @gcc_gxx_include_dir_add_sysroot@
 diff --git a/gcc/configure b/gcc/configure
-index c36d9f1..9945aa8 100755
+index 357dac8..e9ed7ed 100755
 --- a/gcc/configure
 +++ b/gcc/configure
 @@ -668,6 +668,7 @@ all_compilers
@@ -81,5 +81,5 @@ index c36d9f1..9945aa8 100755
  
  
 -- 
-2.5.1
+2.6.2
 

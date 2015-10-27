@@ -1,7 +1,7 @@
-From 519828a6014a95471b5f9c88ca6ea7cd1f8a0683 Mon Sep 17 00:00:00 2001
+From 744ead1ff330492451cc785e9de641fbc33c6741 Mon Sep 17 00:00:00 2001
 From: Yuta NAKAI <nak5124@live.jp>
 Date: Sun, 19 Apr 2015 21:41:59 +0900
-Subject: [PATCH 1/7] binutils: Check harder for the file in question being
+Subject: [PATCH 1/6] binutils: Check harder for the file in question being
  unusual (isatty() does see that).
 
 ---
@@ -82,10 +82,10 @@ index 02b9c98..fb0eadf 100644
        return 1;
      }
 diff --git a/binutils/readelf.c b/binutils/readelf.c
-index bbf5b02..9e4b976 100644
+index 22cec2c..a51869f 100644
 --- a/binutils/readelf.c
 +++ b/binutils/readelf.c
-@@ -16412,6 +16412,14 @@ process_file (char * file_name)
+@@ -16485,6 +16485,14 @@ process_file (char * file_name)
    struct stat statbuf;
    char armag[SARMAG];
    int ret;
@@ -100,7 +100,7 @@ index bbf5b02..9e4b976 100644
  
    if (stat (file_name, &statbuf) < 0)
      {
-@@ -16423,8 +16431,13 @@ process_file (char * file_name)
+@@ -16496,8 +16504,13 @@ process_file (char * file_name)
        return 1;
      }
  
@@ -116,5 +116,5 @@ index bbf5b02..9e4b976 100644
        return 1;
      }
 -- 
-2.5.2
+2.6.2
 
