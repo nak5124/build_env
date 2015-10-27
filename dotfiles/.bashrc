@@ -42,6 +42,8 @@ shopt -s extglob
 shopt -s globstar
 shopt -s lithist
 
+set -o vi
+
 # GCC
 GCC_COLORS='error=01;31;255:warning=01;35;255:note=01;36;255:caret=01;32;255:locus=01:quote=01'
 export GCC_COLORS
