@@ -2,10 +2,10 @@
 # Download the src and decompress it.
 function download_gmp_src() {
     # Download the src.
-    if [ ! -f "${BUILD_DIR}"/gcc_libs/gmp/src/gmp-${GMP_VER}a.tar.lz ]; then
+    if [ ! -f "${BUILD_DIR}"/gcc_libs/gmp/src/gmp-${GMP_VER}.tar.lz ]; then
         printf "===> Downloading GMP %s...\n" "${GMP_VER}"
         pushd "${BUILD_DIR}"/gcc_libs/gmp/src > /dev/null
-        dl_files ftp ftp://ftp.gmplib.org/pub/gmp/gmp-${GMP_VER}a.tar.lz
+        dl_files ftp ftp://ftp.gmplib.org/pub/gmp/gmp-${GMP_VER}.tar.lz
         popd > /dev/null # "${BUILD_DIR}"/gcc_libs/gmp/src
         echo 'done'
     fi
@@ -14,7 +14,7 @@ function download_gmp_src() {
     if [ ! -d "${BUILD_DIR}"/gcc_libs/gmp/src/gmp-$GMP_VER ]; then
         printf "===> Extracting GMP %s...\n" "${GMP_VER}"
         pushd "${BUILD_DIR}"/gcc_libs/gmp/src > /dev/null
-        decomp_arch "${BUILD_DIR}"/gcc_libs/gmp/src/gmp-${GMP_VER}a.tar.lz
+        decomp_arch "${BUILD_DIR}"/gcc_libs/gmp/src/gmp-${GMP_VER}.tar.lz
         popd > /dev/null # "${BUILD_DIR}"/gcc_libs/gmp/src
         echo 'done'
     fi
@@ -85,24 +85,24 @@ function build_gmp() {
 
             # Configure.
             printf "===> Configuring GMP %s...\n" "${_arch}"
-            ../src/gmp-${GMP_VER}/configure           \
-                --prefix=/mingw$_bitval               \
-                --build=${_arch}-w64-mingw32          \
-                --host=${_arch}-w64-mingw32           \
-                --disable-silent-rules                \
-                --disable-cxx                         \
-                --enable-assembly                     \
-                --enable-fft                          \
-                --enable-fat                          \
-                --enable-shared                       \
-                --disable-static                      \
-                --enable-fast-install                 \
-                --with-gnu-ld                         \
-                CFLAGS="${CFLAGS_}"                   \
-                LDFLAGS="${LDFLAGS_/,--gc-sections/}" \
-                CPPFLAGS="${CPPFLAGS_}"               \
-                CXXFLAGS="${CXXFLAGS_}"               \
-                MPN_PATH="${_mpn_path}"               \
+            ../src/gmp-${GMP_VER}/configure  \
+                --prefix=/mingw$_bitval      \
+                --build=${_arch}-w64-mingw32 \
+                --host=${_arch}-w64-mingw32  \
+                --disable-silent-rules       \
+                --disable-cxx                \
+                --enable-assembly            \
+                --enable-fft                 \
+                --enable-fat                 \
+                --enable-shared              \
+                --disable-static             \
+                --enable-fast-install        \
+                --with-gnu-ld                \
+                CFLAGS="${CFLAGS_}"          \
+                LDFLAGS="${LDFLAGS_}"        \
+                CPPFLAGS="${CPPFLAGS_}"      \
+                CXXFLAGS="${CXXFLAGS_}"      \
+                MPN_PATH="${_mpn_path}"      \
                 > "${LOGS_DIR}"/gcc_libs/gmp/gmp_config_${_arch}.log 2>&1 || exit 1
             echo 'done'
 

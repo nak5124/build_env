@@ -26,23 +26,35 @@ function download_mpfr_src() {
 
 # Download the latest patch, apply it and autoreconf.
 function prepare_mpfr() {
-    # Download the latest patch.
-    if [ ! -d "${PATCHES_DIR}"/mpfr ]; then
-        mkdir -p "${PATCHES_DIR}"/mpfr
+    local _have_allpatches=false
+    local _rd='>'
+
+    if wget --spider --recursive --no-directories  http://www.mpfr.org/mpfr-current/allpatches > /dev/null 2>&1; then
+        _have_allpatches=true
+        _rd='>>'
+
+        # Download the latest patch.
+        if [ ! -d "${PATCHES_DIR}"/mpfr ]; then
+            mkdir -p "${PATCHES_DIR}"/mpfr
+        fi
+        printf "===> Downloading the latest MPFR %s patch...\n" "${MPFR_VER}"
+        pushd "${PATCHES_DIR}"/mpfr > /dev/null
+        if [ -f "${PATCHES_DIR}"/mpfr/allpatches ]; then
+            rm -f "${PATCHES_DIR}"/mpfr/allpatches
+        fi
+        dl_files http http://www.mpfr.org/mpfr-current/allpatches
+        popd > /dev/null # "${PATCHES_DIR}"/mpfr
+        echo 'done'
     fi
-    printf "===> Downloading the latest MPFR %s patch...\n" "${MPFR_VER}"
-    pushd "${PATCHES_DIR}"/mpfr > /dev/null
-    if [ -f "${PATCHES_DIR}"/mpfr/allpatches ]; then
-        rm -f "${PATCHES_DIR}"/mpfr/allpatches
-    fi
-    dl_files http http://www.mpfr.org/mpfr-current/allpatches
-    popd > /dev/null # "${PATCHES_DIR}"/mpfr
-    echo 'done'
 
     # Applay the patch.
     printf "===> Applaying the patch to MPFR %s...\n" "${MPFR_VER}"
     pushd "${BUILD_DIR}"/gcc_libs/mpfr/src/mpfr-$MPFR_VER > /dev/null
-    patch -p1 -i "${PATCHES_DIR}"/mpfr/allpatches > "${LOGS_DIR}"/gcc_libs/mpfr/mpfr_patches.log 2>&1 || exit 1
+    if ${_have_allpatches}; then
+        patch -p1 -i "${PATCHES_DIR}"/mpfr/allpatches > "${LOGS_DIR}"/gcc_libs/mpfr/mpfr_patches.log 2>&1 || exit 1
+    fi
+    eval patch -p1 -i "${PATCHES_DIR}"/mpfr/0001-Add-mparam-h-for-sandybridge.patch \
+        $_rd "${LOGS_DIR}"/gcc_libs/mpfr/mpfr_patches.log 2>&1 || exit 1
     echo 'done'
 
     # Autoreconf.
@@ -79,9 +91,7 @@ function build_mpfr() {
     # Setup.
     if ${_rebuild}; then
         download_mpfr_src
-        if wget --spider --recursive --no-directories  http://www.mpfr.org/mpfr-current/allpatches > /dev/null 2>&1; then
-            prepare_mpfr
-        fi
+        prepare_mpfr
     fi
 
     local _arch
@@ -99,20 +109,20 @@ function build_mpfr() {
 
             # Configure.
             printf "===> Configuring MPFR %s...\n" "${_arch}"
-            ../src/mpfr-${MPFR_VER}/configure         \
-                --prefix=/mingw$_bitval               \
-                --build=${_arch}-w64-mingw32          \
-                --host=${_arch}-w64-mingw32           \
-                --disable-silent-rules                \
-                --enable-thread-safe                  \
-                --enable-shared                       \
-                --disable-static                      \
-                --enable-fast-install                 \
-                --with-gmp="${DST_DIR}"/mingw$_bitval \
-                --with-gnu-ld                         \
-                CFLAGS="${CFLAGS_}"                   \
-                LDFLAGS="${LDFLAGS_}"                 \
-                CPPFLAGS="${CPPFLAGS_}"               \
+            ../src/mpfr-${MPFR_VER}/configure          \
+                --prefix=/mingw$_bitval                \
+                --build=${_arch}-w64-mingw32           \
+                --host=${_arch}-w64-mingw32            \
+                --disable-silent-rules                 \
+                --enable-thread-safe                   \
+                --enable-shared                        \
+                --disable-static                       \
+                --enable-fast-install                  \
+                --with-gmp="${DST_DIR}"/mingw$_bitval  \
+                --with-gnu-ld                          \
+                CFLAGS="${CFLAGS_} -march=sandybridge" \
+                LDFLAGS="${LDFLAGS_}"                  \
+                CPPFLAGS="${CPPFLAGS_}"                \
                 > "${LOGS_DIR}"/gcc_libs/mpfr/mpfr_config_${_arch}.log 2>&1 || exit 1
             echo 'done'
 

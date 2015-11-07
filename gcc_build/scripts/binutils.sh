@@ -157,7 +157,7 @@ function build_binutils() {
                 --with-lib-path="${_libpath}"                     \
                 --with-sysroot=/mingw$_bitval                     \
                 CFLAGS="${CFLAGS_} ${CPPFLAGS_}"                  \
-                LDFLAGS="${LDFLAGS_/,--gc-sections/}"             \
+                LDFLAGS="${LDFLAGS_}"                             \
                 CXXFLAGS="${CXXFLAGS_} ${CPPFLAGS_}"              \
                 > "${LOGS_DIR}"/binutils/binutils_config_${_arch}.log 2>&1 || exit 1
             echo 'done'

@@ -44,6 +44,26 @@ function strip_files() {
     find "${1}" -type f -a \( -name "*.a" -o -name "*.o" \) | xargs -rl1 strip --preserve-dates --strip-debug
 }
 
+# Check URL
+: << "#__CO__"
+function check_url() {
+    # $1: url
+
+    local -r _url=${1}
+
+    if [ -z "${_url}" ]; then
+        echo 'check_url: ${1} should be specified!'
+        echo '...exit'
+        exit 1
+    fi
+
+    local -i _ret
+    _ret=$(curl -LI "${_url}" -w '%{http_code}\n' -s -o/dev/null)
+
+    return $_ret
+}
+#__CO__
+
 # Download files.
 function dl_files() {
     # $1: protocol
@@ -55,6 +75,8 @@ function dl_files() {
     local -r _oname=${3}
 
     local _is_curl=false
+
+    local -i _ret
 
     if [ -z "${_prtcl}" -o -z "${_url}" ]; then
         echo 'dl_files: ${1} and ${2} should be specified!'
@@ -74,6 +96,7 @@ function dl_files() {
             ;;
         git )
             git clone "${_url}" "${_oname}"
+            _ret=$?
             ;;
         * )
             printf "dl_files, Unknown Protocol: '%s'\n" "${_prtcl}"
@@ -85,12 +108,14 @@ function dl_files() {
     if ${_is_curl}; then
         if [ ! -z "${_oname}" ]; then
             curl ${_curl_opt[@]} -o "${_oname}" "${_url}"
+            _ret=$?
         else
             curl ${_curl_opt[@]} --remote-name "${_url}"
+            _ret=$?
         fi
     fi
 
-    return 0
+    return $_ret
 }
 
 # Decompress an archive.

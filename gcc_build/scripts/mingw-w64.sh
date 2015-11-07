@@ -36,6 +36,8 @@ function prepare_mingw_w64() {
     autoreconf -fis > /dev/null 2>&1
     cd "${BUILD_DIR}"/mingw-w64/src/mingw-w64-${MINGW_VER}/mingw-w64-tools/genpeimg
     autoreconf -fis > /dev/null 2>&1
+    cd "${BUILD_DIR}"/mingw-w64/src/mingw-w64-${MINGW_VER}/mingw-w64-tools/genlib
+    autoreconf -fis > /dev/null 2>&1
     popd > /dev/null # "${BUILD_DIR}"/mingw-w64/src/mingw-w64-$MINGW_VER
     echo 'done'
 
@@ -394,6 +396,7 @@ function build_tools() {
     local -ra _tools=(
         'gendef'
         'genpeimg'
+        'genlib'
     )
 
     local _arch
@@ -417,7 +420,7 @@ function build_tools() {
 
                 # gendef specific config option.
                 if [ "${_tool}" = 'gendef' ]; then
-                    local _mangle="--with-mangle=${DESTDIR}/mingw${_bitval}/${_arch}-w64-mingw32"
+                    local _mangle="--with-mangle=${DST_DIR}/mingw${_bitval}/${_arch}-w64-mingw32"
                 else
                     local _mangle=''
                 fi
