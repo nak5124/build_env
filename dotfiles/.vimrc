@@ -10,6 +10,7 @@ set fileformat=unix
 
 " Neobundle
 filetype off
+filetype plugin indent off
 
 if has('vim_starting')
   set runtimepath+=$HOME/.vim/bundle/neobundle.vim
@@ -147,7 +148,6 @@ set cmdheight=2
 set showcmd
 " show mode
 set showmode
-set nomodeline
 " show title
 set title
 " highlite parentheses
