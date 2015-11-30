@@ -49,3 +49,5 @@ alias tar_xz='tar Jxf'
 # omake
 alias sanchi='clear; \cat /usr/local/bin/sanchi.txt'
 alias nde='clear; \cat /usr/local/bin/nde.txt'
+
+# vim: set filetype=sh :

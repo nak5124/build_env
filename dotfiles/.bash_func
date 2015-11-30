@@ -1,3 +1,18 @@
+# ls
+function ls_ts() {
+    if [ -z "${1}" ]; then
+        local -r _dir="$(pwd)"
+    else
+        local -r _dir="$(cygpath -a "${1}")"
+    fi
+
+    if [ ! -d "${_dir}" ]; then
+        printf "%s is not a directory\!\n" "${_dir}"
+        return -1
+    fi
+    find "${_dir}" -maxdepth 1 -mindepth 1 -type f -name "*.ts" -mtime -5 -printf "%TY-%Tm-%Td %TH:%TM '%p'\n" | sort -r
+}
+
 # for makepkg
 function addpkg() {
     local -r _pkgfile="${1}"
@@ -228,3 +243,5 @@ function nppp() {
         echo notepad++ >> /tmp/win32applist
     fi
 }
+
+# vim: set filetype=sh :
