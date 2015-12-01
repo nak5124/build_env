@@ -1,0 +1,34 @@
+From 4df36ed404bf3fd9e80a6a8fe2a6eba81191255e Mon Sep 17 00:00:00 2001
+From: Yuta NAKAI <nak5124@live.jp>
+Date: Thu, 16 Oct 2014 22:07:58 +0900
+Subject: [PATCH 52/62] avcodec/libvpxenc: Use VP9E_SET_NOISE_SENSITIVITY for
+ vp9 noise_reduction.
+
+See http://git.chromium.org/gitweb/?p=webm/libvpx.git;a=commit;h=bb1a23656c63097a4b250ac484b14051f09df9b5
+---
+ libavcodec/libvpxenc.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/libavcodec/libvpxenc.c b/libavcodec/libvpxenc.c
+index 887cc33..c3e8aae 100644
+--- a/libavcodec/libvpxenc.c
++++ b/libavcodec/libvpxenc.c
+@@ -120,6 +120,7 @@ static const char *const ctlidstr[] = {
+     [VP9E_SET_TILE_ROWS]               = "VP9E_SET_TILE_ROWS",
+     [VP9E_SET_FRAME_PARALLEL_DECODING] = "VP9E_SET_FRAME_PARALLEL_DECODING",
+     [VP9E_SET_AQ_MODE]                 = "VP9E_SET_AQ_MODE",
++    [VP9E_SET_NOISE_SENSITIVITY]       = "VP9E_SET_NOISE_SENSITIVITY",
+ #if VPX_ENCODER_ABI_VERSION > 8
+     [VP9E_SET_COLOR_SPACE]             = "VP9E_SET_COLOR_SPACE",
+ #endif
+@@ -601,6 +602,7 @@ static av_cold int vpx_init(AVCodecContext *avctx,
+ 
+ #if CONFIG_LIBVPX_VP9_ENCODER
+     if (avctx->codec_id == AV_CODEC_ID_VP9) {
++        codecctl_int(avctx, VP9E_SET_NOISE_SENSITIVITY, avctx->noise_reduction);
+         if (ctx->lossless >= 0)
+             codecctl_int(avctx, VP9E_SET_LOSSLESS, ctx->lossless);
+         if (ctx->tile_columns >= 0)
+-- 
+2.6.3
+

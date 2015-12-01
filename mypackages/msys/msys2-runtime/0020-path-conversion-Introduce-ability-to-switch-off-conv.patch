@@ -1,7 +1,7 @@
-From bcc10b22e52bed1f3b02c46cb0122d284be22d16 Mon Sep 17 00:00:00 2001
+From 938f5b28ee7e176dcbcce0a3d13641a233dc00fa Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?=EB=A7=88=EB=88=84=EC=97=98?= <nalla@hamal.uberspace.de>
 Date: Wed, 17 Jun 2015 09:30:41 +0200
-Subject: [PATCH 20/26] path-conversion: Introduce ability to switch off
+Subject: [PATCH 20/27] path-conversion: Introduce ability to switch off
  conversion.
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -21,7 +21,7 @@ Signed-off-by: 마누엘 <nalla@hamal.uberspace.de>
  1 file changed, 8 insertions(+)
 
 diff --git a/winsup/cygwin/msys2_path_conv.cc b/winsup/cygwin/msys2_path_conv.cc
-index 3cd3f6e..730300e 100644
+index 3706de1..a30779a 100644
 --- a/winsup/cygwin/msys2_path_conv.cc
 +++ b/winsup/cygwin/msys2_path_conv.cc
 @@ -343,6 +343,14 @@ skip_p2w:
@@ -40,5 +40,5 @@ index 3cd3f6e..730300e 100644
       */
      if (*it == ':')
 -- 
-2.5.2
+2.6.3
 

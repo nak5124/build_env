@@ -1,0 +1,28 @@
+From 1cee6f3bb21dff6407cf4744fa528959eae7613a Mon Sep 17 00:00:00 2001
+From: Hendrik Leppkes <h.leppkes@gmail.com>
+Date: Sat, 9 May 2015 11:20:04 +0200
+Subject: [PATCH 39/62] mpegts: do not use teletext streams as wrap reference
+
+teletext streams are often badly interleaved and/or have broken
+timestamps, using them as wrap reference can result in seeking breaking
+and wrap detection causing rather wrong timestamps.
+---
+ libavformat/utils.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/libavformat/utils.c b/libavformat/utils.c
+index f78e6d7..10e48c3 100644
+--- a/libavformat/utils.c
++++ b/libavformat/utils.c
+@@ -596,7 +596,7 @@ static int update_wrap_reference(AVFormatContext *s, AVStream *st, int stream_in
+ 
+     if (ref == AV_NOPTS_VALUE)
+         ref = pkt->pts;
+-    if (st->pts_wrap_reference != AV_NOPTS_VALUE || st->pts_wrap_bits >= 63 || ref == AV_NOPTS_VALUE || !s->correct_ts_overflow)
++    if (st->pts_wrap_reference != AV_NOPTS_VALUE || st->pts_wrap_bits >= 63 || ref == AV_NOPTS_VALUE || !s->correct_ts_overflow || st->codec->codec_id == AV_CODEC_ID_DVB_TELETEXT)
+         return 0;
+     ref &= (1LL << st->pts_wrap_bits)-1;
+ 
+-- 
+2.6.3
+

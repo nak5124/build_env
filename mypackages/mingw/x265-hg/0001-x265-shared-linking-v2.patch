@@ -4,7 +4,7 @@ diff -r 86e9bd7dd192 source/CMakeLists.txt
 @@ -31,8 +31,6 @@
  
  # X265_BUILD must be incremented each time the public API is changed
- set(X265_BUILD 75)
+ set(X265_BUILD 77)
 -configure_file("${PROJECT_SOURCE_DIR}/x265.def.in"
 -               "${PROJECT_BINARY_DIR}/x265.def")
  configure_file("${PROJECT_SOURCE_DIR}/x265_config.h.in"
@@ -48,13 +48,16 @@ diff -r 86e9bd7dd192 source/CMakeLists.txt
  install(FILES x265.h "${PROJECT_BINARY_DIR}/x265_config.h" DESTINATION include)
  
  if(CMAKE_RC_COMPILER)
-@@ -457,13 +454,17 @@
+@@ -457,16 +454,20 @@
  
  option(ENABLE_SHARED "Build shared library" ON)
  if(ENABLE_SHARED)
 -    add_library(x265-shared SHARED "${PROJECT_BINARY_DIR}/x265.def" ${YASM_OBJS}
 +    add_library(x265-shared SHARED ${YASM_OBJS}
                  ${X265_RC_FILE} $<TARGET_OBJECTS:encoder> $<TARGET_OBJECTS:common>)
+     if(EXTRA_LIB)
+         target_link_libraries(x265-shared ${EXTRA_LIB})
+     endif()
      target_link_libraries(x265-shared ${PLATFORM_LIBS})
      if(MSVC)
          set_target_properties(x265-shared PROPERTIES OUTPUT_NAME libx265)

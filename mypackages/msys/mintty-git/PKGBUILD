@@ -2,7 +2,7 @@
 
 pkgname=mintty-git
 pkgdesc='Terminal emulator with native Windows look and feel'
-pkgver=2.1.5.829.ce49bbf
+pkgver=2.1.5.859.f9db71f
 pkgrel=1
 arch=('i686' 'x86_64')
 url='http://mintty.github.io/'
@@ -11,9 +11,10 @@ provides=('mintty')
 conflicts=('mintty')
 makedepends=('git')
 depends=('sh')
-source=("${pkgname}"::'git+https://github.com/mintty/mintty.git')
-sha512sums=('SKIP')
-
+source=("${pkgname}"::'git+https://github.com/mintty/mintty.git'
+        '0001-undefine-debug_virtual_key_codes.patch')
+sha512sums=('SKIP'
+            'e6817379f930173499e5bab56cca63d080e956edfe4c8b4ec0a4e562b21e289c9f1accb1993b3e694b10185c45f6e0e3eb40277e470ce04911d3ef1c3e66c092')
 pkgver() {
   cd "${srcdir}"/$pkgname
   local _major=$(grep -e '\#define MAJOR_VERSION' src/appinfo.h | awk '{ printf $3 }')
@@ -24,6 +25,8 @@ pkgver() {
 
 prepare() {
   cd "${srcdir}"/$pkgname
+
+  patch -p1 -i "${srcdir}"/0001-undefine-debug_virtual_key_codes.patch
 }
 
 build() {
@@ -36,6 +39,6 @@ package() {
   mkdir -p "${pkgdir}"/usr/{bin,share}
   mkdir -p "${pkgdir}"/usr/share/man/man1
 
-  install -m755 src/mintty.exe "${pkgdir}"/usr/bin/mintty.exe
+  install -m755 bin/mintty.exe "${pkgdir}"/usr/bin/mintty.exe
   install -m644 docs/mintty.1 "${pkgdir}"/usr/share/man/man1/mintty.1
 }

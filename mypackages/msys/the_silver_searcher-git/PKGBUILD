@@ -2,7 +2,7 @@
 
 pkgname=the_silver_searcher-git
 pkgdesc='Code searching tool similar to Ack, but faster'
-pkgver=0.31.0.1639.9cd0d78
+pkgver=0.31.0.1647.0a22442
 pkgrel=1
 arch=('i686' 'x86_64')
 url='https://github.com/ggreer/the_silver_searcher'

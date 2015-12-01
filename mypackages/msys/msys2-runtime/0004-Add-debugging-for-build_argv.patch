@@ -1,14 +1,14 @@
-From 36aadece1bae74a1d9043003ee12add9a8dca549 Mon Sep 17 00:00:00 2001
+From bbad54fa2bf37e04d31228c6a6af84587c30e75d Mon Sep 17 00:00:00 2001
 From: Ray Donnelly <mingw.android@gmail.com>
 Date: Fri, 21 Aug 2015 12:18:52 +0100
-Subject: [PATCH 04/26] Add debugging for build_argv
+Subject: [PATCH 04/27] Add debugging for build_argv
 
 ---
  winsup/cygwin/dcrt0.cc | 2 ++
  1 file changed, 2 insertions(+)
 
 diff --git a/winsup/cygwin/dcrt0.cc b/winsup/cygwin/dcrt0.cc
-index 395c8c9..1006c3e 100644
+index 1cf8516..dcd0de6 100644
 --- a/winsup/cygwin/dcrt0.cc
 +++ b/winsup/cygwin/dcrt0.cc
 @@ -313,6 +313,8 @@ build_argv (char *cmd, char **&argv, int &argc, int winshell, int glob)
@@ -21,5 +21,5 @@ index 395c8c9..1006c3e 100644
    while (*cmd)
      {
 -- 
-2.5.2
+2.6.3
 

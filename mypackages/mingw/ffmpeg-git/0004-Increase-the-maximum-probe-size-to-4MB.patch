@@ -1,7 +1,7 @@
-From f706d40bb52160ca1d51b9d9154e61fe4814dc71 Mon Sep 17 00:00:00 2001
+From df2ee82ae01dd56e5f7cd4ccbd697ce1731468e8 Mon Sep 17 00:00:00 2001
 From: Hendrik Leppkes <h.leppkes@gmail.com>
 Date: Tue, 20 Dec 2011 20:44:38 +0100
-Subject: [PATCH 04/60] Increase the maximum probe size to 4MB.
+Subject: [PATCH 04/62] Increase the maximum probe size to 4MB.
 
 This allows detection of some files with corruption within the first few MB and should not have a speed impact on previous functional files.
 ---
@@ -9,7 +9,7 @@ This allows detection of some files with corruption within the first few MB and 
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/libavformat/internal.h b/libavformat/internal.h
-index bd8a0bc..3ffa539 100644
+index acfee94..71a84d8 100644
 --- a/libavformat/internal.h
 +++ b/libavformat/internal.h
 @@ -29,7 +29,7 @@
@@ -22,5 +22,5 @@ index bd8a0bc..3ffa539 100644
  #define MAX_PROBE_PACKETS 2500
  
 -- 
-2.5.2
+2.6.3
 

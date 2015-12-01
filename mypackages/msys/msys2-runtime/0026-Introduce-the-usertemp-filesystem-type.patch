@@ -1,7 +1,7 @@
-From 074d21600c30f2fac28292d8dfc4a664745fffdf Mon Sep 17 00:00:00 2001
+From f3167973f989f8267e39fadeb54024dbd66730bc Mon Sep 17 00:00:00 2001
 From: Johannes Schindelin <johannes.schindelin@gmx.de>
 Date: Wed, 20 May 2015 17:46:25 +0000
-Subject: [PATCH 26/26] Introduce the 'usertemp' filesystem type
+Subject: [PATCH 26/27] Introduce the 'usertemp' filesystem type
 
 In the context of Git for Windows, the MSys2 root lives inside
 %PROGRAMFILES% which is typically write-protected for mere mortals' user
@@ -24,10 +24,10 @@ Signed-off-by: Johannes Schindelin <johannes.schindelin@gmx.de>
  1 file changed, 13 insertions(+)
 
 diff --git a/winsup/cygwin/mount.cc b/winsup/cygwin/mount.cc
-index 1d49e18..eef8457 100644
+index a2b5df3..6fef928 100644
 --- a/winsup/cygwin/mount.cc
 +++ b/winsup/cygwin/mount.cc
-@@ -1148,6 +1148,8 @@ mount_info::from_fstab_line (char *line, bool user)
+@@ -1181,6 +1181,8 @@ mount_info::from_fstab_line (char *line, bool user)
    unsigned mount_flags = MOUNT_SYSTEM | MOUNT_BINARY;
    if (!strcmp (fs_type, "cygdrive"))
      mount_flags |= MOUNT_NOPOSIX;
@@ -36,7 +36,7 @@ index 1d49e18..eef8457 100644
    if (!fstab_read_flags (&c, mount_flags, false))
      return true;
    if (mount_flags & MOUNT_BIND)
-@@ -1172,6 +1174,17 @@ mount_info::from_fstab_line (char *line, bool user)
+@@ -1205,6 +1207,17 @@ mount_info::from_fstab_line (char *line, bool user)
        slashify (posix_path, cygdrive, 1);
        cygdrive_len = strlen (cygdrive);
      }
@@ -55,5 +55,5 @@ index 1d49e18..eef8457 100644
      {
        int res = mount_table->add_item (native_path, posix_path, mount_flags);
 -- 
-2.5.2
+2.6.3
 

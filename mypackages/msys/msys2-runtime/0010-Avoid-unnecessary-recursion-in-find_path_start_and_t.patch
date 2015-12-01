@@ -1,7 +1,7 @@
-From 9e6e5335bcebe602ae66d360b3550a6014c46940 Mon Sep 17 00:00:00 2001
+From 6636b0b44c7825312a98600c15b3c78164fcefc9 Mon Sep 17 00:00:00 2001
 From: Johannes Schindelin <johannes.schindelin@gmx.de>
 Date: Sun, 22 Feb 2015 18:28:02 +0100
-Subject: [PATCH 10/26] Avoid unnecessary recursion in
+Subject: [PATCH 10/27] Avoid unnecessary recursion in
  find_path_start_and_type()
 
 Signed-off-by: Johannes Schindelin <johannes.schindelin@gmx.de>
@@ -10,7 +10,7 @@ Signed-off-by: Johannes Schindelin <johannes.schindelin@gmx.de>
  1 file changed, 4 insertions(+), 2 deletions(-)
 
 diff --git a/winsup/cygwin/msys2_path_conv.cc b/winsup/cygwin/msys2_path_conv.cc
-index 538186a..a621b55 100644
+index a099931..c6653db 100644
 --- a/winsup/cygwin/msys2_path_conv.cc
 +++ b/winsup/cygwin/msys2_path_conv.cc
 @@ -335,8 +335,10 @@ path_type find_path_start_and_type(const char** src, int recurse, const char* en
@@ -27,5 +27,5 @@ index 538186a..a621b55 100644
  
      path_type result = NONE;
 -- 
-2.5.2
+2.6.3
 

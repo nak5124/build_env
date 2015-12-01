@@ -1,7 +1,7 @@
-From 0d81b1bbc5519aa39a208077d257ee321efff9df Mon Sep 17 00:00:00 2001
+From 92c8c6ad00a8323d730e1bea356b02d84927c70f Mon Sep 17 00:00:00 2001
 From: Johannes Schindelin <johannes.schindelin@gmx.de>
 Date: Wed, 18 Feb 2015 11:07:17 +0000
-Subject: [PATCH 16/26] Also leave Git's <rev>:./<name> syntax alone
+Subject: [PATCH 16/27] Also leave Git's <rev>:./<name> syntax alone
 
 This fixes Git's t1506-rev-parse-diagnosis.sh
 
@@ -11,7 +11,7 @@ Signed-off-by: Johannes Schindelin <johannes.schindelin@gmx.de>
  1 file changed, 8 insertions(+)
 
 diff --git a/winsup/cygwin/msys2_path_conv.cc b/winsup/cygwin/msys2_path_conv.cc
-index 3e9116e..30ccace 100644
+index f032ddf..dd7bbd0 100644
 --- a/winsup/cygwin/msys2_path_conv.cc
 +++ b/winsup/cygwin/msys2_path_conv.cc
 @@ -366,6 +366,14 @@ skip_p2w:
@@ -30,5 +30,5 @@ index 3e9116e..30ccace 100644
          ++it;
      }
 -- 
-2.5.2
+2.6.3
 

@@ -1,7 +1,7 @@
-From c2c970c86d747590984fa5fa45f6b344bd8fe855 Mon Sep 17 00:00:00 2001
+From 7c478d081055cc013633a0e9b3d61cfa05025123 Mon Sep 17 00:00:00 2001
 From: Hendrik Leppkes <h.leppkes@gmail.com>
 Date: Mon, 1 Sep 2014 11:39:09 +0200
-Subject: [PATCH 35/60] h264_parser: force grabing a new timestamp until a
+Subject: [PATCH 35/62] h264_parser: force grabing a new timestamp until a
  frame start was found
 
 ---
@@ -23,5 +23,5 @@ index 19d1aa3..466008e 100644
              *poutbuf      = NULL;
              *poutbuf_size = 0;
 -- 
-2.5.2
+2.6.3
 

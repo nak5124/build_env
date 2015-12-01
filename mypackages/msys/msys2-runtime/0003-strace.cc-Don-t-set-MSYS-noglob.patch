@@ -1,7 +1,7 @@
-From 75272eb6b59d4d79e030547401ed672a61fbfe61 Mon Sep 17 00:00:00 2001
+From ead4b3de5646b25997ceaa235a086d7b5633f684 Mon Sep 17 00:00:00 2001
 From: Ray Donnelly <mingw.android@gmail.com>
 Date: Sun, 23 Aug 2015 20:47:30 +0100
-Subject: [PATCH 03/26] strace.cc: Don't set MSYS=noglob
+Subject: [PATCH 03/27] strace.cc: Don't set MSYS=noglob
 
 Commit message for this code was:
 
@@ -63,5 +63,5 @@ index 6d9d727..dc3ef55 100644
  		       NULL,	/* Security */
  		       NULL,	/* thread */
 -- 
-2.5.2
+2.6.3
 

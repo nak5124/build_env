@@ -1,7 +1,7 @@
-From f0baf219efcf624ee887c9dd7146d347245f0104 Mon Sep 17 00:00:00 2001
+From b372b6570ecf3d506da7741d4e949b7737a92758 Mon Sep 17 00:00:00 2001
 From: Johannes Schindelin <johannes.schindelin@gmx.de>
 Date: Wed, 18 Feb 2015 11:07:17 +0000
-Subject: [PATCH 14/26] Leave paths containing '/~' alone
+Subject: [PATCH 14/27] Leave paths containing '/~' alone
 
 We do not perform tilde expansion in the MSys2 runtime; let's leave
 those paths intact for programs that want to expand such paths
@@ -13,7 +13,7 @@ Signed-off-by: Johannes Schindelin <johannes.schindelin@gmx.de>
  1 file changed, 4 insertions(+)
 
 diff --git a/winsup/cygwin/msys2_path_conv.cc b/winsup/cygwin/msys2_path_conv.cc
-index f531cb9..96de272 100644
+index c12b83b..74ae36b 100644
 --- a/winsup/cygwin/msys2_path_conv.cc
 +++ b/winsup/cygwin/msys2_path_conv.cc
 @@ -358,6 +358,10 @@ skip_p2w:
@@ -28,5 +28,5 @@ index f531cb9..96de272 100644
      }
      it = *src;
 -- 
-2.5.2
+2.6.3
 

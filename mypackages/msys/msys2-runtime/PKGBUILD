@@ -3,7 +3,7 @@
 pkgbase=msys2-runtime
 pkgname=('msys2-runtime' 'msys2-runtime-devel')
 pkgdesc="Cygwin POSIX emulation engine"
-pkgver=2.3.0.16655.6ecd782
+pkgver=2.4.0.16753.a021458
 pkgrel=1
 arch=('i686' 'x86_64')
 url=""
@@ -47,7 +47,8 @@ source=('msys2-runtime'::'git+https://github.com/Alexpux/Cygwin.git#branch=msys2
         '0023-kill-Handle-Win32-console-processes-children-too.patch'
         '0024-Allow-overriding-the-home-directory-via-the-HOME-var.patch'
         '0025-Allow-native-symlinks-to-non-existing-targets-in-nat.patch'
-        '0026-Introduce-the-usertemp-filesystem-type.patch')
+        '0026-Introduce-the-usertemp-filesystem-type.patch'
+        '0027-common-msys.din-strtold-Drop-redirection-to-_strtold.patch')
 sha512sums=('SKIP'
             'dcad87b4c24c824e535fb60b8421c4e1fa909cccd6d91adc7e5692c86bb5a3e94d7116a7aa8b25008154e80cb5309f40595ffbce6d5453897e30b3b8d5769562'
             'ed27aafa9f7665f98223969e6465968b178cb2a37ad5f5b1b60c5eefe827a03bdc98b3965506685c29bcd0c23c343fbc6a995b5ef627d9658d566db1b411b84d'
@@ -70,7 +71,7 @@ sha512sums=('SKIP'
             'dcc6b5ca57a71224dff27fcf2e7eecbe6ad29615dbde57fc3a49e4f3b34fce262fb274395752de5b27d6afe8c1830a8e3a074dfcf31539d399de722d3b9d2636'
             '5ce263db43ad6783ec508f34ac25ea421f8cd9e4cc6473e082e963e78d4c9f764c79bdd742fc5c7a464a616b7f645b3262694210ddd2723ae22ac1b726cb72a6'
             '94f62ba2c4836f6364beb43a7cf812e0770ac0740b7aad4178bd3459977004f2c939be0fc06936a4bc81aa722da67945190eda0aecd2c7b67d25afcf4e1991b6'
-            '14f59861bd60d1b87cbe885a9b5a49b89a95b72023f06bac152eaf284cd541afd4b6e25f966c951a9000726ee0ed938cc952e650a32a985a8624e435c1763397'
+            'ab3c0b9b5f007f6690725396570edd11af341b80ff745a4764ab772f0a8d36a47bafee11c1440a4643453e7db783b87eff86d8f9f99187afb01de06c56c8b3d1'
             '99ab52d41a08a9e968791461d0b7d045fc351c334af00d5a53216290447a57f945b3ccd763722b3ee12f6732305aebd5821124d16b936a2d9af4b528d567ce20'
             '72072ac08b0dce6cd7f62c63902554316dd512ca7849bc8a173ce3d631fb1a01b763a524b4fbf9e399692de31a6e63fa4ead423a7112fe539383dd94f08d5278'
             '17a2c1342dc1e8e3be9fbd66275ba8609a468ac12301a5721cf82e91222892279cfac9b0941548dd6abeccfff58c6b4f7bbde59b9add0b854953c9674d0be005'
@@ -84,7 +85,7 @@ pkgver() {
 
 prepare() {
   cd "${srcdir}"/msys2-runtime
-  local -i _N=26
+  local -i _N=27
   local -i _i
   local _num
   msg2 'Apply patches'

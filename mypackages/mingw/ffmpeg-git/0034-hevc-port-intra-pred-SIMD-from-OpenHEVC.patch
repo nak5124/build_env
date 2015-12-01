@@ -1,7 +1,7 @@
-From b61d37a128539ba6b39ed69961bce4c19a4fb14e Mon Sep 17 00:00:00 2001
+From b3a7f533c03a258f67edd172e5e7024290ae15cb Mon Sep 17 00:00:00 2001
 From: Hendrik Leppkes <h.leppkes@gmail.com>
 Date: Mon, 18 Aug 2014 09:44:50 +0200
-Subject: [PATCH 34/60] hevc: port intra pred SIMD from OpenHEVC
+Subject: [PATCH 34/62] hevc: port intra pred SIMD from OpenHEVC
 
 ---
  libavcodec/hevcpred.c                 |   2 +
@@ -37,13 +37,13 @@ index eb17663..57e233d 100644
  
  #endif /* AVCODEC_HEVCPRED_H */
 diff --git a/libavcodec/x86/Makefile b/libavcodec/x86/Makefile
-index 7eea6a1..673e08c 100644
+index 030f874..0ed78ce 100644
 --- a/libavcodec/x86/Makefile
 +++ b/libavcodec/x86/Makefile
-@@ -141,7 +141,8 @@ YASM-OBJS-$(CONFIG_HEVC_DECODER)       += x86/hevc_mc.o                 \
-                                           x86/hevc_idct.o               \
+@@ -146,7 +146,8 @@ YASM-OBJS-$(CONFIG_HEVC_DECODER)       += x86/hevc_mc.o                 \
                                            x86/hevc_res_add.o            \
                                            x86/hevc_sao.o                \
+                                           x86/hevc_sao_10bit.o          \
 -                                          x86/hevc_idct_intrinsic.o
 +                                          x86/hevc_idct_intrinsic.o     \
 +                                          x86/hevc_intra_intrinsic.o
@@ -979,10 +979,10 @@ index 0000000..40e44d9
 +#pragma GCC pop_options
 +#endif
 diff --git a/libavcodec/x86/hevcdsp_init.c b/libavcodec/x86/hevcdsp_init.c
-index a3483de..06f499b 100644
+index 91f931f..a357c4c 100644
 --- a/libavcodec/x86/hevcdsp_init.c
 +++ b/libavcodec/x86/hevcdsp_init.c
-@@ -1130,3 +1130,35 @@ void ff_hevc_dsp_init_x86(HEVCDSPContext *c, const int bit_depth)
+@@ -1125,3 +1125,35 @@ void ff_hevc_dsp_init_x86(HEVCDSPContext *c, const int bit_depth)
          }
      }
  }
@@ -1050,5 +1050,5 @@ index 0000000..d26e5bf
 +#endif // AVCODEC_X86_HEVCPRED_H
 \ No newline at end of file
 -- 
-2.5.2
+2.6.3
 

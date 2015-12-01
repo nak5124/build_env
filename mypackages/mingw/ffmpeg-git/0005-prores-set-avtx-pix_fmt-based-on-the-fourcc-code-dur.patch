@@ -1,7 +1,7 @@
-From 1769880c37e5545e9c1682ce16e05975db833172 Mon Sep 17 00:00:00 2001
+From 149b022d76ab311b0ae240d6d124705813294ed6 Mon Sep 17 00:00:00 2001
 From: Hendrik Leppkes <h.leppkes@gmail.com>
 Date: Sat, 7 Jan 2012 02:01:08 +0100
-Subject: [PATCH 05/60] prores: set avtx->pix_fmt based on the fourcc code
+Subject: [PATCH 05/62] prores: set avtx->pix_fmt based on the fourcc code
  during init
 
 ---
@@ -9,7 +9,7 @@ Subject: [PATCH 05/60] prores: set avtx->pix_fmt based on the fourcc code
  1 file changed, 21 insertions(+)
 
 diff --git a/libavcodec/proresdec2.c b/libavcodec/proresdec2.c
-index 932f85f..973dcec 100644
+index 2d47a13..172ab84 100644
 --- a/libavcodec/proresdec2.c
 +++ b/libavcodec/proresdec2.c
 @@ -54,6 +54,27 @@ static av_cold int decode_init(AVCodecContext *avctx)
@@ -41,5 +41,5 @@ index 932f85f..973dcec 100644
                                    ctx->prodsp.idct_permutation_type);
  
 -- 
-2.5.2
+2.6.3
 

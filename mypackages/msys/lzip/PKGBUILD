@@ -1,0 +1,31 @@
+# Maintainer: Yuta Nakai <nak5124@live.jp>
+
+pkgname=lzip
+pkgdesc='A lossless file compressor based on the LZMA algorithm'
+pkgver=1.18_pre1
+pkgrel=1
+arch=('i686' 'x86_64')
+url='http://www.nongnu.org/lzip/lzip.html'
+license=('GPL3')
+depends=('gcc-libs')
+source=("http://download.savannah.gnu.org/releases/${pkgname}/${pkgname}-${pkgver/_/-}.tar.gz")
+sha512sums=('20aea2bdf98168551895d8137dd619ae3b6ec6eb5b6d138985e32236d38d909c03c899f45aabbc51d8d315d82aaf03c4bc45ff648206fd2dcfd1fec6e437e2f1')
+
+build() {
+  cd "${srcdir}"/${pkgname}-${pkgver/_/-}
+
+  ./configure \
+    --prefix=/usr \
+    CPPFLAGS="${CPPFLAGS}" \
+    CXXFLAGS="${CXXFLAGS}" \
+    LDFLAGS="${LDFLAGS}"
+
+  make
+}
+
+package() {
+  cd "${srcdir}"/${pkgname}-${pkgver/_/-}
+
+  make DESTDIR="${pkgdir}" install{,-man}
+  install -Dm644 "${srcdir}"/${pkgname}-${pkgver/_/-}/COPYING "${pkgdir}"/usr/share/licenses/${pkgname}/COPYING
+}

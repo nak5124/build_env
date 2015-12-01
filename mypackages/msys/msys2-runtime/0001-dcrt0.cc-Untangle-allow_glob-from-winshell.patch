@@ -1,7 +1,7 @@
-From abec393f31e11d84e866f23b764a6ebb4e766391 Mon Sep 17 00:00:00 2001
+From ce8475af18fe6a9fc32ef3a79a606422fb1e02da Mon Sep 17 00:00:00 2001
 From: Ray Donnelly <mingw.android@gmail.com>
 Date: Fri, 21 Aug 2015 12:52:09 +0100
-Subject: [PATCH 01/26] dcrt0.cc: Untangle allow_glob from winshell
+Subject: [PATCH 01/27] dcrt0.cc: Untangle allow_glob from winshell
 
 Otherwise if globbing is allowed and we get called from a
 Windows program, build_argv thinks we've been called from
@@ -11,7 +11,7 @@ a Cygwin program.
  1 file changed, 8 insertions(+), 7 deletions(-)
 
 diff --git a/winsup/cygwin/dcrt0.cc b/winsup/cygwin/dcrt0.cc
-index 5bd1f1d..2dbc562 100644
+index cc80be5..29cc6ea 100644
 --- a/winsup/cygwin/dcrt0.cc
 +++ b/winsup/cygwin/dcrt0.cc
 @@ -157,12 +157,12 @@ isquote (char c)
@@ -76,5 +76,5 @@ index 5bd1f1d..2dbc562 100644
  
        /* Convert argv[0] to posix rules if it's currently blatantly
 -- 
-2.5.2
+2.6.3
 

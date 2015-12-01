@@ -1,7 +1,7 @@
-From 1f4c92ecca636cb40f5e6d07c340e5c256736707 Mon Sep 17 00:00:00 2001
+From 2756246390c41af13ff293dd68351216d38282b9 Mon Sep 17 00:00:00 2001
 From: Hendrik Leppkes <h.leppkes@gmail.com>
 Date: Thu, 9 Jan 2014 10:04:25 +0100
-Subject: [PATCH 29/60] HACK mov: don't set the DEFAULT disposition because of
+Subject: [PATCH 29/62] HACK mov: don't set the DEFAULT disposition because of
  wrong semantics
 
 The meaning of the DEFAULT flag and movs enabled flag don't match and
@@ -11,10 +11,10 @@ cause playback issues.
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/libavformat/mov.c b/libavformat/mov.c
-index 7b8aa64..46507f9 100644
+index f6b5385..80d1af8 100644
 --- a/libavformat/mov.c
 +++ b/libavformat/mov.c
-@@ -3202,7 +3202,7 @@ static int mov_read_tkhd(MOVContext *c, AVIOContext *pb, MOVAtom atom)
+@@ -3344,7 +3344,7 @@ static int mov_read_tkhd(MOVContext *c, AVIOContext *pb, MOVAtom atom)
  
      version = avio_r8(pb);
      flags = avio_rb24(pb);
@@ -24,5 +24,5 @@ index 7b8aa64..46507f9 100644
      if (version == 1) {
          avio_rb64(pb);
 -- 
-2.5.2
+2.6.3
 

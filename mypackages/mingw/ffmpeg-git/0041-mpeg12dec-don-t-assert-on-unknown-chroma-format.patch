@@ -1,0 +1,27 @@
+From a0fec147d570313f74328b90ba69365993be1d33 Mon Sep 17 00:00:00 2001
+From: Hendrik Leppkes <h.leppkes@gmail.com>
+Date: Wed, 30 Sep 2015 12:39:12 +0200
+Subject: [PATCH 41/62] mpeg12dec: don't assert on unknown chroma format
+
+The chroma format can be still unset in postinit when a badly cut stream
+starts with a slice instead of a sequence header. This is a common
+occurance when feeding avcodec from a Live TV stream.
+---
+ libavcodec/mpeg12dec.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/libavcodec/mpeg12dec.c b/libavcodec/mpeg12dec.c
+index 79e185c..4ef4681 100644
+--- a/libavcodec/mpeg12dec.c
++++ b/libavcodec/mpeg12dec.c
+@@ -1395,7 +1395,6 @@ static int mpeg_decode_postinit(AVCodecContext *avctx)
+             case 1: avctx->chroma_sample_location = AVCHROMA_LOC_LEFT; break;
+             case 2:
+             case 3: avctx->chroma_sample_location = AVCHROMA_LOC_TOPLEFT; break;
+-            default: av_assert0(0);
+             }
+         } // MPEG-2
+ 
+-- 
+2.6.3
+

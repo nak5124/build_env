@@ -1,7 +1,7 @@
-From a25190722cad3921b95880f037a6a911173bcdd6 Mon Sep 17 00:00:00 2001
+From 52d4f462b4ab2381998164618ee998af47335a25 Mon Sep 17 00:00:00 2001
 From: Hendrik Leppkes <h.leppkes@gmail.com>
 Date: Tue, 18 Dec 2012 18:08:19 +0100
-Subject: [PATCH 13/60] aac: 7.1 should have side channels, and not 2 pairs of
+Subject: [PATCH 13/62] aac: 7.1 should have side channels, and not 2 pairs of
  front channels.
 
 ---
@@ -9,10 +9,10 @@ Subject: [PATCH 13/60] aac: 7.1 should have side channels, and not 2 pairs of
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/libavcodec/aacdectab.h b/libavcodec/aacdectab.h
-index 5c89a93..c0c966d 100644
+index baf51a7..1326201 100644
 --- a/libavcodec/aacdectab.h
 +++ b/libavcodec/aacdectab.h
-@@ -52,7 +52,7 @@ static const uint8_t aac_channel_layout_map[16][5][3] = {
+@@ -44,7 +44,7 @@ static const uint8_t aac_channel_layout_map[16][5][3] = {
      { { TYPE_SCE, 0, AAC_CHANNEL_FRONT }, { TYPE_CPE, 0, AAC_CHANNEL_FRONT }, { TYPE_SCE, 1, AAC_CHANNEL_BACK }, },
      { { TYPE_SCE, 0, AAC_CHANNEL_FRONT }, { TYPE_CPE, 0, AAC_CHANNEL_FRONT }, { TYPE_CPE, 1, AAC_CHANNEL_BACK }, },
      { { TYPE_SCE, 0, AAC_CHANNEL_FRONT }, { TYPE_CPE, 0, AAC_CHANNEL_FRONT }, { TYPE_CPE, 1, AAC_CHANNEL_BACK }, { TYPE_LFE, 0, AAC_CHANNEL_LFE  }, },
@@ -22,5 +22,5 @@ index 5c89a93..c0c966d 100644
      { { 0, } },
      { { 0, } },
 -- 
-2.5.2
+2.6.3
 

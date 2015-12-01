@@ -1,14 +1,14 @@
-From 6bee0f9f99e624c078b03b17c4a17e5e12a23e25 Mon Sep 17 00:00:00 2001
+From ec675bd6d6d9b54376af032a1f9e0a5890165ef5 Mon Sep 17 00:00:00 2001
 From: Hendrik Leppkes <h.leppkes@gmail.com>
 Date: Sat, 17 Jan 2015 10:36:21 +0100
-Subject: [PATCH 38/60] hevc: don't use deprecated YUVJ pixel formats
+Subject: [PATCH 38/62] hevc: don't use deprecated YUVJ pixel formats
 
 ---
  libavcodec/hevc_ps.c | 2 --
  1 file changed, 2 deletions(-)
 
 diff --git a/libavcodec/hevc_ps.c b/libavcodec/hevc_ps.c
-index 427cf09..c7c6635 100644
+index 14f908e..e68cf88 100644
 --- a/libavcodec/hevc_ps.c
 +++ b/libavcodec/hevc_ps.c
 @@ -543,8 +543,6 @@ static void decode_vui(GetBitContext *gb, AVCodecContext *avctx,
@@ -21,5 +21,5 @@ index 427cf09..c7c6635 100644
              vui->colour_primaries        = get_bits(gb, 8);
              vui->transfer_characteristic = get_bits(gb, 8);
 -- 
-2.5.2
+2.6.3
 

@@ -1,7 +1,7 @@
-From ac56bdb902f2681733818b14ef1dfe9bcb12337e Mon Sep 17 00:00:00 2001
+From a7a65ebf5bf6712bf32c970eeaa8fb090bdc1390 Mon Sep 17 00:00:00 2001
 From: Hendrik Leppkes <h.leppkes@gmail.com>
 Date: Sat, 10 Sep 2011 12:10:05 +0200
-Subject: [PATCH 03/60] aacdec: construct extradata if it wasn't present
+Subject: [PATCH 03/62] aacdec: construct extradata if it wasn't present
  before.
 
 ---
@@ -9,10 +9,10 @@ Subject: [PATCH 03/60] aacdec: construct extradata if it wasn't present
  1 file changed, 15 insertions(+)
 
 diff --git a/libavcodec/aacdec_template.c b/libavcodec/aacdec_template.c
-index c2d7d05..98502f4 100644
+index 70cffe6..5960712 100644
 --- a/libavcodec/aacdec_template.c
 +++ b/libavcodec/aacdec_template.c
-@@ -3156,6 +3156,21 @@ static av_cold int aac_decode_close(AVCodecContext *avctx)
+@@ -3173,6 +3173,21 @@ static av_cold int aac_decode_close(AVCodecContext *avctx)
      AACContext *ac = avctx->priv_data;
      int i, type;
  
@@ -35,5 +35,5 @@ index c2d7d05..98502f4 100644
          for (type = 0; type < 4; type++) {
              if (ac->che[type][i])
 -- 
-2.5.2
+2.6.3
 

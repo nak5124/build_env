@@ -1,7 +1,7 @@
-From 449d70b2f85885f2aabf6bac075a75ec1575265d Mon Sep 17 00:00:00 2001
+From 9764ca72f165acfc94fd5b7e5a6795135f51c119 Mon Sep 17 00:00:00 2001
 From: Johannes Schindelin <johannes.schindelin@gmx.de>
 Date: Wed, 18 Feb 2015 11:07:17 +0000
-Subject: [PATCH 18/26] Prevent scp-style arguments from being mangled
+Subject: [PATCH 18/27] Prevent scp-style arguments from being mangled
 
 An argument like me@example.com:/tmp/ is not something we should convert
 into a Windows path; Use the absence of a slash before the colon as a
@@ -14,7 +14,7 @@ Signed-off-by: Johannes Schindelin <johannes.schindelin@gmx.de>
  1 file changed, 8 insertions(+)
 
 diff --git a/winsup/cygwin/msys2_path_conv.cc b/winsup/cygwin/msys2_path_conv.cc
-index 20c429f..650392b 100644
+index cfa0524..ad144ae 100644
 --- a/winsup/cygwin/msys2_path_conv.cc
 +++ b/winsup/cygwin/msys2_path_conv.cc
 @@ -449,6 +449,8 @@ skip_p2w:
@@ -26,7 +26,7 @@ index 20c429f..650392b 100644
      if (*it == '-') {
        starts_with_minus = 1;
        it += 1;
-@@ -489,11 +491,17 @@ skip_p2w:
+@@ -492,11 +494,17 @@ skip_p2w:
                  if (ch == '/' && *(it2 + 1) == '/') {
                      return URL;
                  } else {
@@ -45,5 +45,5 @@ index 20c429f..650392b 100644
      }
  
 -- 
-2.5.2
+2.6.3
 

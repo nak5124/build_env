@@ -1,7 +1,7 @@
-From 74bd3a2f5eed360f71ecf47f234f1e354d26bca4 Mon Sep 17 00:00:00 2001
+From 79e8b56b07091949638211a308dbfbb073539ebb Mon Sep 17 00:00:00 2001
 From: Johannes Schindelin <johannes.schindelin@gmx.de>
 Date: Wed, 18 Feb 2015 11:07:17 +0000
-Subject: [PATCH 15/26] Skip posix-to-windows conversion when '::' is seen
+Subject: [PATCH 15/27] Skip posix-to-windows conversion when '::' is seen
 
 The substring '::' most likely denotes an IPv6 address, not a path.
 
@@ -11,7 +11,7 @@ Signed-off-by: Johannes Schindelin <johannes.schindelin@gmx.de>
  1 file changed, 5 insertions(+)
 
 diff --git a/winsup/cygwin/msys2_path_conv.cc b/winsup/cygwin/msys2_path_conv.cc
-index 96de272..3e9116e 100644
+index 74ae36b..f032ddf 100644
 --- a/winsup/cygwin/msys2_path_conv.cc
 +++ b/winsup/cygwin/msys2_path_conv.cc
 @@ -362,6 +362,11 @@ skip_p2w:
@@ -27,5 +27,5 @@ index 96de272..3e9116e 100644
      }
      it = *src;
 -- 
-2.5.2
+2.6.3
 

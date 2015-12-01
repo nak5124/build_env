@@ -1,0 +1,73 @@
+diff --git a/options-table.c b/options-table.c
+index e901e24..ff69d2c 100644
+--- a/options-table.c
++++ b/options-table.c
+@@ -260,6 +260,12 @@ const struct options_table_entry session_options_table[] = {
+ 	  .default_num = 0
+ 	},
+ 
++	{ .name = "pane-border-ascii",
++	  .type = OPTIONS_TABLE_FLAG,
++	  .scope = OPTIONS_TABLE_WINDOW,
++	  .default_num = 0
++	},
++
+ 	{ .name = "prefix",
+ 	  .type = OPTIONS_TABLE_KEY,
+ 	  .default_num = '\002',
+diff --git a/tty-acs.c b/tty-acs.c
+index 5d03c3e..af2ce35 100644
+--- a/tty-acs.c
++++ b/tty-acs.c
+@@ -64,6 +64,41 @@ const struct tty_acs_entry tty_acs_table[] = {
+ 	{ '~', "\302\267" }		/* bullet */
+ };
+ 
++const struct tty_acs_entry tty_acs_table_putty[] = {
++	{ '+', "\342\206\222" },
++	{ ',', "\342\206\220" },
++	{ '-', "\342\206\221" },
++	{ '.', "\342\206\223" },
++	{ '0', "\342\226\256" },
++	{ '`', "\342\227\206" },
++	{ 'a', "\342\226\222" },
++	{ 'f', "\302\260" },
++	{ 'g', "\302\261" },
++	{ 'h', "\342\226\222" },
++	{ 'i', "\342\230\203" },
++	{ 'j', "+" },
++	{ 'k', "+" },
++	{ 'l', "+" },
++	{ 'm', "+" },
++	{ 'n', "+" },
++	{ 'o', "\342\216\272" },
++	{ 'p', "\342\216\273" },
++	{ 'q', "-" },
++	{ 'r', "\342\216\274" },
++	{ 's', "\342\216\275" },
++	{ 't', "+" },
++	{ 'u', "+" },
++	{ 'v', "+" },
++	{ 'w', "+" },
++	{ 'x', "|" },
++	{ 'y', "\342\211\244" },
++	{ 'z', "\342\211\245" },
++	{ '{', "\317\200" },
++	{ '|', "\342\211\240" },
++	{ '}', "\302\243" },
++	{ '~', "*" }
++};
++
+ int
+ tty_acs_cmp(const void *key, const void *value)
+ {
+@@ -89,7 +124,8 @@ tty_acs_get(struct tty *tty, u_char ch)
+ 
+ 	/* Otherwise look up the UTF-8 translation. */
+ 	entry = bsearch(&ch,
+-	    tty_acs_table, nitems(tty_acs_table), sizeof tty_acs_table[0],
++	    options_get_number(&global_s_options, "pane-border-ascii") ? tty_acs_table_putty : tty_acs_table,
++	    nitems(tty_acs_table), sizeof tty_acs_table[0],
+ 	    tty_acs_cmp);
+ 	if (entry == NULL)
+ 		return (NULL);

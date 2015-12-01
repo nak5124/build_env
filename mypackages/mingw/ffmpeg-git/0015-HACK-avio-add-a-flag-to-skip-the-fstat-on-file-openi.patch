@@ -1,7 +1,7 @@
-From 9d65eb1f8008ba0508a198f8459ce5b5e221abb9 Mon Sep 17 00:00:00 2001
+From 1e9580deb56cc7db1801aeab7996031e2333ea1d Mon Sep 17 00:00:00 2001
 From: Hendrik Leppkes <h.leppkes@gmail.com>
 Date: Sun, 28 Apr 2013 12:19:31 +0200
-Subject: [PATCH 15/60] HACK avio: add a flag to skip the fstat on file opening
+Subject: [PATCH 15/62] HACK avio: add a flag to skip the fstat on file opening
  for performance reasons
 
 ---
@@ -36,5 +36,5 @@ index d59aa42..f837dd7 100644
      return 0;
  }
 -- 
-2.5.2
+2.6.3
 

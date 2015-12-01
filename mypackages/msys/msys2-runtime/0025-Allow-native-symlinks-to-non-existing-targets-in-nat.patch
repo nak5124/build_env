@@ -1,7 +1,7 @@
-From 382e298b36eec2210ee7e7724cc2d2788d6803e3 Mon Sep 17 00:00:00 2001
+From 4721a4e968732691b09f40365074ce0345e3433e Mon Sep 17 00:00:00 2001
 From: Karsten Blees <blees@dcon.de>
 Date: Wed, 20 May 2015 16:32:52 +0200
-Subject: [PATCH 25/26] Allow native symlinks to non-existing targets in
+Subject: [PATCH 25/27] Allow native symlinks to non-existing targets in
  'nativestrict' mode
 
 Windows native symlinks must match the type of their target (file or
@@ -29,7 +29,7 @@ Signed-off-by: Karsten Blees <blees@dcon.de>
  1 file changed, 33 insertions(+), 9 deletions(-)
 
 diff --git a/winsup/cygwin/path.cc b/winsup/cygwin/path.cc
-index 2dd9274..063bd18 100644
+index 7350ed4..bba6abe 100644
 --- a/winsup/cygwin/path.cc
 +++ b/winsup/cygwin/path.cc
 @@ -1719,6 +1719,7 @@ symlink_native (const char *oldpath, path_conv &win32_newpath)
@@ -84,10 +84,10 @@ index 2dd9274..063bd18 100644
 +	}
      }
 +
-   /* Convert native paths to Win32 UNC paths. */
-   final_newpath = win32_newpath.get_nt_native_path ();
-   final_newpath->Buffer[1] = L'\\';
-@@ -1812,8 +1837,7 @@ symlink_native (const char *oldpath, path_conv &win32_newpath)
+   /* Don't allow native symlinks to Cygwin special files.  However, the
+      caller shoud know because this case shouldn't be covered by the
+      default "nativestrict" behaviour, so we use a special return code. */
+@@ -1817,8 +1842,7 @@ symlink_native (const char *oldpath, path_conv &win32_newpath)
      }
    /* Try to create native symlink. */
    if (!CreateSymbolicLinkW (final_newpath->Buffer, final_oldpath->Buffer,
@@ -98,5 +98,5 @@ index 2dd9274..063bd18 100644
        /* Repair native newpath, we still need it. */
        final_newpath->Buffer[1] = L'?';
 -- 
-2.5.2
+2.6.3
 

@@ -1,0 +1,74 @@
+From fdb36f0dc18b03af851ecc2d73e859218f20cf68 Mon Sep 17 00:00:00 2001
+From: Yuta Nakai <nak5124@live.jp>
+Date: Thu, 3 Sep 2015 21:13:09 +0900
+Subject: [PATCH 61/62] asfdec: Prefer asfdec_o over asfdec_f.
+
+---
+ libavformat/Makefile     | 4 ++--
+ libavformat/allformats.c | 2 +-
+ libavformat/asfdec_f.c   | 4 ++--
+ libavformat/asfdec_o.c   | 4 ++--
+ 4 files changed, 7 insertions(+), 7 deletions(-)
+
+diff --git a/libavformat/Makefile b/libavformat/Makefile
+index bdfe35c..9eccce3 100644
+--- a/libavformat/Makefile
++++ b/libavformat/Makefile
+@@ -85,9 +85,9 @@ OBJS-$(CONFIG_APE_DEMUXER)               += ape.o apetag.o img2.o
+ OBJS-$(CONFIG_APNG_DEMUXER)              += apngdec.o
+ OBJS-$(CONFIG_APNG_MUXER)                += apngenc.o
+ OBJS-$(CONFIG_AQTITLE_DEMUXER)           += aqtitledec.o subtitles.o
+-OBJS-$(CONFIG_ASF_DEMUXER)               += asfdec_f.o asf.o asfcrypt.o \
++OBJS-$(CONFIG_ASF_DEMUXER)               += asfdec_o.o asf.o asfcrypt.o \
+                                             avlanguage.o
+-OBJS-$(CONFIG_ASF_O_DEMUXER)             += asfdec_o.o asf.o asfcrypt.o \
++OBJS-$(CONFIG_ASF_F_DEMUXER)             += asfdec_f.o asf.o asfcrypt.o \
+                                             avlanguage.o
+ OBJS-$(CONFIG_ASF_MUXER)                 += asfenc.o asf.o
+ OBJS-$(CONFIG_ASS_DEMUXER)               += assdec.o subtitles.o
+diff --git a/libavformat/allformats.c b/libavformat/allformats.c
+index 73b1e4a..cd3e24c 100644
+--- a/libavformat/allformats.c
++++ b/libavformat/allformats.c
+@@ -80,7 +80,7 @@ void av_register_all(void)
+     REGISTER_MUXDEMUX(APNG,             apng);
+     REGISTER_DEMUXER (AQTITLE,          aqtitle);
+     REGISTER_MUXDEMUX(ASF,              asf);
+-    REGISTER_DEMUXER (ASF_O,            asf_o);
++    REGISTER_DEMUXER (ASF_F,            asf_f);
+     REGISTER_MUXDEMUX(ASS,              ass);
+     REGISTER_MUXDEMUX(AST,              ast);
+     REGISTER_MUXER   (ASF_STREAM,       asf_stream);
+diff --git a/libavformat/asfdec_f.c b/libavformat/asfdec_f.c
+index 8b89a1a..9225131 100644
+--- a/libavformat/asfdec_f.c
++++ b/libavformat/asfdec_f.c
+@@ -1681,8 +1681,8 @@ static int asf_read_seek(AVFormatContext *s, int stream_index,
+     return 0;
+ }
+ 
+-AVInputFormat ff_asf_demuxer = {
+-    .name           = "asf",
++AVInputFormat ff_asf_f_demuxer = {
++    .name           = "asf_f",
+     .long_name      = NULL_IF_CONFIG_SMALL("ASF (Advanced / Active Streaming Format)"),
+     .priv_data_size = sizeof(ASFContext),
+     .read_probe     = asf_probe,
+diff --git a/libavformat/asfdec_o.c b/libavformat/asfdec_o.c
+index 833a70e..8435d76 100644
+--- a/libavformat/asfdec_o.c
++++ b/libavformat/asfdec_o.c
+@@ -1744,8 +1744,8 @@ failed:
+     return ret;
+ }
+ 
+-AVInputFormat ff_asf_o_demuxer = {
+-    .name           = "asf_o",
++AVInputFormat ff_asf_demuxer = {
++    .name           = "asf",
+     .long_name      = NULL_IF_CONFIG_SMALL("ASF (Advanced / Active Streaming Format)"),
+     .priv_data_size = sizeof(ASFContext),
+     .read_probe     = asf_probe,
+-- 
+2.6.3
+

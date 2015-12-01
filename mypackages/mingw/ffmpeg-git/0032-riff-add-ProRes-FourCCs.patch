@@ -1,17 +1,17 @@
-From cd9b305c9c2abf2839a32cb02a4f79f06d1a4886 Mon Sep 17 00:00:00 2001
+From 6b65e59e7136e7776836808d27f916cd586bb9f2 Mon Sep 17 00:00:00 2001
 From: Carl Eugen Hoyos <cehoyos@ag.or.at>
 Date: Tue, 1 Apr 2014 16:00:23 +0200
-Subject: [PATCH 32/60] riff: add ProRes FourCCs
+Subject: [PATCH 32/62] riff: add ProRes FourCCs
 
 ---
  libavformat/riff.c | 5 +++++
  1 file changed, 5 insertions(+)
 
 diff --git a/libavformat/riff.c b/libavformat/riff.c
-index 2ec07d8..5d8de23 100644
+index 694021b..5fc9ea1 100644
 --- a/libavformat/riff.c
 +++ b/libavformat/riff.c
-@@ -377,6 +377,11 @@ const AVCodecTag ff_codec_bmp_tags[] = {
+@@ -380,6 +380,11 @@ const AVCodecTag ff_codec_bmp_tags[] = {
      { AV_CODEC_ID_HEVC,         MKTAG('H', 'E', 'V', 'C') },
      { AV_CODEC_ID_HEVC,         MKTAG('H', 'V', 'C', '1') },
      { AV_CODEC_ID_HEVC,         MKTAG('H', 'M', '1', '0') },
@@ -24,5 +24,5 @@ index 2ec07d8..5d8de23 100644
  };
  
 -- 
-2.5.2
+2.6.3
 

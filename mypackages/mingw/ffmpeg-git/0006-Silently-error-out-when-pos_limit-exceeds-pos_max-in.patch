@@ -1,7 +1,7 @@
-From 66bb22b535e9f5c2c16759aecfda977d976158c2 Mon Sep 17 00:00:00 2001
+From b264799b9f038247fef0311b622f1b2a1e7ce6c7 Mon Sep 17 00:00:00 2001
 From: Hendrik Leppkes <h.leppkes@gmail.com>
 Date: Sun, 4 Mar 2012 08:51:58 +0100
-Subject: [PATCH 06/60] Silently error out when pos_limit exceeds pos_max
+Subject: [PATCH 06/62] Silently error out when pos_limit exceeds pos_max
  instead of aborting the process.
 
 ---
@@ -9,10 +9,10 @@ Subject: [PATCH 06/60] Silently error out when pos_limit exceeds pos_max
  1 file changed, 4 insertions(+), 1 deletion(-)
 
 diff --git a/libavformat/utils.c b/libavformat/utils.c
-index 1b0dcd5..d84c902 100644
+index aea29aa..72d9689 100644
 --- a/libavformat/utils.c
 +++ b/libavformat/utils.c
-@@ -2000,7 +2000,10 @@ int64_t ff_gen_search(AVFormatContext *s, int stream_index, int64_t target_ts,
+@@ -2018,7 +2018,10 @@ int64_t ff_gen_search(AVFormatContext *s, int stream_index, int64_t target_ts,
          av_log(s, AV_LOG_TRACE,
                  "pos_min=0x%"PRIx64" pos_max=0x%"PRIx64" dts_min=%s dts_max=%s\n",
                  pos_min, pos_max, av_ts2str(ts_min), av_ts2str(ts_max));
@@ -25,5 +25,5 @@ index 1b0dcd5..d84c902 100644
          if (no_change == 0) {
              int64_t approximate_keyframe_distance = pos_max - pos_limit;
 -- 
-2.5.2
+2.6.3
 

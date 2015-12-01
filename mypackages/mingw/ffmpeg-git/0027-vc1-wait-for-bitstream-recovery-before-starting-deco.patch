@@ -1,7 +1,7 @@
-From a9a267daafe5601b625352be708f42225c62cabb Mon Sep 17 00:00:00 2001
+From a5ef53dbbcd958ecdec01aea54806a30c651b25a Mon Sep 17 00:00:00 2001
 From: Hendrik Leppkes <h.leppkes@gmail.com>
 Date: Thu, 12 Dec 2013 19:54:39 +0100
-Subject: [PATCH 27/60] vc1: wait for bitstream recovery before starting
+Subject: [PATCH 27/62] vc1: wait for bitstream recovery before starting
  decoding
 
 ---
@@ -74,5 +74,5 @@ index acd29bc..8254116 100644
      .pix_fmts       = vc1_hwaccel_pixfmt_list_420,
      .profiles       = NULL_IF_CONFIG_SMALL(profiles)
 -- 
-2.5.2
+2.6.3
 

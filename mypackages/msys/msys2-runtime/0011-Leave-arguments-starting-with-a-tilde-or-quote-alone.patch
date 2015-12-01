@@ -1,7 +1,7 @@
-From 275b8b6a9ab8b75ec065b118eea822b684cff20d Mon Sep 17 00:00:00 2001
+From 7eec28e2437870f3bc0c87a7d77ec5ca31f70eea Mon Sep 17 00:00:00 2001
 From: Johannes Schindelin <johannes.schindelin@gmx.de>
 Date: Sun, 15 Feb 2015 11:45:48 +0000
-Subject: [PATCH 11/26] Leave arguments starting with a tilde or quote alone
+Subject: [PATCH 11/27] Leave arguments starting with a tilde or quote alone
 
 It is not a good idea to expand, say, ~/.gitconfig partially: replacing
 it by ~C:\msys64\.gitconfig is most likely the wrong thing to do!
@@ -12,7 +12,7 @@ Signed-off-by: Johannes Schindelin <johannes.schindelin@gmx.de>
  1 file changed, 7 insertions(+)
 
 diff --git a/winsup/cygwin/msys2_path_conv.cc b/winsup/cygwin/msys2_path_conv.cc
-index a621b55..4c516b8 100644
+index c6653db..0a9c2f6 100644
 --- a/winsup/cygwin/msys2_path_conv.cc
 +++ b/winsup/cygwin/msys2_path_conv.cc
 @@ -335,6 +335,13 @@ path_type find_path_start_and_type(const char** src, int recurse, const char* en
@@ -30,5 +30,5 @@ index a621b55..4c516b8 100644
          recurse = true;
          it = ++*src;
 -- 
-2.5.2
+2.6.3
 

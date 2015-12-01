@@ -1,0 +1,70 @@
+From 7c1a5de52d8ca6722f3d6509428a2fbf769cba32 Mon Sep 17 00:00:00 2001
+From: Yuta NAKAI <nak5124@live.jp>
+Date: Wed, 7 Jan 2015 13:14:52 +0900
+Subject: [PATCH 55/62] avcodec/allcodecs: Prefer several external libraries
+ over native codecs.
+
+---
+ libavcodec/allcodecs.c | 18 ++++++++++--------
+ 1 file changed, 10 insertions(+), 8 deletions(-)
+
+diff --git a/libavcodec/allcodecs.c b/libavcodec/allcodecs.c
+index 9f60d7c..0a10fbe 100644
+--- a/libavcodec/allcodecs.c
++++ b/libavcodec/allcodecs.c
+@@ -115,6 +115,16 @@ void avcodec_register_all(void)
+     REGISTER_HWACCEL(WMV3_VAAPI,        wmv3_vaapi);
+     REGISTER_HWACCEL(WMV3_VDPAU,        wmv3_vdpau);
+ 
++    /* preferred external libraries */
++    REGISTER_DECODER(LIBDCADEC,         libdcadec);
++    REGISTER_ENCDEC (LIBOPENCORE_AMRNB, libopencore_amrnb);
++    REGISTER_DECODER(LIBOPENCORE_AMRWB, libopencore_amrwb);
++    REGISTER_ENCDEC (LIBOPENJPEG,       libopenjpeg);
++    REGISTER_ENCDEC (LIBUTVIDEO,        libutvideo);
++    REGISTER_ENCDEC (LIBVORBIS,         libvorbis);
++    REGISTER_ENCODER(LIBX264,           libx264);
++    REGISTER_ENCODER(LIBX264RGB,        libx264rgb);
++
+     /* video codecs */
+     REGISTER_ENCODER(A64MULTI,          a64multi);
+     REGISTER_ENCODER(A64MULTI5,         a64multi5);
+@@ -555,16 +565,12 @@ void avcodec_register_all(void)
+ 
+     /* external libraries */
+     REGISTER_DECODER(LIBCELT,           libcelt);
+-    REGISTER_DECODER(LIBDCADEC,         libdcadec)
+     REGISTER_ENCODER(LIBFAAC,           libfaac);
+     REGISTER_ENCDEC (LIBFDK_AAC,        libfdk_aac);
+     REGISTER_ENCDEC (LIBGSM,            libgsm);
+     REGISTER_ENCDEC (LIBGSM_MS,         libgsm_ms);
+     REGISTER_ENCDEC (LIBILBC,           libilbc);
+     REGISTER_ENCODER(LIBMP3LAME,        libmp3lame);
+-    REGISTER_ENCDEC (LIBOPENCORE_AMRNB, libopencore_amrnb);
+-    REGISTER_DECODER(LIBOPENCORE_AMRWB, libopencore_amrwb);
+-    REGISTER_ENCDEC (LIBOPENJPEG,       libopenjpeg);
+     REGISTER_ENCDEC (LIBOPUS,           libopus);
+     REGISTER_ENCDEC (LIBSCHROEDINGER,   libschroedinger);
+     REGISTER_ENCODER(LIBSHINE,          libshine);
+@@ -572,18 +578,14 @@ void avcodec_register_all(void)
+     REGISTER_DECODER(LIBSTAGEFRIGHT_H264, libstagefright_h264);
+     REGISTER_ENCODER(LIBTHEORA,         libtheora);
+     REGISTER_ENCODER(LIBTWOLAME,        libtwolame);
+-    REGISTER_ENCDEC (LIBUTVIDEO,        libutvideo);
+     REGISTER_ENCODER(LIBVO_AACENC,      libvo_aacenc);
+     REGISTER_ENCODER(LIBVO_AMRWBENC,    libvo_amrwbenc);
+-    REGISTER_ENCDEC (LIBVORBIS,         libvorbis);
+     REGISTER_ENCDEC (LIBVPX_VP8,        libvpx_vp8);
+     REGISTER_ENCDEC (LIBVPX_VP9,        libvpx_vp9);
+     REGISTER_ENCODER(LIBWAVPACK,        libwavpack);
+     REGISTER_ENCODER(LIBWEBP_ANIM,      libwebp_anim);  /* preferred over libwebp */
+     REGISTER_ENCODER(LIBWEBP,           libwebp);
+     REGISTER_ENCODER(LIBX262,           libx262);
+-    REGISTER_ENCODER(LIBX264,           libx264);
+-    REGISTER_ENCODER(LIBX264RGB,        libx264rgb);
+     REGISTER_ENCODER(LIBX265,           libx265);
+     REGISTER_ENCODER(LIBXAVS,           libxavs);
+     REGISTER_ENCODER(LIBXVID,           libxvid);
+-- 
+2.6.3
+

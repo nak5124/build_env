@@ -1,14 +1,14 @@
-From b0e977f0641048738b6a4f7230df529d9a212000 Mon Sep 17 00:00:00 2001
+From 4b8c8fbc05e19d214a404048cf2abee95634c21b Mon Sep 17 00:00:00 2001
 From: Hendrik Leppkes <h.leppkes@gmail.com>
 Date: Wed, 18 Sep 2013 20:19:41 +0200
-Subject: [PATCH 23/60] avidec: remove an assert
+Subject: [PATCH 23/62] avidec: remove an assert
 
 ---
  libavformat/avidec.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/libavformat/avidec.c b/libavformat/avidec.c
-index 2e2d03c..dd1b7e6 100644
+index b7bd54d..9e8c558 100644
 --- a/libavformat/avidec.c
 +++ b/libavformat/avidec.c
 @@ -1832,7 +1832,7 @@ static int avi_read_seek(AVFormatContext *s, int stream_index,
@@ -21,5 +21,5 @@ index 2e2d03c..dd1b7e6 100644
                                            av_rescale_q(timestamp,
                                                         st->time_base,
 -- 
-2.5.2
+2.6.3
 

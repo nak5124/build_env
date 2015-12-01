@@ -1,7 +1,7 @@
-From 24253373059a344e9efd672590f84192266356eb Mon Sep 17 00:00:00 2001
+From ca1aae427093fa1f7276f47c4ea179dea8fe179b Mon Sep 17 00:00:00 2001
 From: Johannes Schindelin <johannes.schindelin@gmx.de>
 Date: Wed, 18 Feb 2015 10:45:01 +0000
-Subject: [PATCH 07/26] Stop assuming that there are no spaces in POSIX-style
+Subject: [PATCH 07/27] Stop assuming that there are no spaces in POSIX-style
  paths
 
 Git's test suite most prominently sports a POSIX path with a space in
@@ -17,7 +17,7 @@ Signed-off-by: Johannes Schindelin <johannes.schindelin@gmx.de>
  1 file changed, 1 insertion(+), 7 deletions(-)
 
 diff --git a/winsup/cygwin/msys2_path_conv.cc b/winsup/cygwin/msys2_path_conv.cc
-index 34c4d26..538186a 100644
+index c347bd4..a099931 100644
 --- a/winsup/cygwin/msys2_path_conv.cc
 +++ b/winsup/cygwin/msys2_path_conv.cc
 @@ -200,7 +200,7 @@ void ppl_convert(const char** from, const char* to, char** dst, const char* dste
@@ -43,5 +43,5 @@ index 34c4d26..538186a 100644
  
      sub_convert(&srcbeg, &srcit, &dstit, dstend, &in_string);
 -- 
-2.5.2
+2.6.3
 

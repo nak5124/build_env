@@ -1,0 +1,34 @@
+From f44208db57fade51e302b273230a7dc525b40423 Mon Sep 17 00:00:00 2001
+From: Yuta NAKAI <nak5124@live.jp>
+Date: Fri, 29 May 2015 21:07:27 +0900
+Subject: [PATCH 59/62] libavformat/os_support.h: Fix multiple redefinition
+ error on MinGW-w64.
+
+---
+ libavformat/os_support.h | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/libavformat/os_support.h b/libavformat/os_support.h
+index d034ec3..c44b12a 100644
+--- a/libavformat/os_support.h
++++ b/libavformat/os_support.h
+@@ -83,6 +83,8 @@ static inline int is_dos_path(const char *path)
+ #endif
+ 
+ #if defined(_WIN32)
++#include <unistd.h>
++#if !defined(SHUT_RDWR)
+ #define SHUT_RD SD_RECEIVE
+ #define SHUT_WR SD_SEND
+ #define SHUT_RDWR SD_BOTH
+@@ -94,6 +96,7 @@ static inline int is_dos_path(const char *path)
+ #define S_IWUSR S_IWRITE
+ #endif
+ #endif
++#endif
+ 
+ #if CONFIG_NETWORK
+ #if !HAVE_SOCKLEN_T
+-- 
+2.6.3
+

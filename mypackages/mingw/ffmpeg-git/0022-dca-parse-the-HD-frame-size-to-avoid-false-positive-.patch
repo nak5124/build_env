@@ -1,7 +1,7 @@
-From e009529feea1c01f9d5129885292693bd01936fe Mon Sep 17 00:00:00 2001
+From e1a852d3e6b3c023c3b9c4a60c246f123ea8ee3a Mon Sep 17 00:00:00 2001
 From: Hendrik Leppkes <h.leppkes@gmail.com>
 Date: Mon, 2 Sep 2013 15:54:41 +0200
-Subject: [PATCH 22/60] dca: parse the HD frame size to avoid false positive
+Subject: [PATCH 22/62] dca: parse the HD frame size to avoid false positive
  marker matches
 
 ---
@@ -9,7 +9,7 @@ Subject: [PATCH 22/60] dca: parse the HD frame size to avoid false positive
  1 file changed, 29 insertions(+), 2 deletions(-)
 
 diff --git a/libavcodec/dca_parser.c b/libavcodec/dca_parser.c
-index 337a99d..c95fedb 100644
+index 70e64a8..7d7868f 100644
 --- a/libavcodec/dca_parser.c
 +++ b/libavcodec/dca_parser.c
 @@ -32,6 +32,7 @@ typedef struct DCAParseContext {
@@ -75,5 +75,5 @@ index 337a99d..c95fedb 100644
                  pc->frame_start_found = 0;
                  pc->state64           = -1;
 -- 
-2.5.2
+2.6.3
 

@@ -1,0 +1,26 @@
+From 96c15471cc85db8e6e0e3290dfecb060d6d71e53 Mon Sep 17 00:00:00 2001
+From: Hendrik Leppkes <h.leppkes@gmail.com>
+Date: Mon, 27 Jul 2015 10:22:03 +0200
+Subject: [PATCH 40/62] dca_parser: allow a bit of variation in hd frame
+ positions
+
+---
+ libavcodec/dca_parser.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/libavcodec/dca_parser.c b/libavcodec/dca_parser.c
+index 7d7868f..798fa1d 100644
+--- a/libavcodec/dca_parser.c
++++ b/libavcodec/dca_parser.c
+@@ -107,7 +107,7 @@ static int dca_find_frame_end(DCAParseContext *pc1, const uint8_t *buf,
+         for (; i < buf_size; i++) {
+             pc1->size++;
+             state = (state << 8) | buf[i];
+-            if (EXSS_MARKER(state) == DCA_SYNCWORD_SUBSTREAM && pc1->size >= pc1->framesize && !pc1->hdframesize) {
++            if (EXSS_MARKER(state) == DCA_SYNCWORD_SUBSTREAM && pc1->lastmarker != DCA_SYNCWORD_SUBSTREAM && pc1->size >= (pc1->framesize - 4) && !pc1->hdframesize) {
+                 if (dca_parse_hd_framesize(&buf[i+1], buf_size - (i+1), &pc1->hdframesize) < 0)
+                     pc1->hdframesize = 0;
+             }
+-- 
+2.6.3
+

@@ -1,7 +1,7 @@
-From 461f2bbfc50325302cd7559af8575f93aa712d3d Mon Sep 17 00:00:00 2001
+From adf07be0b9eebc3ed36a7f693663321ea3073531 Mon Sep 17 00:00:00 2001
 From: Hendrik Leppkes <h.leppkes@gmail.com>
 Date: Fri, 17 Aug 2012 20:45:25 +0200
-Subject: [PATCH 10/60] h264: flag interlaced-coded frames as such when
+Subject: [PATCH 10/62] h264: flag interlaced-coded frames as such when
  sei_pic_struct indicates otherwise
 
 According to the H.264 standard, Annex D, Table D-1, field_pic_flag shall be 0 when sei_pic_struct signals progressive. In the case when this restriction is not fullfilled, its safer to assume the field is actually interlaced.
@@ -11,10 +11,10 @@ Not doing so can cause a renderer to assume the frame is progressive and not dei
  1 file changed, 1 insertion(+)
 
 diff --git a/libavcodec/h264.c b/libavcodec/h264.c
-index 8b95003..cce515d 100644
+index fff65bc..dd6e46c 100644
 --- a/libavcodec/h264.c
 +++ b/libavcodec/h264.c
-@@ -762,6 +762,7 @@ static void decode_postinit(H264Context *h, int setup_finished)
+@@ -768,6 +768,7 @@ static void decode_postinit(H264Context *h, int setup_finished)
      if (h->sps.pic_struct_present_flag) {
          switch (h->sei_pic_struct) {
          case SEI_PIC_STRUCT_FRAME:
@@ -23,5 +23,5 @@ index 8b95003..cce515d 100644
          case SEI_PIC_STRUCT_TOP_FIELD:
          case SEI_PIC_STRUCT_BOTTOM_FIELD:
 -- 
-2.5.2
+2.6.3
 

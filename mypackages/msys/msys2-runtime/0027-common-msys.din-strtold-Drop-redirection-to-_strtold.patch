@@ -1,0 +1,26 @@
+From 6de4ba8fddd26281f73401863da531b3cae6eb21 Mon Sep 17 00:00:00 2001
+From: Yuta Nakai <nak5124@live.jp>
+Date: Mon, 23 Nov 2015 01:58:39 +0900
+Subject: [PATCH 27/27] common-msys.din (strtold): Drop redirection to
+ _strtold.
+
+---
+ winsup/cygwin/common-msys.din | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/winsup/cygwin/common-msys.din b/winsup/cygwin/common-msys.din
+index c130e03..831a15c 100644
+--- a/winsup/cygwin/common-msys.din
++++ b/winsup/cygwin/common-msys.din
+@@ -1200,7 +1200,7 @@ strtoimax = strtoll NOSIGFE
+ strtok NOSIGFE
+ strtok_r NOSIGFE
+ strtol NOSIGFE
+-strtold = _strtold SIGFE
++strtold SIGFE
+ strtoll NOSIGFE
+ strtosigno NOSIGFE
+ strtoul NOSIGFE
+-- 
+2.6.3
+

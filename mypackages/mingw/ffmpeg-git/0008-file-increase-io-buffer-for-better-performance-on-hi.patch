@@ -1,7 +1,7 @@
-From 960c83583b6c9133f119e93312861823be50e86b Mon Sep 17 00:00:00 2001
+From 32bf2fa13c013bd93b29674a2c79dc1e457fd3bc Mon Sep 17 00:00:00 2001
 From: Hendrik Leppkes <h.leppkes@gmail.com>
 Date: Tue, 12 Jun 2012 15:38:28 +0200
-Subject: [PATCH 08/60] file: increase io buffer for better performance on high
+Subject: [PATCH 08/62] file: increase io buffer for better performance on high
  latency resources
 
 ---
@@ -22,5 +22,5 @@ index 1b3d5f5..9fd5ecf 100644
  /**
   * Do seeks within this distance ahead of the current buffer by skipping
 -- 
-2.5.2
+2.6.3
 

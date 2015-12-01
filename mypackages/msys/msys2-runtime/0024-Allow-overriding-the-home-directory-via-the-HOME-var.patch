@@ -1,7 +1,7 @@
-From 7656b5147ece30c2f50dd38d05177366fee97e37 Mon Sep 17 00:00:00 2001
+From e90a3ebc856193fe7ea6fcbb9319184fb8cc241d Mon Sep 17 00:00:00 2001
 From: Johannes Schindelin <johannes.schindelin@gmx.de>
 Date: Mon, 27 Apr 2015 11:58:08 +0200
-Subject: [PATCH 24/26] Allow overriding the home directory via the HOME
+Subject: [PATCH 24/27] Allow overriding the home directory via the HOME
  variable
 
 In Git for Windows, it is a well-established technique to use the
@@ -38,7 +38,7 @@ index fd84814..097d50f 100644
    struct nss_scheme_t {
      nss_scheme_method	method;
 diff --git a/winsup/cygwin/uinfo.cc b/winsup/cygwin/uinfo.cc
-index 3a2ec63..d9031d5 100644
+index e3d36af..44f9b9e 100644
 --- a/winsup/cygwin/uinfo.cc
 +++ b/winsup/cygwin/uinfo.cc
 @@ -780,6 +780,8 @@ cygheap_pwdgrp::nss_init_line (const char *line)
@@ -142,5 +142,5 @@ index 3a2ec63..d9031d5 100644
  	case NSS_SCHEME_DESC:
  	  gecos = fetch_from_description (ui->usri3_comment, L"gecos=\"", 7);
 -- 
-2.5.2
+2.6.3
 

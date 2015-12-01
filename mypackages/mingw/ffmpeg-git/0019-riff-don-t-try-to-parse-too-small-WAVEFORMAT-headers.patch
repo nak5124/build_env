@@ -1,14 +1,14 @@
-From 436fd45dcaa177cc002077e3290b35388eb6493a Mon Sep 17 00:00:00 2001
+From 125fecda5ea625aae9bf6245f0f86df6282cb8f0 Mon Sep 17 00:00:00 2001
 From: Hendrik Leppkes <h.leppkes@gmail.com>
 Date: Tue, 6 Aug 2013 20:24:31 +0200
-Subject: [PATCH 19/60] riff: don't try to parse too small WAVEFORMAT headers
+Subject: [PATCH 19/62] riff: don't try to parse too small WAVEFORMAT headers
 
 ---
  libavformat/riffdec.c | 3 ++-
  1 file changed, 2 insertions(+), 1 deletion(-)
 
 diff --git a/libavformat/riffdec.c b/libavformat/riffdec.c
-index 26779e1..57c997c 100644
+index e75aee5..1dcfbe6 100644
 --- a/libavformat/riffdec.c
 +++ b/libavformat/riffdec.c
 @@ -93,7 +93,8 @@ int ff_get_wav_header(AVFormatContext *s, AVIOContext *pb,
@@ -22,5 +22,5 @@ index 26779e1..57c997c 100644
  
      codec->codec_type  = AVMEDIA_TYPE_AUDIO;
 -- 
-2.5.2
+2.6.3
 

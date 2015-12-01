@@ -1,0 +1,47 @@
+From 81770ad0e97d69de00447eef85e489b22da91120 Mon Sep 17 00:00:00 2001
+From: Yuta NAKAI <nak5124@live.jp>
+Date: Mon, 22 Dec 2014 17:54:01 +0900
+Subject: [PATCH 54/62] build: Cleanup version scripts.
+
+---
+ libavcodec/libavcodec.v   |  3 ---
+ libavformat/libavformat.v | 13 -------------
+ 2 files changed, 16 deletions(-)
+
+diff --git a/libavcodec/libavcodec.v b/libavcodec/libavcodec.v
+index c923cd3..bf14807 100644
+--- a/libavcodec/libavcodec.v
++++ b/libavcodec/libavcodec.v
+@@ -1,7 +1,4 @@
+ LIBAVCODEC_$MAJOR {
+         global: av*;
+-                #deprecated, remove after next bump
+-                audio_resample;
+-                audio_resample_close;
+         local:  *;
+ };
+diff --git a/libavformat/libavformat.v b/libavformat/libavformat.v
+index a00a309..6f11d60 100644
+--- a/libavformat/libavformat.v
++++ b/libavformat/libavformat.v
+@@ -1,17 +1,4 @@
+ LIBAVFORMAT_$MAJOR {
+         global: av*;
+-                #FIXME those are for ffserver
+-                ff_inet_aton;
+-                ff_socket_nonblock;
+-                ff_rtsp_parse_line;
+-                ff_rtp_get_local_rtp_port;
+-                ff_rtp_get_local_rtcp_port;
+-                ffio_open_dyn_packet_buf;
+-                ffio_set_buf_size;
+-                ffurl_close;
+-                ffurl_open;
+-                ffurl_write;
+-                #those are deprecated, remove on next bump
+-                url_feof;
+         local: *;
+ };
+-- 
+2.6.3
+

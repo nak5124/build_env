@@ -1,7 +1,7 @@
-From 13b71c66234ec7333b874a89110b58ec58a0acff Mon Sep 17 00:00:00 2001
+From f5a1f6dbc8117fb24f49d89b38ddef258b3f4e19 Mon Sep 17 00:00:00 2001
 From: Hendrik Leppkes <h.leppkes@gmail.com>
 Date: Sun, 17 Aug 2014 13:26:23 +0200
-Subject: [PATCH 33/60] hevc: port intrinsic SSE2 IDCT from OpenHEVC
+Subject: [PATCH 33/62] hevc: port intrinsic SSE2 IDCT from OpenHEVC
 
 ---
  libavcodec/x86/Makefile              |   4 +-
@@ -12,15 +12,15 @@ Subject: [PATCH 33/60] hevc: port intrinsic SSE2 IDCT from OpenHEVC
  create mode 100644 libavcodec/x86/hevc_idct_intrinsic.c
 
 diff --git a/libavcodec/x86/Makefile b/libavcodec/x86/Makefile
-index b3cfb0b..7eea6a1 100644
+index 0d09fe6..030f874 100644
 --- a/libavcodec/x86/Makefile
 +++ b/libavcodec/x86/Makefile
-@@ -140,7 +140,9 @@ YASM-OBJS-$(CONFIG_HEVC_DECODER)       += x86/hevc_mc.o                 \
-                                           x86/hevc_deblock.o            \
+@@ -145,7 +145,9 @@ YASM-OBJS-$(CONFIG_HEVC_DECODER)       += x86/hevc_mc.o                 \
                                            x86/hevc_idct.o               \
                                            x86/hevc_res_add.o            \
--                                          x86/hevc_sao.o
-+                                          x86/hevc_sao.o                \
+                                           x86/hevc_sao.o                \
+-                                          x86/hevc_sao_10bit.o
++                                          x86/hevc_sao_10bit.o          \
 +                                          x86/hevc_idct_intrinsic.o
 +
  YASM-OBJS-$(CONFIG_JPEG2000_DECODER)   += x86/jpeg2000dsp.o
@@ -827,10 +827,10 @@ index ad8168f..74184f6 100644
 +
  #endif // AVCODEC_X86_HEVCDSP_H
 diff --git a/libavcodec/x86/hevcdsp_init.c b/libavcodec/x86/hevcdsp_init.c
-index ddc876d..a3483de 100644
+index 2181f6d..91f931f 100644
 --- a/libavcodec/x86/hevcdsp_init.c
 +++ b/libavcodec/x86/hevcdsp_init.c
-@@ -724,6 +724,12 @@ void ff_hevc_dsp_init_x86(HEVCDSPContext *c, const int bit_depth)
+@@ -719,6 +719,12 @@ void ff_hevc_dsp_init_x86(HEVCDSPContext *c, const int bit_depth)
              c->transform_add[1]    = ff_hevc_transform_add8_8_sse2;
              c->transform_add[2]    = ff_hevc_transform_add16_8_sse2;
              c->transform_add[3]    = ff_hevc_transform_add32_8_sse2;
@@ -843,7 +843,7 @@ index ddc876d..a3483de 100644
          }
          if (EXTERNAL_SSSE3(cpu_flags)) {
              if(ARCH_X86_64) {
-@@ -876,6 +882,12 @@ void ff_hevc_dsp_init_x86(HEVCDSPContext *c, const int bit_depth)
+@@ -871,6 +877,12 @@ void ff_hevc_dsp_init_x86(HEVCDSPContext *c, const int bit_depth)
              c->transform_add[1]    = ff_hevc_transform_add8_10_sse2;
              c->transform_add[2]    = ff_hevc_transform_add16_10_sse2;
              c->transform_add[3]    = ff_hevc_transform_add32_10_sse2;
@@ -856,7 +856,7 @@ index ddc876d..a3483de 100644
          }
          if (EXTERNAL_SSSE3(cpu_flags) && ARCH_X86_64) {
              c->hevc_v_loop_filter_luma = ff_hevc_v_loop_filter_luma_10_ssse3;
-@@ -1076,6 +1088,12 @@ void ff_hevc_dsp_init_x86(HEVCDSPContext *c, const int bit_depth)
+@@ -1071,6 +1083,12 @@ void ff_hevc_dsp_init_x86(HEVCDSPContext *c, const int bit_depth)
              c->idct_dc[1] = ff_hevc_idct8x8_dc_12_sse2;
              c->idct_dc[2] = ff_hevc_idct16x16_dc_12_sse2;
              c->idct_dc[3] = ff_hevc_idct32x32_dc_12_sse2;
@@ -870,5 +870,5 @@ index ddc876d..a3483de 100644
          if (EXTERNAL_SSSE3(cpu_flags) && ARCH_X86_64) {
              c->hevc_v_loop_filter_luma = ff_hevc_v_loop_filter_luma_12_ssse3;
 -- 
-2.5.2
+2.6.3
 

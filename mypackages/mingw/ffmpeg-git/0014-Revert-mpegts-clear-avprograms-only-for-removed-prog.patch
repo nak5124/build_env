@@ -1,7 +1,7 @@
-From ce5a370933fcc541eb109bb44327f3d7805186fb Mon Sep 17 00:00:00 2001
+From eb4b9edb4bfce5f04e5e9d08b94f4d20abbe8a48 Mon Sep 17 00:00:00 2001
 From: Hendrik Leppkes <h.leppkes@gmail.com>
 Date: Fri, 15 Mar 2013 16:02:37 +0100
-Subject: [PATCH 14/60] Revert "mpegts: clear avprograms only for removed
+Subject: [PATCH 14/62] Revert "mpegts: clear avprograms only for removed
  programs"
 
 This reverts commit 806a66fd08a395486e763fb10588c5fd02e8d54e
@@ -11,7 +11,7 @@ and 4c41fc88df5c507e0f239b4c16f85573f7b49702.
  1 file changed, 27 deletions(-)
 
 diff --git a/libavformat/mpegts.c b/libavformat/mpegts.c
-index b5c50bf..8469253 100644
+index 6d590bf..2a8aa43 100644
 --- a/libavformat/mpegts.c
 +++ b/libavformat/mpegts.c
 @@ -255,26 +255,10 @@ static struct Program * get_program(MpegTSContext *ts, unsigned int programid)
@@ -41,7 +41,7 @@ index b5c50bf..8469253 100644
      for (i = 0; i < ts->nb_prg; i++)
          if (ts->prg[i].id == programid) {
              ts->prg[i].nb_pids = 0;
-@@ -2059,17 +2043,6 @@ static void pat_cb(MpegTSFilter *filter, const uint8_t *section, int section_len
+@@ -2053,17 +2037,6 @@ static void pat_cb(MpegTSFilter *filter, const uint8_t *section, int section_len
              add_pid_to_pmt(ts, sid, pmt_pid);
          }
      }
@@ -60,5 +60,5 @@ index b5c50bf..8469253 100644
  
  static void sdt_cb(MpegTSFilter *filter, const uint8_t *section, int section_len)
 -- 
-2.5.2
+2.6.3
 

@@ -4,8 +4,8 @@ _realname=dcadec
 pkgbase=mingw-w64-$_realname
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}-git"
 pkgdesc='dcadec is a free DTS Coherent Acoustics decoder with support for HD extensions (mingw-w64)'
-pkgver=0.0.0.207.2a9186e
-pkgrel=2
+pkgver=0.0.0.244.41d36b1
+pkgrel=1
 arch=('any')
 url='https://github.com/foo86/dcadec.git'
 license=('LGPL')
@@ -23,14 +23,14 @@ sha512sums=('SKIP'
             '80469f7ad04d7c247dda9c56d7aa9771c3b6ddd8aa238604be7b325ae7ac87cbdfa8668d2212adfa69ddaad3bdd7cad631f0b226255fb5cb6b432f66f6dc8de3'
             'ec11e3a5c300f709f8660c411aaafc98982100a346ad28242640103c2147aaa6dbefdb2a24e5d9198e29111f95fa18faccfd2394a9677c305028e049b4b9879f'
             'f2f7b99dcaf6f4b9d1ffd2ed0dd6f61c6eaba6ee7425752f428e864cec135fc6a4c6c6cf001bfc598ba4a8a487b85a59cfba93a5f59d71bc4a286400efbea985'
-            '6bebd8dba0d7b6dd39c69cb891e4103a47a006b7ad4ee110e9c81e3af70a3aa42d803744790d7150e701d1ea15851929ec23bc5c958ab69d3543774a8ad4fe83'
+            '20edead19655da7c3428a3d7acdc28393fb7da8113708e89176e5e860896686e9fbf7c1f511e8c5a65bad3a166b77e05f5026de9fa9bf3cfe0e64a599a845aee'
             '9ae1446ac65d635858afa05f90734990d08096758bf03a24b9a74d98255643d90badd905e2718eeb97c4a79375c6714585d43c69f47e573d0d7497cc55dcd018')
 
 pkgver() {
   cd "${srcdir}"/$_realname
-  local _major=$(grep -e '\#define DCADEC_VERSION_MAJOR' libdcadec/dca_context.h | awk '{ printf $3 }')
-  local _minor=$(grep -e '\#define DCADEC_VERSION_MINOR' libdcadec/dca_context.h | awk '{ printf $3 }')
-  local _patch=$(grep -e '\#define DCADEC_VERSION_PATCH' libdcadec/dca_context.h | awk '{ printf $3 }')
+  local _major=$(grep -e '\#define DCADEC_API_VERSION_MAJOR' libdcadec/dca_context.h | awk '{ printf $3 }')
+  local _minor=$(grep -e '\#define DCADEC_API_VERSION_MINOR' libdcadec/dca_context.h | awk '{ printf $3 }')
+  local _patch=$(grep -e '\#define DCADEC_API_VERSION_PATCH' libdcadec/dca_context.h | awk '{ printf $3 }')
   printf "%s.%s.%s.%s.%s" "${_major}" "${_minor}" "${_patch}" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
 }
 

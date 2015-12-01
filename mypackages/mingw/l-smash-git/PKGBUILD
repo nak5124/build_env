@@ -4,8 +4,8 @@ _realname=l-smash
 pkgbase=mingw-w64-$_realname
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}-git"
 pkgdesc='Loyal to Spec of Mpeg4 and Ad-hoc Simple Hackwork. Yet another opensource mp4 handler (mingw-w64)'
-pkgver=2.11.2.1383.619fdfc
-pkgrel=1
+pkgver=2.11.2.1393.23f6290
+pkgrel=3
 arch=('any')
 url='http://l-smash.github.io/l-smash/'
 license=('ISC')
@@ -13,24 +13,10 @@ provides=("${MINGW_PACKAGE_PREFIX}-${_realname}")
 conflicts=("${MINGW_PACKAGE_PREFIX}-${_realname}")
 makedepends=('git')
 depends=("${MINGW_PACKAGE_PREFIX}-toolchain")
-source=("${_realname}"::'git+https://github.com/l-smash/l-smash.git'
-        '0001-build-Add-unix-version-script.patch'
-        '0002-.gitignore-Add-version-script.patch'
-        '0003-configure-Check-whether-SRCDIR-is-git-repo-or-not.patch'
-        '0004-configure-Add-api-version-to-mingw-shared-library-na.patch'
-        '0005-build-Use-lib.exe-or-dlltool-when-available-on-mingw.patch'
-        '0006-configure-If-shared-is-enabled-put-LIBS-on-Libs.priv.patch'
-        '0007-Makefile-Move-.ver-from-clean-to-distclean.patch'
-        '0008-build-Add-non-public-symbols-which-start-lsmash_-pre.patch')
-sha512sums=('SKIP'
-            '29e9c6e9a5b74ec33fd55ce4bbd211cd5fa8824681b0eb7137ed4a424dbf5fed0a06b45eb7206b4afe5d842ec2e13dacdbef2cc971f40eb0245f65b32759bd7f'
-            'b0abbc9e32e9383403c2b648d4a4670ab6bbda1f3c52537226d7609a200de05238fd7b6de5db11b54a627915fbc52adbc5b1af563b5a65bf3d869d10927ddec6'
-            '5fa09595af414e405ffb3b9842b6ef0ab9b4773e9c62e37708a8d60ee60ba60ab94d860d6f92bc934e4489bc4cb766d181ebf3a6aa657e74dd757c3e792b7d99'
-            '5922646f3fb294425671798b00bde117a50a5634bd344958092bf6bc5985937f01f64f380d01770b3c6ddd55938a85c274eb430c7fa269ff89bf76c19378e5b4'
-            'b7823afa172f65684482900f3acf0605d515901d55d4ef137213b808538b03eda8aae3566e2b1040e60af1ef3eb317241680a0481217092199d8c4af768be843'
-            '3eab623f3b58e82bcdc9361b45c214e217dfd545ecc0792be43e0069969e04be1c3ea76bfef322913d83e8ba020b4d17f4b7ae38a08ab984112d171f94ee5e71'
-            'e1bb618cc40b7a2038f2b67c3cc8fba9d796db3679ffcb3d80dda87a93ff92f3e8c327b61a0081d0f75a71f472ede244e9673f60df2f0a0f82d383ed1a00593f'
-            'b2e8ea8fea17a6d992b47605c7ea4615ab587590d836ea341afe42e65eab0ddac1dc76c7f273781a3fb34197cbf6ebf1408f4329e61dcdb2fde292efce563aa9')
+source=("${_realname}"::'git+https://github.com/nak5124/l-smash.git#branch=imp-lib')
+sha512sums=('SKIP')
+
+_use_libexe=true
 
 pkgver() {
   cd "${srcdir}"/$_realname
@@ -40,31 +26,17 @@ pkgver() {
   printf "%s.%s.%s.%s.%s" "${_major}" "${_minor}" "${_micro}" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
 }
 
-prepare() {
-  cd "${srcdir}"/$_realname
-  msg2 'Applying patches'
-  if [ -f "${srcdir}/${_realname}/liblsmash.v" ]; then
-    rm -f "${srcdir}"/${_realname}/liblsmash.v
-  fi
-  patch -p1 -i "${srcdir}"/0001-build-Add-unix-version-script.patch
-  patch -p1 -i "${srcdir}"/0002-.gitignore-Add-version-script.patch
-  patch -p1 -i "${srcdir}"/0003-configure-Check-whether-SRCDIR-is-git-repo-or-not.patch
-  patch -p1 -i "${srcdir}"/0004-configure-Add-api-version-to-mingw-shared-library-na.patch
-  patch -p1 -i "${srcdir}"/0005-build-Use-lib.exe-or-dlltool-when-available-on-mingw.patch
-  patch -p1 -i "${srcdir}"/0006-configure-If-shared-is-enabled-put-LIBS-on-Libs.priv.patch
-  patch -p1 -i "${srcdir}"/0007-Makefile-Move-.ver-from-clean-to-distclean.patch
-  patch -p1 -i "${srcdir}"/0008-build-Add-non-public-symbols-which-start-lsmash_-pre.patch
-}
-
 build() {
   cd "${srcdir}"/$_realname
 
-  if [ "${MINGW_CARCH}" = "x86_64" ]; then
-    PATH=${PATH}:$VC64_DIR
-  else
-    PATH=${PATH}:$VC32_DIR
+  if ${_use_libexe:-false}; then
+    if [ "${MINGW_CARCH}" = "x86_64" ]; then
+      PATH=${PATH}:$VC64_DIR
+    else
+      PATH=${PATH}:$VC32_DIR
+    fi
+    export PATH
   fi
-  export PATH
 
   ./configure \
     --prefix=$MINGW_LOCAL_PREFIX \

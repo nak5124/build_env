@@ -1,0 +1,20 @@
+diff --git a/screen-write.c b/screen-write.c
+index f80048b..3c95138 100644
+--- a/screen-write.c
++++ b/screen-write.c
+@@ -924,6 +924,7 @@ screen_write_cell(struct screen_write_ctx *ctx, const struct grid_cell *gc)
+ 	 * If the width is zero, combine onto the previous character, if
+ 	 * there is space.
+ 	 */
++	 /*
+ 	if (width == 0) {
+ 		grid_cell_get(gc, &ud);
+ 		if (screen_write_combine(ctx, &ud) == 0) {
+@@ -932,6 +933,7 @@ screen_write_cell(struct screen_write_ctx *ctx, const struct grid_cell *gc)
+ 		}
+ 		return;
+ 	}
++	*/
+ 
+ 	/* Initialise the redraw context, saving the last cell. */
+ 	screen_write_initctx(ctx, &ttyctx, 1);

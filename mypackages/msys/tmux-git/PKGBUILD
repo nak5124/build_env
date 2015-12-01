@@ -2,7 +2,7 @@
 
 pkgname=tmux-git
 pkgdesc='A terminal multiplexer'
-pkgver=2.0.334.g9833576
+pkgver=2.1.181.geb5ee80
 pkgrel=1
 arch=('i686' 'x86_64')
 url='http://tmux.sourceforge.net/'
@@ -13,16 +13,18 @@ makedepends=('git' 'ncurses-devel' 'libevent-devel')
 depends=('ncurses' 'libevent')
 source=("${pkgname}"::'git+https://github.com/tmux/tmux.git'
         '0001-msys-platform.patch'
-        '0002-use_acs.patch'
-        '0003-utf8_width.patch'
-        '0004-copy_cursor_width.patch'
-        '0005-msys-fix-permission-denied.patch')
+        '0002-msys-fix-permission-denied.patch'
+        '0003-cwd-param-mod.patch'
+        '0004-tmux-ambiguous-width-cjk.patch'
+        '0005-tmux-do-not-combine-utf8.patch'
+        '0006-tmux-pane-border-ascii.patch')
 sha512sums=('SKIP'
             '322a9c95dec1bad12a147a7b160ace52ba77a0b9873aa9e5c22f6e1f0f6505f57c99d651a47365d0c469e8461b43f13379a825551bde5a9f750ff4f9964dc81c'
-            'b00fdfe389410c6dba0f66e251e3fd2bb2e92c215d690087fb148056c880ea5c6daa0071b97f47556915595d5145eab4ffabdb1e820e5b9e7c2b9c14bbb27a58'
-            '263662c0476854855e2ecd940c99ea9b6b4388040b1860b6f843f58a0202ee950374794678abcef3d2cd5a507a6dae92606ea0107b5c000d2294b7488cba18c4'
-            'c40b61f9f6e6432381ab0052d23f3c24a74e4ca1827e21c9da298f0eaaa954ed19e4fd909bbe3d860d9ab1f10aa46f7165270359a368204c5dfa0e88a36782aa'
-            '79c8450896778894e1a59d451d5d5ae258f3f9d93c494391cd603b4680c9616d85e0c75a2844c284c497f9c0c70e8deafa21b0ef97a226051bfe409f3b5d124e')
+            '79c8450896778894e1a59d451d5d5ae258f3f9d93c494391cd603b4680c9616d85e0c75a2844c284c497f9c0c70e8deafa21b0ef97a226051bfe409f3b5d124e'
+            '9b24af1ac7ac109f9dcc2a5402d51568584585166c6e6d34d3093d9a4a54dcd83c9c2d3e0a02a0ab46e90e311648fa91aba6b1d87831992efd2e80a13348c395'
+            '58aaa57de197be8f88dfdb2881e74ba89b19c1c94200d149fae6b4b98a67859b7c5d175b1d62f98d167dd358e8abf052183f3dcdb2132e4368843e9172216556'
+            'f9383632f9b7fe5faf8640574b3f4c90536fd2c8cf513b8bbd5b86e3b49ee0f15b64ed03eeefe03acc12c2abddf31f81f38b578eb4221eeff227d06924a06fc1'
+            '547348f57b80d9b86b644de41186d3c84af63ce2880c815d1774e28589d1d8af95590c8fcdd19183dcd1773b7bdd372eb72f8e09987eacd8c66267c438dcbfb5')
 
 pkgver() {
   cd "${srcdir}"/$pkgname
@@ -33,10 +35,12 @@ prepare() {
   cd "${srcdir}"/$pkgname
 
   patch -p1 -i "${srcdir}"/0001-msys-platform.patch
-  patch -p1 -i "${srcdir}"/0002-use_acs.patch
-  patch -p1 -i "${srcdir}"/0003-utf8_width.patch
-  patch -p1 -i "${srcdir}"/0004-copy_cursor_width.patch
-  patch -p1 -i "${srcdir}"/0005-msys-fix-permission-denied.patch
+  patch -p1 -i "${srcdir}"/0002-msys-fix-permission-denied.patch
+  patch -p1 -i "${srcdir}"/0003-cwd-param-mod.patch
+  # https://gist.github.com/waltarix/1399751
+  patch -p1 -i "${srcdir}"/0004-tmux-ambiguous-width-cjk.patch
+  patch -p1 -i "${srcdir}"/0005-tmux-do-not-combine-utf8.patch
+  patch -p1 -i "${srcdir}"/0006-tmux-pane-border-ascii.patch
   cp -fa osdep-cygwin.c osdep-msys.c
 
   msg2 'Running autogen.sh'

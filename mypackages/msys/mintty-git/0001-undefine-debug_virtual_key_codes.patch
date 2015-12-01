@@ -1,0 +1,13 @@
+diff --git a/src/wininput.c b/src/wininput.c
+index b6901ce..6483bbf 100644
+--- a/src/wininput.c
++++ b/src/wininput.c
+@@ -293,7 +293,7 @@ send_syscommand(WPARAM cmd)
+   SendMessage(wnd, WM_SYSCOMMAND, cmd, ' ');
+ }
+ 
+-#define debug_virtual_key_codes
++//#define debug_virtual_key_codes
+ 
+ #ifdef debug_virtual_key_codes
+ static struct {

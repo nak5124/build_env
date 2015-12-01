@@ -1,7 +1,7 @@
-From ac8725d1f6e817a216bcc7356e5fddd40100e0ce Mon Sep 17 00:00:00 2001
+From 3c1e1a2582dd2db572c671041059912877deb7b7 Mon Sep 17 00:00:00 2001
 From: Johannes Schindelin <johannes.schindelin@gmx.de>
 Date: Fri, 20 Mar 2015 10:01:50 +0000
-Subject: [PATCH 23/26] kill: Handle Win32 console processes' children, too
+Subject: [PATCH 23/27] kill: Handle Win32 console processes' children, too
 
 This change is the equivalent to the change to the Ctrl+C handling we
 just made.
@@ -34,5 +34,5 @@ index edabff3..d34b115 100644
  }
  
 -- 
-2.5.2
+2.6.3
 

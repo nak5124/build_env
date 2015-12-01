@@ -1,17 +1,17 @@
-From dca7e2aa636ac916e270529edbc5b19f8aa02f1f Mon Sep 17 00:00:00 2001
+From ed1918c3af76eef09acf057e48247974cea4905c Mon Sep 17 00:00:00 2001
 From: Cory Fields <theuni-nospam-@xbmc.org>
 Date: Fri, 9 Jul 2010 16:47:58 -0400
-Subject: [PATCH 01/60] get accurate estimate from the PTSes
+Subject: [PATCH 01/62] get accurate estimate from the PTSes
 
 ---
  libavformat/utils.c | 42 ++++++++++++++++++++++++++++++++++++++++++
  1 file changed, 42 insertions(+)
 
 diff --git a/libavformat/utils.c b/libavformat/utils.c
-index 199e80b..75dba9b 100644
+index 9399489..0945e5f 100644
 --- a/libavformat/utils.c
 +++ b/libavformat/utils.c
-@@ -2574,6 +2574,43 @@ static void estimate_timings_from_pts(AVFormatContext *ic, int64_t old_offset)
+@@ -2592,6 +2592,43 @@ static void estimate_timings_from_pts(AVFormatContext *ic, int64_t old_offset)
      }
  }
  
@@ -55,7 +55,7 @@ index 199e80b..75dba9b 100644
  static void estimate_timings(AVFormatContext *ic, int64_t old_offset)
  {
      int64_t file_size;
-@@ -2597,6 +2634,11 @@ static void estimate_timings(AVFormatContext *ic, int64_t old_offset)
+@@ -2615,6 +2652,11 @@ static void estimate_timings(AVFormatContext *ic, int64_t old_offset)
           * the components */
          fill_all_stream_timings(ic);
          ic->duration_estimation_method = AVFMT_DURATION_FROM_STREAM;
@@ -68,5 +68,5 @@ index 199e80b..75dba9b 100644
          /* less precise: use bitrate info */
          estimate_timings_from_bit_rate(ic);
 -- 
-2.5.2
+2.6.3
 

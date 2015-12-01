@@ -1,7 +1,7 @@
-From 00e01fe7c1b17049b8a3681a16ba2ebae661421c Mon Sep 17 00:00:00 2001
+From c076b6f1733af0cac08af208e19b4274c6decd21 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?=EB=A7=88=EB=88=84=EC=97=98?= <nalla@hamal.uberspace.de>
 Date: Mon, 9 Mar 2015 16:24:43 +0100
-Subject: [PATCH 19/26] Fixed path converting with non ascii char.
+Subject: [PATCH 19/27] Fixed path converting with non ascii char.
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -17,7 +17,7 @@ Signed-off-by: 마누엘 <nalla@hamal.uberspace.de>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/winsup/cygwin/msys2_path_conv.cc b/winsup/cygwin/msys2_path_conv.cc
-index 650392b..3cd3f6e 100644
+index ad144ae..3706de1 100644
 --- a/winsup/cygwin/msys2_path_conv.cc
 +++ b/winsup/cygwin/msys2_path_conv.cc
 @@ -384,7 +384,7 @@ skip_p2w:
@@ -30,5 +30,5 @@ index 650392b..3cd3f6e 100644
          it = ++*src;
          if (it == end || *it == '\0') return NONE;
 -- 
-2.5.2
+2.6.3
 

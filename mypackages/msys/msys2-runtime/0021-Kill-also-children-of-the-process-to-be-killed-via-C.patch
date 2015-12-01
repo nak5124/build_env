@@ -1,7 +1,7 @@
-From 3b55b0475f29f800940489e07418141f56393c0c Mon Sep 17 00:00:00 2001
+From 3097e10f68f27a9d980c1bdd3018b73d498561a4 Mon Sep 17 00:00:00 2001
 From: Johannes Schindelin <johannes.schindelin@gmx.de>
 Date: Fri, 20 Mar 2015 09:56:28 +0000
-Subject: [PATCH 21/26] Kill also children of the process to be killed via
+Subject: [PATCH 21/27] Kill also children of the process to be killed via
  Ctrl+C
 
 When a Win32 process needs to be terminated, the child processes it
@@ -50,10 +50,10 @@ Signed-off-by: Johannes Schindelin <johannes.schindelin@gmx.de>
  3 files changed, 62 insertions(+), 1 deletion(-)
 
 diff --git a/winsup/cygwin/exceptions.cc b/winsup/cygwin/exceptions.cc
-index 71b2414..fa1cdf9 100644
+index 0105ca9..f333ec3 100644
 --- a/winsup/cygwin/exceptions.cc
 +++ b/winsup/cygwin/exceptions.cc
-@@ -1562,7 +1562,10 @@ dosig:
+@@ -1559,7 +1559,10 @@ dosig:
    if (have_execed)
      {
        sigproc_printf ("terminating captive process");
@@ -78,7 +78,7 @@ index 19dd0a6..73cfa47 100644
  #ifdef __cplusplus
  }
 diff --git a/winsup/cygwin/signal.cc b/winsup/cygwin/signal.cc
-index 4897417..2088d82 100644
+index 8dfd4ab..fdb882a 100644
 --- a/winsup/cygwin/signal.cc
 +++ b/winsup/cygwin/signal.cc
 @@ -13,6 +13,7 @@ Cygwin license.  Please consult the file "CYGWIN_LICENSE" for
@@ -153,5 +153,5 @@ index 4897417..2088d82 100644
  abort (void)
  {
 -- 
-2.5.2
+2.6.3
 

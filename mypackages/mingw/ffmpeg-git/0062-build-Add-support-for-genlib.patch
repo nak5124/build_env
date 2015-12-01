@@ -1,0 +1,32 @@
+From 540882db875cf802000de2749a25ce81444e826e Mon Sep 17 00:00:00 2001
+From: Yuta Nakai <nak5124@live.jp>
+Date: Mon, 16 Nov 2015 13:21:01 +0900
+Subject: [PATCH 62/62] build: Add support for genlib.
+
+---
+ configure | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+diff --git a/configure b/configure
+index 1779f9c..31fdddb 100755
+--- a/configure
++++ b/configure
+@@ -4444,6 +4444,15 @@ case $target_os in
+             if enabled x86_64; then
+                 LIBTARGET=x64
+             fi
++        elif check_cmd genlib -V; then
++            SLIB_EXTRA_CMD=-'sed -e "s/ @[^ ]*//" $$(@:$(SLIBSUF)=.orig.def) > $$(@:$(SLIBSUF)=.def); genlib -a $(LIBTARGET) -o $(SUBDIR)$(SLIBNAME:$(SLIBSUF)=.lib) -d $(SLIBNAME_WITH_MAJOR) $$(@:$(SLIBSUF)=.def)'
++            if enabled x86_64; then
++                LIBTARGET=x86_64
++            elif enabled arm; then
++                LIBTARGET=arm
++            else
++                LIBTARGET=x86
++            fi
+         elif check_cmd $dlltool --version; then
+             SLIB_EXTRA_CMD=-'sed -e "s/ @[^ ]*//" $$(@:$(SLIBSUF)=.orig.def) > $$(@:$(SLIBSUF)=.def); $(DLLTOOL) -m $(LIBTARGET) -d $$(@:$(SLIBSUF)=.def) -l $(SUBDIR)$(SLIBNAME:$(SLIBSUF)=.lib) -D $(SLIBNAME_WITH_MAJOR)'
+         fi
+-- 
+2.6.3
+

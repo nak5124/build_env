@@ -11,20 +11,16 @@ diff --git a/Makefile b/Makefile
 index 0f4c6c5..6a32ec3 100644
 --- a/Makefile
 +++ b/Makefile
-@@ -8,6 +8,7 @@ LIBDIR ?= $(PREFIX)/lib
- INCLUDEDIR ?= $(PREFIX)/include
- 
- SRC_DIR := $(realpath $(dir $(lastword $(MAKEFILE_LIST))))
-+API_VER=$(shell grep -e '\#define DCADEC_VERSION_MAJOR' $(SRC_DIR)/libdcadec/dca_context.h | awk '{ printf $$3 }')
- vpath %.c $(SRC_DIR)
- vpath %.h $(SRC_DIR)
- vpath %.pc.in $(SRC_DIR)
-@@ -33,7 +34,7 @@ else
+@@ -33,7 +34,11 @@ else
  endif
  
  ifdef CONFIG_SHARED
--    OUT_LIB ?= libdcadec/libdcadec$(DLLSUF)
-+    OUT_LIB ?= libdcadec/libdcadec-$(API_VER)$(DLLSUF)
+-    OUT_LIB ?= libdcadec/libdcadec$(DLLSUF)$(SONAMESUF)
++    ifdef CONFIG_WINDOWS
++        OUT_LIB ?= libdcadec/libdcadec-$(API_MAJOR)$(DLLSUF)
++    else
++        OUT_LIB ?= libdcadec/libdcadec$(DLLSUF)$(SONAMESUF)
++    endif
  else
      OUT_LIB ?= libdcadec/libdcadec$(LIBSUF)
  endif

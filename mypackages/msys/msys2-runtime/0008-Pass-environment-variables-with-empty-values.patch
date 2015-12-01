@@ -1,7 +1,7 @@
-From d96914dc68a25690047ab7c308a9ebb7a41fc729 Mon Sep 17 00:00:00 2001
+From ca4c0a22960351b6129e0d25a44847548ec75f6f Mon Sep 17 00:00:00 2001
 From: Johannes Schindelin <johannes.schindelin@gmx.de>
 Date: Wed, 18 Feb 2015 12:32:17 +0000
-Subject: [PATCH 08/26] Pass environment variables with empty values
+Subject: [PATCH 08/27] Pass environment variables with empty values
 
 There is a difference between an empty value and an unset environment
 variable. We should not confuse both; If the user wants to unset an
@@ -17,7 +17,7 @@ Signed-off-by: Johannes Schindelin <johannes.schindelin@gmx.de>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/winsup/cygwin/environ.cc b/winsup/cygwin/environ.cc
-index fb6de9b..2ab6d28 100644
+index 13dd297..2d303c2 100644
 --- a/winsup/cygwin/environ.cc
 +++ b/winsup/cygwin/environ.cc
 @@ -1263,7 +1263,7 @@ build_env (const char * const *envp, PWCHAR &envblock, int &envc,
@@ -30,5 +30,5 @@ index fb6de9b..2ab6d28 100644
  
  	  /* See if this entry requires posix->win32 conversion. */
 -- 
-2.5.2
+2.6.3
 

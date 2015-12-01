@@ -4,7 +4,7 @@ _realname=x264-10bit
 pkgbase=mingw-w64-$_realname
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}-git"
 pkgdesc='Library and CLI tool for encoding H264/AVC video streams, 10bit-depth (mingw-w64)'
-pkgver=148.2648.23b798e
+pkgver=148.2682.be7638c
 pkgrel=1
 arch=('any')
 url='http://www.videolan.org/developers/x264.html'
@@ -37,8 +37,7 @@ build() {
   cd "${srcdir}"/${_realname%-*}
 
   _CFLAGS="${CFLAGS/-fstack-protector-strong --param=ssp-buffer-size=4/}"
-  LDFLAGS="${LDFLAGS/-fstack-protector-strong --param=ssp-buffer-size=4/}"
-  _LDFLAGS="${LDFLAGS/,--gc-sections/}"
+  _LDFLAGS="${LDFLAGS/-fstack-protector-strong --param=ssp-buffer-size=4/}"
   unset CFLAGS LDFLAGS
 
   ./configure \
