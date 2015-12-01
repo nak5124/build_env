@@ -39,6 +39,8 @@ function prepare_binutils() {
     apply_patch_bu "${PATCHES_DIR}"/binutils/0005-MinGW-Disable-automatic-image-base-calculation.patch       false
     # Don't make a lowercase backslashed path from argv[0] that then fail to strcmp with prefix(es) .. they're also ugly.
     apply_patch_bu "${PATCHES_DIR}"/binutils/0006-libiberty-lrealpath.c-Don-t-make-a-lowercase-backsla.patch false
+    # Ray's patch
+    apply_patch_bu "${PATCHES_DIR}"/binutils/0007-bfd-Increase-_bfd_coff_max_nscns-to-65279.patch
 
     perl -pi -e 's/_stat\n/_stat64\n/g' "${BUILD_DIR}"/binutils/src/binutils-${BINUTILS_VER}/ltmain.sh
 

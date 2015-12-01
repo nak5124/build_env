@@ -1,7 +1,7 @@
-From 569b0c37ff32b9ba370b4f1b578fe2bf13849bac Mon Sep 17 00:00:00 2001
+From 216d08bdc1ae431d6e4134dcfc03b6f51f600eea Mon Sep 17 00:00:00 2001
 From: Yuta NAKAI <nak5124@live.jp>
 Date: Sun, 19 Apr 2015 21:59:01 +0900
-Subject: [PATCH 5/6] MinGW: Disable automatic image base calculation.
+Subject: [PATCH 5/7] MinGW: Disable automatic image base calculation.
 
 ---
  bfd/configure      | 4 ++--
@@ -13,7 +13,7 @@ Subject: [PATCH 5/6] MinGW: Disable automatic image base calculation.
  6 files changed, 14 insertions(+), 14 deletions(-)
 
 diff --git a/bfd/configure b/bfd/configure
-index a17e936..397a333 100755
+index c8cdcc5..3a5b12b 100755
 --- a/bfd/configure
 +++ b/bfd/configure
 @@ -9168,7 +9168,7 @@ _LT_EOF
@@ -35,7 +35,7 @@ index a17e936..397a333 100755
  	ld_shlibs=no
        fi
 diff --git a/binutils/configure b/binutils/configure
-index 0656546..ed14191 100755
+index 97d76a3..3b884af 100755
 --- a/binutils/configure
 +++ b/binutils/configure
 @@ -8966,7 +8966,7 @@ _LT_EOF
@@ -57,7 +57,7 @@ index 0656546..ed14191 100755
  	ld_shlibs=no
        fi
 diff --git a/gas/configure b/gas/configure
-index 5d341fa..b37aa43 100755
+index 3f9bdde..fa1b17c 100755
 --- a/gas/configure
 +++ b/gas/configure
 @@ -8717,7 +8717,7 @@ _LT_EOF
@@ -79,7 +79,7 @@ index 5d341fa..b37aa43 100755
  	ld_shlibs=no
        fi
 diff --git a/gprof/configure b/gprof/configure
-index cdd2e3a..9396e5c 100755
+index c55efc2..2dddb43 100755
 --- a/gprof/configure
 +++ b/gprof/configure
 @@ -8642,7 +8642,7 @@ _LT_EOF
@@ -101,7 +101,7 @@ index cdd2e3a..9396e5c 100755
  	ld_shlibs=no
        fi
 diff --git a/ld/configure b/ld/configure
-index b41efe8..175b56b 100755
+index 120d934..53ff69d 100755
 --- a/ld/configure
 +++ b/ld/configure
 @@ -9461,7 +9461,7 @@ _LT_EOF
@@ -141,7 +141,7 @@ index b41efe8..175b56b 100755
            ld_shlibs_CXX=no
          fi
 diff --git a/opcodes/configure b/opcodes/configure
-index a034862..70beede 100755
+index 34f91eb..2a693ca 100755
 --- a/opcodes/configure
 +++ b/opcodes/configure
 @@ -8891,7 +8891,7 @@ _LT_EOF
@@ -163,5 +163,5 @@ index a034862..70beede 100755
  	ld_shlibs=no
        fi
 -- 
-2.6.2
+2.6.3
 

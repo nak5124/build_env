@@ -145,7 +145,7 @@ function term_gcc() {
 
     # DLLs list of gcc_libs.
     local -ra _dlllist=(
-        "libgmp-*.dll"
+        # "libgmp-*.dll" # GMP is used for FFmpeg, so don't relocate.
         "libmpfr-*.dll"
         "libmpc-*.dll"
         "libisl-*.dll"
@@ -214,8 +214,9 @@ __EOF__
     done
     # Remove headers & libs of gcc_libs.
     # GMP
-    rm -f  "${DST_DIR}"/mingw${_bitval}/include/gmp.h
-    rm -f  "${DST_DIR}"/mingw${_bitval}/lib/libgmp.dll.a
+    # GMP is used for FFmpeg, so don't relocate.
+    # rm -f  "${DST_DIR}"/mingw${_bitval}/include/gmp.h
+    # rm -f  "${DST_DIR}"/mingw${_bitval}/lib/libgmp.dll.a
     # MPFR
     rm -f  "${DST_DIR}"/mingw${_bitval}/include/{mpfr,mpf2mpfr}.h
     rm -f  "${DST_DIR}"/mingw${_bitval}/lib/libmpfr.dll.a

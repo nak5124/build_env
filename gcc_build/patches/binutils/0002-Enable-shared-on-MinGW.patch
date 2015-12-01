@@ -1,7 +1,7 @@
-From cd246fba793b4b4dabbf9cec4b6b04df054a5f45 Mon Sep 17 00:00:00 2001
+From d39f51761aa5b78012a597706393d271a67de8b7 Mon Sep 17 00:00:00 2001
 From: Yuta Nakai <nak5124@live.jp>
 Date: Fri, 28 Aug 2015 22:23:44 +0900
-Subject: [PATCH 2/6] Enable shared on MinGW.
+Subject: [PATCH 2/7] Enable shared on MinGW.
 
 ---
  bfd/Makefile.am        |  7 +++++--
@@ -26,7 +26,7 @@ Subject: [PATCH 2/6] Enable shared on MinGW.
  19 files changed, 112 insertions(+), 101 deletions(-)
 
 diff --git a/bfd/Makefile.am b/bfd/Makefile.am
-index bf73057..06e53c6 100644
+index cdfed8f..3f66a90 100644
 --- a/bfd/Makefile.am
 +++ b/bfd/Makefile.am
 @@ -27,7 +27,7 @@ SUBDIRS = doc po
@@ -38,7 +38,7 @@ index bf73057..06e53c6 100644
  if INSTALL_LIBBFD
  bfdlibdir = @bfdlibdir@
  bfdincludedir = @bfdincludedir@
-@@ -841,6 +841,8 @@ stamp-ofiles: Makefile
+@@ -845,6 +845,8 @@ stamp-ofiles: Makefile
  
  ofiles: stamp-ofiles ; @true
  
@@ -47,7 +47,7 @@ index bf73057..06e53c6 100644
  # Since BFD64_LIBS is optional and we can't have substitution in
  # libbfd_la_SOURCES, we put BFD64_LIBS in OFILES instead.
  # However, list all sources in EXTRA_libbfd_la_SOURCES so the
-@@ -849,7 +851,8 @@ libbfd_la_SOURCES = $(BFD32_LIBS_CFILES)
+@@ -853,7 +855,8 @@ libbfd_la_SOURCES = $(BFD32_LIBS_CFILES)
  EXTRA_libbfd_la_SOURCES = $(CFILES)
  libbfd_la_DEPENDENCIES = $(OFILES) ofiles
  libbfd_la_LIBADD = `cat ofiles` @SHARED_LIBADD@ $(LIBDL) $(ZLIB)
@@ -58,7 +58,7 @@ index bf73057..06e53c6 100644
  # libtool will build .libs/libbfd.a.  We create libbfd.a in the build
  # directory so that we don't have to convert all the programs that use
 diff --git a/bfd/Makefile.in b/bfd/Makefile.in
-index 9fd0d68..b87238b 100644
+index 6cf4b70..4f94b0d 100644
 --- a/bfd/Makefile.in
 +++ b/bfd/Makefile.in
 @@ -343,8 +343,9 @@ INCDIR = $(srcdir)/../include
@@ -72,7 +72,7 @@ index 9fd0d68..b87238b 100644
  @INSTALL_LIBBFD_TRUE@bfdlib_LTLIBRARIES = libbfd.la
  @INSTALL_LIBBFD_FALSE@bfdinclude_HEADERS = $(am__append_2)
  @INSTALL_LIBBFD_TRUE@bfdinclude_HEADERS = $(BFD_H) \
-@@ -1117,6 +1118,8 @@ BLD_POTFILES = $(BUILD_CFILES) $(BUILD_HFILES)
+@@ -1121,6 +1122,8 @@ BLD_POTFILES = $(BUILD_CFILES) $(BUILD_HFILES)
  # bfd64_libs	Routines for 64bit support
  OFILES = $(BFD_BACKENDS) $(BFD_MACHINES) @COREFILE@ @bfd64_libs@
  
@@ -191,7 +191,7 @@ index 5642925..66f80c7 100644
  objcopy_SOURCES = objcopy.c not-strip.c rename.c $(WRITE_DEBUG_SRCS) $(BULIBS)
  strings_SOURCES = strings.c $(BULIBS)
 diff --git a/binutils/configure b/binutils/configure
-index 82572e8..0656546 100755
+index d1769a8..97d76a3 100755
 --- a/binutils/configure
 +++ b/binutils/configure
 @@ -13838,9 +13838,9 @@ fi
@@ -340,10 +340,10 @@ index 47b21a0..da588f5 100644
  
  #ifdef __cplusplus
 diff --git a/ld/Makefile.am b/ld/Makefile.am
-index 3f9546b..ae0c12b 100644
+index 0b3b049..8327ace 100644
 --- a/ld/Makefile.am
 +++ b/ld/Makefile.am
-@@ -2030,8 +2030,8 @@ ld_new_SOURCES = ldgram.y ldlex-wrapper.c lexsup.c ldlang.c mri.c ldctor.c ldmai
+@@ -2040,8 +2040,8 @@ ld_new_SOURCES = ldgram.y ldlex-wrapper.c lexsup.c ldlang.c mri.c ldctor.c ldmai
  	ldwrite.c ldexp.c ldemul.c ldver.c ldmisc.c ldfile.c ldcref.c $(PLUGIN_C) \
  	ldbuildid.c
  ld_new_DEPENDENCIES = $(EMULATION_OFILES) $(EMUL_EXTRA_OFILES) \
@@ -354,7 +354,7 @@ index 3f9546b..ae0c12b 100644
  
  # Dependency tracking for the generated emulation files.
  EXTRA_ld_new_SOURCES += $(ALL_EMULATION_SOURCES) $(ALL_64_EMULATION_SOURCES)
-@@ -2064,16 +2064,16 @@ check-DEJAGNU: site.exp
+@@ -2074,16 +2074,16 @@ check-DEJAGNU: site.exp
  ld-partial.@OBJEXT@: ld-new$(EXEEXT)
  	./ld-new$(EXEEXT) $(HOSTING_EMU) -o ld-partial.@OBJEXT@ -r $(OFILES)
  ld1$(EXEEXT): ld-partial.@OBJEXT@
@@ -376,10 +376,10 @@ index 3f9546b..ae0c12b 100644
  bootstrap: ld3$(EXEEXT)
  	cmp ld2$(EXEEXT) ld3$(EXEEXT)
 diff --git a/ld/Makefile.in b/ld/Makefile.in
-index 9237ff0..3d31153 100644
+index ed98f87..f1818b4 100644
 --- a/ld/Makefile.in
 +++ b/ld/Makefile.in
-@@ -889,9 +889,9 @@ ld_new_SOURCES = ldgram.y ldlex-wrapper.c lexsup.c ldlang.c mri.c ldctor.c ldmai
+@@ -891,9 +891,9 @@ ld_new_SOURCES = ldgram.y ldlex-wrapper.c lexsup.c ldlang.c mri.c ldctor.c ldmai
  	ldbuildid.c
  
  ld_new_DEPENDENCIES = $(EMULATION_OFILES) $(EMUL_EXTRA_OFILES) \
@@ -391,7 +391,7 @@ index 9237ff0..3d31153 100644
  
  # A test program for C++ constructors and destructors.
  # This test is now in the testsuite.
-@@ -3549,16 +3549,16 @@ check-DEJAGNU: site.exp
+@@ -3561,16 +3561,16 @@ check-DEJAGNU: site.exp
  ld-partial.@OBJEXT@: ld-new$(EXEEXT)
  	./ld-new$(EXEEXT) $(HOSTING_EMU) -o ld-partial.@OBJEXT@ -r $(OFILES)
  ld1$(EXEEXT): ld-partial.@OBJEXT@
@@ -413,7 +413,7 @@ index 9237ff0..3d31153 100644
  bootstrap: ld3$(EXEEXT)
  	cmp ld2$(EXEEXT) ld3$(EXEEXT)
 diff --git a/libiberty/Makefile.in b/libiberty/Makefile.in
-index 7d7e2f4..e66fef1 100644
+index c7a4568..c037c8d 100644
 --- a/libiberty/Makefile.in
 +++ b/libiberty/Makefile.in
 @@ -131,7 +131,7 @@ CFILES = alloca.c argv.c asprintf.c atexit.c				\
@@ -459,10 +459,10 @@ index 7d7e2f4..e66fef1 100644
  # These files are installed if the library has been configured to do so.
  INSTALLED_HEADERS =                                                     \
 diff --git a/libiberty/configure b/libiberty/configure
-index d8890a1..efb376c 100755
+index bde78ff..1b997da 100755
 --- a/libiberty/configure
 +++ b/libiberty/configure
-@@ -5684,7 +5684,6 @@ funcs="$funcs vfprintf"
+@@ -5718,7 +5718,6 @@ funcs="$funcs vfprintf"
  funcs="$funcs vprintf"
  funcs="$funcs vsnprintf"
  funcs="$funcs vsprintf"
@@ -470,7 +470,7 @@ index d8890a1..efb376c 100755
  funcs="$funcs setproctitle"
  
  # Also in the old function.def file: alloca, vfork, getopt.
-@@ -6051,13 +6050,6 @@ esac
+@@ -6085,13 +6084,6 @@ esac
   ;;
  esac
  
@@ -484,7 +484,7 @@ index d8890a1..efb376c 100755
      for f in $funcs; do
        case "$f" in
  	asprintf | basename | bcmp | bcopy | bzero | clock | ffs | getpagesize | index | insque | mempcpy | mkstemps | random | rindex | sigsetmask | stpcpy | stpncpy | strdup | strndup | strnlen | strverscmp | vasprintf | waitpid)
-@@ -6198,12 +6190,6 @@ esac
+@@ -6232,12 +6224,6 @@ esac
  esac
  
      case " $LIBOBJS " in
@@ -497,7 +497,7 @@ index d8890a1..efb376c 100755
    *" waitpid.$ac_objext "* ) ;;
    *) LIBOBJS="$LIBOBJS waitpid.$ac_objext"
   ;;
-@@ -6665,7 +6651,7 @@ fi
+@@ -6705,7 +6691,7 @@ fi
    if test $ac_cv_func_vfork_works = no; then
      case " $LIBOBJS " in
    *" vfork.$ac_objext "* ) ;;
@@ -507,10 +507,10 @@ index d8890a1..efb376c 100755
  esac
  
 diff --git a/libiberty/configure.ac b/libiberty/configure.ac
-index 868be8e..05f9401 100644
+index 9d3f298..c3e29a0 100644
 --- a/libiberty/configure.ac
 +++ b/libiberty/configure.ac
-@@ -381,7 +381,6 @@ funcs="$funcs vfprintf"
+@@ -382,7 +382,6 @@ funcs="$funcs vfprintf"
  funcs="$funcs vprintf"
  funcs="$funcs vsnprintf"
  funcs="$funcs vsprintf"
@@ -518,7 +518,7 @@ index 868be8e..05f9401 100644
  funcs="$funcs setproctitle"
  
  # Also in the old function.def file: alloca, vfork, getopt.
-@@ -482,6 +481,7 @@ if test -n "${with_target_subdir}"; then
+@@ -483,6 +482,7 @@ if test -n "${with_target_subdir}"; then
      AC_LIBOBJ([insque])
      AC_LIBOBJ([mempcpy])
      AC_LIBOBJ([mkstemps])
@@ -526,7 +526,7 @@ index 868be8e..05f9401 100644
      AC_LIBOBJ([random])
      AC_LIBOBJ([rindex])
      AC_LIBOBJ([sigsetmask])
-@@ -491,7 +491,6 @@ if test -n "${with_target_subdir}"; then
+@@ -492,7 +492,6 @@ if test -n "${with_target_subdir}"; then
      AC_LIBOBJ([strnlen])
      AC_LIBOBJ([strverscmp])
      AC_LIBOBJ([vasprintf])
@@ -534,7 +534,7 @@ index 868be8e..05f9401 100644
  
      for f in $funcs; do
        case "$f" in
-@@ -639,9 +638,6 @@ if test -z "${setobjs}"; then
+@@ -646,9 +645,6 @@ if test -z "${setobjs}"; then
    AC_REPLACE_FUNCS($funcs)
    libiberty_AC_FUNC_C_ALLOCA
    AC_FUNC_FORK
@@ -573,7 +573,7 @@ index 3517739..2bc6b70 100644
  @INSTALL_LIBBFD_TRUE@bfdinclude_DATA = $(INCDIR)/dis-asm.h
  @INSTALL_LIBBFD_FALSE@rpath_bfdlibdir = @bfdlibdir@
 diff --git a/opcodes/configure b/opcodes/configure
-index 86412c5..a034862 100755
+index 2d5baaf..34f91eb 100755
 --- a/opcodes/configure
 +++ b/opcodes/configure
 @@ -12465,11 +12465,17 @@ if test "$enable_shared" = "yes"; then
@@ -635,5 +635,5 @@ index 07e3162..d8aa347 100644
  	SHARED_LIBADD="$SHARED_LIBADD $LIBM"
        fi
 -- 
-2.6.2
+2.6.3
 
