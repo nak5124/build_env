@@ -35,10 +35,8 @@ function prepare_gcc() {
     # Apply patches.
     printf "===> Applying patches to GCC %s...\n" "${GCC_VER}"
 
-    # Merge gcc-5-branch (ffb2c26).
-    apply_patch_gcc "${PATCHES_DIR}"/gcc/0000-merge-gcc-5-branch.patch                                   true
     # hack! - some configure tests for header files using "$CPP $CPPFLAGS"
-    apply_patch_gcc "${PATCHES_DIR}"/gcc/0001-libiberty-gcc-configure-hack-some-configure-tests-fo.patch false
+    apply_patch_gcc "${PATCHES_DIR}"/gcc/0001-libiberty-gcc-configure-hack-some-configure-tests-fo.patch true
     # MinGW-w64 does not support Linux system call.
     apply_patch_gcc "${PATCHES_DIR}"/gcc/0002-libiberty-Modify-Makefile-for-mingw-w64.patch              false
     # Do not install libiberty.

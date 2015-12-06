@@ -43,7 +43,7 @@ declare -r MAKEFLAGS_=" -j$(($(nproc)+1)) -O"
 declare -r THREAD_MODEL='posix'
 
 # GCC package revision
-declare -r GCC_PKGREV=7
+declare -r GCC_PKGREV=1
 declare -r GCC_BUILT_DATE=$(date +%Y.%m.%d)
 
 # Version
@@ -55,7 +55,7 @@ declare -r ICONV_VER='1.14'
 declare -r ZLIB_VER='git'
 declare -r MINGW_VER='git'
 declare -r BINUTILS_VER='git'
-declare -r GCC_VER='5.2.0'
+declare -r GCC_VER='5.3.0'
 declare -r NASM_VER='2.11.09rc1'
 # declare -r NASM_SS='20150118'
 declare -r YASM_VER='1.3.0'
