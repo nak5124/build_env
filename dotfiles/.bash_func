@@ -100,72 +100,78 @@ function bak_restore() {
 function tv_t() {
     start /d/PT2/TVTest/TVTest.exe //d BonDriver_PT-T.dll
 
+    local -r _applist=/tmp/win32applist_"$$"
+
     local _exists=false
-    if [ -f /tmp/win32applist ] ; then
-        local -i i=0
-        local -a list
+    if [ -f "${_applist}" ] ; then
+        local -i _i=0
+        local -a _list
         while read line
         do
-            list[i]=$line
-            i=$((${i} + 1))
-        done < /tmp/win32applist
-        for (( i = 0; i < ${#list[*]}; i++ ))
+            _list[_i]="${line}"
+            _i=$((${_i} + 1))
+        done < "${_applist}"
+        for (( _i = 0; _i < ${#_list[*]}; _i++ ))
         do
-            if [ "${list[${i}]}" = "TVTest" ] ; then
+            if [ "${_list[${_i}]}" = 'TVTest' ] ; then
                 _exists=true
             fi
         done
     fi
-    if ! $_exists ; then
-        echo TVTest >> /tmp/win32applist
+    if ! ${_exists}; then
+        echo 'TVTest' >> "${_applist}"
     fi
 }
 
 function tv_bs() {
     start /d/PT2/TVTest/TVTest.exe //d BonDriver_PT-S.dll //chspace 0 //rch 11
 
+    local -r _applist=/tmp/win32applist_"$$"
+
     local _exists=false
-    if [ -f /tmp/win32applist ] ; then
-        local -i i=0
-        local -a list
+    if [ -f "${_applist}" ] ; then
+        local -i _i=0
+        local -a _list
         while read line
         do
-            list[i]=$line
-            i=$((${i} + 1))
-        done < /tmp/win32applist
-        for (( i = 0; i < ${#list[*]}; i++ ))
+            _list[_i]="${line}"
+            _i=$((${_i} + 1))
+        done < "${_applist}"
+        for (( _i = 0; _i < ${#_list[*]}; _i++ ))
         do
-            if [ "${list[${i}]}" = "TVTest" ] ; then
+            if [ "${_list[${_i}]}" = 'TVTest' ] ; then
                 _exists=true
             fi
         done
     fi
-    if ! $_exists ; then
-        echo TVTest >> /tmp/win32applist
+    if ! ${_exists}; then
+        echo 'TVTest' >> "${_applist}"
     fi
 }
 
 function tv_cs() {
     start /d/PT2/TVTest/TVTest.exe //d BonDriver_PT-S.dll //chspace 1 //rch 330
 
+    local -r _applist=/tmp/win32applist_"$$"
+
     local _exists=false
-    if [ -f /tmp/win32applist ] ; then
-        local -i i=0
-        local -a list
+    if [ -f "${_applist}" ] ; then
+        local -i _i=0
+        local -a _list
         while read line
         do
-            list[i]=$line
-            i=$((${i} + 1))
-        done < /tmp/win32applist
-        for (( i = 0; i < ${#list[*]}; i++ ))
+            _list[_i]="${line}"
+            _i=$((${_i} + 1))
+        done < "${_applist}"
+        for (( _i = 0; _i < ${#_list[*]}; _i++ ))
         do
-            if [ "${list[${i}]}" = "TVTest" ] ; then
+            if [ "${_list[${_i}]}" = 'TVTest' ] ; then
                 _exists=true
             fi
         done
     fi
-    if ! $_exists ; then
-        echo TVTest >> /tmp/win32applist
+    if ! ${_exists}; then
+        echo 'TVTest' >> "${_applist}"
     fi
 }
 
@@ -173,24 +179,26 @@ function tv_cs() {
 function firefox() {
     start /c/firefox/firefox.exe -p nightly_x64
 
+    local -r _applist=/tmp/win32applist_"$$"
+
     local _exists=false
-    if [ -f /tmp/win32applist ] ; then
-        local -i i=0
-        local -a list
+    if [ -f "${_applist}" ] ; then
+        local -i _i=0
+        local -a _list
         while read line
         do
-            list[i]=$line
-            i=$((${i} + 1))
-        done < /tmp/win32applist
-        for (( i = 0; i < ${#list[*]}; i++ ))
+            _list[_i]="${line}"
+            _i=$((${_i} + 1))
+        done < "${_applist}"
+        for (( _i = 0; _i < ${#_list[*]}; _i++ ))
         do
-            if [ "${list[${i}]}" = "firefox" ] ; then
+            if [ "${_list[${_i}]}" = 'firefox' ] ; then
                 _exists=true
             fi
         done
     fi
-    if ! $_exists ; then
-        echo firefox >> /tmp/win32applist
+    if ! ${_exists}; then
+        echo 'firefox' >> "${_applist}"
     fi
 }
 
@@ -198,24 +206,26 @@ function firefox() {
 function play() {
     start /d/Program_Files_portable/mpc-hc/x64/mpc-hc64.exe "$@"
 
+    local -r _applist=/tmp/win32applist_"$$"
+
     local _exists=false
-    if [ -f /tmp/win32applist ] ; then
-        local -i i=0
-        local -a list
+    if [ -f "${_applist}" ] ; then
+        local -i _i=0
+        local -a _list
         while read line
         do
-            list[i]=$line
-            i=$((${i} + 1))
-        done < /tmp/win32applist
-        for (( i = 0; i < ${#list[*]}; i++ ))
+            _list[_i]="${line}"
+            _i=$((${_i} + 1))
+        done < "${_applist}"
+        for (( _i = 0; _i < ${#_list[*]}; _i++ ))
         do
-            if [ "${list[${i}]}" = "mpc-hc" ] ; then
+            if [ "${_list[${_i}]}" = 'mpc-hc' ] ; then
                 _exists=true
             fi
         done
     fi
-    if ! $_exists ; then
-        echo mpc-hc >> /tmp/win32applist
+    if ! ${_exists}; then
+        echo 'mpc-hc' >> "${_applist}"
     fi
 }
 
@@ -223,24 +233,26 @@ function play() {
 function nppp() {
     start /c/progra~2/Notepad++/notepad++.exe "$@"
 
+    local -r _applist=/tmp/win32applist_"$$"
+
     local _exists=false
-    if [ -f /tmp/win32applist ] ; then
-        local -i i=0
-        local -a list
+    if [ -f "${_applist}" ] ; then
+        local -i _i=0
+        local -a _list
         while read line
         do
-            list[i]=$line
-            i=$((${i} + 1))
-        done < /tmp/win32applist
-        for (( i = 0; i < ${#list[*]}; i++ ))
+            _list[_i]="${line}"
+            _i=$((${_i} + 1))
+        done < "${_applist}"
+        for (( _i = 0; _i < ${#_list[*]}; _i++ ))
         do
-            if [ "${list[${i}]}" = "notepad++" ] ; then
+            if [ "${_list[${_i}]}" = 'notepad++' ] ; then
                 _exists=true
             fi
         done
     fi
-    if ! $_exists ; then
-        echo notepad++ >> /tmp/win32applist
+    if ! ${_exists}; then
+        echo 'notepad++' >> "${_applist}"
     fi
 }
 

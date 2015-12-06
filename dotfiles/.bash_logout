@@ -1,20 +1,22 @@
 
 pacman -Sc --noconfirm > /dev/null
 
-if [ -f /tmp/win32applist ] ; then
+declare -r applist=/tmp/win32applist_"$$"
+
+if [ -f "${applist}" ] ; then
     declare -i i=0
     declare -a list
-    sed -i '/^ *$/d' /tmp/win32applist
+    sed -i '/^ *$/d' "${applist}"
     while read line
     do
         list[i]=$line
         i=$((${i} + 1))
-    done < /tmp/win32applist
+    done < "${applist}"
     for (( i = 0; i < ${#list[*]}; i++ ))
     do
         win32kill ${list[${i}]} > /dev/null 2>&1
     done
-    rm -f /tmp/win32applist
+    rm -f "${applist}"
 fi
 
 if [ "${SHLVL}" = 1 ] ; then
