@@ -199,13 +199,13 @@ ln -fsr ./roff2dvi ./roff2x
 ln -fsr ./gunzip ./uncompress
 
 # icu-devel
-ln -fsr ../lib/libicui18n51.dll.a ../lib/libicui18n.dll.a
-ln -fsr ../lib/libicuuc51.dll.a ../lib/libicuuc.dll.a
-ln -fsr ../lib/libicule51.dll.a ../lib/libicule.dll.a
-ln -fsr ../lib/libicutu51.dll.a ../lib/libicutu.dll.a
-ln -fsr ../lib/libiculx51.dll.a ../lib/libiculx.dll.a
-ln -fsr ../lib/libicutest51.dll.a ../lib/libicutest.dll.a
-ln -fsr ../lib/libicuio51.dll.a ../lib/libicuio.dll.a
+ln -fsr ../lib/libicui18n56.dll.a ../lib/libicui18n.dll.a
+ln -fsr ../lib/libicuuc56.dll.a ../lib/libicuuc.dll.a
+ln -fsr ../lib/libicule56.dll.a ../lib/libicule.dll.a
+ln -fsr ../lib/libicutu56.dll.a ../lib/libicutu.dll.a
+ln -fsr ../lib/libiculx56.dll.a ../lib/libiculx.dll.a
+ln -fsr ../lib/libicutest56.dll.a ../lib/libicutest.dll.a
+ln -fsr ../lib/libicuio56.dll.a ../lib/libicuio.dll.a
 
 # libdb-devel
 ln -fsr ../lib/libdb-5.3.a ../lib/libdb.a
@@ -240,8 +240,11 @@ ln -fsr ../../opt/bin/x86_64-w64-mingw32-strip.exe ../../opt/x86_64-w64-mingw32/
 
 # mingw-w64-cross-gcc
 rm -f /opt/bin/i686-w64-mingw32-*.exe
+rm -f /opt/bin/armv7-w64-mingw32-*.exe
 rm -fr /opt/i686-w64-mingw32
+rm -fr /opt/armv7-w64-mingw32
 rm -fr /opt/lib/gcc/i686-w64-mingw32
+rm -fr /opt/lib/gcc/armv7-w64-mingw32
 rm -f /opt/bin/x86_64-w64-mingw32-gfortran.exe
 rm -f /opt/lib/gcc/x86_64-w64-mingw32/4.9.2/{f951.exe,libgfortran.a,libgfortran.dll.a,libgfortran-3.dll,libcaf_single.a,libgfortranbegin.a,libstdc++.dll.a-gdb.py,libgfortran.spec}
 rm -fr /opt/lib/gcc/x86_64-w64-mingw32/4.9.2/finclude
