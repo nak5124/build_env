@@ -13,10 +13,12 @@ else
     ' | cmd > /dev/null
 fi
 
-if [ -f /tmp/win32applist ] ; then
-    sed -i "s/${1}//gi" /tmp/win32applist
-    sed -i '/^$/d' /tmp/win32applist
-    if [ ! -s /tmp/win32applist ] ; then
-        rm -f /tmp/win32applist
+declare -r applist=/tmp/win32applist_"$$"
+
+if [ -f "${applist}" ] ; then
+    sed -i "s/${1}//gi" "${applist}"
+    sed -i '/^$/d' "${applist}"
+    if [ ! -s "${applist}" ] ; then
+        rm -f "${applist}"
     fi
 fi
