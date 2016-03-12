@@ -25,8 +25,8 @@ if [ -z "${MSYSTEM}" ]; then
 fi
 
 CMD_PATH="${PATH}"
-VC32_DIR="/c/progra~2/Microsoft Visual Studio 12.0/VC/bin"
-VC64_DIR="/c/progra~2/Microsoft Visual Studio 12.0/VC/bin/amd64"
+VC32_DIR="/c/progra~2/Microsoft Visual Studio 14.0/VC/bin"
+VC64_DIR="/c/progra~2/Microsoft Visual Studio 14.0/VC/bin/amd64"
 INNO_DIR="/c/progra~2/Inno Setup 5"
 MSYS2_PATH="/usr/local/bin:/usr/bin:/bin"
 MANPATH="/usr/local/man:/usr/share/man:/usr/man:/share/man"
@@ -74,13 +74,15 @@ SYSCONFDIR="${SYSCONFDIR:=/etc}"
 # them set to the default Windows temporary directory or unset
 # can have unexpected consequences for msys2 apps, so we define
 # our own to match GNU/Linux behaviour.
-# ORIGINAL_TMP=$TMP
-# ORIGINAL_TEMP=$TEMP
-# unset TMP TEMP
-# tmp=$(cygpath -w "$ORIGINAL_TMP" 2> /dev/null)
-# temp=$(cygpath -w "$ORIGINAL_TEMP" 2> /dev/null)
+ORIGINAL_TMP=$TMP
+ORIGINAL_TEMP=$TEMP
+unset TMP TEMP
+tmp=$(cygpath -w "$ORIGINAL_TMP" 2> /dev/null)
+temp=$(cygpath -w "$ORIGINAL_TEMP" 2> /dev/null)
 TMP="/tmp"
 TEMP="/tmp"
+TMP_SYS=${tmp}/../system
+TEMP_SYS=${temp}/../system
 
 # Define default printer
 p='/proc/registry/HKEY_CURRENT_USER/Software/Microsoft/Windows NT/CurrentVersion/Windows/Device'

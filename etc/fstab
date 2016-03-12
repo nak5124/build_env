@@ -4,5 +4,6 @@
 # DO NOT REMOVE NEXT LINE. It remove cygdrive prefix from path
 none / cygdrive binary,posix=0,noacl,user 0 0
 none /tmp usertemp binary,posix=0,noacl,user 0 0
+e:/tmp/system /systmp ntfs binary,posix=0,noacl,user 0 0
 /usr/lib /lib none bind
-f:/OneDrive/Nukadoko/msys2/var /var ntfs binary,posix=0,noacl,user 0 0
+d:/OneDrive/Nukadoko/msys2/var /var ntfs binary,posix=0,noacl,user 0 0
