@@ -13,6 +13,17 @@ function ls_ts() {
     find "${_dir}" -maxdepth 1 -mindepth 1 -type f -name "*.ts" -mtime -5 -printf "%TY-%Tm-%Td %TH:%TM '%p'\n" | sort -r
 }
 
+function sl() {
+    local -r _rand=$(awk 'BEGIN{srand();print rand()}')
+    local -r _ret=$(echo "${_rand} > 0.5" | bc)
+
+    if [ $_ret -eq 0 ]; then
+        erutaso -Fa
+    else
+        pyonpyon -Fa
+    fi
+}
+
 # for makepkg
 function addpkg() {
     local -r _pkgfile="${1}"
