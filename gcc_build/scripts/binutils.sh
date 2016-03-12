@@ -41,6 +41,10 @@ function prepare_binutils() {
     apply_patch_bu "${PATCHES_DIR}"/binutils/0006-libiberty-lrealpath.c-Don-t-make-a-lowercase-backsla.patch false
     # Ray's patch
     apply_patch_bu "${PATCHES_DIR}"/binutils/0007-bfd-Increase-_bfd_coff_max_nscns-to-65279.patch
+    # Fixes for NT weak external (https://sourceware.org/ml/binutils/2015-10/msg00234.html).
+    apply_patch_bu "${PATCHES_DIR}"/binutils/0008-coff-linker-weak-nt-externals.patch
+    apply_patch_bu "${PATCHES_DIR}"/binutils/0009-gas-aux-nt-weak-externals.patch
+    apply_patch_bu "${PATCHES_DIR}"/binutils/0010-objcopy-weak-nt-externals2local.patch
 
     perl -pi -e 's/_stat\n/_stat64\n/g' "${BUILD_DIR}"/binutils/src/binutils-${BINUTILS_VER}/ltmain.sh
 

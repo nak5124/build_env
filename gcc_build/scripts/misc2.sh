@@ -58,7 +58,7 @@ function replace_config() {
     if [ ! -d "${BUILD_DIR}"/autotools/config/src/config ]; then
         echo '===> Cloning config git repo...'
         pushd "${BUILD_DIR}"/autotools/config/src > /dev/null
-        dl_files git git://git.sv.gnu.org/config.git
+        dl_files git git://git.sv.gnu.org/config.git config
         popd > /dev/null # "${BUILD_DIR}"/autotools/config/src
         echo 'done'
     fi

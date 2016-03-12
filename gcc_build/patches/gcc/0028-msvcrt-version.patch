@@ -1,0 +1,16 @@
+--- a/gcc/config/i386/mingw-w64.h
++++ b/gcc/config/i386/mingw-w64.h
+@@ -24,6 +24,13 @@
+ #undef CPP_SPEC
+ #define CPP_SPEC "%{posix:-D_POSIX_SOURCE} %{mthreads:-D_MT} " \
+ 		 "%{municode:-DUNICODE} " \
++		 "%{mcrtdll=msvcrt|!mcrtdll=*:-D__MSVCRT_VERSION__=0x0700} " \
++		 "%{mcrtdll=msvcr80:-D__MSVCRT_VERSION__=0x0800} " \
++		 "%{mcrtdll=msvcr90:-D__MSVCRT_VERSION__=0x0900} " \
++		 "%{mcrtdll=msvcr100:-D__MSVCRT_VERSION__=0x1000} " \
++		 "%{mcrtdll=msvcr110:-D__MSVCRT_VERSION__=0x1100} " \
++		 "%{mcrtdll=msvcr120:-D__MSVCRT_VERSION__=0x1200} " \
++		 "%{mcrtdll=ucrtbase:-D__MSVCRT_VERSION__=0x1400 -D__UCRT__} " \
+ 		 PTHREAD_CPP_SPEC
+
+ #undef STARTFILE_SPEC

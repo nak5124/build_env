@@ -86,11 +86,13 @@ function dl_files() {
 
     case "${_prtcl}" in
         ftp )
-            local _curl_opt=(--fail --continue-at - --ftp-pasv --retry 10 --retry-delay 5 --speed-limit 1 --speed-time 30)
+# --retry 10 --retry-delay 5
+            local _curl_opt=(--fail --continue-at - --ftp-pasv --speed-limit 1 --speed-time 30)
             _is_curl=true
             ;;
         http | https )
-            local _curl_opt=(--fail --location --max-redirs 2 --continue-at - --retry 10 --retry-delay 5
+# --retry 10 --retry-delay 5
+            local _curl_opt=(--fail --location --max-redirs 2 --continue-at -
                              --speed-limit 1 --speed-time 30)
             _is_curl=true
             ;;

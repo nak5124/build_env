@@ -56,7 +56,7 @@ function prepare_gcc() {
     # C++
     apply_patch_gcc "${PATCHES_DIR}"/gcc/0010-gcc-Make-xmmintrin-header-cplusplus-compatible.patch       false
     # For i386 target build.
-    apply_patch_gcc "${PATCHES_DIR}"/gcc/0011-Fixup-for-dw2-eh.patch                                     false
+    # apply_patch_gcc "${PATCHES_DIR}"/gcc/0011-Fixup-for-dw2-eh.patch                                     false
     # PR14940 (https://gcc.gnu.org/bugzilla/show_bug.cgi?id=14940).
     apply_patch_gcc "${PATCHES_DIR}"/gcc/0012-gcc-Fix-using-large-pch.patch                              false
     # To build EXEs linked dynamically with libraries.
@@ -76,11 +76,11 @@ function prepare_gcc() {
     # when building executables, not DLLs. Add --large-address-aware and --tsaware.
     apply_patch_gcc "${PATCHES_DIR}"/gcc/0020-MinGW-When-building-executables-not-DLLs.-Add-large-.patch false
     # Enable nxcompat and (HE)ASLR by default.
-    apply_patch_gcc "${PATCHES_DIR}"/gcc/0021-MinGW-Enable-nxcompat-and-HE-ASLR-by-default.patch         false
+    # apply_patch_gcc "${PATCHES_DIR}"/gcc/0021-MinGW-Enable-nxcompat-and-HE-ASLR-by-default.patch         false
     # Assume that target is windows 7 or later. XP has died, and nobody uses vista.
-    apply_patch_gcc "${PATCHES_DIR}"/gcc/0022-MinGW-w64-Assume-that-target-is-windows-7-or-later.-.patch false
+    # apply_patch_gcc "${PATCHES_DIR}"/gcc/0022-MinGW-w64-Assume-that-target-is-windows-7-or-later.-.patch false
     # Disable automatic image base calculation.
-    apply_patch_gcc "${PATCHES_DIR}"/gcc/0023-MinGW-Disable-automatic-image-base-calculation.patch       false
+    # apply_patch_gcc "${PATCHES_DIR}"/gcc/0023-MinGW-Disable-automatic-image-base-calculation.patch       false
     # Shut up GCC -Wformat.
     apply_patch_gcc "${PATCHES_DIR}"/gcc/0024-MinGW-Use-__MINGW_PRINTF_FORMAT-for-__USE_MINGW_ANSI.patch false
     # https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=792909
@@ -89,6 +89,8 @@ function prepare_gcc() {
     apply_patch_gcc "${PATCHES_DIR}"/gcc/0026-gcc-diagnostic-color.c-Enable-color-diagnostic-on-Mi.patch false
     # PR65704 (https://gcc.gnu.org/bugzilla/show_bug.cgi?id=65704).
     apply_patch_gcc "${PATCHES_DIR}"/gcc/0027-gcc-master-Cherry-pick-adace2e-and-26befab.patch           false
+    #
+    apply_patch_gcc "${PATCHES_DIR}"/gcc/0028-msvcrt-version.patch                                       false
 
     echo 'done'
 
@@ -362,11 +364,12 @@ function build_gcc() {
                 --with-plugin-ld=ld.bfd                                           \
                 --with-system-zlib                                                \
                 --with-diagnostics-color=auto-if-env                              \
-                --with-arch=x86-64                                                \
-                --with-tune=generic                                               \
+                --with-tune=intel                                                 \
                 --with-fpmath=sse                                                 \
                 > "${LOGS_DIR}"/gcc/gcc_config_${_arch}.log 2>&1 || exit 1
             echo 'done'
+
+                # --with-arch=x86-64                                                \
 
             # Make.
             printf "===> Making GCC %s...\n" $_arch
@@ -426,12 +429,6 @@ BEGIN
   "  </trustInfo>\n"
   "  <compatibility xmlns=""urn:schemas-microsoft-com:compatibility.v1"">\n"
   "    <application>\n"
-  "      <!--The ID below indicates application support for Windows 7 -->\n"
-  "      <supportedOS Id=""{35138b9a-5d96-4fbd-8e2d-a2440225f93a}""/>\n"
-  "      <!--The ID below indicates application support for Windows 8 -->\n"
-  "      <supportedOS Id=""{4a2f28e3-53b9-4441-ba9c-d69d4a4a6e38}""/>\n"
-  "      <!--The ID below indicates application support for Windows 8.1 -->\n"
-  "      <supportedOS Id=""{1f676c76-80e1-4239-95bb-83d0f6d0da78}""/> \n"
   "      <!--The ID below indicates application support for Windows 10 -->\n"
   "      <supportedOS Id=""{8e0f7a12-bfb3-4fe8-b9a5-48fd50a15a9a}""/> \n"
   "    </application>\n"

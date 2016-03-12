@@ -1,14 +1,14 @@
-From a11f767fc776eff7941c381ddfb0cc5a7ecb0486 Mon Sep 17 00:00:00 2001
+From a8cbd9ae0ec41086d5d8202dce8e9b71bd4c9b27 Mon Sep 17 00:00:00 2001
 From: Yuta NAKAI <nak5124@live.jp>
 Date: Sun, 24 May 2015 22:04:15 +0900
-Subject: [PATCH 2/3] Fix LFS on MinGW-w64.
+Subject: [PATCH 2/2] Fix LFS on MinGW-w64.
 
 ---
  zconf.h.in | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/zconf.h.in b/zconf.h.in
-index e919175..e53866f 100644
+index 55488af..3085796 100644
 --- a/zconf.h.in
 +++ b/zconf.h.in
 @@ -147,7 +147,7 @@ typedef void       *voidp;
@@ -21,5 +21,5 @@ index e919175..e53866f 100644
  #endif
  
 -- 
-2.4.1
+2.6.3
 

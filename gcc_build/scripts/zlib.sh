@@ -31,8 +31,6 @@ function download_zlib_src() {
     apply_patch_z "${PATCHES_DIR}"/zlib/0001-Improve-buildsystem-for-MinGW-w64.patch true
     # LFS
     apply_patch_z "${PATCHES_DIR}"/zlib/0002-Fix-LFS-on-MinGW-w64.patch              false
-    # To build toolchain.
-    apply_patch_z "${PATCHES_DIR}"/zlib/0003-Use-typedef-instead-of-define.patch     false
 
     popd > /dev/null # "${BUILD_DIR}"/zlib/src/zlib-$ZLIB_VER
     echo 'done'

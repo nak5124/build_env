@@ -34,7 +34,7 @@ function prepare_isl() {
     # Add -no-undefined to libisl_la_LDFLAGS.
     apply_patch_isl "${PATCHES_DIR}"/isl/0001-isl-no-undefined.patch                       true
     # Shut up GCC warning.
-    apply_patch_isl "${PATCHES_DIR}"/isl/0002-Remove-comma-at-end-of-enumerator-list.patch false
+#    apply_patch_isl "${PATCHES_DIR}"/isl/0002-Remove-comma-at-end-of-enumerator-list.patch false
 
     echo 'done'
 
