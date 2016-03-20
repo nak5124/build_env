@@ -298,7 +298,7 @@ function prepare_libtool() {
     apply_patch_lt "${PATCHES_DIR}"/libtool/0006-Remove-useless-define.patch                     false
 
     # Disable automatic image base calculation.
-    sed -i 's/enable-auto-image-base//g' \
+    sed -i 's/$wl--enable-auto-image-base //g' \
         "${BUILD_DIR}"/autotools/libtool/src/libtool-${LIBTOOL_VER}/{configure,m4/libtool.m4}
 
     echo 'done'
