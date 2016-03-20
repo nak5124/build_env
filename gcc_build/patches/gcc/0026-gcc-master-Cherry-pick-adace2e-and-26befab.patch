@@ -1,17 +1,17 @@
-From cafa96b560b5ad202bf62fd19db3916758a89ef5 Mon Sep 17 00:00:00 2001
+From a0b84792bbde063dcf5f4f96a475127adda06369 Mon Sep 17 00:00:00 2001
 From: Yuta Nakai <nak5124@live.jp>
-Date: Sun, 6 Sep 2015 09:43:11 +0900
-Subject: [PATCH 27/27] gcc-master: Cherry pick adace2e and 26befab.
+Date: Sun, 20 Mar 2016 15:52:02 +0900
+Subject: [PATCH 26/29] gcc-master: Cherry pick adace2e and 26befab.
 
 Add portable timed_mutex and recursive_timed_mutex.
 ---
  libstdc++-v3/include/Makefile.am            |   1 +
  libstdc++-v3/include/Makefile.in            |   1 +
- libstdc++-v3/include/bits/mutex.h           | 360 ++++++++++++++++++++++++
+ libstdc++-v3/include/bits/mutex.h           | 360 +++++++++++++++++++++++
  libstdc++-v3/include/bits/shared_ptr_base.h |  27 +-
  libstdc++-v3/include/std/condition_variable |   2 +-
- libstdc++-v3/include/std/mutex              | 419 ++++++++++------------------
- 6 files changed, 525 insertions(+), 285 deletions(-)
+ libstdc++-v3/include/std/mutex              | 427 ++++++++++------------------
+ 6 files changed, 524 insertions(+), 294 deletions(-)
  create mode 100644 libstdc++-v3/include/bits/mutex.h
 
 diff --git a/libstdc++-v3/include/Makefile.am b/libstdc++-v3/include/Makefile.am
@@ -405,7 +405,7 @@ index 0000000..43f5b0b
 +
 +#endif // _GLIBCXX_MUTEX_H
 diff --git a/libstdc++-v3/include/bits/shared_ptr_base.h b/libstdc++-v3/include/bits/shared_ptr_base.h
-index 8c3af12..61d6721 100644
+index d71df31..9c46186 100644
 --- a/libstdc++-v3/include/bits/shared_ptr_base.h
 +++ b/libstdc++-v3/include/bits/shared_ptr_base.h
 @@ -49,6 +49,7 @@
@@ -526,7 +526,7 @@ index f7da017..9e757d1 100644
  #include <bits/alloc_traits.h>
  #include <bits/allocator.h>
 diff --git a/libstdc++-v3/include/std/mutex b/libstdc++-v3/include/std/mutex
-index deb85df..28395e4 100644
+index b80a8a0..5edcdb0 100644
 --- a/libstdc++-v3/include/std/mutex
 +++ b/libstdc++-v3/include/std/mutex
 @@ -41,10 +41,11 @@
@@ -595,7 +595,7 @@ index deb85df..28395e4 100644
 -   * @{
 -   */
 -
--  /// mutex
+-  /// The standard mutex type.
 -  class mutex : private __mutex_base
 -  {
 -  public:
@@ -639,10 +639,10 @@ index deb85df..28395e4 100644
 -    { return &_M_mutex; }
 -  };
 -
-   /// recursive_mutex
+   /// The standard recursive mutex type.
    class recursive_mutex : private __recursive_mutex_base
    {
-@@ -347,230 +276,178 @@ _GLIBCXX_BEGIN_NAMESPACE_VERSION
+@@ -347,239 +276,177 @@ _GLIBCXX_BEGIN_NAMESPACE_VERSION
      native_handle()
      { return &_M_mutex; }
    };
@@ -651,33 +651,14 @@ index deb85df..28395e4 100644
 -
 -  /// Do not acquire ownership of the mutex.
 -  struct defer_lock_t { };
--
++#else // !_GTHREAD_USE_MUTEX_TIMEDLOCK
+ 
 -  /// Try to acquire ownership of the mutex without blocking.
 -  struct try_to_lock_t { };
 -
 -  /// Assume the calling thread has already obtained mutex ownership
 -  /// and manage it.
 -  struct adopt_lock_t { };
--
--  constexpr defer_lock_t	defer_lock { };
--  constexpr try_to_lock_t	try_to_lock { };
--  constexpr adopt_lock_t	adopt_lock { };
- 
--  /// @brief  Scoped lock idiom.
--  // Acquire the mutex here with a constructor call, then release with
--  // the destructor call in accordance with RAII style.
--  template<typename _Mutex>
--    class lock_guard
--    {
--    public:
--      typedef _Mutex mutex_type;
--
--      explicit lock_guard(mutex_type& __m) : _M_device(__m)
--      { _M_device.lock(); }
-+#else // !_GTHREAD_USE_MUTEX_TIMEDLOCK
- 
--      lock_guard(mutex_type& __m, adopt_lock_t) : _M_device(__m)
--      { } // calling thread owns mutex
 +  /// timed_mutex
 +  class timed_mutex
 +  {
@@ -685,40 +666,67 @@ index deb85df..28395e4 100644
 +    condition_variable	_M_cv;
 +    bool		_M_locked = false;
  
--      ~lock_guard()
--      { _M_device.unlock(); }
+-  /// Tag used to prevent a scoped lock from acquiring ownership of a mutex.
+-  constexpr defer_lock_t	defer_lock { };
 +  public:
  
--      lock_guard(const lock_guard&) = delete;
--      lock_guard& operator=(const lock_guard&) = delete;
+-  /// Tag used to prevent a scoped lock from blocking if a mutex is locked.
+-  constexpr try_to_lock_t	try_to_lock { };
 +    timed_mutex() = default;
 +    ~timed_mutex() { _GLIBCXX_DEBUG_ASSERT( !_M_locked ); }
  
--    private:
--      mutex_type&  _M_device;
--    };
+-  /// Tag used to make a scoped lock take ownership of a locked mutex.
+-  constexpr adopt_lock_t	adopt_lock { };
 +    timed_mutex(const timed_mutex&) = delete;
 +    timed_mutex& operator=(const timed_mutex&) = delete;
  
--  /// unique_lock
+-  /** @brief A movable scoped lock type.
+-   *
+-   * A unique_lock controls mutex ownership within a scope. Ownership of the
+-   * mutex can be delayed until after construction and can be transferred
+-   * to another unique_lock by move construction or move assignment. If a
+-   * mutex lock is owned when the destructor runs ownership will be released.
+-   */
 -  template<typename _Mutex>
--    class unique_lock
+-    class lock_guard
 +    void
 +    lock()
      {
 -    public:
 -      typedef _Mutex mutex_type;
+-
+-      explicit lock_guard(mutex_type& __m) : _M_device(__m)
+-      { _M_device.lock(); }
+-
+-      lock_guard(mutex_type& __m, adopt_lock_t) : _M_device(__m)
+-      { } // calling thread owns mutex
+-
+-      ~lock_guard()
+-      { _M_device.unlock(); }
+-
+-      lock_guard(const lock_guard&) = delete;
+-      lock_guard& operator=(const lock_guard&) = delete;
+-
+-    private:
+-      mutex_type&  _M_device;
+-    };
 +      unique_lock<mutex> __lk(_M_mut);
 +      _M_cv.wait(__lk, [&]{ return !_M_locked; });
 +      _M_locked = true;
 +    }
  
+-  /// unique_lock
+-  template<typename _Mutex>
+-    class unique_lock
++    bool
++    try_lock()
+     {
+-    public:
+-      typedef _Mutex mutex_type;
+-
 -      unique_lock() noexcept
 -      : _M_device(0), _M_owns(false)
 -      { }
-+    bool
-+    try_lock()
-+    {
 +      lock_guard<mutex> __lk(_M_mut);
 +      if (_M_locked)
 +	return false;
@@ -1012,5 +1020,5 @@ index deb85df..28395e4 100644
    template<typename _Lock>
      inline unique_lock<_Lock>
 -- 
-2.6.2
+2.7.3
 

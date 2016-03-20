@@ -1,7 +1,7 @@
-From fff5992810f3d217aa3122f6c1da003a1459e383 Mon Sep 17 00:00:00 2001
+From 365dfa54af3999ebf6e92e8014746b53e91dcce0 Mon Sep 17 00:00:00 2001
 From: Yuta NAKAI <nak5124@live.jp>
 Date: Sun, 12 Apr 2015 14:40:59 +0900
-Subject: [PATCH 19/27] mingw: Dynamically linking to libintl and libiconv.
+Subject: [PATCH 19/29] mingw: Dynamically linking to libintl and libiconv.
 
 ---
  gcc/configure          |  8 ++++----
@@ -11,7 +11,7 @@ Subject: [PATCH 19/27] mingw: Dynamically linking to libintl and libiconv.
  4 files changed, 20 insertions(+), 20 deletions(-)
 
 diff --git a/gcc/configure b/gcc/configure
-index e9ed7ed..b69292b 100755
+index ef6798e..269ef16 100755
 --- a/gcc/configure
 +++ b/gcc/configure
 @@ -10107,9 +10107,9 @@ fi
@@ -119,10 +119,10 @@ index 096ac8b..284dbf8 100755
                          found_la="$dir/lib$name.la"
                        fi
 diff --git a/libstdc++-v3/configure b/libstdc++-v3/configure
-index ba59fba..c452f46 100755
+index 8cd4c76..3595c5c 100755
 --- a/libstdc++-v3/configure
 +++ b/libstdc++-v3/configure
-@@ -27390,9 +27390,9 @@ fi
+@@ -27452,9 +27452,9 @@ fi
                  found_la="$additional_libdir/lib$name.la"
                fi
              else
@@ -134,7 +134,7 @@ index ba59fba..c452f46 100755
                  if test -f "$additional_libdir/lib$name.la"; then
                    found_la="$additional_libdir/lib$name.la"
                  fi
-@@ -27420,9 +27420,9 @@ fi
+@@ -27482,9 +27482,9 @@ fi
                        found_la="$dir/lib$name.la"
                      fi
                    else
@@ -147,5 +147,5 @@ index ba59fba..c452f46 100755
                          found_la="$dir/lib$name.la"
                        fi
 -- 
-2.6.2
+2.7.3
 

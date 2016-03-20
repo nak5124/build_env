@@ -1,6 +1,17 @@
+From 51955ab43434d0297fc32b5c8bf2871d32d01b7a Mon Sep 17 00:00:00 2001
+From: Yuta Nakai <nak5124@live.jp>
+Date: Sun, 20 Mar 2016 15:53:32 +0900
+Subject: [PATCH 27/29] MinGW-w64: Define __MSVCRT_VERSION__.
+
+---
+ gcc/config/i386/mingw-w64.h | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/gcc/config/i386/mingw-w64.h b/gcc/config/i386/mingw-w64.h
+index 85e83a7..25c08ea 100644
 --- a/gcc/config/i386/mingw-w64.h
 +++ b/gcc/config/i386/mingw-w64.h
-@@ -24,6 +24,13 @@
+@@ -24,6 +24,13 @@ along with GCC; see the file COPYING3.  If not see
  #undef CPP_SPEC
  #define CPP_SPEC "%{posix:-D_POSIX_SOURCE} %{mthreads:-D_MT} " \
  		 "%{municode:-DUNICODE} " \
@@ -12,5 +23,8 @@
 +		 "%{mcrtdll=msvcr120:-D__MSVCRT_VERSION__=0x1200} " \
 +		 "%{mcrtdll=ucrtbase:-D__MSVCRT_VERSION__=0x1400 -D__UCRT__} " \
  		 PTHREAD_CPP_SPEC
-
+ 
  #undef STARTFILE_SPEC
+-- 
+2.7.3
+

@@ -1,0 +1,29 @@
+--- libtool-2.4.6/build-aux/ltmain.in.old	2016-03-19 08:03:03.512481100 +0900
++++ libtool-2.4.6/build-aux/ltmain.in	2016-03-20 07:10:31.847330600 +0900
+@@ -3654,26 +3654,6 @@
+ /* #elif defined other_platform || defined ... */
+ #endif
+ 
+-/* portability defines, excluding path handling macros */
+-#if defined _MSC_VER
+-# define setmode _setmode
+-# define stat    _stat
+-# define chmod   _chmod
+-# define getcwd  _getcwd
+-# define putenv  _putenv
+-# define S_IXUSR _S_IEXEC
+-#elif defined __MINGW32__
+-# define setmode _setmode
+-# define stat    _stat
+-# define chmod   _chmod
+-# define getcwd  _getcwd
+-# define putenv  _putenv
+-#elif defined __CYGWIN__
+-# define HAVE_SETENV
+-# define FOPEN_WB "wb"
+-/* #elif defined other platforms ... */
+-#endif
+-
+ #if defined PATH_MAX
+ # define LT_PATHMAX PATH_MAX
+ #elif defined MAXPATHLEN

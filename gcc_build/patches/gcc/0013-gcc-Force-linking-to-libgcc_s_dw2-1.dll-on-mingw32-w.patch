@@ -1,7 +1,7 @@
-From a316913db7245c870e02e1591d4fc33fd7c19402 Mon Sep 17 00:00:00 2001
+From 32c9bc14ee2d2850fa1240009dab2a6df204c295 Mon Sep 17 00:00:00 2001
 From: Yuta NAKAI <nak5124@live.jp>
 Date: Sat, 13 Jun 2015 15:58:15 +0900
-Subject: [PATCH 13/27] gcc: Force linking to libgcc_s_dw2-1.dll on mingw32
+Subject: [PATCH 13/29] gcc: Force linking to libgcc_s_dw2-1.dll on mingw32
  with dw2 eh.
 
 ---
@@ -61,5 +61,5 @@ index 47e12e7..9afe794 100644
    } "
  #else
 -- 
-2.6.2
+2.7.3
 

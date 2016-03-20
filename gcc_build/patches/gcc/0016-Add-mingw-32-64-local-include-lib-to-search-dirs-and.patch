@@ -1,7 +1,7 @@
-From 1fcd6499ab41e387f7e2efecca6518ff999ff092 Mon Sep 17 00:00:00 2001
+From 85446108cfb7c0a0db651a70b3288b52babba4ce Mon Sep 17 00:00:00 2001
 From: Yuta NAKAI <nak5124@live.jp>
 Date: Sun, 12 Apr 2015 14:35:17 +0900
-Subject: [PATCH 16/27] Add /mingw{32,64}/local/{include,lib} to search dirs,
+Subject: [PATCH 16/29] Add /mingw{32,64}/local/{include,lib} to search dirs,
  and make relocatable perfectly.
 
 ---
@@ -122,5 +122,5 @@ index d956c36..38ae524 100644
  
        /* Sysrooted prefixes are relocated because target_system_root is
 -- 
-2.6.2
+2.7.3
 

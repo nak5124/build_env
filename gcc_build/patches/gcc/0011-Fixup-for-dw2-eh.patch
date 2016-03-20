@@ -1,7 +1,7 @@
-From 204182c5f532088b59f966fb13b3839ca7390713 Mon Sep 17 00:00:00 2001
+From ca4ecb33d79c799321d9b4a3ed629bf645581f37 Mon Sep 17 00:00:00 2001
 From: Yuta NAKAI <nak5124@live.jp>
 Date: Mon, 29 Jun 2015 20:55:30 +0900
-Subject: [PATCH 11/27] Fixup for dw2 eh.
+Subject: [PATCH 11/29] Fixup for dw2 eh.
 
 ---
  libgcc/libgcc2.c | 6 +++---
@@ -39,5 +39,5 @@ index c737620..e5ab209 100644
      static struct object object;
      __register_frame_info (__EH_FRAME_BEGIN__, &object);
 -- 
-2.6.2
+2.7.3
 

@@ -1,7 +1,7 @@
-From 5fd9264c37a2593293bc27fc242072a2fd02b6de Mon Sep 17 00:00:00 2001
+From 0620af638de620920d869cfebf249ed2e6db9b64 Mon Sep 17 00:00:00 2001
 From: Yuta NAKAI <nak5124@live.jp>
 Date: Sat, 4 Jul 2015 18:50:07 +0900
-Subject: [PATCH 02/27] libiberty: Modify Makefile for mingw-w64.
+Subject: [PATCH 02/29] libiberty: Modify Makefile for mingw-w64.
 
 ---
  libiberty/Makefile.in | 14 +++++++-------
@@ -123,5 +123,5 @@ index bfec5b6..e6ce642 100755
  esac
  
 -- 
-2.6.2
+2.7.3
 

@@ -1,7 +1,7 @@
-From a8ab411fbcd4803b502df6cbf52fbc7058e95f8b Mon Sep 17 00:00:00 2001
+From fcbe86078c14b12cfc064fbfb1f0ece27dbcc51c Mon Sep 17 00:00:00 2001
 From: Yuta NAKAI <nak5124@live.jp>
 Date: Mon, 20 Jul 2015 15:20:16 +0900
-Subject: [PATCH 25/27] config/i386/mingw32.h: Fix SPEC_PTHREAD2 definition.
+Subject: [PATCH 24/29] config/i386/mingw32.h: Fix SPEC_PTHREAD2 definition.
 
 ---
  gcc/config/i386/mingw-w64.h |  6 ++----
@@ -9,7 +9,7 @@ Subject: [PATCH 25/27] config/i386/mingw32.h: Fix SPEC_PTHREAD2 definition.
  2 files changed, 12 insertions(+), 12 deletions(-)
 
 diff --git a/gcc/config/i386/mingw-w64.h b/gcc/config/i386/mingw-w64.h
-index f0cfc2d..2a00493 100644
+index 60ac0a5..85e83a7 100644
 --- a/gcc/config/i386/mingw-w64.h
 +++ b/gcc/config/i386/mingw-w64.h
 @@ -24,8 +24,7 @@ along with GCC; see the file COPYING3.  If not see
@@ -33,7 +33,7 @@ index f0cfc2d..2a00493 100644
       "%{fvtable-verify=preinit:-lvtv -lpsapi; \
          fvtable-verify=std:-lvtv -lpsapi} " \
 diff --git a/gcc/config/i386/mingw32.h b/gcc/config/i386/mingw32.h
-index 067dd09..e6474ae 100644
+index 68a736c..d95bd0c 100644
 --- a/gcc/config/i386/mingw32.h
 +++ b/gcc/config/i386/mingw32.h
 @@ -53,12 +53,16 @@ along with GCC; see the file COPYING3.  If not see
@@ -57,7 +57,7 @@ index 067dd09..e6474ae 100644
  #endif
  
  #undef SUB_LINK_ENTRY32
-@@ -98,14 +102,12 @@ along with GCC; see the file COPYING3.  If not see
+@@ -82,14 +86,12 @@ along with GCC; see the file COPYING3.  If not see
  
  #undef CPP_SPEC
  #define CPP_SPEC "%{posix:-D_POSIX_SOURCE} %{mthreads:-D_MT} " \
@@ -75,5 +75,5 @@ index 067dd09..e6474ae 100644
       "%{fvtable-verify=preinit:-lvtv -lpsapi; \
          fvtable-verify=std:-lvtv -lpsapi} " \
 -- 
-2.6.2
+2.7.3
 

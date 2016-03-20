@@ -1,0 +1,35 @@
+diff --git a/ltmain.sh b/ltmain.sh
+index 9503ec8..988557c 100644
+--- a/ltmain.sh
++++ b/ltmain.sh
+@@ -3380,30 +3380,6 @@ int setenv (const char *, const char *, int);
+ /* #elif defined (other platforms) ... */
+ #endif
+ 
+-/* portability defines, excluding path handling macros */
+-#if defined(_MSC_VER)
+-# define setmode _setmode
+-# define stat    _stat
+-# define chmod   _chmod
+-# define getcwd  _getcwd
+-# define putenv  _putenv
+-# define S_IXUSR _S_IEXEC
+-# ifndef _INTPTR_T_DEFINED
+-#  define _INTPTR_T_DEFINED
+-#  define intptr_t int
+-# endif
+-#elif defined(__MINGW32__)
+-# define setmode _setmode
+-# define stat    _stat
+-# define chmod   _chmod
+-# define getcwd  _getcwd
+-# define putenv  _putenv
+-#elif defined(__CYGWIN__)
+-# define HAVE_SETENV
+-# define FOPEN_WB "wb"
+-/* #elif defined (other platforms) ... */
+-#endif
+-
+ #if defined(PATH_MAX)
+ # define LT_PATHMAX PATH_MAX
+ #elif defined(MAXPATHLEN)

@@ -1,0 +1,43 @@
+diff --git a/ld/emultempl/pe.em b/ld/emultempl/pe.em
+index bf146f6..4e37660 100644
+--- a/ld/emultempl/pe.em
++++ b/ld/emultempl/pe.em
+@@ -406,16 +406,17 @@ static definfo init[] =
+   D(ImageBase, "___ImageBase", NT_EXE_IMAGE_BASE, TRUE),
+   D(SectionAlignment,"__section_alignment__", PE_DEF_SECTION_ALIGNMENT, FALSE),
+   D(FileAlignment,"__file_alignment__", PE_DEF_FILE_ALIGNMENT, FALSE),
+-  D(MajorOperatingSystemVersion,"__major_os_version__", 4, FALSE),
++  D(MajorOperatingSystemVersion,"__major_os_version__", 10, FALSE),
+   D(MinorOperatingSystemVersion,"__minor_os_version__", 0, FALSE),
+   D(MajorImageVersion,"__major_image_version__", 1, FALSE),
+   D(MinorImageVersion,"__minor_image_version__", 0, FALSE),
+ #if defined(TARGET_IS_armpe)  || defined(TARGET_IS_arm_wince_pe)
+   D(MajorSubsystemVersion,"__major_subsystem_version__", 3, FALSE),
++  D(MinorSubsystemVersion,"__minor_subsystem_version__", 0, FALSE),
+ #else
+-  D(MajorSubsystemVersion,"__major_subsystem_version__", 4, FALSE),
++  D(MajorSubsystemVersion,"__major_subsystem_version__", 6, FALSE),
++  D(MinorSubsystemVersion,"__minor_subsystem_version__", 2, FALSE),
+ #endif
+-  D(MinorSubsystemVersion,"__minor_subsystem_version__", 0, FALSE),
+   D(Subsystem,"__subsystem__", ${SUBSYSTEM}, FALSE),
+   D(SizeOfStackReserve,"__size_of_stack_reserve__", 0x200000, FALSE),
+   D(SizeOfStackCommit,"__size_of_stack_commit__", 0x1000, FALSE),
+diff --git a/ld/emultempl/pep.em b/ld/emultempl/pep.em
+index ab7c473..cb82da8 100644
+--- a/ld/emultempl/pep.em
++++ b/ld/emultempl/pep.em
+@@ -377,11 +377,11 @@ static definfo init[] =
+   D(ImageBase, "___ImageBase", NT_EXE_IMAGE_BASE, TRUE),
+   D(SectionAlignment,"__section_alignment__", PE_DEF_SECTION_ALIGNMENT, FALSE),
+   D(FileAlignment,"__file_alignment__", PE_DEF_FILE_ALIGNMENT, FALSE),
+-  D(MajorOperatingSystemVersion,"__major_os_version__", 4, FALSE),
++  D(MajorOperatingSystemVersion,"__major_os_version__", 10, FALSE),
+   D(MinorOperatingSystemVersion,"__minor_os_version__", 0, FALSE),
+   D(MajorImageVersion,"__major_image_version__", 0, FALSE),
+   D(MinorImageVersion,"__minor_image_version__", 0, FALSE),
+-  D(MajorSubsystemVersion,"__major_subsystem_version__", 5, FALSE),
++  D(MajorSubsystemVersion,"__major_subsystem_version__", 6, FALSE),
+   D(MinorSubsystemVersion,"__minor_subsystem_version__", 2, FALSE),
+   D(Subsystem,"__subsystem__", ${SUBSYSTEM}, FALSE),
+   D(SizeOfStackReserve,"__size_of_stack_reserve__", 0x200000, FALSE),

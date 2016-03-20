@@ -1,7 +1,7 @@
-From 78afca725a1e499c0b3c92429fca90c0e3fe7acf Mon Sep 17 00:00:00 2001
+From 5cb003c4beadceb9cdde18bb1e59469423131f5c Mon Sep 17 00:00:00 2001
 From: Yuta NAKAI <nak5124@live.jp>
 Date: Sun, 12 Apr 2015 11:48:03 +0900
-Subject: [PATCH 05/27] gthr-posix.h: (std:threads) Add !defined(__MINGW32__)
+Subject: [PATCH 05/29] gthr-posix.h: (std:threads) Add !defined(__MINGW32__)
  guard around __gthrw*.
 
 ---
@@ -22,5 +22,5 @@ index fb59816..733bece 100644
  #  define __gthrw_pragma(pragma)
  # endif
 -- 
-2.6.2
+2.7.3
 

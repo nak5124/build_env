@@ -1,0 +1,27 @@
+From 71a54c238709318f2ff383db3a802aeb6539ed5c Mon Sep 17 00:00:00 2001
+From: Yuta Nakai <nak5124@live.jp>
+Date: Sun, 20 Mar 2016 15:35:41 +0900
+Subject: [PATCH 21/29] MinGW-w64: Enable nxcompat and (HE)ASLR by default.
+
+---
+ gcc/config/i386/mingw-w64.h | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/gcc/config/i386/mingw-w64.h b/gcc/config/i386/mingw-w64.h
+index 3d00bec..60ac0a5 100644
+--- a/gcc/config/i386/mingw-w64.h
++++ b/gcc/config/i386/mingw-w64.h
+@@ -87,6 +87,8 @@ along with GCC; see the file COPYING3.  If not see
+   %{shared: %{mdll: %eshared and mdll are not compatible}} \
+   %{shared: --shared} %{mdll:--dll} \
+   %{static:-Bstatic} %{!static:-Bdynamic} \
+-  %{shared|mdll: " SUB_LINK_ENTRY " --enable-auto-image-base} \
++  --nxcompat --dynamicbase %{" SPEC_64 ":--high-entropy-va} \
++  %{shared|mdll: " SUB_LINK_ENTRY " %{" SPEC_64 ":--image-base 0x180000000} --disable-auto-image-base} \
+   %(shared_libgcc_undefs) \
+-  %{!shared: %{!mdll: %{" SPEC_32 ": --large-address-aware} --tsaware}}"
++  %{!shared: %{!mdll: %{" SPEC_32 ":--large-address-aware} --tsaware \
++  --enable-reloc-section %{" SPEC_64 ":--image-base 0x140000000}}} "
+-- 
+2.7.3
+

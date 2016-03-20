@@ -1,0 +1,69 @@
+From fc9492547dd5b8da121f15f791e4ed19613a48fc Mon Sep 17 00:00:00 2001
+From: Yuta Nakai <nak5124@live.jp>
+Date: Sun, 20 Mar 2016 16:00:38 +0900
+Subject: [PATCH 28/29] Fix issue about record/union attribute packed for
+ ms_struct.
+
+Patch by Kai.
+---
+ gcc/stor-layout.c | 24 +++++++++++++++++++-----
+ 1 file changed, 19 insertions(+), 5 deletions(-)
+
+diff --git a/gcc/stor-layout.c b/gcc/stor-layout.c
+index 5bc8a29..10a8dcb 100644
+--- a/gcc/stor-layout.c
++++ b/gcc/stor-layout.c
+@@ -848,7 +848,10 @@ start_record_layout (tree t)
+   /* If the type has a minimum specified alignment (via an attribute
+      declaration, for example) use it -- otherwise, start with a
+      one-byte alignment.  */
+-  rli->record_align = MAX (BITS_PER_UNIT, TYPE_ALIGN (t));
++  if (TYPE_PACKED (t))
++    rli->record_align = BITS_PER_UNIT;
++  else
++    rli->record_align = MAX (BITS_PER_UNIT, TYPE_ALIGN (t));
+   rli->unpacked_align = rli->record_align;
+   rli->offset_align = MAX (rli->record_align, BIGGEST_ALIGNMENT);
+ 
+@@ -1044,15 +1047,20 @@ update_alignment_for_field (record_layout_info rli, tree field,
+      meaningless.  */
+   if (targetm.ms_bitfield_layout_p (rli->t))
+     {
++      if (rli->t && TYPE_PACKED (rli->t)
++          && (is_bitfield || !DECL_PACKED (field)
++              || DECL_SIZE (field) == NULL_TREE
++              || !integer_zerop (DECL_SIZE (field))))
++        desired_align = BITS_PER_UNIT;
+       /* Here, the alignment of the underlying type of a bitfield can
+ 	 affect the alignment of a record; even a zero-sized field
+ 	 can do this.  The alignment should be to the alignment of
+ 	 the type, except that for zero-size bitfields this only
+ 	 applies if there was an immediately prior, nonzero-size
+ 	 bitfield.  (That's the way it is, experimentally.) */
+-      if ((!is_bitfield && !DECL_PACKED (field))
+-	  || ((DECL_SIZE (field) == NULL_TREE
+-	       || !integer_zerop (DECL_SIZE (field)))
++      else if ((!is_bitfield && !DECL_PACKED (field))
++	       || ((DECL_SIZE (field) == NULL_TREE
++		   || !integer_zerop (DECL_SIZE (field)))
+ 	      ? !DECL_PACKED (field)
+ 	      : (rli->prev_field
+ 		 && DECL_BIT_FIELD_TYPE (rli->prev_field)
+@@ -1505,7 +1513,13 @@ place_field (record_layout_info rli, tree field)
+ 	    }
+ 
+ 	  /* Now align (conventionally) for the new type.  */
+-	  type_align = TYPE_ALIGN (TREE_TYPE (field));
++	  if (!TYPE_PACKED (rli->t))
++	    {
++	      type_align = TYPE_ALIGN (TREE_TYPE (field));
++	      if (DECL_PACKED (field))
++	        type_align = MIN (type_align, BITS_PER_UNIT);
++	      
++	    }
+ 
+ 	  if (maximum_field_alignment != 0)
+ 	    type_align = MIN (type_align, maximum_field_alignment);
+-- 
+2.7.3
+

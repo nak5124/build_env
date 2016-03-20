@@ -35,8 +35,10 @@ function prepare_gcc() {
     # Apply patches.
     printf "===> Applying patches to GCC %s...\n" "${GCC_VER}"
 
+    # Merge gcc-5-branch (37d89c7).
+    apply_patch_gcc "${PATCHES_DIR}"/gcc/0000-merge-gcc-5-branch.patch                                   true
     # hack! - some configure tests for header files using "$CPP $CPPFLAGS"
-    apply_patch_gcc "${PATCHES_DIR}"/gcc/0001-libiberty-gcc-configure-hack-some-configure-tests-fo.patch true
+    apply_patch_gcc "${PATCHES_DIR}"/gcc/0001-libiberty-gcc-configure-hack-some-configure-tests-fo.patch false
     # MinGW-w64 does not support Linux system call.
     apply_patch_gcc "${PATCHES_DIR}"/gcc/0002-libiberty-Modify-Makefile-for-mingw-w64.patch              false
     # Do not install libiberty.
@@ -56,7 +58,7 @@ function prepare_gcc() {
     # C++
     apply_patch_gcc "${PATCHES_DIR}"/gcc/0010-gcc-Make-xmmintrin-header-cplusplus-compatible.patch       false
     # For i386 target build.
-    # apply_patch_gcc "${PATCHES_DIR}"/gcc/0011-Fixup-for-dw2-eh.patch                                     false
+    apply_patch_gcc "${PATCHES_DIR}"/gcc/0011-Fixup-for-dw2-eh.patch                                     false
     # PR14940 (https://gcc.gnu.org/bugzilla/show_bug.cgi?id=14940).
     apply_patch_gcc "${PATCHES_DIR}"/gcc/0012-gcc-Fix-using-large-pch.patch                              false
     # To build EXEs linked dynamically with libraries.
@@ -76,21 +78,23 @@ function prepare_gcc() {
     # when building executables, not DLLs. Add --large-address-aware and --tsaware.
     apply_patch_gcc "${PATCHES_DIR}"/gcc/0020-MinGW-When-building-executables-not-DLLs.-Add-large-.patch false
     # Enable nxcompat and (HE)ASLR by default.
-    # apply_patch_gcc "${PATCHES_DIR}"/gcc/0021-MinGW-Enable-nxcompat-and-HE-ASLR-by-default.patch         false
-    # Assume that target is windows 7 or later. XP has died, and nobody uses vista.
-    # apply_patch_gcc "${PATCHES_DIR}"/gcc/0022-MinGW-w64-Assume-that-target-is-windows-7-or-later.-.patch false
+    apply_patch_gcc "${PATCHES_DIR}"/gcc/0021-MinGW-w64-Enable-nxcompat-and-HE-ASLR-by-default.patch     false
     # Disable automatic image base calculation.
-    # apply_patch_gcc "${PATCHES_DIR}"/gcc/0023-MinGW-Disable-automatic-image-base-calculation.patch       false
+    apply_patch_gcc "${PATCHES_DIR}"/gcc/0022-MinGW-Disable-automatic-image-base-calculation.patch       false
     # Shut up GCC -Wformat.
-    apply_patch_gcc "${PATCHES_DIR}"/gcc/0024-MinGW-Use-__MINGW_PRINTF_FORMAT-for-__USE_MINGW_ANSI.patch false
+    apply_patch_gcc "${PATCHES_DIR}"/gcc/0023-MinGW-Use-__MINGW_PRINTF_FORMAT-for-__USE_MINGW_ANSI.patch false
     # https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=792909
-    apply_patch_gcc "${PATCHES_DIR}"/gcc/0025-config-i386-mingw32.h-Fix-SPEC_PTHREAD2-definition.patch   false
+    apply_patch_gcc "${PATCHES_DIR}"/gcc/0024-config-i386-mingw32.h-Fix-SPEC_PTHREAD2-definition.patch   false
     # Enable colorizing diagnostics.
-    apply_patch_gcc "${PATCHES_DIR}"/gcc/0026-gcc-diagnostic-color.c-Enable-color-diagnostic-on-Mi.patch false
+    apply_patch_gcc "${PATCHES_DIR}"/gcc/0025-gcc-diagnostic-color.c-Enable-color-diagnostic-on-Mi.patch false
     # PR65704 (https://gcc.gnu.org/bugzilla/show_bug.cgi?id=65704).
-    apply_patch_gcc "${PATCHES_DIR}"/gcc/0027-gcc-master-Cherry-pick-adace2e-and-26befab.patch           false
+    apply_patch_gcc "${PATCHES_DIR}"/gcc/0026-gcc-master-Cherry-pick-adace2e-and-26befab.patch           false
     #
-    apply_patch_gcc "${PATCHES_DIR}"/gcc/0028-msvcrt-version.patch                                       false
+    apply_patch_gcc "${PATCHES_DIR}"/gcc/0027-MinGW-w64-Define-__MSVCRT_VERSION__.patch                  false
+    # PR52991 (https://gcc.gnu.org/bugzilla/show_bug.cgi?id=52991).
+    apply_patch_gcc "${PATCHES_DIR}"/gcc/0028-Fix-issue-about-record-union-attribute-packed-for-ms.patch false
+    # Remove #define stat _stat ...
+    apply_patch_gcc "${PATCHES_DIR}"/gcc/0029-ltmain.sh-Remove-useless-defines.patch                     false
 
     echo 'done'
 

@@ -1,7 +1,7 @@
-From ae9acd0e9bd751995952291d3f80a4732de9408d Mon Sep 17 00:00:00 2001
+From daa7705cfa2580a473df05a66809d1d23349f467 Mon Sep 17 00:00:00 2001
 From: Yuta NAKAI <nak5124@live.jp>
 Date: Sun, 12 Apr 2015 12:00:35 +0900
-Subject: [PATCH 06/27] libcpp/files.c: Make Windows behave the same as Posix
+Subject: [PATCH 06/29] libcpp/files.c: Make Windows behave the same as Posix
  in the consideration of whether folder "/exists/doesnt-exist/.." is a valid
  path.. in Posix, it isn't.
 
@@ -10,7 +10,7 @@ Subject: [PATCH 06/27] libcpp/files.c: Make Windows behave the same as Posix
  1 file changed, 86 insertions(+)
 
 diff --git a/libcpp/files.c b/libcpp/files.c
-index 2f49122..3a6996a 100644
+index ea2cc23..a6ba414 100644
 --- a/libcpp/files.c
 +++ b/libcpp/files.c
 @@ -30,6 +30,13 @@ along with this program; see the file COPYING3.  If not see
@@ -121,5 +121,5 @@ index 2f49122..3a6996a 100644
    if (file->fd != -1)
      {
 -- 
-2.6.2
+2.7.3
 

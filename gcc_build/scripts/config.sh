@@ -32,7 +32,7 @@ declare -r BUILD_DIR="${ROOT_DIR}"/build
 declare -r DST_DIR="${ROOT_DIR}"/dst
 
 # BUILDFLAGS
-declare -r CPPFLAGS_=' -D__USE_MINGW_ANSI_STDIO=1 -D_FORTIFY_SOURCE=2 -D_FILE_OFFSET_BITS=64 -DWINVER=0x0a00 -D_WIN32_WINNT=0x0a00 -D_GNU_SOURCE=1 -D_BSD_SOURCE=1 -D_POSIX_SOURCE=1 -D_POSIX_C_SOURCE=200809L -D_XOPEN_SOURCE=700'
+declare -r CPPFLAGS_=' -D__USE_MINGW_ANSI_STDIO=1 -D__USE_MINGW_ACCESS -D_FILE_OFFSET_BITS=64 -DWINVER=0x0a00 -D_WIN32_WINNT=0x0a00 -D_GNU_SOURCE=1 -D_BSD_SOURCE=1 -D_POSIX_SOURCE=1 -D_POSIX_C_SOURCE=200809L -D_XOPEN_SOURCE=700'
 declare -r CFLAGS_=' -pipe -Os -fomit-frame-pointer -foptimize-strlen -fno-fast-math -fno-math-errno -fno-signed-zeros -fno-tree-vectorize'
 declare -r CXXFLAGS_=" ${CFLAGS_}"
 declare -r LDFLAGS_=' -Wl,-O1,--sort-common,--as-needed,--no-undefined,--no-gc-sections'
@@ -43,7 +43,7 @@ declare -r MAKEFLAGS_=" -j$(($(nproc)+1)) -O"
 declare -r THREAD_MODEL='posix'
 
 # GCC package revision
-declare -r GCC_PKGREV=2
+declare -r GCC_PKGREV=5
 declare -r GCC_BUILT_DATE=$(date +%Y.%m.%d)
 
 # Version
@@ -56,7 +56,7 @@ declare -r ZLIB_VER='git'
 declare -r MINGW_VER='git'
 declare -r BINUTILS_VER='git'
 declare -r GCC_VER='5.3.0'
-declare -r NASM_VER='2.12'
+declare -r NASM_VER='2.12.01'
 # declare -r NASM_SS='20150118'
 declare -r YASM_VER='1.3.0'
 declare -r AUTOCONF_VER='2.69'

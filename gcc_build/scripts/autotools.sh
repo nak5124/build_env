@@ -294,11 +294,12 @@ function prepare_libtool() {
     apply_patch_lt "${PATCHES_DIR}"/libtool/0004-Fix-strict-ansi-vs-posix.patch                  false
     # Remove CR.
     apply_patch_lt "${PATCHES_DIR}"/libtool/0005-fix-cr-for-awk-in-configure.patch               false
+    # Remove #define stat _stat ...
+    apply_patch_lt "${PATCHES_DIR}"/libtool/0006-Remove-useless-define.patch                     false
 
     # Disable automatic image base calculation.
-    sed -i 's/enable-auto-image-base/disable-auto-image-base/g' \
+    sed -i 's/enable-auto-image-base//g' \
         "${BUILD_DIR}"/autotools/libtool/src/libtool-${LIBTOOL_VER}/{configure,m4/libtool.m4}
-    perl -pi -e 's/_stat\n/_stat64\n/g' "${BUILD_DIR}"/autotools/libtool/src/libtool-${LIBTOOL_VER}/build-aux/ltmain.in
 
     echo 'done'
 
