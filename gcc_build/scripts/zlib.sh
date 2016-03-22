@@ -86,6 +86,7 @@ function build_zlib() {
                 --prefix=/mingw$_bitval       \
                 --enable-shared               \
                 --disable-static              \
+                --zlib-compat                 \
                 > "${LOGS_DIR}"/zlib/libz_config_${_arch}.log 2>&1 || exit 1
             echo 'done'
 
