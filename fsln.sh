@@ -53,7 +53,7 @@ ln -fsr ./gawk.exe ./awk.exe
 ln -fsr ./cpp.exe ../lib/cpp.exe
 ln -fsr ./gcc.exe ./cc.exe
 ln -fsr ./gcc.exe ./x86_64-pc-msys-gcc.exe
-ln -fsr ./gcc.exe ./x86_64-pc-msys-gcc-4.9.2.exe
+ln -fsr ./gcc.exe ./x86_64-pc-msys-gcc-5.3.0.exe
 ln -fsr ./gcc-ar.exe ./x86_64-pc-msys-gcc-ar.exe
 ln -fsr ./gcc-nm.exe ./x86_64-pc-msys-gcc-nm.exe
 ln -fsr ./gcc-ranlib.exe ./x86_64-pc-msys-gcc-ranlib.exe
@@ -246,9 +246,9 @@ rm -fr /opt/armv7-w64-mingw32
 rm -fr /opt/lib/gcc/i686-w64-mingw32
 rm -fr /opt/lib/gcc/armv7-w64-mingw32
 rm -f /opt/bin/x86_64-w64-mingw32-gfortran.exe
-rm -f /opt/lib/gcc/x86_64-w64-mingw32/4.9.2/{f951.exe,libgfortran.a,libgfortran.dll.a,libgfortran-3.dll,libcaf_single.a,libgfortranbegin.a,libstdc++.dll.a-gdb.py,libgfortran.spec}
-rm -fr /opt/lib/gcc/x86_64-w64-mingw32/4.9.2/finclude
-ln -fsr ../../opt/bin/x86_64-w64-mingw32-gcc.exe ../../opt/bin/x86_64-w64-mingw32-gcc-4.9.2.exe
+rm -f /opt/lib/gcc/x86_64-w64-mingw32/5.3.0/{f951.exe,libgfortran.a,libgfortran.dll.a,libgfortran-3.dll,libcaf_single.a,libgfortranbegin.a,libstdc++.dll.a-gdb.py,libgfortran.spec}
+rm -fr /opt/lib/gcc/x86_64-w64-mingw32/5.3.0/finclude
+ln -fsr ../../opt/bin/x86_64-w64-mingw32-gcc.exe ../../opt/bin/x86_64-w64-mingw32-gcc-5.3.0.exe
 ln -fsr ../../opt/bin/x86_64-w64-mingw32-g++.exe ../../opt/bin/x86_64-w64-mingw32-c++.exe
 
 # msys2-runtime-devel
