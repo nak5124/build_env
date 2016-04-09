@@ -6,7 +6,7 @@ shdir=$(cd $(dirname $0);pwd)
 dot_files=( .bash_logout .bash_profile .bashrc .bash_alias .bash_func .gitconfig .hgrc .inputrc .minttyrc .tigrc .tmux.conf .vimrc .vimshrc )
 etc_files=( DIR_COLORS fstab makepkg.conf makepkg_mingw32_Takuan.conf makepkg_mingw64_Takuan.conf pacman.conf profile )
 pd_files=( mirrorlist.mingw32 mirrorlist.mingw64 mirrorlist.msys repman.conf )
-mg_patches=( mpfr isl libiconv zlib binutils gcc nasm autoconf automake libtool config )
+mg_patches=( mpfr isl libiconv zlib binutils gcc nasm autoconf automake libtool config gmp)
 
 # bat
 cp -fa ${shdir}/bat/* /
