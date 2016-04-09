@@ -24,7 +24,7 @@ do
             PKG_CONFIG_PATH="/mingw32/local/lib/pkgconfig:/mingw32/lib/pkgconfig"
             MANPATH="/mingw32/local/share/man:/mingw32/share/man:${MANPATH}"
             INFOPATH="/mingw32/local/share/info:/mingw32/share/info:${INFOPATH}"
-            MSYSTEM=mingw32
+            MSYSTEM=MINGW32
             CARCH=i686
             CHOST=${CARCH}-w64-mingw32
             ;;
@@ -34,7 +34,7 @@ do
             PKG_CONFIG_PATH="/mingw64/local/lib/pkgconfig:/mingw64/lib/pkgconfig"
             MANPATH="/mingw64/local/share/man:/mingw64/share/man:${MANPATH}"
             INFOPATH="/mingw64/local/share/info:/mingw64/share/info:${INFOPATH}"
-            MSYSTEM=mingw64
+            MSYSTEM=MINGW64
             CARCH=x86_64
             CHOST=${CARCH}-w64-mingw32
             ;;
