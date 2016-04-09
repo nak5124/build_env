@@ -51,10 +51,10 @@ function prepare_mpfr() {
     printf "===> Applaying the patch to MPFR %s...\n" "${MPFR_VER}"
     pushd "${BUILD_DIR}"/gcc_libs/mpfr/src/mpfr-$MPFR_VER > /dev/null
     if ${_have_allpatches}; then
-        patch -p1 -i "${PATCHES_DIR}"/mpfr/allpatches > "${LOGS_DIR}"/gcc_libs/mpfr/mpfr_patches.log 2>&1 || exit 1
+        patch -p1 -i "${PATCHES_DIR}"/mpfr/allpatches > "${LOGS_DIR}"/gcc_libs/mpfr/mpfr_patch.log 2>&1 || exit 1
     fi
     eval patch -p1 -i "${PATCHES_DIR}"/mpfr/0001-Add-mparam-h-for-sandybridge.patch \
-        $_rd "${LOGS_DIR}"/gcc_libs/mpfr/mpfr_patches.log 2>&1 || exit 1
+        $_rd "${LOGS_DIR}"/gcc_libs/mpfr/mpfr_patch.log 2>&1 || exit 1
     echo 'done'
 
     # Autoreconf.
@@ -109,20 +109,20 @@ function build_mpfr() {
 
             # Configure.
             printf "===> Configuring MPFR %s...\n" "${_arch}"
-            ../src/mpfr-${MPFR_VER}/configure          \
-                --prefix=/mingw$_bitval                \
-                --build=${_arch}-w64-mingw32           \
-                --host=${_arch}-w64-mingw32            \
-                --disable-silent-rules                 \
-                --enable-thread-safe                   \
-                --enable-shared                        \
-                --disable-static                       \
-                --enable-fast-install                  \
-                --with-gmp="${DST_DIR}"/mingw$_bitval  \
-                --with-gnu-ld                          \
-                CFLAGS="${CFLAGS_} -march=sandybridge" \
-                LDFLAGS="${LDFLAGS_}"                  \
-                CPPFLAGS="${CPPFLAGS_}"                \
+            ../src/mpfr-${MPFR_VER}/configure         \
+                --prefix=/mingw$_bitval               \
+                --build=${_arch}-w64-mingw32          \
+                --host=${_arch}-w64-mingw32           \
+                --disable-silent-rules                \
+                --enable-thread-safe                  \
+                --enable-shared                       \
+                --disable-static                      \
+                --enable-fast-install                 \
+                --with-gmp="${DST_DIR}"/mingw$_bitval \
+                --with-gnu-ld                         \
+                CFLAGS="${CFLAGS_}"                   \
+                LDFLAGS="${LDFLAGS_}"                 \
+                CPPFLAGS="${CPPFLAGS_}"               \
                 > "${LOGS_DIR}"/gcc_libs/mpfr/mpfr_config_${_arch}.log 2>&1 || exit 1
             echo 'done'
 

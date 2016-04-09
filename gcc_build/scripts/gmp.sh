@@ -22,8 +22,21 @@ function download_gmp_src() {
     return 0
 }
 
-# Autoreconf.
+# Apply patches and autoreconf.
+function apply_patch_gmp() {
+    apply_patch "${1}" "${BUILD_DIR}"/gcc_libs/gmp/src/gmp-$GMP_VER "${LOGS_DIR}"/gcc_libs/gmp/gmp_patch.log "${2}"
+}
+
 function prepare_gmp() {
+    # Applay the patch.
+    printf "===> Applaying the patch to GMP %s...\n" "${GMP_VER}"
+
+    # Fix fat
+    apply_patch_gmp "${PATCHES_DIR}"/gmp/0001-Add-FUNC_EXITs.patch true
+    apply_patch_gmp "${PATCHES_DIR}"/gmp/0002-Fix-fat.patch        false
+
+    echo 'done'
+
     # Autoreconf.
     printf "===> Autoreconfing GMP %s...\n" "${GMP_VER}"
     pushd "${BUILD_DIR}"/gcc_libs/gmp/src/gmp-$GMP_VER > /dev/null
@@ -76,12 +89,12 @@ function build_gmp() {
             set_path $_arch
 
             # MPN_PATH
-            # local _mpn_path
-            # if [ "${_arch}" = 'i686' ]; then
-                # _mpn_path=' x86/coreisbr x86/p6/sse2 x86/p6/p3mmx x86/p6/mmx x86/p6 x86/mmx x86/fat x86 generic'
-            # else
-                # _mpn_path=' x86_64/coreisbr x86_64/coreinhm x86_64/core2 x86_64/fastsse x86_64/fat x86_64 generic'
-            # fi
+            local _mpn_path
+            if [ "${_arch}" = 'i686' ]; then
+                _mpn_path=' x86/coreisbr x86/p6/sse2 x86/p6/p3mmx x86/p6/mmx x86/p6 x86/mmx x86/fat x86 generic'
+            else
+                _mpn_path=' x86_64/skylake x86_64/coreibwl x86_64/coreihwl x86_64/fastavx x86_64/coreisbr x86_64/coreinhm x86_64/core2 x86_64/fastsse x86_64/fat x86_64 generic'
+            fi
 
             # Configure.
             printf "===> Configuring GMP %s...\n" "${_arch}"
@@ -95,17 +108,16 @@ function build_gmp() {
                 --disable-static             \
                 --enable-fast-install        \
                 --with-gnu-ld                \
+                --enable-assembly            \
+                --enable-fft                 \
+                --enable-fat                 \
+                MPN_PATH="${_mpn_path}"      \
                 CFLAGS="${CFLAGS_}"          \
                 LDFLAGS="${LDFLAGS_}"        \
                 CPPFLAGS="${CPPFLAGS_}"      \
                 CXXFLAGS="${CXXFLAGS_}"      \
                 > "${LOGS_DIR}"/gcc_libs/gmp/gmp_config_${_arch}.log 2>&1 || exit 1
             echo 'done'
-
-                # --enable-assembly            \
-                # --enable-fft                 \
-                # --enable-fat                 \
-                # MPN_PATH="${_mpn_path}"      
 
             # Make.
             printf "===> Making GMP %s...\n" "${_arch}"

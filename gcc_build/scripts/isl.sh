@@ -32,7 +32,7 @@ function prepare_isl() {
     printf "===> Applying patches to ISL %s...\n" "${ISL_VER}"
 
     # Add -no-undefined to libisl_la_LDFLAGS.
-    apply_patch_isl "${PATCHES_DIR}"/isl/0001-isl-no-undefined.patch                       true
+    apply_patch_isl "${PATCHES_DIR}"/isl/0001-isl-no-undefined.patch true
 
     echo 'done'
 

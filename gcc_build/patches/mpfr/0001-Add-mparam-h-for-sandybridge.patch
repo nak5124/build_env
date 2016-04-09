@@ -6,7 +6,7 @@ diff -urN mpfr-3.1.3_old/src/mparam_h.in mpfr-3.1.3/src/mparam_h.in
     As of gcc 4.2, you can also use: -march=native or -mtune=native */
  
 -#if defined (__tune_pentium4__) /* Threshold for Pentium 4 */
-+#if defined (__tune_sandybridge__) /* Threshold for sandybridge */
++#if defined (__tune_sandybridge__) || defined (__tune_haswell__) /* Threshold for sandybridge */
 +#define MPFR_TUNE_CASE "src/x86_64/corei5/mparam.h"
 +#include "x86_64/corei5/mparam.h"
 +

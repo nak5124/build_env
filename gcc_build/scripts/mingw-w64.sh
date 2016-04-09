@@ -267,9 +267,9 @@ function build_crt() {
                 ${_libs_conf}                                                    \
                 --disable-libarm32                                               \
                 --with-sysroot="${DST_DIR}"/mingw${_bitval}/${_arch}-w64-mingw32 \
-                CFLAGS="${CFLAGS_}"                                              \
-                LDFLAGS="${LDFLAGS_}"                                            \
-                CXXFLAGS="${CXXFLAGS_}"                                          \
+                CFLAGS="${CFLAGS_/-mcrtdll=msvcr120/}"                           \
+                LDFLAGS="${LDFLAGS_/-mcrtdll=msvcr120/}"                         \
+                CXXFLAGS="${CXXFLAGS_/-mcrtdll=msvcr120/}"                       \
                 > "${LOGS_DIR}"/mingw-w64/crt/crt_config_${_arch}.log 2>&1 || exit 1
             echo 'done'
 
