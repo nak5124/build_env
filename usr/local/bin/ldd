@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+
+declare -ra _cygcheck=(
+    $(cygcheck $@ | sed -e 's/ //g' | cygpath -u -f -)
+)
+
+declare _bin
+declare _isarg1=true
+for _bin in ${_cygcheck[@]}
+do
+    if echo $_bin | grep -q '.*Found.*'; then
+        printf "Found: %s\n" "$(cygpath -u ${_bin/Found:/})"
+    elif ${_isarg1}; then
+        echo $_bin
+        _isarg1=false
+    else
+        printf "\t%s => %s\n" "${_bin##*/}" "${_bin}"
+    fi
+done
