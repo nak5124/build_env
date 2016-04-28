@@ -48,9 +48,9 @@ set -o vi
 GCC_COLORS='error=01;31;255:warning=01;35;255:note=01;36;255:caret=01;32;255:locus=01:quote=01'
 export GCC_COLORS
 BASE_CPPFLAGS='-U__USE_MINGW_ANSI_STDIO -D__USE_MINGW_ANSI_STDIO=1 -D__USE_MINGW_ACCESS -U_FILE_OFFSET_BITS -D_FILE_OFFSET_BITS=64 -UWINVER -DWINVER=0x0a00 -U_WIN32_WINNT -D_WIN32_WINNT=0x0a00 -U_GNU_SOURCE -D_GNU_SOURCE=1 -U_BSD_SOURCE -D_BSD_SOURCE=1 -U_POSIX_SOURCE -D_POSIX_SOURCE=1 -U_POSIX_C_SOURCE -D_POSIX_C_SOURCE=200809L -U_XOPEN_SOURCE -D_XOPEN_SOURCE=700'
-BASE_CFLAGS='"-pipe -Os -fomit-frame-pointer -foptimize-strlen -fexcess-precision=fast -fno-fast-math -fno-math-errno -fno-signed-zeros -fno-tree-vectorize -fstack-protector-strong --param=ssp-buffer-size=4 -mcrtdll=msvcr120'
+BASE_CFLAGS='-pipe -O2 -march=native -fomit-frame-pointer -ftree-vectorize -fexcess-precision=fast -fno-fast-math -fno-math-errno -fno-signed-zeros -fstack-protector-strong --param=ssp-buffer-size=4 -mcrtdll=msvcr120'
 BASE_CXXFLAGS="${BASE_CFLAGS}"
-BASE_LDFLAGS='-Wl,-s,-O1,--sort-common,--as-needed,--no-undefined,--no-gc-sections ${BASE_CFLAGS}'
+BASE_LDFLAGS="-Wl,-s,-O1,--sort-common,--as-needed,--no-undefined,--no-gc-sections ${BASE_CFLAGS}"
 export BASE_CPPFLAGS BASE_CFLAGS BASE_CXXFLAGS BASE_LDFLAGS
 
 # import aliases
