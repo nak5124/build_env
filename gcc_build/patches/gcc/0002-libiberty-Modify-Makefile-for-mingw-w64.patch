@@ -1,7 +1,7 @@
-From 0620af638de620920d869cfebf249ed2e6db9b64 Mon Sep 17 00:00:00 2001
+From 1ad6ae45a10545d5f88c7bb772f9e783e5a88906 Mon Sep 17 00:00:00 2001
 From: Yuta NAKAI <nak5124@live.jp>
 Date: Sat, 4 Jul 2015 18:50:07 +0900
-Subject: [PATCH 02/29] libiberty: Modify Makefile for mingw-w64.
+Subject: [PATCH 02/23] libiberty: Modify Makefile for mingw-w64.
 
 ---
  libiberty/Makefile.in | 14 +++++++-------
@@ -9,10 +9,10 @@ Subject: [PATCH 02/29] libiberty: Modify Makefile for mingw-w64.
  2 files changed, 8 insertions(+), 27 deletions(-)
 
 diff --git a/libiberty/Makefile.in b/libiberty/Makefile.in
-index f06cc69..73d5ab8 100644
+index c7a4568..e919a57 100644
 --- a/libiberty/Makefile.in
 +++ b/libiberty/Makefile.in
-@@ -130,7 +130,7 @@ CFILES = alloca.c argv.c asprintf.c atexit.c				\
+@@ -131,7 +131,7 @@ CFILES = alloca.c argv.c asprintf.c atexit.c				\
  	d-demangle.c dwarfnames.c dyn-string.c				\
  	fdmatch.c ffs.c fibheap.c filename_cmp.c floatformat.c		\
  	fnmatch.c fopen_unlocked.c					\
@@ -21,7 +21,7 @@ index f06cc69..73d5ab8 100644
           gettimeofday.c                                                 \
  	hashtab.c hex.c							\
  	index.c insque.c						\
-@@ -139,6 +139,7 @@ CFILES = alloca.c argv.c asprintf.c atexit.c				\
+@@ -140,6 +140,7 @@ CFILES = alloca.c argv.c asprintf.c atexit.c				\
  	make-relative-prefix.c						\
  	make-temp-file.c md5.c memchr.c memcmp.c memcpy.c memmem.c	\
  	 memmove.c mempcpy.c memset.c mkstemps.c			\
@@ -29,7 +29,7 @@ index f06cc69..73d5ab8 100644
  	objalloc.c obstack.c						\
  	partition.c pexecute.c						\
  	 pex-common.c pex-djgpp.c pex-msdos.c pex-one.c			\
-@@ -155,9 +156,8 @@ CFILES = alloca.c argv.c asprintf.c atexit.c				\
+@@ -156,9 +157,8 @@ CFILES = alloca.c argv.c asprintf.c atexit.c				\
  	 strtoll.c strtoul.c strtoull.c strndup.c strnlen.c             \
  	 strverscmp.c timeval-utils.c tmpnam.c				\
  	unlink-if-ordinary.c						\
@@ -40,7 +40,7 @@ index f06cc69..73d5ab8 100644
  	xasprintf.c xatexit.c xexit.c xmalloc.c xmemdup.c xstrdup.c	\
  	 xstrerror.c xstrndup.c xvasprintf.c
  
-@@ -173,7 +173,7 @@ REQUIRED_OFILES =							\
+@@ -174,7 +174,7 @@ REQUIRED_OFILES =							\
  	./fdmatch.$(objext) ./fibheap.$(objext)				\
  	./filename_cmp.$(objext) ./floatformat.$(objext)		\
  	./fnmatch.$(objext) ./fopen_unlocked.$(objext)			\
@@ -49,7 +49,7 @@ index f06cc69..73d5ab8 100644
  	./getruntime.$(objext) ./hashtab.$(objext) ./hex.$(objext)	\
  	./lbasename.$(objext) ./lrealpath.$(objext)			\
  	./make-relative-prefix.$(objext) ./make-temp-file.$(objext)	\
-@@ -210,6 +210,7 @@ CONFIGURED_OFILES = ./asprintf.$(objext) ./atexit.$(objext)		\
+@@ -211,6 +211,7 @@ CONFIGURED_OFILES = ./asprintf.$(objext) ./atexit.$(objext)		\
  	./memchr.$(objext) ./memcmp.$(objext) ./memcpy.$(objext) 	\
  	./memmem.$(objext) ./memmove.$(objext)				\
  	 ./mempcpy.$(objext) ./memset.$(objext) ./mkstemps.$(objext)	\
@@ -57,7 +57,7 @@ index f06cc69..73d5ab8 100644
  	./pex-djgpp.$(objext) ./pex-msdos.$(objext)			\
  	 ./pex-unix.$(objext) ./pex-win32.$(objext)			\
  	 ./putenv.$(objext)						\
-@@ -223,9 +224,8 @@ CONFIGURED_OFILES = ./asprintf.$(objext) ./atexit.$(objext)		\
+@@ -224,9 +225,8 @@ CONFIGURED_OFILES = ./asprintf.$(objext) ./atexit.$(objext)		\
  	 ./strrchr.$(objext) ./strstr.$(objext) ./strtod.$(objext)	\
  	 ./strtol.$(objext) ./strtoul.$(objext) strtoll.$(objext)	\
  	./strtoull.$(objext) ./tmpnam.$(objext) ./strverscmp.$(objext)	\
@@ -70,10 +70,10 @@ index f06cc69..73d5ab8 100644
  # These files are installed if the library has been configured to do so.
  INSTALLED_HEADERS =                                                     \
 diff --git a/libiberty/configure b/libiberty/configure
-index bfec5b6..e6ce642 100755
+index 1d0b9d5..f357fb6 100755
 --- a/libiberty/configure
 +++ b/libiberty/configure
-@@ -5478,7 +5478,6 @@ funcs="$funcs vfprintf"
+@@ -5718,7 +5718,6 @@ funcs="$funcs vfprintf"
  funcs="$funcs vprintf"
  funcs="$funcs vsnprintf"
  funcs="$funcs vsprintf"
@@ -81,7 +81,7 @@ index bfec5b6..e6ce642 100755
  funcs="$funcs setproctitle"
  
  # Also in the old function.def file: alloca, vfork, getopt.
-@@ -5845,12 +5844,6 @@ esac
+@@ -6085,12 +6084,6 @@ esac
   ;;
  esac
  
@@ -94,7 +94,7 @@ index bfec5b6..e6ce642 100755
  
      for f in $funcs; do
        case "$f" in
-@@ -5992,18 +5985,6 @@ esac
+@@ -6232,18 +6225,6 @@ esac
  esac
  
      case " $LIBOBJS " in
@@ -113,7 +113,7 @@ index bfec5b6..e6ce642 100755
    *" vasprintf.$ac_objext "* ) ;;
    *) LIBOBJS="$LIBOBJS vasprintf.$ac_objext"
   ;;
-@@ -6459,7 +6440,7 @@ fi
+@@ -6705,7 +6686,7 @@ fi
    if test $ac_cv_func_vfork_works = no; then
      case " $LIBOBJS " in
    *" vfork.$ac_objext "* ) ;;
@@ -123,5 +123,5 @@ index bfec5b6..e6ce642 100755
  esac
  
 -- 
-2.7.3
+2.8.1
 

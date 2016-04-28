@@ -1,0 +1,23 @@
+From 3690f1fa6e55582807cc5f7d9d4443a7e7b727ac Mon Sep 17 00:00:00 2001
+From: Yuta Nakai <nak5124@live.jp>
+Date: Thu, 28 Apr 2016 19:36:15 +0900
+Subject: [PATCH 23/23] MinGW-w64: Fix bootstrap when libitm is disabled.
+
+---
+ libstdc++-v3/config/os/mingw32-w64/os_defines.h | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/libstdc++-v3/config/os/mingw32-w64/os_defines.h b/libstdc++-v3/config/os/mingw32-w64/os_defines.h
+index 43c400b..2be57f5 100644
+--- a/libstdc++-v3/config/os/mingw32-w64/os_defines.h
++++ b/libstdc++-v3/config/os/mingw32-w64/os_defines.h
+@@ -86,4 +86,6 @@
+ // See libstdc++/59807
+ #define _GTHREAD_USE_MUTEX_INIT_FUNC 1
+ 
++#define _GLIBCXX_USE_WEAK_REF 0
++
+ #endif
+-- 
+2.8.1
+

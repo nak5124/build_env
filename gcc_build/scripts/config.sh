@@ -5,6 +5,7 @@ declare -ra BUILD_TARGETS=(
     'zlib'
     'binutils'
     'mingw-w64 headers crt winpthreads crt libmangle tools'
+    'mcfgthread'
     'gcc'
     'autotools autoconf automake libtool'
     'nyasm nasm yasm'
@@ -40,10 +41,10 @@ declare -r MAKEFLAGS_=" -j$(($(nproc)+1)) -O"
 #declare -r MAKEFLAGS_=" -j$(($(nproc)/2-1)) -O"
 
 # GCC thread model
-declare -r THREAD_MODEL='posix'
+declare -r THREAD_MODEL='mcf'
 
 # GCC package revision
-declare -r GCC_PKGREV=6
+declare -r GCC_PKGREV=0
 declare -r GCC_BUILT_DATE=$(date +%Y.%m.%d)
 
 # Version
@@ -51,11 +52,12 @@ declare -r GMP_VER='6.1.0'
 declare -r MPFR_VER='3.1.4'
 declare -r MPC_VER='1.0.3'
 declare -r ISL_VER='0.16.1'
-declare -r ICONV_VER='1.14'
 declare -r ZLIB_VER='git'
+declare -r ICONV_VER='1.14'
 declare -r MINGW_VER='git'
-declare -r BINUTILS_VER='git'
-declare -r GCC_VER='5.3.0'
+declare -r MCFGTHREAD_VER='git'
+declare -r BINUTILS_VER='2.25.1'
+declare -r GCC_VER='6.1.0'
 declare -r NASM_VER='2.12.01'
 # declare -r NASM_SS='20150118'
 declare -r YASM_VER='1.3.0'
@@ -72,17 +74,19 @@ declare mpc_rebuild=true
 declare isl_rebuild=true
 
 # MinGW-w64 toolchain
-declare iconv_rebuild=true
 declare zlib_rebuild=true
+declare iconv_rebuild=true
 declare headers_rebuild=true
 declare threads_rebuild=true
 declare crt_rebuild=true
+declare mcfgthread_rebuild=true
 declare binutils_rebuild=true
 declare gcc_rebuild=true
 
 # Rebuild with newer GCC.
 declare binutils_2nd_rebuild=true
 declare crt_2nd_rebuild=true
+declare mcfgthread_2nd_rebuild=true
 declare threads_2nd_rebuild=true
 
 # MinGW-w64 additional packages

@@ -1,15 +1,28 @@
-From 32e5ef0b704a478d7867fa3b119a44ba3f84827d Mon Sep 17 00:00:00 2001
-From: Yuta NAKAI <nak5124@live.jp>
-Date: Sun, 2 Aug 2015 12:20:17 +0900
-Subject: [PATCH 12/29] gcc: Fix using large pch.
+From 92fe801a22a4c4bbe4112685706a1e2699ce0528 Mon Sep 17 00:00:00 2001
+From: Martin Richter <xricht17@stud.fit.vutbr.cz>
+Date: Wed, 5 Aug 2015 23:36:25 +0100
+Subject: [PATCH 07/23] Fix using large PCH
 
+The following patch fixes segfault when gt_pch_use_address
+fails (returns -1). fatal_error now correctly shows an error
+message and terminates the program.
+I have basicly only reordered reads, and placed them after
+the file mapping itself. Global pointers are changed only
+after gt_pch_use_address succeeds, so in case of failure
+they still contain valid addresses.
+
+This patch is meant for the master branch. However, it
+should not be hard to modify it for others.
+
+https://gcc.gnu.org/bugzilla/show_bug.cgi?id=14940
+https://sourceforge.net/p/mingw-w64/bugs/382/
 ---
  gcc/config/i386/host-mingw32.c | 10 ++-------
- gcc/ggc-common.c               | 47 ++++++++++++++++++++++++++++++++++--------
- 2 files changed, 40 insertions(+), 17 deletions(-)
+ gcc/ggc-common.c               | 51 +++++++++++++++++++++++++++++++++---------
+ 2 files changed, 42 insertions(+), 19 deletions(-)
 
 diff --git a/gcc/config/i386/host-mingw32.c b/gcc/config/i386/host-mingw32.c
-index aa17378..631d9c4 100644
+index f51219a..903c027 100644
 --- a/gcc/config/i386/host-mingw32.c
 +++ b/gcc/config/i386/host-mingw32.c
 @@ -42,9 +42,6 @@ static size_t mingw32_gt_pch_alloc_granularity (void);
@@ -51,19 +64,21 @@ index aa17378..631d9c4 100644
  
  
 diff --git a/gcc/ggc-common.c b/gcc/ggc-common.c
-index 03fbe7d..6bc99ac 100644
+index 9b291aa..1861c95 100644
 --- a/gcc/ggc-common.c
 +++ b/gcc/ggc-common.c
-@@ -603,6 +603,8 @@ gt_pch_restore (FILE *f)
+@@ -598,7 +598,9 @@ gt_pch_restore (FILE *f)
    size_t i;
    struct mmap_info mmi;
    int result;
+-
 +  long pch_tabs_off;
 +  long pch_data_off;
- 
++  
    /* Delete any deletable objects.  This makes ggc_pch_read much
       faster, as it can be sure that no GCable objects remain other
-@@ -611,20 +613,24 @@ gt_pch_restore (FILE *f)
+      than the ones just read in.  */
+@@ -606,20 +608,24 @@ gt_pch_restore (FILE *f)
      for (rti = *rt; rti->base != NULL; rti++)
        memset (rti->base, 0, rti->stride);
  
@@ -71,7 +86,7 @@ index 03fbe7d..6bc99ac 100644
 +  /* We need to read tables after mapping, or fatal_error will
 +     segfault when gt_pch_use_address returns -1. Skip them for now. */
 +  pch_tabs_off = ftell(f);
-+
++     
 +  /* Skip all the scalar variables. */
    for (rt = gt_pch_scalar_rtab; *rt; rt++)
      for (rti = *rt; rti->base != NULL; rti++)
@@ -88,14 +103,15 @@ index 03fbe7d..6bc99ac 100644
 -	if (fread ((char *)rti->base + rti->stride * i,
 -		   sizeof (void *), 1, f) != 1)
 -	  fatal_error (input_location, "can%'t read PCH file: %m");
+-
 +        if (fseek (f, sizeof (void *), SEEK_CUR) != 0)
 +          fatal_error (input_location, "can%'t read PCH file: %m");
- 
++          
 +  /* mmi still has to be read now. */          
    if (fread (&mmi, sizeof (mmi), 1, f) != 1)
      fatal_error (input_location, "can%'t read PCH file: %m");
  
-@@ -635,11 +641,34 @@ gt_pch_restore (FILE *f)
+@@ -630,12 +636,35 @@ gt_pch_restore (FILE *f)
    if (result == 0)
      {
        if (fseek (f, mmi.offset, SEEK_SET) != 0
@@ -109,10 +125,10 @@ index 03fbe7d..6bc99ac 100644
 +    
 +  /* File mapping done, read tables now. */
 +  pch_data_off = ftell(f);
-+
++  
 +  if (fseek (f, pch_tabs_off, SEEK_SET) != 0)
 +    fatal_error (input_location, "can%'t read PCH file: %m");
-+
+ 
 +  /* Read in all the scalar variables.  */
 +  for (rt = gt_pch_scalar_rtab; *rt; rt++)
 +    for (rti = *rt; rti->base != NULL; rti++)
@@ -129,9 +145,10 @@ index 03fbe7d..6bc99ac 100644
 +
 +  if (fseek (f, pch_data_off, SEEK_SET) != 0)
 +    fatal_error (input_location, "can%'t read PCH file: %m");
- 
++            
    ggc_pch_read (f, mmi.preferred_base);
  
+   gt_pch_restore_stringpool ();
 -- 
-2.7.3
+2.8.1
 

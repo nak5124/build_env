@@ -35,66 +35,52 @@ function prepare_gcc() {
     # Apply patches.
     printf "===> Applying patches to GCC %s...\n" "${GCC_VER}"
 
-    # Merge gcc-5-branch (37d89c7).
-    apply_patch_gcc "${PATCHES_DIR}"/gcc/0000-merge-gcc-5-branch.patch                                   true
     # hack! - some configure tests for header files using "$CPP $CPPFLAGS"
-    apply_patch_gcc "${PATCHES_DIR}"/gcc/0001-libiberty-gcc-configure-hack-some-configure-tests-fo.patch false
+    apply_patch_gcc "${PATCHES_DIR}"/gcc/0001-libiberty-gcc-configure-hack-some-configure-tests-fo.patch true
     # MinGW-w64 does not support Linux system call.
     apply_patch_gcc "${PATCHES_DIR}"/gcc/0002-libiberty-Modify-Makefile-for-mingw-w64.patch              false
     # Do not install libiberty.
     apply_patch_gcc "${PATCHES_DIR}"/gcc/0003-libiberty-Makefile.in-Don-t-install-libiberty.patch        false
-    # PR54314 (https://gcc.gnu.org/bugzilla/show_bug.cgi?id=54314).
-    apply_patch_gcc "${PATCHES_DIR}"/gcc/0004-libstdc-Export-_ZTC.patch                                  false
-    # PR52300 (https://gcc.gnu.org/bugzilla/show_bug.cgi?id=52300).
-    apply_patch_gcc "${PATCHES_DIR}"/gcc/0005-gthr-posix.h-std-threads-Add-defined-__MINGW32__-gua.patch false
-    # Windows: Follow Posix dir-exists semantics more closely.
-    apply_patch_gcc "${PATCHES_DIR}"/gcc/0006-libcpp-files.c-Make-Windows-behave-the-same-as-Posix.patch false
-    # Don't make a lowercase backslashed path from argv[0] that then fail to strcmp with prefix(es). they're also ugly.
-    apply_patch_gcc "${PATCHES_DIR}"/gcc/0007-libiberty-lrealpath.c-Don-t-make-a-lowercase-backsla.patch false
-    # Feature to allow overriding -lmsvcrt with a custom msvcrt dll.
-    apply_patch_gcc "${PATCHES_DIR}"/gcc/0008-MinGW-Add-mcrtdll-option-for-msvcrt-stubbing.patch         false
-    # C++
-    apply_patch_gcc "${PATCHES_DIR}"/gcc/0009-Fix-C-11-compatibility-issue.patch                         false
-    # C++
-    apply_patch_gcc "${PATCHES_DIR}"/gcc/0010-gcc-Make-xmmintrin-header-cplusplus-compatible.patch       false
-    # For i386 target build.
-    apply_patch_gcc "${PATCHES_DIR}"/gcc/0011-Fixup-for-dw2-eh.patch                                     false
+    # For the consideration of whether folder "/doesnt-exist/.." is a valid.
+    apply_patch_gcc "${PATCHES_DIR}"/gcc/0004-Windows-Follow-Posix-dir-exists-semantics-more-close.patch false
+    # '\' => '/'
+    apply_patch_gcc "${PATCHES_DIR}"/gcc/0005-Windows-Use-not-in-progpath-and-leave-case-as-is.patch     false
+    # -mcrtdll
+    apply_patch_gcc "${PATCHES_DIR}"/gcc/0006-Windows-New-feature-to-allow-overriding-lmsvcrt.patch      false
     # PR14940 (https://gcc.gnu.org/bugzilla/show_bug.cgi?id=14940).
-    apply_patch_gcc "${PATCHES_DIR}"/gcc/0012-gcc-Fix-using-large-pch.patch                              false
-    # To build EXEs linked dynamically with libraries.
-    apply_patch_gcc "${PATCHES_DIR}"/gcc/0013-gcc-Force-linking-to-libgcc_s_dw2-1.dll-on-mingw32-w.patch false
+    apply_patch_gcc "${PATCHES_DIR}"/gcc/0007-Fix-using-large-PCH.patch                                  false
     # Fix clone_function_name stdcall suffix handling.
-    apply_patch_gcc "${PATCHES_DIR}"/gcc/0014-clone_function_name_1-Retain-any-stdcall-suffix.patch      false
-    # Remove pointless -fPIC warning on Windows platforms.
-    apply_patch_gcc "${PATCHES_DIR}"/gcc/0015-config-i386-cygming.h-SUBTARGET_OVERRIDE_OPTIONS-Do-.patch false
+    apply_patch_gcc "${PATCHES_DIR}"/gcc/0008-clone_function_name_1-Retain-any-stdcall-suffix.patch      false
     # Add /mingw{32,64}/local/{include,lib} to search dirs, and make relocatable perfectly.
-    apply_patch_gcc "${PATCHES_DIR}"/gcc/0016-Add-mingw-32-64-local-include-lib-to-search-dirs-and.patch false
+    apply_patch_gcc "${PATCHES_DIR}"/gcc/0009-Add-mingw-32-64-local-include-lib-to-search-dirs-and.patch false
     # Don't search dirs under ${prefix} but ${build_sysroot}.
-    apply_patch_gcc "${PATCHES_DIR}"/gcc/0017-configure-Search-dirs-under-build_sysroot-instead-of.patch false
+    apply_patch_gcc "${PATCHES_DIR}"/gcc/0010-configure-Search-dirs-under-build_sysroot-instead-of.patch false
     # When binutils's prefix == tooldir, gcc -print-prog-name=ld returns correct result.
-    apply_patch_gcc "${PATCHES_DIR}"/gcc/0018-gcc-Add-prefix-bindir-to-exec_prefix.patch                 false
+    apply_patch_gcc "${PATCHES_DIR}"/gcc/0011-gcc-Add-prefix-bindir-to-exec_prefix.patch                 false
     # Dynamically linking to libiconv.
-    apply_patch_gcc "${PATCHES_DIR}"/gcc/0019-mingw-Dynamically-linking-to-libintl-and-libiconv.patch    false
+    apply_patch_gcc "${PATCHES_DIR}"/gcc/0012-mingw-Dynamically-linking-to-libiconv.patch                false
     # when building executables, not DLLs. Add --large-address-aware and --tsaware.
-    apply_patch_gcc "${PATCHES_DIR}"/gcc/0020-MinGW-When-building-executables-not-DLLs.-Add-large-.patch false
+    apply_patch_gcc "${PATCHES_DIR}"/gcc/0013-MinGW-w64-When-building-executables-not-DLLs-add-lar.patch false
     # Enable nxcompat and (HE)ASLR by default.
-    apply_patch_gcc "${PATCHES_DIR}"/gcc/0021-MinGW-w64-Enable-nxcompat-and-HE-ASLR-by-default.patch     false
+    apply_patch_gcc "${PATCHES_DIR}"/gcc/0014-MinGW-w64-Enable-nxcompat-and-HE-ASLR-by-default.patch     false
     # Disable automatic image base calculation.
-    apply_patch_gcc "${PATCHES_DIR}"/gcc/0022-MinGW-Disable-automatic-image-base-calculation.patch       false
+    apply_patch_gcc "${PATCHES_DIR}"/gcc/0015-MinGW-w64-Disable-automatic-image-base-calculation.patch   false
     # Shut up GCC -Wformat.
-    apply_patch_gcc "${PATCHES_DIR}"/gcc/0023-MinGW-Use-__MINGW_PRINTF_FORMAT-for-__USE_MINGW_ANSI.patch false
+    apply_patch_gcc "${PATCHES_DIR}"/gcc/0016-MinGW-w64-Use-__MINGW_PRINTF_FORMAT-for-__USE_MINGW_.patch false
     # https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=792909
-    apply_patch_gcc "${PATCHES_DIR}"/gcc/0024-config-i386-mingw32.h-Fix-SPEC_PTHREAD2-definition.patch   false
+    apply_patch_gcc "${PATCHES_DIR}"/gcc/0017-MinGW-w64-Fix-SPEC_PTHREAD2-definition.patch               false
     # Enable colorizing diagnostics.
-    apply_patch_gcc "${PATCHES_DIR}"/gcc/0025-gcc-diagnostic-color.c-Enable-color-diagnostic-on-Mi.patch false
-    # PR65704 (https://gcc.gnu.org/bugzilla/show_bug.cgi?id=65704).
-    apply_patch_gcc "${PATCHES_DIR}"/gcc/0026-gcc-master-Cherry-pick-adace2e-and-26befab.patch           false
-    #
-    apply_patch_gcc "${PATCHES_DIR}"/gcc/0027-MinGW-w64-Define-__MSVCRT_VERSION__.patch                  false
+    apply_patch_gcc "${PATCHES_DIR}"/gcc/0018-gcc-diagnostic-color.c-Enable-color-diagnostic-on-Wi.patch false
+    # __MSVCRT_VERSION__
+    apply_patch_gcc "${PATCHES_DIR}"/gcc/0019-MinGW-w64-Define-__MSVCRT_VERSION__.patch                  false
     # PR52991 (https://gcc.gnu.org/bugzilla/show_bug.cgi?id=52991).
-    apply_patch_gcc "${PATCHES_DIR}"/gcc/0028-Fix-issue-about-record-union-attribute-packed-for-ms.patch false
+    apply_patch_gcc "${PATCHES_DIR}"/gcc/0020-Fix-issue-about-record-union-attribute-packed-for-ms.patch false
     # Remove #define stat _stat ...
-    apply_patch_gcc "${PATCHES_DIR}"/gcc/0029-ltmain.sh-Remove-useless-defines.patch                     false
+    apply_patch_gcc "${PATCHES_DIR}"/gcc/0021-ltmain.sh-Remove-useless-defines.patch                     false
+    # Thread model: mcf
+    apply_patch_gcc "${PATCHES_DIR}"/gcc/0022-Added-mcf-thread-model-support-from-mcfgthread.patch       false
+    # Fix bootstrap
+    apply_patch_gcc "${PATCHES_DIR}"/gcc/0023-MinGW-w64-Fix-bootstrap-when-libitm-is-disabled.patch      false
 
     echo 'done'
 
@@ -368,12 +354,12 @@ function build_gcc() {
                 --with-plugin-ld=ld.bfd                                           \
                 --with-system-zlib                                                \
                 --with-diagnostics-color=auto-if-env                              \
-                --with-tune=intel                                                 \
-                --with-fpmath=sse                                                 \
                 > "${LOGS_DIR}"/gcc/gcc_config_${_arch}.log 2>&1 || exit 1
             echo 'done'
 
                 # --with-arch=x86-64                                                \
+                # --with-tune=generic                                               \
+                # --with-fpmath=sse                                                 \
 
             # Make.
             printf "===> Making GCC %s...\n" $_arch

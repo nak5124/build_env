@@ -1,7 +1,7 @@
-From 8d72ae0d6b086f5e81bd72e41b65dcd01021e9c2 Mon Sep 17 00:00:00 2001
+From eafce716fa74c58e5f5672ac37abf368a0ef7b96 Mon Sep 17 00:00:00 2001
 From: Yuta Nakai <nak5124@live.jp>
 Date: Sun, 20 Mar 2016 16:25:06 +0900
-Subject: [PATCH 29/29] ltmain.sh: Remove useless defines.
+Subject: [PATCH 21/23] ltmain.sh: Remove useless defines.
 
 ---
  ltmain.sh | 24 ------------------------
@@ -43,5 +43,5 @@ index 9503ec8..988557c 100644
  # define LT_PATHMAX PATH_MAX
  #elif defined(MAXPATHLEN)
 -- 
-2.7.3
+2.8.1
 

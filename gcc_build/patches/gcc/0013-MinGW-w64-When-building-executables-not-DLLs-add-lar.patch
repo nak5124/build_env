@@ -1,0 +1,24 @@
+From e59e6e45d356a5754bbcde287f8ed801a064bf4d Mon Sep 17 00:00:00 2001
+From: Yuta NAKAI <nak5124@live.jp>
+Date: Sun, 12 Apr 2015 14:38:53 +0900
+Subject: [PATCH 13/23] MinGW-w64: When building executables, not DLLs, add
+ --large-address-aware and --tsaware.
+
+---
+ gcc/config/i386/mingw-w64.h | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/gcc/config/i386/mingw-w64.h b/gcc/config/i386/mingw-w64.h
+index fe11333..4479dad 100644
+--- a/gcc/config/i386/mingw-w64.h
++++ b/gcc/config/i386/mingw-w64.h
+@@ -88,4 +88,5 @@ along with GCC; see the file COPYING3.  If not see
+   %{shared: --shared} %{mdll:--dll} \
+   %{static:-Bstatic} %{!static:-Bdynamic} \
+   %{shared|mdll: " SUB_LINK_ENTRY " --enable-auto-image-base} \
+-  %(shared_libgcc_undefs)"
++  %(shared_libgcc_undefs) \
++  %{!shared: %{!mdll: %{" SPEC_32 ": --large-address-aware} --tsaware}}"
+-- 
+2.8.1
+

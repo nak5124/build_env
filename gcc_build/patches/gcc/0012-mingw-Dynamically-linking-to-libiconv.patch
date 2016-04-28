@@ -1,20 +1,19 @@
-From 365dfa54af3999ebf6e92e8014746b53e91dcce0 Mon Sep 17 00:00:00 2001
+From bfa8f5fdf5d26b5b0a5c16221691e5f4490d927a Mon Sep 17 00:00:00 2001
 From: Yuta NAKAI <nak5124@live.jp>
 Date: Sun, 12 Apr 2015 14:40:59 +0900
-Subject: [PATCH 19/29] mingw: Dynamically linking to libintl and libiconv.
+Subject: [PATCH 12/23] mingw: Dynamically linking to libiconv.
 
 ---
- gcc/configure          |  8 ++++----
- intl/configure         | 16 ++++++++--------
- libcpp/configure       |  8 ++++----
- libstdc++-v3/configure |  8 ++++----
- 4 files changed, 20 insertions(+), 20 deletions(-)
+ gcc/configure          | 8 ++++----
+ libcpp/configure       | 8 ++++----
+ libstdc++-v3/configure | 8 ++++----
+ 3 files changed, 12 insertions(+), 12 deletions(-)
 
 diff --git a/gcc/configure b/gcc/configure
-index ef6798e..269ef16 100755
+index 050fc53..b7c41a3 100755
 --- a/gcc/configure
 +++ b/gcc/configure
-@@ -10107,9 +10107,9 @@ fi
+@@ -10378,9 +10378,9 @@ fi
                  found_la="$additional_libdir/lib$name.la"
                fi
              else
@@ -26,59 +25,7 @@ index ef6798e..269ef16 100755
                  if test -f "$additional_libdir/lib$name.la"; then
                    found_la="$additional_libdir/lib$name.la"
                  fi
-@@ -10137,9 +10137,9 @@ fi
-                       found_la="$dir/lib$name.la"
-                     fi
-                   else
--                    if test -f "$dir/lib$name.$libext"; then
-+                    if test -f "$dir/lib$name.dll.a"; then
-                       found_dir="$dir"
--                      found_a="$dir/lib$name.$libext"
-+                      found_a="$dir/lib$name.dll.a"
-                       if test -f "$dir/lib$name.la"; then
-                         found_la="$dir/lib$name.la"
-                       fi
-diff --git a/intl/configure b/intl/configure
-index 34da38b..4578bdb 100755
---- a/intl/configure
-+++ b/intl/configure
-@@ -5097,9 +5097,9 @@ fi
-                 found_la="$additional_libdir/lib$name.la"
-               fi
-             else
--              if test -f "$additional_libdir/lib$name.$libext"; then
-+              if test -f "$additional_libdir/lib$name.dll.a"; then
-                 found_dir="$additional_libdir"
--                found_a="$additional_libdir/lib$name.$libext"
-+                found_a="$additional_libdir/lib$name.dll.a"
-                 if test -f "$additional_libdir/lib$name.la"; then
-                   found_la="$additional_libdir/lib$name.la"
-                 fi
-@@ -5127,9 +5127,9 @@ fi
-                       found_la="$dir/lib$name.la"
-                     fi
-                   else
--                    if test -f "$dir/lib$name.$libext"; then
-+                    if test -f "$dir/lib$name.dll.a"; then
-                       found_dir="$dir"
--                      found_a="$dir/lib$name.$libext"
-+                      found_a="$dir/lib$name.dll.a"
-                       if test -f "$dir/lib$name.la"; then
-                         found_la="$dir/lib$name.la"
-                       fi
-@@ -5889,9 +5889,9 @@ fi
-                 found_la="$additional_libdir/lib$name.la"
-               fi
-             else
--              if test -f "$additional_libdir/lib$name.$libext"; then
-+              if test -f "$additional_libdir/lib$name.dll.a"; then
-                 found_dir="$additional_libdir"
--                found_a="$additional_libdir/lib$name.$libext"
-+                found_a="$additional_libdir/lib$name.dll.a"
-                 if test -f "$additional_libdir/lib$name.la"; then
-                   found_la="$additional_libdir/lib$name.la"
-                 fi
-@@ -5919,9 +5919,9 @@ fi
+@@ -10408,9 +10408,9 @@ fi
                        found_la="$dir/lib$name.la"
                      fi
                    else
@@ -91,10 +38,10 @@ index 34da38b..4578bdb 100755
                          found_la="$dir/lib$name.la"
                        fi
 diff --git a/libcpp/configure b/libcpp/configure
-index 096ac8b..284dbf8 100755
+index 0342f16..45fd7b0 100755
 --- a/libcpp/configure
 +++ b/libcpp/configure
-@@ -6674,9 +6674,9 @@ fi
+@@ -6734,9 +6734,9 @@ fi
                  found_la="$additional_libdir/lib$name.la"
                fi
              else
@@ -106,7 +53,7 @@ index 096ac8b..284dbf8 100755
                  if test -f "$additional_libdir/lib$name.la"; then
                    found_la="$additional_libdir/lib$name.la"
                  fi
-@@ -6704,9 +6704,9 @@ fi
+@@ -6764,9 +6764,9 @@ fi
                        found_la="$dir/lib$name.la"
                      fi
                    else
@@ -119,10 +66,10 @@ index 096ac8b..284dbf8 100755
                          found_la="$dir/lib$name.la"
                        fi
 diff --git a/libstdc++-v3/configure b/libstdc++-v3/configure
-index 8cd4c76..3595c5c 100755
+index 41797a9..ef23c8a 100755
 --- a/libstdc++-v3/configure
 +++ b/libstdc++-v3/configure
-@@ -27452,9 +27452,9 @@ fi
+@@ -28223,9 +28223,9 @@ fi
                  found_la="$additional_libdir/lib$name.la"
                fi
              else
@@ -134,7 +81,7 @@ index 8cd4c76..3595c5c 100755
                  if test -f "$additional_libdir/lib$name.la"; then
                    found_la="$additional_libdir/lib$name.la"
                  fi
-@@ -27482,9 +27482,9 @@ fi
+@@ -28253,9 +28253,9 @@ fi
                        found_la="$dir/lib$name.la"
                      fi
                    else
@@ -147,5 +94,5 @@ index 8cd4c76..3595c5c 100755
                          found_la="$dir/lib$name.la"
                        fi
 -- 
-2.7.3
+2.8.1
 

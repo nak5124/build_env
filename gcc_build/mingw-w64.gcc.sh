@@ -116,34 +116,42 @@ source "${SCRIPTS_DIR}"/libiconv.sh
 source "${SCRIPTS_DIR}"/zlib.sh
 source "${SCRIPTS_DIR}"/mingw-w64.sh
 source "${SCRIPTS_DIR}"/binutils.sh
+source "${SCRIPTS_DIR}"/mcfgthread.sh
 source "${SCRIPTS_DIR}"/gcc.sh
 
 declare update_mingw=false
-if ( ! ${no_toolchain} && ( ${headers_rebuild:-false} || ${threads_rebuild:-false} || ${crt_rebuild:-false} ) ) \
-|| ( ! ${no_map}       && ( ${mangle_rebuild:-false}  || ${tools_rebuild:-false}                            ) ); then
+if ( ! ${no_toolchain}   && ( ${headers_rebuild:-false} || ${threads_rebuild:-false} || ${crt_rebuild:-false} ) ) \
+|| ( ! ${no_2nd_rebuild} && ( ${crt_2nd_rebuild:-false} || ${threads_2nd_rebuild:-false}                      ) ) \
+|| ( ! ${no_map}         && ( ${mangle_rebuild:-false}  || ${tools_rebuild:-false}                            ) ); then
     update_mingw=true
 fi
 
 if ! ${no_toolchain}; then
-    build_iconv --rebuild=${iconv_rebuild:-false}
     build_zlib  --rebuild=${zlib_rebuild:-false}
+    build_iconv --rebuild=${iconv_rebuild:-false}
     if ${update_mingw}; then
         prepare_mingw_w64
         update_mingw=false
     fi
-    build_headers  --rebuild=${headers_rebuild:-false}
-    build_threads  --rebuild=${threads_rebuild:-false}
-    build_crt      --rebuild=${crt_rebuild:-false}
-    build_binutils --rebuild=${binutils_rebuild:-false}
-    build_gcc      --rebuild=${gcc_rebuild:-false}
+    build_headers    --rebuild=${headers_rebuild:-false}
+    build_threads    --rebuild=${threads_rebuild:-false}
+    build_crt        --rebuild=${crt_rebuild:-false}
+    if [ "${THREAD_MODEL}" = 'mcf' ]; then
+        build_mcfgthread --rebuild=${mcfgthread_rebuild:-false}
+    fi
+    build_binutils   --rebuild=${binutils_rebuild:-false}
+    build_gcc        --rebuild=${gcc_rebuild:-false}
 else
-    build_iconv    --rebuild=false
-    build_zlib     --rebuild=false
-    build_headers  --rebuild=false
-    build_threads  --rebuild=false
-    build_crt      --rebuild=false
-    build_binutils --rebuild=false
-    build_gcc      --rebuild=false
+    build_iconv      --rebuild=false
+    build_zlib       --rebuild=false
+    build_headers    --rebuild=false
+    build_threads    --rebuild=false
+    build_crt        --rebuild=false
+    if [ "${THREAD_MODEL}" = 'mcf' ]; then
+        build_mcfgthread --rebuild=false
+    fi
+    build_binutils   --rebuild=false
+    build_gcc        --rebuild=false
 fi
 
 # Rebuild with newer GCC.
@@ -151,8 +159,17 @@ if ! ${no_2nd_rebuild}; then
     if ${binutils_2nd_rebuild:-false}; then
         build_binutils --rebuild=${binutils_2nd_rebuild:-false} --2nd
     fi
+    if ${update_mingw}; then
+        prepare_mingw_w64
+        update_mingw=false
+    fi
     if ${crt_2nd_rebuild:-false}; then
         build_crt --rebuild=${crt_2nd_rebuild:-false} --2nd
+    fi
+    if [ "${THREAD_MODEL}" = 'mcf' ]; then
+        if ${mcfgthread_2nd_rebuild:-false}; then
+            build_mcfgthread --rebuild=${mcfgthread_2nd_rebuild:-false} --2nd
+        fi
     fi
     if ${threads_2nd_rebuild:-false}; then
         build_threads --rebuild=${threads_2nd_rebuild:-false} --2nd

@@ -26,13 +26,13 @@ index 4621e60..e6a20eb 100644
 +      t = isatty (f);
 +      close (f);
 +    }
- 
+   
    if (stat (file_name, &statbuf) < 0)
      {
 @@ -583,8 +591,15 @@ get_file_size (const char * file_name)
  	non_fatal (_("Warning: could not locate '%s'.  reason: %s"),
  		   file_name, strerror (errno));
-     }
+     }  
 -  else if (! S_ISREG (statbuf.st_mode))
 -    non_fatal (_("Warning: '%s' is not an ordinary file"), file_name);
 +  else if (! S_ISREG (statbuf.st_mode) || t > 0)

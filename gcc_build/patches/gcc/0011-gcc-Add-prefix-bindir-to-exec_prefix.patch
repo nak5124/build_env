@@ -1,17 +1,17 @@
-From ae708ed5b1301b3e5f612360d71448fc669e4725 Mon Sep 17 00:00:00 2001
-From: Yuta NAKAI <nak5124@live.jp>
-Date: Sun, 12 Apr 2015 14:59:10 +0900
-Subject: [PATCH 18/29] gcc: Add prefix/bindir to exec_prefix.
+From a918bfbd41f69d20040b6390c1a269dd01554f28 Mon Sep 17 00:00:00 2001
+From: Yuta Nakai <nak5124@live.jp>
+Date: Sun, 24 Apr 2016 01:28:05 +0900
+Subject: [PATCH 11/23] gcc: Add prefix/bindir to exec_prefix.
 
 ---
  gcc/gcc.c | 13 ++++++++++++-
  1 file changed, 12 insertions(+), 1 deletion(-)
 
 diff --git a/gcc/gcc.c b/gcc/gcc.c
-index 38ae524..b4bada1 100644
+index f7434a1..9e1d99c 100644
 --- a/gcc/gcc.c
 +++ b/gcc/gcc.c
-@@ -3904,7 +3904,7 @@ process_command (unsigned int decoded_options_count,
+@@ -4118,7 +4118,7 @@ process_command (unsigned int decoded_options_count,
  {
    const char *temp;
    char *temp1;
@@ -20,13 +20,13 @@ index 38ae524..b4bada1 100644
    char *(*get_relative_prefix) (const char *, const char *,
  				const char *) = NULL;
    struct cl_option_handlers handlers;
-@@ -4268,23 +4268,34 @@ process_command (unsigned int decoded_options_count,
+@@ -4487,23 +4487,34 @@ process_command (unsigned int decoded_options_count,
      }
  
    gcc_assert (!IS_ABSOLUTE_PATH (tooldir_base_prefix));
 +  bindir_prefix2 = concat (tooldir_base_prefix, "bin",
 +			    dir_separator_str, NULL);
-   tooldir_prefix2 = concat (tooldir_base_prefix, spec_host_machine,
+   tooldir_prefix2 = concat (tooldir_base_prefix, spec_machine,
  			    dir_separator_str, NULL);
  
    /* Look for tools relative to the location from which the driver is
@@ -56,5 +56,5 @@ index 38ae524..b4bada1 100644
  
  #if defined(TARGET_SYSTEM_ROOT_RELOCATABLE) && !defined(VMS)
 -- 
-2.7.3
+2.8.1
 

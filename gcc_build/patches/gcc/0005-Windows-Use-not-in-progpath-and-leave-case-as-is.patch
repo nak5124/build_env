@@ -1,16 +1,27 @@
-From 0216d97c85fbf48d0f8aa89f4004e5ff7c245977 Mon Sep 17 00:00:00 2001
-From: Yuta NAKAI <nak5124@live.jp>
-Date: Sun, 12 Apr 2015 12:03:12 +0900
-Subject: [PATCH 07/29] libiberty/lrealpath.c: Don't make a lowercase
- backslashed path from argv[0] that then fail to strcmp with prefix(es) ..
- they're also ugly.
+From e694dc6957a2b6f6639911c4a38eb4184d1aa9a1 Mon Sep 17 00:00:00 2001
+From: Ray Donnelly <mingw.android@gmail.com>
+Date: Wed, 5 Aug 2015 23:36:09 +0100
+Subject: [PATCH 05/23] Windows: Use '/' not '\' in progpath and leave case
+ as-is
 
+Windows can handle both '/' and '\' dirseps. GCC will
+have been built using Cygwin, MSYS* or cross-compiled
+from a system where dirsep is '/' so it is cleaner to
+force the dirseps to be '/' and keep the case as-is.
+
+This way, the value will be consistent with the build
+system and string operations, be they internal to GCC
+or external to it (e.g. processing map files with sed)
+have a better chance of working as expected.
+
+A concrete instance of when this matters is when cross
+compiling GNU/Linux glibc on Windows.
 ---
  libiberty/lrealpath.c | 19 +++++++++++++++----
  1 file changed, 15 insertions(+), 4 deletions(-)
 
 diff --git a/libiberty/lrealpath.c b/libiberty/lrealpath.c
-index b27c8de..423d128 100644
+index b27c8de..8165984 100644
 --- a/libiberty/lrealpath.c
 +++ b/libiberty/lrealpath.c
 @@ -138,15 +138,26 @@ lrealpath (const char *filename)
@@ -27,8 +38,8 @@ index b27c8de..423d128 100644
 -	   Canonicalize to lowercase, using the codepage associated
 -	   with the process locale.  */
 -        CharLowerBuff (buf, len);
-+	/* Turn all back slashes back back into forward slashes
-+	   and don't make it all lowercase.
++	/* Turn all back slashes back into forward slashes
++	   and don't make it lowercase.
 +	   Rationale:
 +	   Windows is as happy with / as it is with \. This will
 +	   have been built using Cygwin, MSYS* or cross-compiled
@@ -45,5 +56,5 @@ index b27c8de..423d128 100644
        }
    }
 -- 
-2.7.3
+2.8.1
 

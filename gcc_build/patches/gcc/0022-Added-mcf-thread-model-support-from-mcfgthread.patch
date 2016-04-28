@@ -1,0 +1,201 @@
+From 629847cb886dd278a24abfe9e5a0f1d8cfd1e288 Mon Sep 17 00:00:00 2001
+From: lhmouse <lh_mouse@126.com>
+Date: Mon, 18 Apr 2016 11:50:55 +0800
+Subject: [PATCH 22/23] Added 'mcf' thread model support from mcfgthread.
+
+---
+ config/gthr.m4                        | 1 +
+ gcc/config.gcc                        | 3 +++
+ gcc/config/i386/mingw-mcfgthread.h    | 1 +
+ gcc/config/i386/mingw-w64.h           | 2 +-
+ gcc/config/i386/mingw32.h             | 8 +++++++-
+ gcc/configure                         | 2 +-
+ gcc/configure.ac                      | 2 +-
+ libatomic/configure.tgt               | 2 +-
+ libgcc/config.host                    | 6 ++++++
+ libgcc/config/i386/gthr-mcf.h         | 1 +
+ libgcc/config/i386/t-mingw-mcfgthread | 2 ++
+ libgcc/configure                      | 1 +
+ libstdc++-v3/configure                | 1 +
+ 13 files changed, 27 insertions(+), 5 deletions(-)
+ create mode 100644 gcc/config/i386/mingw-mcfgthread.h
+ create mode 100644 libgcc/config/i386/gthr-mcf.h
+ create mode 100644 libgcc/config/i386/t-mingw-mcfgthread
+
+diff --git a/config/gthr.m4 b/config/gthr.m4
+index 7b29f1f..82e21fe 100644
+--- a/config/gthr.m4
++++ b/config/gthr.m4
+@@ -21,6 +21,7 @@ case $1 in
+     tpf)	thread_header=config/s390/gthr-tpf.h ;;
+     vxworks)	thread_header=config/gthr-vxworks.h ;;
+     win32)	thread_header=config/i386/gthr-win32.h ;;
++    mcf)	thread_header=config/i386/gthr-mcf.h ;;
+ esac
+ AC_SUBST(thread_header)
+ ])
+diff --git a/gcc/config.gcc b/gcc/config.gcc
+index f66e48c..b61e94b 100644
+--- a/gcc/config.gcc
++++ b/gcc/config.gcc
+@@ -1708,6 +1708,9 @@ i[34567]86-*-mingw* | x86_64-*-mingw*)
+ 	if test x$enable_threads = xposix ; then
+ 		tm_file="${tm_file} i386/mingw-pthread.h"
+ 	fi
++	if test x$enable_threads = xmcf ; then
++		tm_file="${tm_file} i386/mingw-mcfgthread.h"
++	fi
+ 	tm_file="${tm_file} i386/mingw32.h"
+ 	# This makes the logic if mingw's or the w64 feature set has to be used
+ 	case ${target} in
+diff --git a/gcc/config/i386/mingw-mcfgthread.h b/gcc/config/i386/mingw-mcfgthread.h
+new file mode 100644
+index 0000000..ec381a7
+--- /dev/null
++++ b/gcc/config/i386/mingw-mcfgthread.h
+@@ -0,0 +1 @@
++#define TARGET_USE_MCFGTHREAD 1
+diff --git a/gcc/config/i386/mingw-w64.h b/gcc/config/i386/mingw-w64.h
+index 59ef622..c1b509e 100644
+--- a/gcc/config/i386/mingw-w64.h
++++ b/gcc/config/i386/mingw-w64.h
+@@ -53,7 +53,7 @@ along with GCC; see the file COPYING3.  If not see
+ 		 "%{mwindows:-lgdi32 -lcomdlg32} " \
+      "%{fvtable-verify=preinit:-lvtv -lpsapi; \
+         fvtable-verify=std:-lvtv -lpsapi} " \
+-		 "-ladvapi32 -lshell32 -luser32 -lkernel32"
++		 LIB_MCFGTHREAD "-ladvapi32 -lshell32 -luser32 -lkernel32"
+ 
+ #undef SPEC_32
+ #undef SPEC_64
+diff --git a/gcc/config/i386/mingw32.h b/gcc/config/i386/mingw32.h
+index ba5ebef..373d1e3 100644
+--- a/gcc/config/i386/mingw32.h
++++ b/gcc/config/i386/mingw32.h
+@@ -65,6 +65,12 @@ along with GCC; see the file COPYING3.  If not see
+ #define SPEC_PTHREAD "!no-pthread"
+ #endif
+ 
++#ifndef TARGET_USE_MCFGTHREAD
++#define LIB_MCFGTHREAD ""
++#else
++#define LIB_MCFGTHREAD " -lmcfgthread "
++#endif
++
+ #undef SUB_LINK_ENTRY32
+ #undef SUB_LINK_ENTRY64
+ #define SUB_LINK_ENTRY32 "-e _DllMainCRTStartup@12"
+@@ -95,7 +101,7 @@ along with GCC; see the file COPYING3.  If not see
+ 		 "%{mwindows:-lgdi32 -lcomdlg32} " \
+      "%{fvtable-verify=preinit:-lvtv -lpsapi; \
+         fvtable-verify=std:-lvtv -lpsapi} " \
+-                 "-ladvapi32 -lshell32 -luser32 -lkernel32"
++                 LIB_MCFGTHREAD "-ladvapi32 -lshell32 -luser32 -lkernel32"
+ 
+ /* Weak symbols do not get resolved if using a Windows dll import lib.
+    Make the unwind registration references strong undefs.  */
+diff --git a/gcc/configure b/gcc/configure
+index caf5f93..03f7e89 100755
+--- a/gcc/configure
++++ b/gcc/configure
+@@ -11698,7 +11698,7 @@ case ${enable_threads} in
+     target_thread_file='single'
+     ;;
+   aix | dce | lynx | mipssde | posix | rtems | \
+-  single | tpf | vxworks | win32)
++  single | tpf | vxworks | win32 | mcf)
+     target_thread_file=${enable_threads}
+     ;;
+   *)
+diff --git a/gcc/configure.ac b/gcc/configure.ac
+index 6c1dcd9..d196561 100644
+--- a/gcc/configure.ac
++++ b/gcc/configure.ac
+@@ -1586,7 +1586,7 @@ case ${enable_threads} in
+     target_thread_file='single'
+     ;;
+   aix | dce | lynx | mipssde | posix | rtems | \
+-  single | tpf | vxworks | win32)
++  single | tpf | vxworks | win32 | mcf)
+     target_thread_file=${enable_threads}
+     ;;
+   *)
+diff --git a/libatomic/configure.tgt b/libatomic/configure.tgt
+index c5470d7..72b3bda 100644
+--- a/libatomic/configure.tgt
++++ b/libatomic/configure.tgt
+@@ -120,7 +120,7 @@ case "${target}" in
+   *-*-mingw*)
+ 	# OS support for atomic primitives.
+         case ${target_thread_file} in
+-          win32)
++          win32 | mcf)
+             config_path="${config_path} mingw"
+             ;;
+           posix)
+diff --git a/libgcc/config.host b/libgcc/config.host
+index b61a579..bea795b 100644
+--- a/libgcc/config.host
++++ b/libgcc/config.host
+@@ -700,6 +700,9 @@ i[34567]86-*-mingw*)
+ 	  posix)
+ 	    tmake_file="i386/t-mingw-pthread $tmake_file"
+ 	    ;;
++	  mcf)
++	    tmake_file="i386/t-mingw-mcfgthread $tmake_file"
++	    ;;
+ 	esac
+ 	# This has to match the logic for DWARF2_UNWIND_INFO in gcc/config/i386/cygming.h
+ 	if test x$ac_cv_sjlj_exceptions = xyes; then
+@@ -724,6 +727,9 @@ x86_64-*-mingw*)
+ 	  posix)
+ 	    tmake_file="i386/t-mingw-pthread $tmake_file"
+ 	    ;;
++	  mcf)
++	    tmake_file="i386/t-mingw-mcfgthread $tmake_file"
++	    ;;
+ 	esac
+ 	# This has to match the logic for DWARF2_UNWIND_INFO in gcc/config/i386/cygming.h
+ 	if test x$ac_cv_sjlj_exceptions = xyes; then
+diff --git a/libgcc/config/i386/gthr-mcf.h b/libgcc/config/i386/gthr-mcf.h
+new file mode 100644
+index 0000000..7b4951f
+--- /dev/null
++++ b/libgcc/config/i386/gthr-mcf.h
+@@ -0,0 +1 @@
++#include <mcfgthread/env/gthread.h>
+diff --git a/libgcc/config/i386/t-mingw-mcfgthread b/libgcc/config/i386/t-mingw-mcfgthread
+new file mode 100644
+index 0000000..4b9b10e
+--- /dev/null
++++ b/libgcc/config/i386/t-mingw-mcfgthread
+@@ -0,0 +1,2 @@
++SHLIB_PTHREAD_CFLAG =
++SHLIB_PTHREAD_LDFLAG = -lmcfgthread
+diff --git a/libgcc/configure b/libgcc/configure
+index e7d6c75..664d0f8 100644
+--- a/libgcc/configure
++++ b/libgcc/configure
+@@ -5077,6 +5077,7 @@ case $target_thread_file in
+     tpf)	thread_header=config/s390/gthr-tpf.h ;;
+     vxworks)	thread_header=config/gthr-vxworks.h ;;
+     win32)	thread_header=config/i386/gthr-win32.h ;;
++    mcf)	thread_header=config/i386/gthr-mcf.h ;;
+ esac
+ 
+ 
+diff --git a/libstdc++-v3/configure b/libstdc++-v3/configure
+index a7b6e58..8e4faed 100755
+--- a/libstdc++-v3/configure
++++ b/libstdc++-v3/configure
+@@ -15177,6 +15177,7 @@ case $target_thread_file in
+     tpf)	thread_header=config/s390/gthr-tpf.h ;;
+     vxworks)	thread_header=config/gthr-vxworks.h ;;
+     win32)	thread_header=config/i386/gthr-win32.h ;;
++    mcf)	thread_header=config/i386/gthr-mcf.h ;;
+ esac
+ 
+ 
+-- 
+2.8.1
+

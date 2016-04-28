@@ -1,7 +1,7 @@
-From ff099582ab8bcb1d01060c8df3ab3546744e9d8c Mon Sep 17 00:00:00 2001
+From a6f3936eeaae7316de3d032c307eb36ce0d99de1 Mon Sep 17 00:00:00 2001
 From: Yuta NAKAI <nak5124@live.jp>
 Date: Sun, 12 Apr 2015 14:25:35 +0900
-Subject: [PATCH 17/29] configure: Search dirs under ${build_sysroot} instead
+Subject: [PATCH 10/23] configure: Search dirs under ${build_sysroot} instead
  of ${prefix}.
 
 ---
@@ -11,10 +11,10 @@ Subject: [PATCH 17/29] configure: Search dirs under ${build_sysroot} instead
  3 files changed, 18 insertions(+), 2 deletions(-)
 
 diff --git a/configure b/configure
-index a3f66ba..7faf975 100755
+index 35f231e..dce834e 100755
 --- a/configure
 +++ b/configure
-@@ -6919,6 +6919,12 @@ esac
+@@ -7005,6 +7005,12 @@ esac
  # using) don't handle "\$" correctly, so don't use it here.
  tooldir='${exec_prefix}'/${target_noncanonical}
  build_tooldir=${tooldir}
@@ -27,7 +27,7 @@ index a3f66ba..7faf975 100755
  
  # Create a .gdbinit file which runs the one in srcdir
  # and tells GDB to look there for source files.
-@@ -7533,7 +7539,14 @@ case "$target" in
+@@ -7619,7 +7625,14 @@ case "$target" in
    x86_64-*mingw* | *-w64-mingw*)
    # MinGW-w64 does not use newlib, nor does it use winsup. It may,
    # however, use a symlink named 'mingw' in ${prefix} .
@@ -44,10 +44,10 @@ index a3f66ba..7faf975 100755
    *-mingw*)
    # MinGW can't be handled as Cygwin above since it does not use newlib.
 diff --git a/gcc/Makefile.in b/gcc/Makefile.in
-index 776a021..ef1aee3 100644
+index 9fed49d..8eb6a9f 100644
 --- a/gcc/Makefile.in
 +++ b/gcc/Makefile.in
-@@ -631,7 +631,7 @@ dollar = @dollar@
+@@ -642,7 +642,7 @@ dollar = @dollar@
  # Used in install-cross.
  gcc_tooldir = @gcc_tooldir@
  # Since gcc_tooldir does not exist at build-time, use -B$(build_tooldir)/bin/
@@ -57,10 +57,10 @@ index 776a021..ef1aee3 100644
  gcc_gxx_include_dir = @gcc_gxx_include_dir@
  gcc_gxx_include_dir_add_sysroot = @gcc_gxx_include_dir_add_sysroot@
 diff --git a/gcc/configure b/gcc/configure
-index a383444..ef6798e 100755
+index abf6373..050fc53 100755
 --- a/gcc/configure
 +++ b/gcc/configure
-@@ -668,6 +668,7 @@ all_compilers
+@@ -671,6 +671,7 @@ all_compilers
  srcdir
  subdirs
  dollar
@@ -68,7 +68,7 @@ index a383444..ef6798e 100755
  gcc_tooldir
  enable_lto
  DO_LINK_MUTEX
-@@ -7289,9 +7290,11 @@ fi
+@@ -3484,9 +3485,11 @@ fi
  if test "${with_build_sysroot+set}" = set; then :
    withval=$with_build_sysroot; if test x"$withval" != x ; then
       SYSROOT_CFLAGS_FOR_TARGET="--sysroot=$withval"
@@ -81,5 +81,5 @@ index a383444..ef6798e 100755
  
  
 -- 
-2.7.3
+2.8.1
 

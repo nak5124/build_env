@@ -108,16 +108,18 @@ function build_gmp() {
                 --disable-static             \
                 --enable-fast-install        \
                 --with-gnu-ld                \
-                --enable-assembly            \
-                --enable-fft                 \
-                --enable-fat                 \
-                MPN_PATH="${_mpn_path}"      \
                 CFLAGS="${CFLAGS_}"          \
                 LDFLAGS="${LDFLAGS_}"        \
                 CPPFLAGS="${CPPFLAGS_}"      \
                 CXXFLAGS="${CXXFLAGS_}"      \
                 > "${LOGS_DIR}"/gcc_libs/gmp/gmp_config_${_arch}.log 2>&1 || exit 1
             echo 'done'
+
+                # --enable-assembly            \
+                # --enable-fft                 \
+                # --enable-fat                 \
+                # MPN_PATH="${_mpn_path}"      \
+
 
             # Make.
             printf "===> Making GMP %s...\n" "${_arch}"

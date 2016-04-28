@@ -1,14 +1,14 @@
-From 51955ab43434d0297fc32b5c8bf2871d32d01b7a Mon Sep 17 00:00:00 2001
+From 6c113a878749b8ca520bf58e8c904238dc70a363 Mon Sep 17 00:00:00 2001
 From: Yuta Nakai <nak5124@live.jp>
 Date: Sun, 20 Mar 2016 15:53:32 +0900
-Subject: [PATCH 27/29] MinGW-w64: Define __MSVCRT_VERSION__.
+Subject: [PATCH 19/23] MinGW-w64: Define __MSVCRT_VERSION__.
 
 ---
  gcc/config/i386/mingw-w64.h | 7 +++++++
  1 file changed, 7 insertions(+)
 
 diff --git a/gcc/config/i386/mingw-w64.h b/gcc/config/i386/mingw-w64.h
-index 85e83a7..25c08ea 100644
+index ebeeddc..59ef622 100644
 --- a/gcc/config/i386/mingw-w64.h
 +++ b/gcc/config/i386/mingw-w64.h
 @@ -24,6 +24,13 @@ along with GCC; see the file COPYING3.  If not see
@@ -26,5 +26,5 @@ index 85e83a7..25c08ea 100644
  
  #undef STARTFILE_SPEC
 -- 
-2.7.3
+2.8.1
 

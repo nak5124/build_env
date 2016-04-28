@@ -1,8 +1,8 @@
-From d4c3fe572056c88f754f0e17049089724b90e49c Mon Sep 17 00:00:00 2001
+From 1de5d717e9033f7da7afa95e07f7d6538a872c21 Mon Sep 17 00:00:00 2001
 From: Yuta NAKAI <nak5124@live.jp>
 Date: Sun, 26 Apr 2015 09:53:07 +0900
-Subject: [PATCH 25/29] gcc/diagnostic-color.c: Enable color diagnostic on
- MinGW.
+Subject: [PATCH 18/23] gcc/diagnostic-color.c: Enable color diagnostic on
+ Windows.
 
 ---
  gcc/Makefile.in        |  5 +--
@@ -10,10 +10,10 @@ Subject: [PATCH 25/29] gcc/diagnostic-color.c: Enable color diagnostic on
  2 files changed, 86 insertions(+), 9 deletions(-)
 
 diff --git a/gcc/Makefile.in b/gcc/Makefile.in
-index ef1aee3..ddb9b4c 100644
+index 8eb6a9f..49a5e14 100644
 --- a/gcc/Makefile.in
 +++ b/gcc/Makefile.in
-@@ -1011,10 +1011,11 @@ BUILD_LIBDEPS= $(BUILD_LIBIBERTY)
+@@ -1031,10 +1031,11 @@ BUILD_LIBDEPS= $(BUILD_LIBIBERTY)
  
  # How to link with both our special library facilities
  # and the system's installed libraries.
@@ -28,10 +28,10 @@ index ef1aee3..ddb9b4c 100644
  SYSLIBS = @GNAT_LIBEXC@
  
 diff --git a/gcc/diagnostic-color.c b/gcc/diagnostic-color.c
-index 3fe49b2..9530058 100644
+index f76c87b..c683c67 100644
 --- a/gcc/diagnostic-color.c
 +++ b/gcc/diagnostic-color.c
-@@ -263,20 +263,97 @@ parse_gcc_colors (void)
+@@ -264,20 +264,97 @@ parse_gcc_colors (void)
        return true;
  }
  
@@ -135,11 +135,11 @@ index 3fe49b2..9530058 100644
  }
  
  
-@@ -298,4 +375,3 @@ colorize_init (diagnostic_color_rule_t rule)
+@@ -299,4 +376,3 @@ colorize_init (diagnostic_color_rule_t rule)
        gcc_unreachable ();
      }
  }
 -#endif
 -- 
-2.7.3
+2.8.1
 
