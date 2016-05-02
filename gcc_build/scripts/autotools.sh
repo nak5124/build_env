@@ -118,6 +118,13 @@ function build_autoconf() {
         printf "===> Copying Autoconf %s to %s/mingw%s...\n" "${_arch}" "${DST_DIR}" "${_bitval}"
         cp -af "${PREIN_DIR}"/autotools/autoconf/mingw$_bitval "${DST_DIR}"
         echo 'done'
+
+        # Copy logs
+        printf "===> Copying Autoconf %s logs to %s/mingw%s/logs...\n" "${_arch}" "${DST_DIR}" "${_bitval}"
+        mkdir -p "${DST_DIR}"/mingw${_bitval}/logs/autotools/autoconf
+        cp -af "${LOGS_DIR}"/autotools/autoconf/*${_arch}*         "${DST_DIR}"/mingw${_bitval}/logs/autotools/autoconf
+        cp -af "${LOGS_DIR}"/autotools/autoconf/autoconf_patch.log "${DST_DIR}"/mingw${_bitval}/logs/autotools/autoconf
+        echo 'done'
     done
 
     cd "${ROOT_DIR}"
@@ -242,6 +249,13 @@ function build_automake() {
         else
             rm -f "${DST_DIR}"/mingw${_bitval}/bin/{aclocal,automake}
         fi
+        echo 'done'
+
+        # Copy logs
+        printf "===> Copying Automake %s logs to %s/mingw%s/logs...\n" "${_arch}" "${DST_DIR}" "${_bitval}"
+        mkdir -p "${DST_DIR}"/mingw${_bitval}/logs/autotools/automake
+        cp -af "${LOGS_DIR}"/autotools/automake/*${_arch}*         "${DST_DIR}"/mingw${_bitval}/logs/autotools/automake
+        cp -af "${LOGS_DIR}"/autotools/automake/automake_patch.log "${DST_DIR}"/mingw${_bitval}/logs/autotools/automake
         echo 'done'
     done
 
@@ -380,6 +394,13 @@ function build_libtool() {
         # Copy to DST_DIR.
         printf "===> Copying Libtool %s to %s/mingw%s...\n" "${_arch}" "${DST_DIR}" "${_bitval}"
         cp -af "${PREIN_DIR}"/autotools/libtool/mingw$_bitval "${DST_DIR}"
+        echo 'done'
+
+        # Copy logs
+        printf "===> Copying Libtool %s logs to %s/mingw%s/logs...\n" "${_arch}" "${DST_DIR}" "${_bitval}"
+        mkdir -p "${DST_DIR}"/mingw${_bitval}/logs/autotools/libtool
+        cp -af "${LOGS_DIR}"/autotools/libtool/*${_arch}*        "${DST_DIR}"/mingw${_bitval}/logs/autotools/libtool
+        cp -af "${LOGS_DIR}"/autotools/libtool/libtool_patch.log "${DST_DIR}"/mingw${_bitval}/logs/autotools/libtool
         echo 'done'
     done
 

@@ -1,7 +1,7 @@
-From ffaae15d9444a5c4d1accfd375f9d7ae0c36e6e3 Mon Sep 17 00:00:00 2001
+From d57a1db01054253693bca59476cfa1b9f9bbef6b Mon Sep 17 00:00:00 2001
 From: Ray Donnelly <mingw.android@gmail.com>
 Date: Wed, 5 Aug 2015 23:36:13 +0100
-Subject: [PATCH 06/23] Windows: New feature to allow overriding -lmsvcrt
+Subject: [PATCH 06/24] Windows: New feature to allow overriding -lmsvcrt
 
 Added in support of the MinGW-w64 WIP feature "agile mscvrt dll" where
 a process' loaded msvc runtime is used by a newly loaded DLL rather than

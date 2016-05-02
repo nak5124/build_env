@@ -1,7 +1,7 @@
-From 51d478c098f16514ef8f55c49a7b055d1e3bc735 Mon Sep 17 00:00:00 2001
+From 315e4532e6f6213e4ab918d81b249e3887c3a151 Mon Sep 17 00:00:00 2001
 From: Yuta Nakai <nak5124@live.jp>
 Date: Sun, 20 Mar 2016 16:00:38 +0900
-Subject: [PATCH 20/23] Fix issue about record/union attribute packed for
+Subject: [PATCH 20/24] Fix issue about record/union attribute packed for
  ms_struct.
 
 Patch by Kai.

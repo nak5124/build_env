@@ -215,6 +215,21 @@ function build_iconv() {
             cp -af "${PREIN_DIR}"/win-iconv/mingw$_bitval "${DST_DIR}"
         fi
         echo 'done'
+
+        # Copy logs
+        if ! ${use_win_iconv}; then
+            printf "===> Copying win-iconv %s logs to %s/mingw%s/logs...\n" "${_arch}" "${DST_DIR}" "${_bitval}"
+            mkdir -p "${DST_DIR}"/mingw${_bitval}/logs/libiconv
+            cp -af "${LOGS_DIR}"/libiconv/libiconv*${_arch}* "${DST_DIR}"/mingw${_bitval}/logs/libiconv
+            cp -af "${LOGS_DIR}"/libiconv/libiconv_patch.log "${DST_DIR}"/mingw${_bitval}/logs/libiconv
+        else
+            printf "===> Copying win-iconv %s logs to %s/mingw%s/logs...\n" "${_arch}" "${DST_DIR}" "${_bitval}"
+            mkdir -p "${DST_DIR}"/mingw${_bitval}/logs/win-iconv
+            cp -af "${LOGS_DIR}"/libiconv/win-iconv*${_arch}* "${DST_DIR}"/mingw${_bitval}/logs/win-iconv
+            cp -af "${LOGS_DIR}"/libiconv/win-iconv_patch.log "${DST_DIR}"/mingw${_bitval}/logs/win-iconv
+            cp -af "${LOGS_DIR}"/libiconv/win-iconv.hash      "${DST_DIR}"/mingw${_bitval}/logs/win-iconv
+        fi
+        echo 'done'
     done
 
     cd "${ROOT_DIR}"

@@ -44,7 +44,7 @@ declare -r MAKEFLAGS_=" -j$(($(nproc)+1)) -O"
 declare -r THREAD_MODEL='mcf'
 
 # GCC package revision
-declare -r GCC_PKGREV=0
+declare -r GCC_PKGREV=2
 declare -r GCC_BUILT_DATE=$(date +%Y.%m.%d)
 
 # Version

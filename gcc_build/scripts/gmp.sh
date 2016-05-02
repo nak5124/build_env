@@ -142,6 +142,13 @@ function build_gmp() {
         printf "===> Copying GMP %s to %s/mingw%s...\n" "${_arch}" "${DST_DIR}" "${_bitval}"
         cp -af "${PREIN_DIR}"/gcc_libs/gmp/mingw$_bitval "${DST_DIR}"
         echo 'done'
+
+        # Copy logs
+        printf "===> Copying GMP %s logs to %s/mingw%s/logs...\n" "${_arch}" "${DST_DIR}" "${_bitval}"
+        mkdir -p "${DST_DIR}"/mingw${_bitval}/logs/gcc_libs/gmp
+        cp -af "${LOGS_DIR}"/gcc_libs/gmp/*${_arch}*    "${DST_DIR}"/mingw${_bitval}/logs/gcc_libs/gmp
+        cp -af "${LOGS_DIR}"/gcc_libs/gmp/gmp_patch.log "${DST_DIR}"/mingw${_bitval}/logs/gcc_libs/gmp
+        echo 'done'
     done
 
     cd "${ROOT_DIR}"

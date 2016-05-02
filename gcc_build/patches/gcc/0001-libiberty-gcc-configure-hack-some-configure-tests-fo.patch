@@ -1,7 +1,7 @@
-From a7d64e6666183cd4f1b3ef3d38c5bf628f062ae6 Mon Sep 17 00:00:00 2001
+From 61952c1d963ca7132998cb64f2718ac16315d66f Mon Sep 17 00:00:00 2001
 From: Yuta Nakai <nak5124@live.jp>
 Date: Sun, 24 Apr 2016 00:26:32 +0900
-Subject: [PATCH 01/23] {libiberty, gcc}/configure: hack! - some configure
+Subject: [PATCH 01/24] {libiberty, gcc}/configure: hack! - some configure
  tests for header files using "$CPP $CPPFLAGS"
 
 ---

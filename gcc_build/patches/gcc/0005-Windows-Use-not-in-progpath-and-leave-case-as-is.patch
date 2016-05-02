@@ -1,7 +1,7 @@
-From e694dc6957a2b6f6639911c4a38eb4184d1aa9a1 Mon Sep 17 00:00:00 2001
+From ac729d3f3bfaa9a926acdbf2c22802eadbdc41ff Mon Sep 17 00:00:00 2001
 From: Ray Donnelly <mingw.android@gmail.com>
 Date: Wed, 5 Aug 2015 23:36:09 +0100
-Subject: [PATCH 05/23] Windows: Use '/' not '\' in progpath and leave case
+Subject: [PATCH 05/24] Windows: Use '/' not '\' in progpath and leave case
  as-is
 
 Windows can handle both '/' and '\' dirseps. GCC will

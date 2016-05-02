@@ -104,6 +104,13 @@ function build_headers() {
         printf "===> Copying MinGW-w64 headers %s to %s/mingw%s...\n" "${_arch}" "${DST_DIR}" "${_bitval}"
         cp -af "${PREIN_DIR}"/mingw-w64/headers/mingw$_bitval "${DST_DIR}"
         echo 'done'
+
+        # Copy logs
+        printf "===> Copying MinGW-w64 headers %s logs to %s/mingw%s/logs...\n" "${_arch}" "${DST_DIR}" "${_bitval}"
+        mkdir -p "${DST_DIR}"/mingw${_bitval}/logs/mingw-w64/headers
+        cp -af "${LOGS_DIR}"/mingw-w64/mingw-w64.hash     "${DST_DIR}"/mingw${_bitval}/logs/mingw-w64
+        cp -af "${LOGS_DIR}"/mingw-w64/headers/*${_arch}* "${DST_DIR}"/mingw${_bitval}/logs/mingw-w64/headers
+        echo 'done'
     done
 
     cd "${ROOT_DIR}"
@@ -196,6 +203,12 @@ function build_threads() {
             # Copy to DST_DIR.
             printf "===> Copying MinGW-w64 winpthreads %s to %s/mingw%s...\n" "${_arch}" "${DST_DIR}" "${_bitval}"
             cp -af "${PREIN_DIR}"/mingw-w64/winpthreads/mingw$_bitval "${DST_DIR}"
+            echo 'done'
+
+            # Copy logs
+            printf "===> Copying MinGW-w64 winpthreads %s logs to %s/mingw%s/logs...\n" "${_arch}" "${DST_DIR}" "${_bitval}"
+            mkdir -p "${DST_DIR}"/mingw${_bitval}/logs/mingw-w64/winpthreads
+            cp -af "${LOGS_DIR}"/mingw-w64/winpthreads/*${_arch}* "${DST_DIR}"/mingw${_bitval}/logs/mingw-w64/winpthreads
             echo 'done'
         fi
     done
@@ -292,6 +305,12 @@ function build_crt() {
             printf "===> Copying MinGW-w64 crt %s to %s/mingw%s...\n" "${_arch}" "${DST_DIR}" "${_bitval}"
             cp -af "${PREIN_DIR}"/mingw-w64/crt/mingw$_bitval "${DST_DIR}"
             echo 'done'
+
+            # Copy logs
+            printf "===> Copying MinGW-w64 crt %s logs to %s/mingw%s/logs...\n" "${_arch}" "${DST_DIR}" "${_bitval}"
+            mkdir -p "${DST_DIR}"/mingw${_bitval}/logs/mingw-w64/crt
+            cp -af "${LOGS_DIR}"/mingw-w64/crt/*${_arch}* "${DST_DIR}"/mingw${_bitval}/logs/mingw-w64/crt
+            echo 'done'
         fi
     done
 
@@ -363,6 +382,12 @@ function build_mangle() {
         # Copy to DST_DIR.
         printf "===> Copying MinGW-w64 libmangle %s to %s/mingw%s...\n" "${_arch}" "${DST_DIR}" "${_bitval}"
         cp -af "${PREIN_DIR}"/mingw-w64/libmangle/mingw$_bitval "${DST_DIR}"
+        echo 'done'
+
+        # Copy logs
+        printf "===> Copying MinGW-w64 libmangle %s logs to %s/mingw%s/logs...\n" "${_arch}" "${DST_DIR}" "${_bitval}"
+        mkdir -p "${DST_DIR}"/mingw${_bitval}/logs/mingw-w64/libmangle
+        cp -af "${LOGS_DIR}"/mingw-w64/libmangle/*${_arch}* "${DST_DIR}"/mingw${_bitval}/logs/mingw-w64/libmangle
         echo 'done'
     done
 
@@ -458,6 +483,12 @@ function build_tools() {
         # Copy to DST_DIR.
         printf "===> Copying MinGW-w64 tools %s to %s/mingw%s...\n" "${_arch}" "${DST_DIR}" "${_bitval}"
         cp -af "${PREIN_DIR}"/mingw-w64/tools/mingw$_bitval "${DST_DIR}"
+        echo 'done'
+
+        # Copy logs
+        printf "===> Copying MinGW-w64 tools %s logs to %s/mingw%s/logs...\n" "${_arch}" "${DST_DIR}" "${_bitval}"
+        mkdir -p "${DST_DIR}"/mingw${_bitval}/logs/mingw-w64/tools
+        cp -af "${LOGS_DIR}"/mingw-w64/tools/*${_arch}* "${DST_DIR}"/mingw${_bitval}/logs/mingw-w64/tools
         echo 'done'
     done
 

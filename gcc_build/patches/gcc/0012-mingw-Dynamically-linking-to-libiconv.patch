@@ -1,7 +1,7 @@
-From bfa8f5fdf5d26b5b0a5c16221691e5f4490d927a Mon Sep 17 00:00:00 2001
+From 1330bf3d6c723498d11f082344eca4e3b353c463 Mon Sep 17 00:00:00 2001
 From: Yuta NAKAI <nak5124@live.jp>
 Date: Sun, 12 Apr 2015 14:40:59 +0900
-Subject: [PATCH 12/23] mingw: Dynamically linking to libiconv.
+Subject: [PATCH 12/24] mingw: Dynamically linking to libiconv.
 
 ---
  gcc/configure          | 8 ++++----

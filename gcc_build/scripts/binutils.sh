@@ -224,6 +224,17 @@ function build_binutils() {
                 symlink_binutils $_arch
                 echo 'done'
             fi
+
+            # Copy logs
+            printf "===> Copying Binutils %s logs to %s/mingw%s/logs...\n" "${_arch}" "${DST_DIR}" "${_bitval}"
+            mkdir -p "${DST_DIR}"/mingw${_bitval}/logs/binutils
+            cp -af "${LOGS_DIR}"/binutils/binutils_{config,install,make}_${_arch}* \
+                "${DST_DIR}"/mingw${_bitval}/logs/binutils
+            cp -af "${LOGS_DIR}"/binutils/binutils_patch.log "${DST_DIR}"/mingw${_bitval}/logs/binutils
+            if [ "${BINUTILS_VER}" = 'git' ]; then
+                cp -af "${LOGS_DIR}"/binutils/binutils.hash "${DST_DIR}"/mingw${_bitval}/logs/binutils
+            fi
+            echo 'done'
         fi
     done
 
@@ -243,6 +254,12 @@ function copy_ld() {
         # Copy to DST_DIR.
         printf "===> Copying ld %s to %s/mingw%s...\n" "${_arch}" "${DST_DIR}" "${_bitval}"
         cp -af "${PREIN_DIR}"/binutils_ld/mingw$_bitval "${DST_DIR}"
+        echo 'done'
+
+        # Copy logs
+        printf "===> Copying ld %s logs to %s/mingw%s/logs...\n" "${_arch}" "${DST_DIR}" "${_bitval}"
+        cp -af "${LOGS_DIR}"/binutils/binutils_{reinstallld,remakeld}_${_arch}* \
+            "${DST_DIR}"/mingw${_bitval}/logs/binutils
         echo 'done'
     done
 

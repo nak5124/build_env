@@ -1,7 +1,7 @@
-From 6f0a5155017fdad31b0c81a9a63e57e88c2bdf2f Mon Sep 17 00:00:00 2001
+From 6c584cf3d38e545310fc588df6d195099bb32502 Mon Sep 17 00:00:00 2001
 From: Yuta NAKAI <nak5124@live.jp>
 Date: Mon, 20 Jul 2015 15:20:16 +0900
-Subject: [PATCH 17/23] MinGW-w64: Fix SPEC_PTHREAD2 definition.
+Subject: [PATCH 17/24] MinGW-w64: Fix SPEC_PTHREAD2 definition.
 
 ---
  gcc/config/i386/mingw-w64.h |  6 ++----

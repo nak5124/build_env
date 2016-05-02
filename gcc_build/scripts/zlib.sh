@@ -107,6 +107,14 @@ function build_zlib() {
         printf "===> Copying zlib %s to %s/mingw%s...\n" "${_arch}" "${DST_DIR}" "${_bitval}"
         cp -af "${PREIN_DIR}"/zlib/mingw$_bitval "${DST_DIR}"
         echo 'done'
+
+        # Copy logs
+        printf "===> Copying zlib %s logs to %s/mingw%s/logs...\n" "${_arch}" "${DST_DIR}" "${_bitval}"
+        mkdir -p "${DST_DIR}"/mingw${_bitval}/logs/zlib
+        cp -af "${LOGS_DIR}"/zlib/*${_arch}*     "${DST_DIR}"/mingw${_bitval}/logs/zlib
+        cp -af "${LOGS_DIR}"/zlib/zlib_patch.log "${DST_DIR}"/mingw${_bitval}/logs/zlib
+        cp -af "${LOGS_DIR}"/zlib/zlib.hash      "${DST_DIR}"/mingw${_bitval}/logs/zlib
+        echo 'done'
     done
 
     cd "${ROOT_DIR}"

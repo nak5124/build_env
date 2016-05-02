@@ -1,7 +1,7 @@
-From 04d6b8c421fce2b738a10ce166c59d0b2ebdd637 Mon Sep 17 00:00:00 2001
+From d5a6190ca4bdfab544a4fabdefd93ef7ce488b65 Mon Sep 17 00:00:00 2001
 From: Yuta NAKAI <nak5124@live.jp>
 Date: Sun, 12 Apr 2015 15:25:08 +0900
-Subject: [PATCH 15/23] MinGW-w64: Disable automatic image base calculation.
+Subject: [PATCH 15/24] MinGW-w64: Disable automatic image base calculation.
 
 ---
  gcc/configure          | 8 ++++----

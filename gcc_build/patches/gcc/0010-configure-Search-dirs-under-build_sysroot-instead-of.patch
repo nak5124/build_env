@@ -1,7 +1,7 @@
-From a6f3936eeaae7316de3d032c307eb36ce0d99de1 Mon Sep 17 00:00:00 2001
+From 5fde97d99a822131ce55601e7fb53a3bba963f04 Mon Sep 17 00:00:00 2001
 From: Yuta NAKAI <nak5124@live.jp>
 Date: Sun, 12 Apr 2015 14:25:35 +0900
-Subject: [PATCH 10/23] configure: Search dirs under ${build_sysroot} instead
+Subject: [PATCH 10/24] configure: Search dirs under ${build_sysroot} instead
  of ${prefix}.
 
 ---

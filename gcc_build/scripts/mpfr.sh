@@ -147,6 +147,13 @@ function build_mpfr() {
         printf "===> Copying MPFR %s to %s/mingw%s...\n" "${_arch}" "${DST_DIR}" "${_bitval}"
         cp -af "${PREIN_DIR}"/gcc_libs/mpfr/mingw$_bitval "${DST_DIR}"
         echo 'done'
+
+        # Copy logs
+        printf "===> Copying MPFR %s logs to %s/mingw%s/logs...\n" "${_arch}" "${DST_DIR}" "${_bitval}"
+        mkdir -p "${DST_DIR}"/mingw${_bitval}/logs/gcc_libs/mpfr
+        cp -af "${LOGS_DIR}"/gcc_libs/mpfr/*${_arch}*     "${DST_DIR}"/mingw${_bitval}/logs/gcc_libs/mpfr
+        cp -af "${LOGS_DIR}"/gcc_libs/mpfr/mpfr_patch.log "${DST_DIR}"/mingw${_bitval}/logs/gcc_libs/mpfr
+        echo 'done'
     done
 
     cd "${ROOT_DIR}"

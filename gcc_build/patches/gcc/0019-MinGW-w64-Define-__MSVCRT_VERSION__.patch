@@ -1,7 +1,7 @@
-From 6c113a878749b8ca520bf58e8c904238dc70a363 Mon Sep 17 00:00:00 2001
+From 64ac1838fbd4f7d4c531228246f8cac1a91fe4d0 Mon Sep 17 00:00:00 2001
 From: Yuta Nakai <nak5124@live.jp>
 Date: Sun, 20 Mar 2016 15:53:32 +0900
-Subject: [PATCH 19/23] MinGW-w64: Define __MSVCRT_VERSION__.
+Subject: [PATCH 19/24] MinGW-w64: Define __MSVCRT_VERSION__.
 
 ---
  gcc/config/i386/mingw-w64.h | 7 +++++++

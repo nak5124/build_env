@@ -1,7 +1,7 @@
-From 4c43d3aadccc797a82ff1d0fb0f05d2ee390e63c Mon Sep 17 00:00:00 2001
+From c98be0d7ab79cda7367f73907a412b6f96a56bf7 Mon Sep 17 00:00:00 2001
 From: Yuta NAKAI <nak5124@live.jp>
 Date: Sun, 12 Apr 2015 14:35:17 +0900
-Subject: [PATCH 09/23] Add /mingw{32,64}/local/{include,lib} to search dirs,
+Subject: [PATCH 09/24] Add /mingw{32,64}/local/{include,lib} to search dirs,
  and make relocatable perfectly.
 
 ---

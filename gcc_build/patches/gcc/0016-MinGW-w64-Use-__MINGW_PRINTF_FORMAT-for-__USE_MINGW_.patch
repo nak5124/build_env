@@ -1,7 +1,7 @@
-From 020ea879a4d7b0d04bf95e0f3e4e5c31cdf7c3e1 Mon Sep 17 00:00:00 2001
+From db2c9d44a5591a211dadfad8f33f63ca34f72d83 Mon Sep 17 00:00:00 2001
 From: Yuta Nakai <nak5124@live.jp>
 Date: Sun, 24 Apr 2016 01:46:10 +0900
-Subject: [PATCH 16/23] MinGW-w64: Use __MINGW_PRINTF_FORMAT for
+Subject: [PATCH 16/24] MinGW-w64: Use __MINGW_PRINTF_FORMAT for
  __USE_MINGW_ANSI_STDIO.
 
 ---

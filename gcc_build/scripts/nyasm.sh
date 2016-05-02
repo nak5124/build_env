@@ -130,6 +130,13 @@ function build_nasm() {
         printf "===> Copying NASM %s to %s/mingw%s...\n" "${_arch}" "${DST_DIR}" "${_bitval}"
         cp -af "${PREIN_DIR}"/nyasm/nasm/mingw$_bitval "${DST_DIR}"
         echo 'done'
+
+        # Copy logs
+        printf "===> Copying NASM %s logs to %s/mingw%s/logs...\n" "${_arch}" "${DST_DIR}" "${_bitval}"
+        mkdir -p "${DST_DIR}"/mingw${_bitval}/logs/nasm
+        cp -af "${LOGS_DIR}"/nyasm/nasm/*${_arch}*     "${DST_DIR}"/mingw${_bitval}/logs/nasm
+        cp -af "${LOGS_DIR}"/nyasm/nasm/nasm_patch.log "${DST_DIR}"/mingw${_bitval}/logs/nasm
+        echo 'done'
     done
 
     cd "${ROOT_DIR}"
@@ -248,6 +255,12 @@ function build_yasm() {
         # Copy to DST_DIR.
         printf "===> Copying Yasm %s to %s/mingw%s...\n" "${_arch}" "${DST_DIR}" "${_bitval}"
         cp -af "${PREIN_DIR}"/nyasm/yasm/mingw$_bitval "${DST_DIR}"
+        echo 'done'
+
+        # Copy logs
+        printf "===> Copying Yasm %s logs to %s/mingw%s/logs...\n" "${_arch}" "${DST_DIR}" "${_bitval}"
+        mkdir -p "${DST_DIR}"/mingw${_bitval}/logs/yasm
+        cp -af "${LOGS_DIR}"/nyasm/yasm/*${_arch}* "${DST_DIR}"/mingw${_bitval}/logs/yasm
         echo 'done'
     done
 

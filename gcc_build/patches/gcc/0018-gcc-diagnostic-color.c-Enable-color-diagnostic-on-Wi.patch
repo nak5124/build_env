@@ -1,7 +1,7 @@
-From 1de5d717e9033f7da7afa95e07f7d6538a872c21 Mon Sep 17 00:00:00 2001
+From 5972c05526d60e24c1b38f1e239cdbf883d140bd Mon Sep 17 00:00:00 2001
 From: Yuta NAKAI <nak5124@live.jp>
 Date: Sun, 26 Apr 2015 09:53:07 +0900
-Subject: [PATCH 18/23] gcc/diagnostic-color.c: Enable color diagnostic on
+Subject: [PATCH 18/24] gcc/diagnostic-color.c: Enable color diagnostic on
  Windows.
 
 ---

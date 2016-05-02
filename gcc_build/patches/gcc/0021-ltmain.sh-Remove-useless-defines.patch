@@ -1,7 +1,7 @@
-From eafce716fa74c58e5f5672ac37abf368a0ef7b96 Mon Sep 17 00:00:00 2001
+From a8b9d36c826326903f2cf359820db7d6dac4bc63 Mon Sep 17 00:00:00 2001
 From: Yuta Nakai <nak5124@live.jp>
 Date: Sun, 20 Mar 2016 16:25:06 +0900
-Subject: [PATCH 21/23] ltmain.sh: Remove useless defines.
+Subject: [PATCH 21/24] ltmain.sh: Remove useless defines.
 
 ---
  ltmain.sh | 24 ------------------------

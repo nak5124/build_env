@@ -1,7 +1,7 @@
-From e59e6e45d356a5754bbcde287f8ed801a064bf4d Mon Sep 17 00:00:00 2001
+From b607ae6642876ad320bb01cc22c51455fab7299d Mon Sep 17 00:00:00 2001
 From: Yuta NAKAI <nak5124@live.jp>
 Date: Sun, 12 Apr 2015 14:38:53 +0900
-Subject: [PATCH 13/23] MinGW-w64: When building executables, not DLLs, add
+Subject: [PATCH 13/24] MinGW-w64: When building executables, not DLLs, add
  --large-address-aware and --tsaware.
 
 ---

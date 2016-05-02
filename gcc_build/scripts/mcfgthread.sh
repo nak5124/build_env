@@ -129,6 +129,13 @@ function build_mcfgthread() {
                 popd > /dev/null
                 echo 'done'
             fi
+
+            # Copy logs
+            printf "===> Copying mcfgthread %s logs to %s/mingw%s/logs...\n" "${_arch}" "${DST_DIR}" "${_bitval}"
+            mkdir -p "${DST_DIR}"/mingw${_bitval}/logs/mcfgthread
+            cp -af "${LOGS_DIR}"/mcfgthread/*${_arch}*      "${DST_DIR}"/mingw${_bitval}/logs/mcfgthread
+            cp -af "${LOGS_DIR}"/mcfgthread/mcfgthread.hash "${DST_DIR}"/mingw${_bitval}/logs/mcfgthread
+            echo 'done'
         fi
     done
 

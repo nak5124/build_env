@@ -1,7 +1,7 @@
-From a918bfbd41f69d20040b6390c1a269dd01554f28 Mon Sep 17 00:00:00 2001
+From 410270082bb9e70b16bf4c856a80a58fe772d945 Mon Sep 17 00:00:00 2001
 From: Yuta Nakai <nak5124@live.jp>
 Date: Sun, 24 Apr 2016 01:28:05 +0900
-Subject: [PATCH 11/23] gcc: Add prefix/bindir to exec_prefix.
+Subject: [PATCH 11/24] gcc: Add prefix/bindir to exec_prefix.
 
 ---
  gcc/gcc.c | 13 ++++++++++++-

@@ -1,7 +1,7 @@
-From 2a95174a3b78746679b35413746661d43e5fe9ce Mon Sep 17 00:00:00 2001
+From 679087a4db874372cda981acff525e468dbfaced Mon Sep 17 00:00:00 2001
 From: Ray Donnelly <mingw.android@gmail.com>
 Date: Wed, 5 Aug 2015 23:36:07 +0100
-Subject: [PATCH 04/23] Windows: Follow Posix dir-exists semantics more closely
+Subject: [PATCH 04/24] Windows: Follow Posix dir-exists semantics more closely
 
 Make Windows behave the same as Posix in the consideration
 of whether folder "/doesnt-exist/.." is a valid

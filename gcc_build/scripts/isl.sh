@@ -131,6 +131,13 @@ function build_isl() {
         printf "===> Copying ISL %s to %s/mingw%s...\n" "${_arch}" "${DST_DIR}" "${_bitval}"
         cp -af "${PREIN_DIR}"/gcc_libs/isl/mingw$_bitval "${DST_DIR}"
         echo 'done'
+
+        # Copy logs
+        printf "===> Copying ISL %s logs to %s/mingw%s/logs...\n" "${_arch}" "${DST_DIR}" "${_bitval}"
+        mkdir -p "${DST_DIR}"/mingw${_bitval}/logs/gcc_libs/isl
+        cp -af "${LOGS_DIR}"/gcc_libs/isl/*${_arch}*    "${DST_DIR}"/mingw${_bitval}/logs/gcc_libs/isl
+        cp -af "${LOGS_DIR}"/gcc_libs/isl/isl_patch.log "${DST_DIR}"/mingw${_bitval}/logs/gcc_libs/isl
+        echo 'done'
     done
 
     cd "${ROOT_DIR}"

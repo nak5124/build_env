@@ -81,6 +81,10 @@ function prepare_gcc() {
     apply_patch_gcc "${PATCHES_DIR}"/gcc/0022-Added-mcf-thread-model-support-from-mcfgthread.patch       false
     # Fix bootstrap
     apply_patch_gcc "${PATCHES_DIR}"/gcc/0023-MinGW-w64-Fix-bootstrap-when-libitm-is-disabled.patch      false
+    # Hack for relocation
+    apply_patch_gcc "${PATCHES_DIR}"/gcc/0024-MinGW-w64-Hack-Do-not-pass-iprefix-internally.patch        false
+
+    sed -i 's/msvcrt/msvcr120/g' "${BUILD_DIR}"/gcc/src/gcc-${GCC_VER}/libgcc/config/i386/t-mingw32
 
     echo 'done'
 
@@ -389,6 +393,7 @@ function build_gcc() {
             # Remove unneeded files.
             rm -f  "${PREIN_DIR}"/gcc/mingw${_bitval}/lib/gcc/${_arch}-w64-mingw32/${GCC_VER/-*}/*.py
             rm -fr "${PREIN_DIR}"/gcc/mingw${_bitval}/share/gcc-${GCC_VER/-*}
+            rm -fr "${PREIN_DIR}"/gcc/mingw${_bitval}/bin/*tmp*
             remove_la_files   "${PREIN_DIR}"/gcc/mingw$_bitval
             remove_empty_dirs "${PREIN_DIR}"/gcc/mingw$_bitval
             # Strip files.
@@ -460,6 +465,13 @@ __EOF__
         # Relocate DLLs & cleanup.
         printf "===> Cleanup GCC %s...\n" "${_arch}"
         term_gcc $_arch
+        echo 'done'
+
+        # Copy logs
+        printf "===> Copying GCC %s logs to %s/mingw%s/logs...\n" "${_arch}" "${DST_DIR}" "${_bitval}"
+        mkdir -p "${DST_DIR}"/mingw${_bitval}/logs/gcc
+        cp -af "${LOGS_DIR}"/gcc/*${_arch}*    "${DST_DIR}"/mingw${_bitval}/logs/gcc
+        cp -af "${LOGS_DIR}"/gcc/gcc_patch.log "${DST_DIR}"/mingw${_bitval}/logs/gcc
         echo 'done'
     done
 
