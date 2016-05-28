@@ -45,7 +45,7 @@ function prepare_iconv() {
     if ! ${use_win_iconv}; then
         # Apply patches.
         printf "===> Applying patches to libiconv %s...\n" "${ICONV_VER}"
-    
+
         # http://apolloron.org/software/libiconv-1.14-ja/
         apply_patch_iconv "${PATCHES_DIR}"/libiconv/0001-libiconv-1.14-ja-1.patch            true
         # For --enable-relocatable.
@@ -54,12 +54,12 @@ function prepare_iconv() {
         apply_patch_iconv "${PATCHES_DIR}"/libiconv/0003-fix-cr-for-awk-in-configure.patch   false
         # GetACP -> GetConsoleOutputCP.
         apply_patch_iconv "${PATCHES_DIR}"/libiconv/0004-use-GetConsoleOutputCP.patch        false
-    
+
         # Disable automatic image base calculation.
         pushd "${BUILD_DIR}"/libiconv/src/libiconv-$ICONV_VER > /dev/null
         sed -i 's/enable-auto-image-base/disable-auto-image-base/g' {.,preload,libcharset}/configure
         popd > /dev/null # "${BUILD_DIR}"/libiconv/src/libiconv-$ICONV_VER
-    
+
         echo 'done'
     else
         # Git pull.
@@ -78,7 +78,7 @@ function prepare_iconv() {
         # cmake hack!
         apply_patch_winiconv "${PATCHES_DIR}"/libiconv/0001-change-bins-name-to-match-gnu.patch true
 
-        dos2unix "${BUILD_DIR}"/libiconv/src/win-iconv/iconv.h > /dev/null 2>&1
+        dos2unixi --keepdate "${BUILD_DIR}"/libiconv/src/win-iconv/iconv.h > /dev/null 2>&1
 
         popd > /dev/null # "${BUILD_DIR}"/libiconv/src/win-iconv
         echo 'done'
