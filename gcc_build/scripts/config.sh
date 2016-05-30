@@ -33,7 +33,7 @@ declare -r BUILD_DIR="${ROOT_DIR}"/build
 declare -r DST_DIR="${ROOT_DIR}"/dst
 
 # BUILDFLAGS
-declare -r CPPFLAGS_=' -D__USE_MINGW_ANSI_STDIO=1 -D__USE_MINGW_ACCESS -D_FILE_OFFSET_BITS=64 -DWINVER=0x0a00 -D_WIN32_WINNT=0x0a00 -D_GNU_SOURCE=1 -D_BSD_SOURCE=1 -D_POSIX_SOURCE=1 -D_POSIX_C_SOURCE=200809L -D_XOPEN_SOURCE=700'
+declare -r CPPFLAGS_=' -D__USE_MINGW_ANSI_STDIO=1 -D__USE_MINGW_ACCESS -D_FILE_OFFSET_BITS=64 -DWINVER=0x0a00 -D_WIN32_WINNT=0x0a00 -D_GNU_SOURCE=1 -D_BSD_SOURCE=1 -D_POSIX_SOURCE=1 -D_POSIX_C_SOURCE=200809L -D_XOPEN_SOURCE=700 -DNDEBUG'
 declare -r CFLAGS_=' -pipe -O2 -fomit-frame-pointer -fno-tree-vectorize -fno-fast-math -fno-math-errno -fno-signed-zeros -mcrtdll=msvcr120'
 declare -r CXXFLAGS_=" ${CFLAGS_}"
 declare -r LDFLAGS_=' -Wl,-O1,--sort-common,--as-needed,--no-undefined,--no-gc-sections -mcrtdll=msvcr120'
