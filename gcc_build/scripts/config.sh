@@ -44,7 +44,7 @@ declare -r MAKEFLAGS_=" -j$(($(nproc)+1)) -O"
 declare -r THREAD_MODEL='mcf'
 
 # GCC package revision
-declare -r GCC_PKGREV=3
+declare -r GCC_PKGREV=4
 declare -r GCC_BUILT_DATE=$(date +%Y.%m.%d)
 
 # Version
@@ -58,7 +58,7 @@ declare -r MINGW_VER='git'
 declare -r MCFGTHREAD_VER='git'
 declare -r BINUTILS_VER='2.25.1'
 declare -r GCC_VER='6.1.0'
-declare -r NASM_VER='2.12.01'
+declare -r NASM_VER='2.12.02rc7'
 # declare -r NASM_SS='20150118'
 declare -r YASM_VER='1.3.0'
 declare -r AUTOCONF_VER='2.69'

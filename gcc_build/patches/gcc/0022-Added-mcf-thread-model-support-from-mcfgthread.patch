@@ -226,7 +226,7 @@ index e6520c1..859e380 100644
 +				 void *obj, void *dso_handle)
 +  _GLIBCXX_NOTHROW
 +{
-+  return ::_MCFCRT_AtThreadExit((void (*)(std::intptr_t))dtor, (std::intptr_t)obj) ? 0 : -1;
++  return ::_MCFCRT_AtThreadExit((void (*)(_MCFCRT_STD intptr_t))dtor, (_MCFCRT_STD intptr_t)obj) ? 0 : -1;
 +  (void)dso_handle;
 +}
 +

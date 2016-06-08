@@ -1,0 +1,72 @@
+From bdb6c0dc6dcba75fe7802927b2c9e623d3a18afb Mon Sep 17 00:00:00 2001
+From: Yuta Nakai <nak5124@live.jp>
+Date: Mon, 6 Jun 2016 20:38:05 +0900
+Subject: [PATCH] Add API version suffix to DLL name.
+
+---
+ Makefile.am  | 12 ++++++------
+ configure.ac |  3 +++
+ 2 files changed, 9 insertions(+), 6 deletions(-)
+
+diff --git a/Makefile.am b/Makefile.am
+index f5d03a6..d181af4 100644
+--- a/Makefile.am
++++ b/Makefile.am
+@@ -33,9 +33,9 @@ pkginclude_ext_HEADERS =	\
+ 	src/ext/wcpcpy.h
+ 
+ bin_PROGRAMS =	\
+-	bin/mcfgthread.dll
++	bin/libmcfgthread-@API_VERSION@.dll
+ 
+-bin_mcfgthread_dll_SOURCES =	\
++bin_libmcfgthread_@API_VERSION@_dll_SOURCES =	\
+ 	src/env/avl_tree.c	\
+ 	src/env/bail.c	\
+ 	src/env/clocks.c	\
+@@ -51,10 +51,10 @@ bin_mcfgthread_dll_SOURCES =	\
+ 	src/ext/wcpcpy.c	\
+ 	src/dll_startup.c
+ 
+-bin_mcfgthread_dll_LDFLAGS =	\
++bin_libmcfgthread_@API_VERSION@_dll_LDFLAGS =	\
+ 	-shared -nostdlib -Wl,-e__MCFCRT_DllStartup,--out-implib,libmcfgthread.dll.a,-subsystem,windows,--disable-runtime-pseudo-reloc,--disable-auto-import
+ 
+-bin_mcfgthread_dll_LDADD =	\
++bin_libmcfgthread_@API_VERSION@_dll_LDADD =	\
+ 	-lkernel32 -lntdll
+ 
+ lib_LIBRARIES =	\
+@@ -63,13 +63,13 @@ lib_LIBRARIES =	\
+ 
+ lib_libmcfgthread_dll_a_SOURCES =
+ 
+-lib/libmcfgthread.dll.a: bin/mcfgthread.dll
++lib/libmcfgthread.dll.a: bin/libmcfgthread-@API_VERSION@.dll
+ 	mkdir -p "$$(dirname '$@')"
+ 	cp -p libmcfgthread.dll.a '$@'
+ 
+ lib_libmcfgthread_a_SOURCES =
+ 
+-lib/libmcfgthread.a: bin/mcfgthread.dll
++lib/libmcfgthread.a: bin/libmcfgthread-@API_VERSION@.dll
+ 	mkdir -p "$$(dirname '$@')"
+ 	## Due to Windows limitation we can't link this library statically.
+ 	cp -p libmcfgthread.dll.a '$@'
+diff --git a/configure.ac b/configure.ac
+index 256849e..5e9c71f 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -6,6 +6,9 @@ AC_CONFIG_MACRO_DIR([m4])
+ AC_PROG_CC
+ AC_PROG_RANLIB
+ 
++API_VERSION=0
++AC_SUBST(API_VERSION)
++
+ AM_INIT_AUTOMAKE
+ 
+ AC_CONFIG_FILES([Makefile])
+-- 
+2.8.2
+

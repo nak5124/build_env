@@ -343,6 +343,7 @@ function build_gcc() {
                 --enable-libstdcxx-time=yes                                       \
                 --enable-libstdcxx-threads                                        \
                 --disable-vtable-verify                                           \
+                --disable-tls                                                     \
                 --with-stage1-ldflags=no                                          \
                 --with-boot-ldflags=no                                            \
                 --with-{mpc,mpfr,gmp,isl}="${DST_DIR}"/mingw$_bitval              \

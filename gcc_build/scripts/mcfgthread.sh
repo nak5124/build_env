@@ -1,4 +1,10 @@
 # mcfgthread: A Gthread implementation for Windows suitable for porting gcc and its libraries.
+# Apply patches and autoreconf.
+function apply_patch_mcf() {
+    apply_patch "${1}" "${BUILD_DIR}"/mcfgthread/src/mcfgthread-$MCFGTHREAD_VER \
+        "${LOGS_DIR}"/mcfgthread/mcfgthread_patch.log "${2}"
+}
+
 # Clone git repo and git pull
 function prepare_mcfgthread() {
     # Git clone.
@@ -20,8 +26,13 @@ function prepare_mcfgthread() {
     git rev-list HEAD | wc -l >> "${LOGS_DIR}"/mcfgthread/mcfgthread.hash 2>&1
     echo 'done'
 
-    # Use msvcr120.dll.
-    sed -i 's/msvcrt/msvcr120/g' "${BUILD_DIR}"/mcfgthread/src/mcfgthread-${MCFGTHREAD_VER}/Makefile.am
+    # Apply patches.
+    printf "===> Applying patches to mcfgthread %s...\n" "${MCFGTHREAD_VER}"
+
+    # Add api version suffix to DLL name.
+    apply_patch_mcf "${PATCHES_DIR}"/mcfgthread/0001-Add-API-version-suffix-to-DLL-name.patch true
+
+    echo 'done'
 
     # Autoreconf.
     printf "===> Autoreconfing mcfgthread %s...\n" "${MCFGTHREAD_VER}"
@@ -88,9 +99,6 @@ function build_mcfgthread() {
                 --prefix=/mingw$_bitval                   \
                 --build=${_arch}-w64-mingw32              \
                 --host=${_arch}-w64-mingw32               \
-                --enable-shared                           \
-                --disable-static                          \
-                --enable-fast-install                     \
                 --disable-silent-rules                    \
                 CFLAGS="${CFLAGS_}"                       \
                 LDFLAGS="${LDFLAGS_}"                     \
@@ -109,7 +117,7 @@ function build_mcfgthread() {
             make DESTDIR="${PREIN_DIR}"/mcfgthread install \
                 > "${LOGS_DIR}"/mcfgthread/mcfgthread_install_${_arch}.log 2>&1 || exit 1
             # Remove unneeded files.
-            rm -f  "${PREIN_DIR}"/mcfgthread/mingw${_bitval}/lib/libmcfgthread.la
+            rm -f  "${PREIN_DIR}"/mcfgthread/mingw${_bitval}/lib/libmcfgthread.a
             remove_la_files "${PREIN_DIR}"/mcfgthread/mingw$_bitval
             # Strip files.
             strip_files "${PREIN_DIR}"/mcfgthread/mingw$_bitval
