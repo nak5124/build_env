@@ -30,7 +30,7 @@ index f5d03a6..d181af4 100644
  
 -bin_mcfgthread_dll_LDFLAGS =	\
 +bin_libmcfgthread_@API_VERSION@_dll_LDFLAGS =	\
- 	-shared -nostdlib -Wl,-e__MCFCRT_DllStartup,--out-implib,libmcfgthread.dll.a,-subsystem,windows,--disable-runtime-pseudo-reloc,--disable-auto-import
+ 	-shared -static -nostdlib -Wl,-e__MCFCRT_DllStartup,--out-implib,libmcfgthread.dll.a,-subsystem,windows,--disable-runtime-pseudo-reloc,--disable-auto-import
  
 -bin_mcfgthread_dll_LDADD =	\
 +bin_libmcfgthread_@API_VERSION@_dll_LDADD =	\
