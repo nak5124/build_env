@@ -29,18 +29,15 @@ function apply_patch_gmp() {
 
 function prepare_gmp() {
     # Applay the patch.
-    printf "===> Applaying the patch to GMP %s...\n" "${GMP_VER}"
+#    printf "===> Applaying the patch to GMP %s...\n" "${GMP_VER}"
 
-    # Fix fat
-    apply_patch_gmp "${PATCHES_DIR}"/gmp/0001-Add-FUNC_EXITs.patch true
-    apply_patch_gmp "${PATCHES_DIR}"/gmp/0002-Fix-fat.patch        false
 
-    echo 'done'
+#    echo 'done'
 
     # Autoreconf.
     printf "===> Autoreconfing GMP %s...\n" "${GMP_VER}"
     pushd "${BUILD_DIR}"/gcc_libs/gmp/src/gmp-$GMP_VER > /dev/null
-    autoreconf -fis > /dev/null 2>&1
+    autoreconf -is > /dev/null 2>&1
     popd > /dev/null # "${BUILD_DIR}"/gcc_libs/gmp/src/gmp-$GMP_VER
     echo 'done'
 
@@ -108,6 +105,9 @@ function build_gmp() {
                 --disable-static             \
                 --enable-fast-install        \
                 --with-gnu-ld                \
+                --enable-assembly            \
+                --enable-fft                 \
+                --enable-fat                 \
                 CFLAGS="${CFLAGS_}"          \
                 LDFLAGS="${LDFLAGS_}"        \
                 CPPFLAGS="${CPPFLAGS_}"      \
@@ -115,9 +115,7 @@ function build_gmp() {
                 > "${LOGS_DIR}"/gcc_libs/gmp/gmp_config_${_arch}.log 2>&1 || exit 1
             echo 'done'
 
-                # --enable-assembly            \
-                # --enable-fft                 \
-                # --enable-fat                 \
+
                 # MPN_PATH="${_mpn_path}"      \
 
 
