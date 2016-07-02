@@ -1,0 +1,53 @@
+From 7650cc72e5985817da4a19c0b472c926c9612708 Mon Sep 17 00:00:00 2001
+From: Yuta Nakai <nak5124@live.jp>
+Date: Sat, 2 Jul 2016 17:25:43 +0900
+Subject: [PATCH] Makefile.am: Add 'lib' prefix to DLL name.
+
+---
+ Makefile.am | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/Makefile.am b/Makefile.am
+index cee6cdd..38adbf9 100644
+--- a/Makefile.am
++++ b/Makefile.am
+@@ -37,9 +37,9 @@ pkginclude_ext_HEADERS =	\
+ 	src/ext/wcpcpy.h
+ 
+ bin_PROGRAMS =	\
+-	mcfgthread-6.dll
++	libmcfgthread-6.dll
+ 
+-mcfgthread_6_dll_SOURCES =	\
++libmcfgthread_6_dll_SOURCES =	\
+ 	src/env/avl_tree.c	\
+ 	src/env/bail.c	\
+ 	src/env/clocks.c	\
+@@ -57,20 +57,20 @@ mcfgthread_6_dll_SOURCES =	\
+ 	src/ext/wcpcpy.c	\
+ 	src/dll_startup.c
+ 
+-mcfgthread_6_dll_LDFLAGS =	\
++libmcfgthread_6_dll_LDFLAGS =	\
+ 	-shared -static -nostdlib	\
+ 	-Wl,-e@__MCFCRT_DllStartup,-subsystem,windows,--disable-runtime-pseudo-reloc,--disable-auto-import	\
+ 	-Wl,--disable-stdcall-fixup,--enable-auto-image-base,--export-all-symbols,--out-implib,libmcfgthread.dll.a
+ 
+-mcfgthread_6_dll_LDADD =	\
++libmcfgthread_6_dll_LDADD =	\
+ 	-lkernel32 -lntdll
+ 
+ lib_LIBRARIES =	\
+ 	libmcfgthread.dll.a	\
+ 	libmcfgthread.a
+ 
+-libmcfgthread.dll.a: mcfgthread-6.dll
++libmcfgthread.dll.a: libmcfgthread-6.dll
+ 
+-libmcfgthread.a: mcfgthread-6.dll
++libmcfgthread.a: libmcfgthread-6.dll
+ 	## Due to Windows limitation we can't link this library statically.
+ 	cp -p libmcfgthread.dll.a '$@'
+-- 
+2.9.0
+

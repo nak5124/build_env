@@ -29,8 +29,8 @@ function prepare_mcfgthread() {
     # Apply patches.
     printf "===> Applying patches to mcfgthread %s...\n" "${MCFGTHREAD_VER}"
 
-    # Add api version suffix to DLL name.
-    apply_patch_mcf "${PATCHES_DIR}"/mcfgthread/0001-Add-API-version-suffix-to-DLL-name.patch true
+    # Add 'lib' prefix to DLL name.
+    apply_patch_mcf "${PATCHES_DIR}"/mcfgthread/0001-Makefile.am-Add-lib-prefix-to-DLL-name.patch true
 
     echo 'done'
 
