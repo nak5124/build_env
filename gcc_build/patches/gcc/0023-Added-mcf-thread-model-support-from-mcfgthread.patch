@@ -1,7 +1,7 @@
-From e61d94dd279ac13418a84a0c29810bd812ca6f70 Mon Sep 17 00:00:00 2001
+From b1dbd020ae14b96541f863d66fc6b73cfac848d6 Mon Sep 17 00:00:00 2001
 From: lhmouse <lh_mouse@126.com>
 Date: Mon, 18 Apr 2016 11:50:55 +0800
-Subject: [PATCH 22/24] Added 'mcf' thread model support from mcfgthread.
+Subject: [PATCH 23/26] Added 'mcf' thread model support from mcfgthread.
 
 ---
  config/gthr.m4                          |  1 +
@@ -37,10 +37,10 @@ index 7b29f1f..82e21fe 100644
  AC_SUBST(thread_header)
  ])
 diff --git a/gcc/config.gcc b/gcc/config.gcc
-index f66e48c..b61e94b 100644
+index 1d5b23f..212fcda 100644
 --- a/gcc/config.gcc
 +++ b/gcc/config.gcc
-@@ -1708,6 +1708,9 @@ i[34567]86-*-mingw* | x86_64-*-mingw*)
+@@ -1717,6 +1717,9 @@ i[34567]86-*-mingw* | x86_64-*-mingw*)
  	if test x$enable_threads = xposix ; then
  		tm_file="${tm_file} i386/mingw-pthread.h"
  	fi
@@ -107,10 +107,10 @@ index ba5ebef..eaef5ca 100644
  /* Weak symbols do not get resolved if using a Windows dll import lib.
     Make the unwind registration references strong undefs.  */
 diff --git a/gcc/configure b/gcc/configure
-index caf5f93..03f7e89 100755
+index 486c637..b52ae2a 100755
 --- a/gcc/configure
 +++ b/gcc/configure
-@@ -11698,7 +11698,7 @@ case ${enable_threads} in
+@@ -11705,7 +11705,7 @@ case ${enable_threads} in
      target_thread_file='single'
      ;;
    aix | dce | lynx | mipssde | posix | rtems | \
@@ -120,10 +120,10 @@ index caf5f93..03f7e89 100755
      ;;
    *)
 diff --git a/gcc/configure.ac b/gcc/configure.ac
-index 6c1dcd9..d196561 100644
+index 4c65d44..e6fa04a 100644
 --- a/gcc/configure.ac
 +++ b/gcc/configure.ac
-@@ -1586,7 +1586,7 @@ case ${enable_threads} in
+@@ -1593,7 +1593,7 @@ case ${enable_threads} in
      target_thread_file='single'
      ;;
    aix | dce | lynx | mipssde | posix | rtems | \
@@ -133,10 +133,10 @@ index 6c1dcd9..d196561 100644
      ;;
    *)
 diff --git a/libatomic/configure.tgt b/libatomic/configure.tgt
-index c5470d7..72b3bda 100644
+index eab2765..f4058b6 100644
 --- a/libatomic/configure.tgt
 +++ b/libatomic/configure.tgt
-@@ -120,7 +120,7 @@ case "${target}" in
+@@ -124,7 +124,7 @@ case "${target}" in
    *-*-mingw*)
  	# OS support for atomic primitives.
          case ${target_thread_file} in
@@ -146,10 +146,10 @@ index c5470d7..72b3bda 100644
              ;;
            posix)
 diff --git a/libgcc/config.host b/libgcc/config.host
-index b61a579..bea795b 100644
+index 124f2ce..93e7e6a 100644
 --- a/libgcc/config.host
 +++ b/libgcc/config.host
-@@ -700,6 +700,9 @@ i[34567]86-*-mingw*)
+@@ -707,6 +707,9 @@ i[34567]86-*-mingw*)
  	  posix)
  	    tmake_file="i386/t-mingw-pthread $tmake_file"
  	    ;;
@@ -159,7 +159,7 @@ index b61a579..bea795b 100644
  	esac
  	# This has to match the logic for DWARF2_UNWIND_INFO in gcc/config/i386/cygming.h
  	if test x$ac_cv_sjlj_exceptions = xyes; then
-@@ -724,6 +727,9 @@ x86_64-*-mingw*)
+@@ -731,6 +734,9 @@ x86_64-*-mingw*)
  	  posix)
  	    tmake_file="i386/t-mingw-pthread $tmake_file"
  	    ;;
@@ -185,7 +185,7 @@ index 0000000..4b9b10e
 +SHLIB_PTHREAD_CFLAG =
 +SHLIB_PTHREAD_LDFLAG = -lmcfgthread
 diff --git a/libgcc/configure b/libgcc/configure
-index e7d6c75..664d0f8 100644
+index c3ccca9..41fe89f 100644
 --- a/libgcc/configure
 +++ b/libgcc/configure
 @@ -5077,6 +5077,7 @@ case $target_thread_file in
@@ -197,7 +197,7 @@ index e7d6c75..664d0f8 100644
  
  
 diff --git a/libstdc++-v3/configure b/libstdc++-v3/configure
-index a7b6e58..8e4faed 100755
+index b1b8587..e6550dd 100755
 --- a/libstdc++-v3/configure
 +++ b/libstdc++-v3/configure
 @@ -15177,6 +15177,7 @@ case $target_thread_file in
@@ -209,7 +209,7 @@ index a7b6e58..8e4faed 100755
  
  
 diff --git a/libstdc++-v3/libsupc++/atexit_thread.cc b/libstdc++-v3/libsupc++/atexit_thread.cc
-index e6520c1..859e380 100644
+index e6520c1..3d69077 100644
 --- a/libstdc++-v3/libsupc++/atexit_thread.cc
 +++ b/libstdc++-v3/libsupc++/atexit_thread.cc
 @@ -25,6 +25,22 @@
@@ -280,5 +280,5 @@ index 9b61799..a441fdb 100644
 +
 +#endif
 -- 
-2.8.1
+2.10.2
 

@@ -1,14 +1,14 @@
-From 35896d05330901737eeeb5e314a0d9e3ef526d7b Mon Sep 17 00:00:00 2001
+From 4d3cebca46aa48d0d08bb350b3ae7a4e8c346e67 Mon Sep 17 00:00:00 2001
 From: Yuta Nakai <nak5124@live.jp>
 Date: Tue, 3 May 2016 00:31:25 +0900
-Subject: [PATCH 24/24] MinGW-w64: Hack! Do not pass -iprefix internally.
+Subject: [PATCH 25/26] MinGW-w64: Hack! Do not pass -iprefix internally.
 
 ---
  gcc/gcc.c | 20 +++++++++++---------
  1 file changed, 11 insertions(+), 9 deletions(-)
 
 diff --git a/gcc/gcc.c b/gcc/gcc.c
-index 9e1d99c..be2a0f1 100644
+index 3584dea..3dd5cb7 100644
 --- a/gcc/gcc.c
 +++ b/gcc/gcc.c
 @@ -4574,10 +4574,10 @@ process_command (unsigned int decoded_options_count,
@@ -24,7 +24,7 @@ index 9e1d99c..be2a0f1 100644
    spec_undefvar_allowed = (n_varsafe_options == decoded_options_count - 1);
  
    alloc_switch ();
-@@ -5521,6 +5521,7 @@ do_spec_1 (const char *spec, int inswitch, const char *soft_matched_part)
+@@ -5522,6 +5522,7 @@ do_spec_1 (const char *spec, int inswitch, const char *soft_matched_part)
  		  do_spec_1 (" ", 0, NULL);
  		}
  
@@ -32,7 +32,7 @@ index 9e1d99c..be2a0f1 100644
  	      if (gcc_exec_prefix)
  		{
  		  do_spec_1 ("-iprefix", 1, NULL);
-@@ -5529,6 +5530,7 @@ do_spec_1 (const char *spec, int inswitch, const char *soft_matched_part)
+@@ -5530,6 +5531,7 @@ do_spec_1 (const char *spec, int inswitch, const char *soft_matched_part)
  		  do_spec_1 (gcc_exec_prefix, 1, NULL);
  		  do_spec_1 (" ", 0, NULL);
  		}
@@ -40,7 +40,7 @@ index 9e1d99c..be2a0f1 100644
  
  	      if (target_system_root_changed ||
  		  (target_system_root && target_sysroot_hdrs_suffix))
-@@ -5853,7 +5855,7 @@ do_spec_1 (const char *spec, int inswitch, const char *soft_matched_part)
+@@ -5854,7 +5856,7 @@ do_spec_1 (const char *spec, int inswitch, const char *soft_matched_part)
  		     "%{foo=*:bar%*}%{foo=*:one%*two}"
  
  		   matches -foo=hello then it will produce:
@@ -49,7 +49,7 @@ index 9e1d99c..be2a0f1 100644
  		     barhello onehellotwo
  		*/
  		if (*p == 0 || *p == '}')
-@@ -9528,9 +9530,9 @@ static unsigned HOST_WIDE_INT
+@@ -9532,9 +9534,9 @@ static unsigned HOST_WIDE_INT
  get_random_number (void)
  {
    unsigned HOST_WIDE_INT ret = 0;
@@ -61,7 +61,7 @@ index 9e1d99c..be2a0f1 100644
    if (fd >= 0)
      {
        read (fd, &ret, sizeof (HOST_WIDE_INT));
-@@ -9811,16 +9813,16 @@ greater_than_spec_func (int argc, const char **argv)
+@@ -9815,16 +9817,16 @@ greater_than_spec_func (int argc, const char **argv)
    return NULL;
  }
  
@@ -83,5 +83,5 @@ index 9e1d99c..be2a0f1 100644
     "a b"  -> "a\\ b"
     "a  b" -> "a\\ \\ b"
 -- 
-2.8.1
+2.10.2
 

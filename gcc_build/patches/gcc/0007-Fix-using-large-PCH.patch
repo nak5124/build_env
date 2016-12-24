@@ -1,7 +1,7 @@
-From 5ea2b32fa7271e1b13294c41f9dd50a394117c09 Mon Sep 17 00:00:00 2001
+From eefdb0c5dbd170da050a221daf771ca778bdbb7e Mon Sep 17 00:00:00 2001
 From: Martin Richter <xricht17@stud.fit.vutbr.cz>
 Date: Wed, 5 Aug 2015 23:36:25 +0100
-Subject: [PATCH 07/24] Fix using large PCH
+Subject: [PATCH 07/26] Fix using large PCH
 
 The following patch fixes segfault when gt_pch_use_address
 fails (returns -1). fatal_error now correctly shows an error
@@ -150,5 +150,5 @@ index 9b291aa..1861c95 100644
  
    gt_pch_restore_stringpool ();
 -- 
-2.8.1
+2.10.2
 

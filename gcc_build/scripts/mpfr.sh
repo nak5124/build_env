@@ -2,10 +2,10 @@
 # Download the src and decompress it.
 function download_mpfr_src() {
     # Download the src.
-    if [ ! -f "${BUILD_DIR}"/gcc_libs/mpfr/src/mpfr-${MPFR_VER}.tar.bz2 ]; then
+    if [ ! -f "${BUILD_DIR}"/gcc_libs/mpfr/src/mpfr-${MPFR_VER}.tar.xz ]; then
         printf "===> Downloading MPFR %s...\n" "${MPFR_VER}"
         pushd "${BUILD_DIR}"/gcc_libs/mpfr/src > /dev/null
-        dl_files http http://www.mpfr.org/mpfr-current/mpfr-${MPFR_VER}.tar.bz2
+        dl_files http http://www.mpfr.org/mpfr-current/mpfr-${MPFR_VER}.tar.xz
         popd > /dev/null # "${BUILD_DIR}"/gcc_libs/mpfr/src
         echo 'done'
     fi
@@ -17,7 +17,7 @@ function download_mpfr_src() {
         # Redecompress every time.
         rm -fr "${BUILD_DIR}"/gcc_libs/mpfr/src/mpfr-$MPFR_VER
     fi
-    decomp_arch "${BUILD_DIR}"/gcc_libs/mpfr/src/mpfr-${MPFR_VER}.tar.bz2
+    decomp_arch "${BUILD_DIR}"/gcc_libs/mpfr/src/mpfr-${MPFR_VER}.tar.xz
     popd > /dev/null # "${BUILD_DIR}"/gcc_libs/mpfr/src
     echo 'done'
 

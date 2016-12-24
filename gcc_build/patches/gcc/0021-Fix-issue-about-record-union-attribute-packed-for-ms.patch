@@ -1,7 +1,7 @@
-From 315e4532e6f6213e4ab918d81b249e3887c3a151 Mon Sep 17 00:00:00 2001
+From a6fc97e78a1c61a012d8dff4c74a6b66d2bc3268 Mon Sep 17 00:00:00 2001
 From: Yuta Nakai <nak5124@live.jp>
 Date: Sun, 20 Mar 2016 16:00:38 +0900
-Subject: [PATCH 20/24] Fix issue about record/union attribute packed for
+Subject: [PATCH 21/26] Fix issue about record/union attribute packed for
  ms_struct.
 
 Patch by Kai.
@@ -10,10 +10,10 @@ Patch by Kai.
  1 file changed, 19 insertions(+), 5 deletions(-)
 
 diff --git a/gcc/stor-layout.c b/gcc/stor-layout.c
-index d1738d2..86140c0 100644
+index dd40ca0..a37cf80 100644
 --- a/gcc/stor-layout.c
 +++ b/gcc/stor-layout.c
-@@ -814,7 +814,10 @@ start_record_layout (tree t)
+@@ -800,7 +800,10 @@ start_record_layout (tree t)
    /* If the type has a minimum specified alignment (via an attribute
       declaration, for example) use it -- otherwise, start with a
       one-byte alignment.  */
@@ -25,7 +25,7 @@ index d1738d2..86140c0 100644
    rli->unpacked_align = rli->record_align;
    rli->offset_align = MAX (rli->record_align, BIGGEST_ALIGNMENT);
  
-@@ -1010,15 +1013,20 @@ update_alignment_for_field (record_layout_info rli, tree field,
+@@ -996,15 +999,20 @@ update_alignment_for_field (record_layout_info rli, tree field,
       meaningless.  */
    if (targetm.ms_bitfield_layout_p (rli->t))
      {
@@ -49,7 +49,7 @@ index d1738d2..86140c0 100644
  	      ? !DECL_PACKED (field)
  	      : (rli->prev_field
  		 && DECL_BIT_FIELD_TYPE (rli->prev_field)
-@@ -1465,7 +1473,13 @@ place_field (record_layout_info rli, tree field)
+@@ -1451,7 +1459,13 @@ place_field (record_layout_info rli, tree field)
  	    }
  
  	  /* Now align (conventionally) for the new type.  */
@@ -65,5 +65,5 @@ index d1738d2..86140c0 100644
  	  if (maximum_field_alignment != 0)
  	    type_align = MIN (type_align, maximum_field_alignment);
 -- 
-2.8.1
+2.10.2
 

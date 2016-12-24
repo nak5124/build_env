@@ -1,14 +1,14 @@
-From 410270082bb9e70b16bf4c856a80a58fe772d945 Mon Sep 17 00:00:00 2001
+From 8c3bf003f83d15270c4587cce26d9c23cb80114a Mon Sep 17 00:00:00 2001
 From: Yuta Nakai <nak5124@live.jp>
 Date: Sun, 24 Apr 2016 01:28:05 +0900
-Subject: [PATCH 11/24] gcc: Add prefix/bindir to exec_prefix.
+Subject: [PATCH 12/26] gcc: Add prefix/bindir to exec_prefix.
 
 ---
  gcc/gcc.c | 13 ++++++++++++-
  1 file changed, 12 insertions(+), 1 deletion(-)
 
 diff --git a/gcc/gcc.c b/gcc/gcc.c
-index f7434a1..9e1d99c 100644
+index 3050b75..3584dea 100644
 --- a/gcc/gcc.c
 +++ b/gcc/gcc.c
 @@ -4118,7 +4118,7 @@ process_command (unsigned int decoded_options_count,
@@ -56,5 +56,5 @@ index f7434a1..9e1d99c 100644
  
  #if defined(TARGET_SYSTEM_ROOT_RELOCATABLE) && !defined(VMS)
 -- 
-2.8.1
+2.10.2
 

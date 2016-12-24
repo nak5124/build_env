@@ -1,0 +1,246 @@
+From abe2e07af517956d1862a5db33eb28595824743a Mon Sep 17 00:00:00 2001
+From: Octavian Purdila <octavian.purdila@intel.com>
+Date: Sun, 13 Nov 2016 21:58:46 +0900
+Subject: [PATCH 08/11] Fixes for NT weak externals.
+
+---
+ bfd/coffcode.h        |  1 +
+ bfd/coffgen.c         | 43 ++++++++++++++++++++++++++++
+ bfd/cofflink.c        | 79 ++++++++++++++++++++++++++++++---------------------
+ bfd/libcoff.h         |  2 ++
+ binutils/objcopy.c    |  5 +++-
+ gas/config/obj-coff.c |  1 +
+ 6 files changed, 98 insertions(+), 33 deletions(-)
+
+diff --git a/bfd/coffcode.h b/bfd/coffcode.h
+index d5f0bb1..823c62a 100644
+--- a/bfd/coffcode.h
++++ b/bfd/coffcode.h
+@@ -4212,6 +4212,7 @@ coff_write_object_contents (bfd * abfd)
+     {
+       int firstundef;
+ 
++      coff_nt_weak_to_local(abfd);
+       if (!coff_renumber_symbols (abfd, &firstundef))
+ 	return FALSE;
+       coff_mangle_symbols (abfd);
+diff --git a/bfd/coffgen.c b/bfd/coffgen.c
+index e208cee..1534d44 100644
+--- a/bfd/coffgen.c
++++ b/bfd/coffgen.c
+@@ -790,6 +790,49 @@ coff_renumber_symbols (bfd *bfd_ptr, int *first_undef)
+   return TRUE;
+ }
+ 
++/* Transform weak externals to local symbols if requested (e.g. objcopy). */
++void coff_nt_weak_to_local(bfd *abfd)
++{
++  unsigned int symbol_count = bfd_get_symcount (abfd);
++  asymbol **symbol_ptr_ptr = abfd->outsymbols;
++  unsigned int symbol_index;
++
++  for (symbol_index = 0; symbol_index < symbol_count; symbol_index++)
++    {
++      asymbol *symbol = symbol_ptr_ptr[symbol_index];
++      coff_symbol_type *coff_symbol_ptr;
++      combined_entry_type *native;
++      struct internal_syment *sym;
++
++      coff_symbol_ptr = coff_symbol_from (symbol);
++      if (!coff_symbol_ptr)
++        continue;
++
++      native = coff_symbol_ptr->native;
++      if (!native)
++        continue;
++
++      sym = &native->u.syment;
++
++      if ((symbol->flags & BSF_LOCAL) && sym->n_sclass == C_NT_WEAK
++	  && sym->n_numaux == 1) {
++        union internal_auxent *aux = &native[1].u.auxent;
++	struct internal_syment *wsym = &aux->x_sym.x_tagndx.p->u.syment;
++
++	if (!wsym) {
++	  symbol->flags &= BSF_LOCAL;
++	  continue;
++	}
++
++	symbol->flags &= ~BSF_WEAK;
++	symbol->value = wsym->n_value;
++	symbol->section = coff_section_from_bfd_index (abfd, wsym->n_scnum);
++	symbol->section->output_section = symbol->section;
++	sym->n_numaux = 0;
++      }
++    }
++}
++
+ /* Run thorough the symbol table again, and fix it so that all
+    pointers to entries are changed to the entries' index in the output
+    symbol table.  */
+diff --git a/bfd/cofflink.c b/bfd/cofflink.c
+index b9a2c27..d0dcdd7 100644
+--- a/bfd/cofflink.c
++++ b/bfd/cofflink.c
+@@ -427,7 +427,7 @@ coff_link_add_symbols (bfd *abfd,
+   	      if (((*sym_hash)->symbol_class == C_NULL
+   		   && (*sym_hash)->type == T_NULL)
+   		  || sym.n_scnum != 0
+-  		  || (sym.n_value != 0
++  		  || ((sym.n_value != 0 || IS_WEAK_EXTERNAL(abfd, sym))
+   		      && (*sym_hash)->root.type != bfd_link_hash_defined
+   		      && (*sym_hash)->root.type != bfd_link_hash_defweak))
+   		{
+@@ -1977,7 +1977,8 @@ _bfd_coff_link_input_bfd (struct coff_final_link_info *flaginfo, bfd *input_bfd)
+       if ((*indexp < 0
+ 	   || (bfd_size_type) *indexp < syment_base)
+ 	  && (*sym_hash == NULL
+-	      || (*sym_hash)->auxbfd != input_bfd))
++	      || (*sym_hash)->auxbfd != input_bfd)
++	  && isymp->n_sclass != C_NT_WEAK)
+ 	esym += add * isymesz;
+       else
+ 	{
+@@ -2047,8 +2048,15 @@ _bfd_coff_link_input_bfd (struct coff_final_link_info *flaginfo, bfd *input_bfd)
+ 		      auxp->x_file.x_n.x_offset = STRING_SIZE_SIZE + indx;
+ 		    }
+ 		}
+-	      else if ((isymp->n_sclass != C_STAT || isymp->n_type != T_NULL)
+-		       && isymp->n_sclass != C_NT_WEAK)
++	      else if (isymp->n_sclass == C_NT_WEAK)
++	        {
++		    long *tagndx = &auxp->x_sym.x_tagndx.l;
++
++		    if (bfd_link_relocatable (flaginfo->info) &&
++			flaginfo->sym_indices[*tagndx] > 0)
++		      *tagndx = flaginfo->sym_indices[*tagndx];
++		}
++	      else if (isymp->n_sclass != C_STAT || isymp->n_type != T_NULL)
+ 		{
+ 		  unsigned long indx;
+ 
+@@ -2920,6 +2928,37 @@ _bfd_coff_reloc_link_order (bfd *output_bfd,
+   return TRUE;
+ }
+ 
++/* See _Microsoft Portable Executable and Common Object File Format
++   Specification_, section 5.5.3.  Note that weak symbols without aux records
++   are a GNU extension.
++
++   FIXME: All weak externals are treated as having characteristic
++   IMAGE_WEAK_EXTERN_SEARCH_NOLIBRARY (1).  These behave as per SVR4 ABI: A
++   library member will resolve a weak external only if a normal external causes
++   the library member to be linked.  See also linker.c:
++   generic_link_check_archive_element. */
++
++static void _bfd_coff_relocate_weak_externals(struct coff_link_hash_entry *h,
++					      bfd_vma *val, asection **sec)
++{
++  long aux_index = h->aux->x_sym.x_tagndx.l;
++  struct coff_tdata *cdata = h->auxbfd->tdata.coff_obj_data;
++  struct coff_link_hash_entry *h2 = cdata->sym_hashes[aux_index];
++
++  if (!h2 || h2->root.type == bfd_link_hash_undefined)
++    {
++      *sec = bfd_abs_section_ptr;
++      *val = 0;
++    }
++  else
++    {
++      *sec = h2->root.u.def.section;
++      *val = h2->root.u.def.value + (*sec)->output_section->vma +
++	      (*sec)->output_offset;
++    }
++}
++
++
+ /* A basic reloc handling routine which may be used by processors with
+    simple relocs.  */
+ 
+@@ -3036,38 +3075,14 @@ _bfd_coff_generic_relocate_section (bfd *output_bfd,
+ 	  else if (h->root.type == bfd_link_hash_undefweak)
+ 	    {
+               if (h->symbol_class == C_NT_WEAK && h->numaux == 1)
+-		{
+-		  /* See _Microsoft Portable Executable and Common Object
+-                     File Format Specification_, section 5.5.3.
+-		     Note that weak symbols without aux records are a GNU
+-		     extension.
+-		     FIXME: All weak externals are treated as having
+-		     characteristic IMAGE_WEAK_EXTERN_SEARCH_NOLIBRARY (1).
+-		     These behave as per SVR4 ABI:  A library member
+-		     will resolve a weak external only if a normal
+-		     external causes the library member to be linked.
+-		     See also linker.c: generic_link_check_archive_element. */
+-		  struct coff_link_hash_entry *h2 =
+-		    h->auxbfd->tdata.coff_obj_data->sym_hashes[
+-		    h->aux->x_sym.x_tagndx.l];
+-
+-		  if (!h2 || h2->root.type == bfd_link_hash_undefined)
+-		    {
+-		      sec = bfd_abs_section_ptr;
+-		      val = 0;
+-		    }
+-		  else
+-		    {
+-		      sec = h2->root.u.def.section;
+-		      val = h2->root.u.def.value
+-			+ sec->output_section->vma + sec->output_offset;
+-		    }
+-		}
++	        _bfd_coff_relocate_weak_externals(h, &val, &sec);
+ 	      else
+                 /* This is a GNU extension.  */
+ 		val = 0;
+ 	    }
+-
++	  else if (h->root.type == bfd_link_hash_undefined &&
++		   h->symbol_class == C_NT_WEAK && h->numaux == 1)
++	    _bfd_coff_relocate_weak_externals(h, &val, &sec);
+ 	  else if (! bfd_link_relocatable (info))
+ 	    (*info->callbacks->undefined_symbol)
+ 	      (info, h->root.root.string, input_bfd, input_section,
+diff --git a/bfd/libcoff.h b/bfd/libcoff.h
+index bbed3e0..9779acb 100644
+--- a/bfd/libcoff.h
++++ b/bfd/libcoff.h
+@@ -309,6 +309,8 @@ extern long coff_canonicalize_symtab
+   (bfd *, asymbol **);
+ extern int coff_count_linenumbers
+   (bfd *);
++extern void coff_nt_weak_to_local
++  (bfd *);
+ extern bfd_boolean coff_renumber_symbols
+   (bfd *, int *);
+ extern void coff_mangle_symbols
+diff --git a/binutils/objcopy.c b/binutils/objcopy.c
+index d40cfcb..eaee140 100644
+--- a/binutils/objcopy.c
++++ b/binutils/objcopy.c
+@@ -1549,7 +1549,10 @@ filter_symbols (bfd *abfd, bfd *obfd, asymbol **osyms,
+ 	      sym->flags |= BSF_WEAK;
+ 	    }
+ 
+-	  if (!undefined
++	  /* We want to check even undefined weak symbols in the case of PE,
++	   * since weak externals are classified as undefined. */
++	  if ((!undefined || (bfd_get_flavour (abfd) == bfd_target_coff_flavour &&
++			      CONST_STRNEQ ((abfd)->xvec->name, "pe")))
+ 	      && (flags & (BSF_GLOBAL | BSF_WEAK))
+ 	      && (is_specified_symbol (name, localize_specific_htab)
+ 		  || (htab_elements (keepglobal_specific_htab) != 0
+diff --git a/gas/config/obj-coff.c b/gas/config/obj-coff.c
+index b3bafee..caf9cde 100644
+--- a/gas/config/obj-coff.c
++++ b/gas/config/obj-coff.c
+@@ -1263,6 +1263,7 @@ coff_frob_symbol (symbolS *symp, int *punt)
+ 					   symbol_get_value_expression (weakp));
+ 	      symbol_set_frag (symp, symbol_get_frag (weakp));
+ 	      S_SET_SEGMENT (symp, S_GET_SEGMENT (weakp));
++	      S_SET_DATA_TYPE (symp, S_GET_DATA_TYPE (weakp));
+ 	    }
+ 	  else
+ 	    {
+-- 
+2.10.1
+

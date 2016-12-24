@@ -1,0 +1,46 @@
+From 4447709dfbbd95854d57fbe9b84893cc4631f1fe Mon Sep 17 00:00:00 2001
+From: Yuta Nakai <nak5124@live.jp>
+Date: Sun, 13 Nov 2016 20:59:37 +0900
+Subject: [PATCH 2/2] Makefile.am: Don't enable precompiled headers.
+
+---
+ Makefile.am | 19 ++-----------------
+ 1 file changed, 2 insertions(+), 17 deletions(-)
+
+diff --git a/Makefile.am b/Makefile.am
+index f83fc8e..9bd6288 100644
+--- a/Makefile.am
++++ b/Makefile.am
+@@ -1,27 +1,12 @@
+ ACLOCAL_AMFLAGS = -I m4
+ AUTOMAKE_OPTIONS = no-exeext foreign subdir-objects
+-AM_CPPFLAGS = -Wall -Wextra -pedantic -pedantic-errors -Werror	\
+-	-Wwrite-strings -Wconversion -Wsign-conversion -Wsuggest-attribute=noreturn -Winvalid-pch -Wundef -Wshadow -Wstrict-aliasing=2 -Wstrict-overflow=5	\
++AM_CPPFLAGS =  -std=c11 -Wall -Wextra -pedantic -pedantic-errors -Werror	\
++	-Wwrite-strings -Wstrict-prototypes -Wconversion -Wsign-conversion -Wsuggest-attribute=noreturn -Wundef -Wshadow -Wstrict-aliasing=2 -Wstrict-overflow=5	\
+ 	-pipe -mno-stack-arg-probe -mno-accumulate-outgoing-args -mpush-args -masm=intel
+-AM_CFLAGS = -include __pch.h -std=c11 -Wstrict-prototypes
+ 
+ ## I think you GNU people should just STFU and stop confusing the linker.
+ EXEEXT =
+ 
+-BUILT_SOURCES = \
+-	__pch.h	\
+-	__pch.h.gch
+-
+-CLEANFILES = \
+-	__pch.h	\
+-	__pch.h.gch
+-
+-__pch.h: ${srcdir}/src/env/_crtdef.h
+-	echo "#include \"$<\"" > $@
+-
+-__pch.h.gch: __pch.h
+-	${CC} -x c-header @DEFS@ ${AM_CPPFLAGS} ${CPPFLAGS} $$(echo "" "${AM_CFLAGS}" | sed "s/-include __pch\\.h//") ${CFLAGS} $< -o $@
+-
+ pkginclude_HEADERS = \
+ 	src/gthread.h	\
+ 	src/c11thread.h
+-- 
+2.10.1
+

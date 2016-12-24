@@ -1,53 +1,56 @@
-From 7650cc72e5985817da4a19c0b472c926c9612708 Mon Sep 17 00:00:00 2001
+From 86e3cf26f121b528547ced0f4d24052b252d1842 Mon Sep 17 00:00:00 2001
 From: Yuta Nakai <nak5124@live.jp>
-Date: Sat, 2 Jul 2016 17:25:43 +0900
-Subject: [PATCH] Makefile.am: Add 'lib' prefix to DLL name.
+Date: Sun, 13 Nov 2016 20:24:21 +0900
+Subject: [PATCH 1/2] Makefile.am: Add 'lib' prefix to DLL name.
 
 ---
  Makefile.am | 12 ++++++------
  1 file changed, 6 insertions(+), 6 deletions(-)
 
 diff --git a/Makefile.am b/Makefile.am
-index cee6cdd..38adbf9 100644
+index f79e9b2..f83fc8e 100644
 --- a/Makefile.am
 +++ b/Makefile.am
-@@ -37,9 +37,9 @@ pkginclude_ext_HEADERS =	\
- 	src/ext/wcpcpy.h
+@@ -82,20 +82,20 @@ mcfgthread_sources = \
+ 	src/ext/wcpcpy.c
  
- bin_PROGRAMS =	\
--	mcfgthread-6.dll
-+	libmcfgthread-6.dll
+ bin_PROGRAMS = \
+-	mcfgthread-10.dll
++	libmcfgthread-10.dll
  
--mcfgthread_6_dll_SOURCES =	\
-+libmcfgthread_6_dll_SOURCES =	\
- 	src/env/avl_tree.c	\
- 	src/env/bail.c	\
- 	src/env/clocks.c	\
-@@ -57,20 +57,20 @@ mcfgthread_6_dll_SOURCES =	\
- 	src/ext/wcpcpy.c	\
- 	src/dll_startup.c
+-mcfgthread_10_dll_SOURCES = \
++libmcfgthread_10_dll_SOURCES = \
+ 	src/dll_startup.c	\
+ 	${mcfgthread_pre_sources}	\
+ 	${mcfgthread_sources}
  
--mcfgthread_6_dll_LDFLAGS =	\
-+libmcfgthread_6_dll_LDFLAGS =	\
+-mcfgthread_10_dll_LDFLAGS = \
++libmcfgthread_10_dll_LDFLAGS = \
  	-shared -static -nostdlib	\
- 	-Wl,-e@__MCFCRT_DllStartup,-subsystem,windows,--disable-runtime-pseudo-reloc,--disable-auto-import	\
- 	-Wl,--disable-stdcall-fixup,--enable-auto-image-base,--export-all-symbols,--out-implib,libmcfgthread.dll.a
+ 	-Wl,-e@__MCFCRT_DllStartup,--subsystem,windows,--disable-runtime-pseudo-reloc,--disable-auto-import	\
+ 	-Wl,--export-all-symbols,--exclude-symbols,@__MCFCRT_DllStartup,--exclude-libs,ALL	\
+ 	-Wl,--disable-stdcall-fixup,--enable-auto-image-base,--out-implib,libmcfgthread.dll.a
  
--mcfgthread_6_dll_LDADD =	\
-+libmcfgthread_6_dll_LDADD =	\
+-mcfgthread_10_dll_LDADD = \
++libmcfgthread_10_dll_LDADD = \
  	-lkernel32 -lntdll
  
- lib_LIBRARIES =	\
- 	libmcfgthread.dll.a	\
+ lib_LIBRARIES = \
+@@ -103,12 +103,12 @@ lib_LIBRARIES = \
  	libmcfgthread.a
  
--libmcfgthread.dll.a: mcfgthread-6.dll
-+libmcfgthread.dll.a: libmcfgthread-6.dll
+ libmcfgthread_dll_a_SOURCES =
+-libmcfgthread.dll.a: mcfgthread-10.dll
++libmcfgthread.dll.a: libmcfgthread-10.dll
  
--libmcfgthread.a: mcfgthread-6.dll
-+libmcfgthread.a: libmcfgthread-6.dll
- 	## Due to Windows limitation we can't link this library statically.
- 	cp -p libmcfgthread.dll.a '$@'
+ libmcfgthread_a_SOURCES =
+ ##libmcfgthread_a_SOURCES = \
+ ##	${mcfgthread_sources}
+ 
+ ## Due to Windows limitation we can't link this library statically.
+-libmcfgthread.a: mcfgthread-10.dll
++libmcfgthread.a: libmcfgthread-10.dll
+ 	cp --no-preserve=timestamps libmcfgthread.dll.a $@
 -- 
-2.9.0
+2.10.1
 

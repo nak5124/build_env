@@ -1,7 +1,7 @@
-From e8fa573181336522b500ae33d38cb109ecf309c0 Mon Sep 17 00:00:00 2001
+From 47fa2c757c4bf95204abfa2c4a737422324988d0 Mon Sep 17 00:00:00 2001
 From: Yuta NAKAI <nak5124@live.jp>
 Date: Sun, 19 Apr 2015 21:45:48 +0900
-Subject: [PATCH 3/7] MinGW: Use __MINGW_PRINTF_FORMAT for
+Subject: [PATCH 03/11] MinGW: Use __MINGW_PRINTF_FORMAT for
  __USE_MINGW_ANSI_STDIO.
 
 ---
@@ -18,10 +18,10 @@ Subject: [PATCH 3/7] MinGW: Use __MINGW_PRINTF_FORMAT for
  10 files changed, 36 insertions(+), 19 deletions(-)
 
 diff --git a/bfd/bfd-in.h b/bfd/bfd-in.h
-index 1721ce7..849f98c 100644
+index 4b3bcfd..1d739d7 100644
 --- a/bfd/bfd-in.h
 +++ b/bfd/bfd-in.h
-@@ -137,7 +137,7 @@ typedef BFD_HOST_U_64_BIT symvalue;
+@@ -138,7 +138,7 @@ typedef BFD_HOST_U_64_BIT symvalue;
  
  #if BFD_HOST_64BIT_LONG
  #define BFD_VMA_FMT "l"
@@ -31,10 +31,10 @@ index 1721ce7..849f98c 100644
  #else
  #define BFD_VMA_FMT "ll"
 diff --git a/bfd/bfd-in2.h b/bfd/bfd-in2.h
-index db54efe..5d9aa96 100644
+index fdb7878..29567a9 100644
 --- a/bfd/bfd-in2.h
 +++ b/bfd/bfd-in2.h
-@@ -144,7 +144,7 @@ typedef BFD_HOST_U_64_BIT symvalue;
+@@ -145,7 +145,7 @@ typedef BFD_HOST_U_64_BIT symvalue;
  
  #if BFD_HOST_64BIT_LONG
  #define BFD_VMA_FMT "l"
@@ -44,7 +44,7 @@ index db54efe..5d9aa96 100644
  #else
  #define BFD_VMA_FMT "ll"
 diff --git a/binutils/dwarf.c b/binutils/dwarf.c
-index 9f1baea..e699ea2 100644
+index fee6a60..c232d37 100644
 --- a/binutils/dwarf.c
 +++ b/binutils/dwarf.c
 @@ -164,7 +164,7 @@ get_encoded_value (unsigned char **pdata,
@@ -57,10 +57,10 @@ index 9f1baea..e699ea2 100644
  #  define DWARF_VMA_FMT_LONG	"%16.16llx"
  # else
 diff --git a/binutils/nm.c b/binutils/nm.c
-index ad6e70d..cbe61f8 100644
+index d537441..05255ab 100644
 --- a/binutils/nm.c
 +++ b/binutils/nm.c
-@@ -162,7 +162,7 @@ static char value_format_32bit[] = "%08lx";
+@@ -172,7 +172,7 @@ static char value_format_32bit[] = "%08lx";
  #if BFD_HOST_64BIT_LONG
  static char value_format_64bit[] = "%016lx";
  #elif BFD_HOST_64BIT_LONG_LONG
@@ -69,7 +69,7 @@ index ad6e70d..cbe61f8 100644
  static char value_format_64bit[] = "%016llx";
  #else
  static char value_format_64bit[] = "%016I64x";
-@@ -292,7 +292,7 @@ set_print_radix (char *radix)
+@@ -304,7 +304,7 @@ set_print_radix (char *radix)
  #if BFD_HOST_64BIT_LONG
        value_format_64bit[5] = *radix;
  #elif BFD_HOST_64BIT_LONG_LONG
@@ -79,7 +79,7 @@ index ad6e70d..cbe61f8 100644
  #else
        value_format_64bit[7] = *radix;
 diff --git a/binutils/prdbg.c b/binutils/prdbg.c
-index 6e2b217..ee58b8b 100644
+index 92c6087..49db5b6 100644
 --- a/binutils/prdbg.c
 +++ b/binutils/prdbg.c
 @@ -502,7 +502,7 @@ print_vma (bfd_vma vma, char *buf, bfd_boolean unsignedp, bfd_boolean hexp)
@@ -92,10 +92,10 @@ index 6e2b217..ee58b8b 100644
  	sprintf (buf, "0x%llx", (unsigned long long) vma);
        else if (unsignedp)
 diff --git a/binutils/readelf.c b/binutils/readelf.c
-index 3b6768a..be3833a 100644
+index 95a4edd..6900dc7 100644
 --- a/binutils/readelf.c
 +++ b/binutils/readelf.c
-@@ -1150,7 +1150,7 @@ dump_relocations (FILE * file,
+@@ -1156,7 +1156,7 @@ dump_relocations (FILE * file,
  		  : "%12.12lx  %12.12lx ",
  		  offset, inf);
  #elif BFD_HOST_64BIT_LONG_LONG
@@ -104,7 +104,7 @@ index 3b6768a..be3833a 100644
  	  printf (do_wide
  		  ? "%16.16llx  %16.16llx "
  		  : "%12.12llx  %12.12llx ",
-@@ -12174,7 +12174,7 @@ dump_section_as_strings (Elf_Internal_Shdr * section, FILE * file)
+@@ -12572,7 +12572,7 @@ dump_section_as_strings (Elf_Internal_Shdr * section, FILE * file)
  	{
  	  size_t maxlen = end - data;
  
@@ -114,10 +114,10 @@ index 3b6768a..be3833a 100644
               around bugs in the Solaris 8 implementation of printf.  */
  	  printf ("  [%6tx]  ", data - start);
 diff --git a/binutils/strings.c b/binutils/strings.c
-index 2c6f0eb..ef2a00e 100644
+index 58b7e8a..3936fd9 100644
 --- a/binutils/strings.c
 +++ b/binutils/strings.c
-@@ -595,7 +595,7 @@ print_strings (const char *filename, FILE *stream, file_ptr address,
+@@ -592,7 +592,7 @@ print_strings (const char *filename, FILE *stream, file_ptr address,
  #ifdef HAVE_LONG_LONG
  	    if (sizeof (start) > sizeof (long))
  	      {
@@ -126,7 +126,7 @@ index 2c6f0eb..ef2a00e 100644
  	        printf ("%7llo ", (unsigned long long) start);
  # else
  	        printf ("%7I64o ", (unsigned long long) start);
-@@ -614,7 +614,7 @@ print_strings (const char *filename, FILE *stream, file_ptr address,
+@@ -611,7 +611,7 @@ print_strings (const char *filename, FILE *stream, file_ptr address,
  #ifdef HAVE_LONG_LONG
  	    if (sizeof (start) > sizeof (long))
  	      {
@@ -135,7 +135,7 @@ index 2c6f0eb..ef2a00e 100644
  	        printf ("%7lld ", (unsigned long long) start);
  # else
  	        printf ("%7I64d ", (unsigned long long) start);
-@@ -633,7 +633,7 @@ print_strings (const char *filename, FILE *stream, file_ptr address,
+@@ -630,7 +630,7 @@ print_strings (const char *filename, FILE *stream, file_ptr address,
  #ifdef HAVE_LONG_LONG
  	    if (sizeof (start) > sizeof (long))
  	      {
@@ -145,10 +145,10 @@ index 2c6f0eb..ef2a00e 100644
  # else
  	        printf ("%7I64x ", (unsigned long long) start);
 diff --git a/gas/as.h b/gas/as.h
-index 635b2c5..4ab4c2a 100644
+index 9fa9389..eb89daa 100644
 --- a/gas/as.h
 +++ b/gas/as.h
-@@ -449,12 +449,21 @@ typedef struct _pseudo_type pseudo_typeS;
+@@ -436,12 +436,21 @@ typedef struct _pseudo_type pseudo_typeS;
  #define __format__ format
  #endif
  
@@ -157,26 +157,26 @@ index 635b2c5..4ab4c2a 100644
 +  void FCN (const char *format, ...) \
 +    __attribute__ ((__format__ (__MINGW_PRINTF_FORMAT, 1, 2)))
 +#define PRINTF_WHERE_LIKE(FCN) \
-+  void FCN (char *file, unsigned int line, const char *format, ...) \
++  void FCN (const char *file, unsigned int line, const char *format, ...) \
 +    __attribute__ ((__format__ (__MINGW_PRINTF_FORMAT, 3, 4)))
 +#else
  #define PRINTF_LIKE(FCN) \
    void FCN (const char *format, ...) \
      __attribute__ ((__format__ (__printf__, 1, 2)))
  #define PRINTF_WHERE_LIKE(FCN) \
-   void FCN (char *file, unsigned int line, const char *format, ...) \
+   void FCN (const char *file, unsigned int line, const char *format, ...) \
      __attribute__ ((__format__ (__printf__, 3, 4)))
 +#endif
  
  #else /* __GNUC__ < 2 || defined(VMS) */
  
 diff --git a/gas/read.c b/gas/read.c
-index 1718aaa..c3eefa7 100644
+index a940ff3..b091721 100644
 --- a/gas/read.c
 +++ b/gas/read.c
-@@ -4352,7 +4352,7 @@ emit_expr_with_reloc (expressionS *exp,
- 	      || (get & hibit) == 0))
- 	{		/* Leading bits contain both 0s & 1s.  */
+@@ -4415,7 +4415,7 @@ emit_expr_with_reloc (expressionS *exp,
+ 	{
+ 	  /* Leading bits contain both 0s & 1s.  */
  #if defined (BFD64) && BFD_HOST_64BIT_LONG_LONG
 -#ifndef __MSVCRT__
 +#if !defined(__MSVCRT__) || (defined(__MINGW32__) && defined(__USE_MINGW_ANSI_STDIO) && ((__USE_MINGW_ANSI_STDIO + 0) != 0))
@@ -184,7 +184,7 @@ index 1718aaa..c3eefa7 100644
  		   (unsigned long long) get, (unsigned long long) use);
  #else
 diff --git a/include/ansidecl.h b/include/ansidecl.h
-index 6e4bfc2..caae0be 100644
+index 0c71685..728396b 100644
 --- a/include/ansidecl.h
 +++ b/include/ansidecl.h
 @@ -195,12 +195,16 @@ So instead we use the macro below and test it against specific values.  */
@@ -224,5 +224,5 @@ index 6e4bfc2..caae0be 100644
  #  define ATTRIBUTE_NULL_PRINTF(m, n)
  # endif /* GNUC >= 3.3 */
 -- 
-2.6.3
+2.10.1
 

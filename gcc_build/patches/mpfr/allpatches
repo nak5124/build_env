@@ -1,356 +1,174 @@
-diff -Naurd mpfr-3.1.4-a/PATCHES mpfr-3.1.4-b/PATCHES
---- mpfr-3.1.4-a/PATCHES	2016-04-13 21:22:23.720604013 +0000
-+++ mpfr-3.1.4-b/PATCHES	2016-04-13 21:22:23.744603677 +0000
+diff -Naurd mpfr-3.1.5-a/PATCHES mpfr-3.1.5-b/PATCHES
+--- mpfr-3.1.5-a/PATCHES	2016-12-15 08:35:46.476430238 +0000
++++ mpfr-3.1.5-b/PATCHES	2016-12-15 08:35:46.544430346 +0000
 @@ -0,0 +1 @@
-+unix-check
-diff -Naurd mpfr-3.1.4-a/VERSION mpfr-3.1.4-b/VERSION
---- mpfr-3.1.4-a/VERSION	2016-03-06 11:33:04.000000000 +0000
-+++ mpfr-3.1.4-b/VERSION	2016-04-13 21:22:23.744603677 +0000
++vasprintf
+diff -Naurd mpfr-3.1.5-a/VERSION mpfr-3.1.5-b/VERSION
+--- mpfr-3.1.5-a/VERSION	2016-09-27 07:58:14.000000000 +0000
++++ mpfr-3.1.5-b/VERSION	2016-12-15 08:35:46.544430346 +0000
 @@ -1 +1 @@
--3.1.4
-+3.1.4-p1
-diff -Naurd mpfr-3.1.4-a/src/mpfr-impl.h mpfr-3.1.4-b/src/mpfr-impl.h
---- mpfr-3.1.4-a/src/mpfr-impl.h	2016-03-06 11:33:04.000000000 +0000
-+++ mpfr-3.1.4-b/src/mpfr-impl.h	2016-04-13 21:22:23.736603789 +0000
-@@ -252,19 +252,6 @@
- # define MPFR_WIN_THREAD_SAFE_DLL 1
- #endif
- 
--/* Detect some possible inconsistencies under Unix. */
--#if defined(__unix__)
--# if defined(_WIN32)
--#  error "Both __unix__ and _WIN32 are defined"
--# endif
--# if __GMP_LIBGMP_DLL
--#  error "__unix__ is defined and __GMP_LIBGMP_DLL is true"
--# endif
--# if defined(MPFR_WIN_THREAD_SAFE_DLL)
--#  error "Both __unix__ and MPFR_WIN_THREAD_SAFE_DLL are defined"
--# endif
--#endif
--
- #if defined(__MPFR_WITHIN_MPFR) || !defined(MPFR_WIN_THREAD_SAFE_DLL)
- extern MPFR_THREAD_ATTR unsigned int __gmpfr_flags;
- extern MPFR_THREAD_ATTR mpfr_exp_t   __gmpfr_emin;
-diff -Naurd mpfr-3.1.4-a/src/mpfr.h mpfr-3.1.4-b/src/mpfr.h
---- mpfr-3.1.4-a/src/mpfr.h	2016-03-06 11:33:04.000000000 +0000
-+++ mpfr-3.1.4-b/src/mpfr.h	2016-04-13 21:22:23.744603677 +0000
+-3.1.5
++3.1.5-p1
+diff -Naurd mpfr-3.1.5-a/src/mpfr.h mpfr-3.1.5-b/src/mpfr.h
+--- mpfr-3.1.5-a/src/mpfr.h	2016-09-27 07:58:15.000000000 +0000
++++ mpfr-3.1.5-b/src/mpfr.h	2016-12-15 08:35:46.540430340 +0000
 @@ -27,7 +27,7 @@
  #define MPFR_VERSION_MAJOR 3
  #define MPFR_VERSION_MINOR 1
- #define MPFR_VERSION_PATCHLEVEL 4
--#define MPFR_VERSION_STRING "3.1.4"
-+#define MPFR_VERSION_STRING "3.1.4-p1"
+ #define MPFR_VERSION_PATCHLEVEL 5
+-#define MPFR_VERSION_STRING "3.1.5"
++#define MPFR_VERSION_STRING "3.1.5-p1"
  
  /* Macros dealing with MPFR VERSION */
  #define MPFR_VERSION_NUM(a,b,c) (((a) << 16L) | ((b) << 8) | (c))
-diff -Naurd mpfr-3.1.4-a/src/version.c mpfr-3.1.4-b/src/version.c
---- mpfr-3.1.4-a/src/version.c	2016-03-06 11:33:05.000000000 +0000
-+++ mpfr-3.1.4-b/src/version.c	2016-04-13 21:22:23.744603677 +0000
-@@ -25,5 +25,5 @@
- const char *
- mpfr_get_version (void)
- {
--  return "3.1.4";
-+  return "3.1.4-p1";
- }
-diff -Naurd mpfr-3.1.4-a/PATCHES mpfr-3.1.4-b/PATCHES
---- mpfr-3.1.4-a/PATCHES	2016-05-22 19:59:43.838399677 +0000
-+++ mpfr-3.1.4-b/PATCHES	2016-05-22 19:59:43.866399168 +0000
-@@ -0,0 +1 @@
-+add-sub-ui-flags
-diff -Naurd mpfr-3.1.4-a/VERSION mpfr-3.1.4-b/VERSION
---- mpfr-3.1.4-a/VERSION	2016-04-13 21:22:23.744603677 +0000
-+++ mpfr-3.1.4-b/VERSION	2016-05-22 19:59:43.866399168 +0000
-@@ -1 +1 @@
--3.1.4-p1
-+3.1.4-p2
-diff -Naurd mpfr-3.1.4-a/src/add_ui.c mpfr-3.1.4-b/src/add_ui.c
---- mpfr-3.1.4-a/src/add_ui.c	2016-03-06 11:33:04.000000000 +0000
-+++ mpfr-3.1.4-b/src/add_ui.c	2016-05-22 19:59:43.854399385 +0000
-@@ -49,6 +49,7 @@
-       MPFR_SAVE_EXPO_MARK (expo);
-       MPFR_SET_EXP (uu, GMP_NUMB_BITS - cnt);
-       inex = mpfr_add(y, x, uu, rnd_mode);
-+      MPFR_SAVE_EXPO_UPDATE_FLAGS (expo, __gmpfr_flags);
-       MPFR_SAVE_EXPO_FREE (expo);
-       return mpfr_check_range(y, inex, rnd_mode);
-     }
-diff -Naurd mpfr-3.1.4-a/src/mpfr.h mpfr-3.1.4-b/src/mpfr.h
---- mpfr-3.1.4-a/src/mpfr.h	2016-04-13 21:22:23.744603677 +0000
-+++ mpfr-3.1.4-b/src/mpfr.h	2016-05-22 19:59:43.862399241 +0000
-@@ -27,7 +27,7 @@
- #define MPFR_VERSION_MAJOR 3
- #define MPFR_VERSION_MINOR 1
- #define MPFR_VERSION_PATCHLEVEL 4
--#define MPFR_VERSION_STRING "3.1.4-p1"
-+#define MPFR_VERSION_STRING "3.1.4-p2"
- 
- /* Macros dealing with MPFR VERSION */
- #define MPFR_VERSION_NUM(a,b,c) (((a) << 16L) | ((b) << 8) | (c))
-diff -Naurd mpfr-3.1.4-a/src/sub_ui.c mpfr-3.1.4-b/src/sub_ui.c
---- mpfr-3.1.4-a/src/sub_ui.c	2016-03-06 11:33:05.000000000 +0000
-+++ mpfr-3.1.4-b/src/sub_ui.c	2016-05-22 19:59:43.854399385 +0000
-@@ -52,6 +52,7 @@
-       MPFR_SAVE_EXPO_MARK (expo);
-       MPFR_SET_EXP (uu, GMP_NUMB_BITS - cnt);
-       inex = mpfr_sub (y, x, uu, rnd_mode);
-+      MPFR_SAVE_EXPO_UPDATE_FLAGS (expo, __gmpfr_flags);
-       MPFR_SAVE_EXPO_FREE (expo);
-       return mpfr_check_range (y, inex, rnd_mode);
-     }
-diff -Naurd mpfr-3.1.4-a/src/version.c mpfr-3.1.4-b/src/version.c
---- mpfr-3.1.4-a/src/version.c	2016-04-13 21:22:23.744603677 +0000
-+++ mpfr-3.1.4-b/src/version.c	2016-05-22 19:59:43.866399168 +0000
-@@ -25,5 +25,5 @@
- const char *
- mpfr_get_version (void)
- {
--  return "3.1.4-p1";
-+  return "3.1.4-p2";
- }
-diff -Naurd mpfr-3.1.4-a/tests/tadd_ui.c mpfr-3.1.4-b/tests/tadd_ui.c
---- mpfr-3.1.4-a/tests/tadd_ui.c	2016-03-06 11:33:03.000000000 +0000
-+++ mpfr-3.1.4-b/tests/tadd_ui.c	2016-05-22 19:59:43.854399385 +0000
-@@ -69,7 +69,9 @@
- 
-   /* nan + 2394875 == nan */
-   mpfr_set_nan (x);
-+  mpfr_clear_nanflag ();
-   mpfr_add_ui (y, x, 2394875L, MPFR_RNDN);
-+  MPFR_ASSERTN (mpfr_nanflag_p ());
-   MPFR_ASSERTN (mpfr_nan_p (y));
- 
-   /* +inf + 2394875 == +inf */
-diff -Naurd mpfr-3.1.4-a/tests/tsub_ui.c mpfr-3.1.4-b/tests/tsub_ui.c
---- mpfr-3.1.4-a/tests/tsub_ui.c	2016-03-06 11:33:03.000000000 +0000
-+++ mpfr-3.1.4-b/tests/tsub_ui.c	2016-05-22 19:59:43.854399385 +0000
-@@ -96,7 +96,9 @@
- 
-   /* nan - 1 == nan */
-   mpfr_set_nan (x);
-+  mpfr_clear_nanflag ();
-   mpfr_sub_ui (y, x, 1L, MPFR_RNDN);
-+  MPFR_ASSERTN (mpfr_nanflag_p ());
-   MPFR_ASSERTN (mpfr_nan_p (y));
- 
-   /* +inf - 1 == +inf */
-diff -Naurd mpfr-3.1.4-a/PATCHES mpfr-3.1.4-b/PATCHES
---- mpfr-3.1.4-a/PATCHES	2016-06-01 13:00:30.748711490 +0000
-+++ mpfr-3.1.4-b/PATCHES	2016-06-01 13:00:30.772711162 +0000
-@@ -0,0 +1 @@
-+sub1-overflow
-diff -Naurd mpfr-3.1.4-a/VERSION mpfr-3.1.4-b/VERSION
---- mpfr-3.1.4-a/VERSION	2016-05-22 19:59:43.866399168 +0000
-+++ mpfr-3.1.4-b/VERSION	2016-06-01 13:00:30.772711162 +0000
-@@ -1 +1 @@
--3.1.4-p2
-+3.1.4-p3
-diff -Naurd mpfr-3.1.4-a/src/mpfr.h mpfr-3.1.4-b/src/mpfr.h
---- mpfr-3.1.4-a/src/mpfr.h	2016-05-22 19:59:43.862399241 +0000
-+++ mpfr-3.1.4-b/src/mpfr.h	2016-06-01 13:00:30.772711162 +0000
-@@ -27,7 +27,7 @@
- #define MPFR_VERSION_MAJOR 3
- #define MPFR_VERSION_MINOR 1
- #define MPFR_VERSION_PATCHLEVEL 4
--#define MPFR_VERSION_STRING "3.1.4-p2"
-+#define MPFR_VERSION_STRING "3.1.4-p3"
- 
- /* Macros dealing with MPFR VERSION */
- #define MPFR_VERSION_NUM(a,b,c) (((a) << 16L) | ((b) << 8) | (c))
-diff -Naurd mpfr-3.1.4-a/src/sub1.c mpfr-3.1.4-b/src/sub1.c
---- mpfr-3.1.4-a/src/sub1.c	2016-03-06 11:33:05.000000000 +0000
-+++ mpfr-3.1.4-b/src/sub1.c	2016-06-01 13:00:30.760711326 +0000
-@@ -96,16 +96,15 @@
-       /* A = S*ABS(B) +/- ulp(a) */
-       MPFR_SET_EXP (a, MPFR_GET_EXP (b));
-       MPFR_RNDRAW_EVEN (inexact, a, MPFR_MANT (b), MPFR_PREC (b),
--                        rnd_mode, MPFR_SIGN (a),
--                        if (MPFR_UNLIKELY ( ++MPFR_EXP (a) > __gmpfr_emax))
--                        inexact = mpfr_overflow (a, rnd_mode, MPFR_SIGN (a)));
--      /* inexact = mpfr_set4 (a, b, rnd_mode, MPFR_SIGN (a));  */
-+                        rnd_mode, MPFR_SIGN (a), ++ MPFR_EXP (a));
-       if (inexact == 0)
-         {
-           /* a = b (Exact)
-              But we know it isn't (Since we have to remove `c')
-              So if we round to Zero, we have to remove one ulp.
-              Otherwise the result is correctly rounded. */
-+          /* An overflow is not possible. */
-+          MPFR_ASSERTD (MPFR_EXP (a) <= __gmpfr_emax);
-           if (MPFR_IS_LIKE_RNDZ (rnd_mode, MPFR_IS_NEG (a)))
-             {
-               mpfr_nexttozero (a);
-@@ -136,9 +135,14 @@
-              i.e. inexact= MPFR_EVEN_INEX */
-           if (MPFR_UNLIKELY (inexact == MPFR_EVEN_INEX*MPFR_INT_SIGN (a)))
-             {
--              mpfr_nexttozero (a);
-+              if (MPFR_UNLIKELY (MPFR_EXP (a) > __gmpfr_emax))
-+                mpfr_setmax (a, __gmpfr_emax);
-+              else
-+                mpfr_nexttozero (a);
-               inexact = -MPFR_INT_SIGN (a);
-             }
-+          else if (MPFR_UNLIKELY (MPFR_EXP (a) > __gmpfr_emax))
-+            inexact = mpfr_overflow (a, rnd_mode, MPFR_SIGN (a));
-           MPFR_RET (inexact);
+diff -Naurd mpfr-3.1.5-a/src/vasprintf.c mpfr-3.1.5-b/src/vasprintf.c
+--- mpfr-3.1.5-a/src/vasprintf.c	2016-09-27 07:58:15.000000000 +0000
++++ mpfr-3.1.5-b/src/vasprintf.c	2016-12-15 08:35:46.520430308 +0000
+@@ -1593,7 +1593,7 @@
          }
-     }
-diff -Naurd mpfr-3.1.4-a/src/version.c mpfr-3.1.4-b/src/version.c
---- mpfr-3.1.4-a/src/version.c	2016-05-22 19:59:43.866399168 +0000
-+++ mpfr-3.1.4-b/src/version.c	2016-06-01 13:00:30.772711162 +0000
+       else if (spec.spec == 'f' || spec.spec == 'F')
+         {
+-          if (spec.prec == -1)
++          if (spec.prec < 0)
+             spec.prec = 6;
+           if (regular_fg (np, p, spec, NULL) == -1)
+             goto error;
+diff -Naurd mpfr-3.1.5-a/src/version.c mpfr-3.1.5-b/src/version.c
+--- mpfr-3.1.5-a/src/version.c	2016-09-27 07:58:15.000000000 +0000
++++ mpfr-3.1.5-b/src/version.c	2016-12-15 08:35:46.544430346 +0000
 @@ -25,5 +25,5 @@
  const char *
  mpfr_get_version (void)
  {
--  return "3.1.4-p2";
-+  return "3.1.4-p3";
+-  return "3.1.5";
++  return "3.1.5-p1";
  }
-diff -Naurd mpfr-3.1.4-a/tests/tsub.c mpfr-3.1.4-b/tests/tsub.c
---- mpfr-3.1.4-a/tests/tsub.c	2016-03-06 11:33:03.000000000 +0000
-+++ mpfr-3.1.4-b/tests/tsub.c	2016-06-01 13:00:30.760711326 +0000
-@@ -630,6 +630,135 @@
-     }
+diff -Naurd mpfr-3.1.5-a/tests/tsprintf.c mpfr-3.1.5-b/tests/tsprintf.c
+--- mpfr-3.1.5-a/tests/tsprintf.c	2016-09-27 07:58:14.000000000 +0000
++++ mpfr-3.1.5-b/tests/tsprintf.c	2016-12-15 08:35:46.520430308 +0000
+@@ -1251,6 +1251,25 @@
+   check_emin_aux (MPFR_EMIN_MIN);
  }
  
 +static void
-+check_max_almosteven (void)
++test20161214 (void)
 +{
-+  mpfr_exp_t old_emin, old_emax;
-+  mpfr_exp_t emin[2] = { MPFR_EMIN_MIN, -1000 };
-+  mpfr_exp_t emax[2] = { MPFR_EMAX_MAX, 1000 };
-+  int i;
++  mpfr_t x;
++  char buf[32];
++  const char s[] = "0x0.fffffffffffff8p+1024";
++  int r;
 +
-+  old_emin = mpfr_get_emin ();
-+  old_emax = mpfr_get_emax ();
-+
-+  for (i = 0; i < 2; i++)
-+    {
-+      mpfr_t a1, a2, b, c;
-+      mpfr_prec_t p;
-+      int neg, j, rnd;
-+
-+      set_emin (emin[i]);
-+      set_emax (emax[i]);
-+
-+      p = MPFR_PREC_MIN + randlimb () % 70;
-+      mpfr_init2 (a1, p);
-+      mpfr_init2 (a2, p);
-+      mpfr_init2 (b, p+1);
-+      mpfr_init2 (c, MPFR_PREC_MIN);
-+
-+      mpfr_setmax (b, 0);
-+      mpfr_set_ui (c, 1, MPFR_RNDN);
-+
-+      for (neg = 0; neg < 2; neg++)
-+        {
-+          for (j = 1; j >= 0; j--)
-+            {
-+              mpfr_set_exp (b, __gmpfr_emax - j);
-+              RND_LOOP (rnd)
-+                {
-+                  unsigned int flags1, flags2;
-+                  int inex1, inex2;
-+
-+                  flags1 = MPFR_FLAGS_INEXACT;
-+                  if (rnd == MPFR_RNDN || MPFR_IS_LIKE_RNDZ (rnd, neg))
-+                    {
-+                      inex1 = neg ? 1 : -1;
-+                      mpfr_setmax (a1, __gmpfr_emax - j);
-+                    }
-+                  else
-+                    {
-+                      inex1 = neg ? -1 : 1;
-+                      if (j == 0)
-+                        {
-+                          flags1 |= MPFR_FLAGS_OVERFLOW;
-+                          mpfr_set_inf (a1, 1);
-+                        }
-+                      else
-+                        {
-+                          mpfr_setmin (a1, __gmpfr_emax);
-+                        }
-+                    }
-+                  MPFR_SET_SIGN (a1, neg ? -1 : 1);
-+
-+                  mpfr_clear_flags ();
-+                  inex2 = mpfr_sub (a2, b, c, (mpfr_rnd_t) rnd);
-+                  flags2 = __gmpfr_flags;
-+
-+                  if (! (flags1 == flags2 && SAME_SIGN (inex1, inex2) &&
-+                         mpfr_equal_p (a1, a2)))
-+                    {
-+                      printf ("Error 1 in check_max_almosteven for %s,"
-+                              " i = %d, j = %d, neg = %d\n",
-+                              mpfr_print_rnd_mode ((mpfr_rnd_t) rnd),
-+                              i, j, neg);
-+                      printf ("     b = ");
-+                      mpfr_dump (b);
-+                      printf ("Expected ");
-+                      mpfr_dump (a1);
-+                      printf ("  with inex = %d, flags =", inex1);
-+                      flags_out (flags1);
-+                      printf ("Got      ");
-+                      mpfr_dump (a2);
-+                      printf ("  with inex = %d, flags =", inex2);
-+                      flags_out (flags2);
-+                      exit (1);
-+                    }
-+
-+                  if (i == 0)
-+                    break;
-+
-+                  mpfr_clear_flags ();
-+                  set_emin (MPFR_EMIN_MIN);
-+                  set_emax (MPFR_EMAX_MAX);
-+                  inex2 = mpfr_sub (a2, b, c, (mpfr_rnd_t) rnd);
-+                  set_emin (emin[i]);
-+                  set_emax (emax[i]);
-+                  inex2 = mpfr_check_range (a2, inex2, (mpfr_rnd_t) rnd);
-+                  flags2 = __gmpfr_flags;
-+
-+                  if (! (flags1 == flags2 && SAME_SIGN (inex1, inex2) &&
-+                         mpfr_equal_p (a1, a2)))
-+                    {
-+                      printf ("Error 2 in check_max_almosteven for %s,"
-+                              " i = %d, j = %d, neg = %d\n",
-+                              mpfr_print_rnd_mode ((mpfr_rnd_t) rnd),
-+                              i, j, neg);
-+                      printf ("     b = ");
-+                      mpfr_dump (b);
-+                      printf ("Expected ");
-+                      mpfr_dump (a1);
-+                      printf ("  with inex = %d, flags =", inex1);
-+                      flags_out (flags1);
-+                      printf ("Got      ");
-+                      mpfr_dump (a2);
-+                      printf ("  with inex = %d, flags =", inex2);
-+                      flags_out (flags2);
-+                      exit (1);
-+                    }
-+                }
-+            }  /* j */
-+
-+          mpfr_neg (b, b, MPFR_RNDN);
-+          mpfr_neg (c, c, MPFR_RNDN);
-+        }  /* neg */
-+
-+      mpfr_clears (a1, a2, b, c, (mpfr_ptr) 0);
-+    }  /* i */
-+
-+  set_emin (old_emin);
-+  set_emax (old_emax);
++  mpfr_init2 (x, 64);
++  mpfr_set_str (x, s, 16, MPFR_RNDN);
++  r = mpfr_snprintf (buf, 32, "%.*RDf", -2, x);
++  MPFR_ASSERTN(r == 316);
++  r = mpfr_snprintf (buf, 32, "%.*RDf", INT_MIN + 1, x);
++  MPFR_ASSERTN(r == 316);
++  r = mpfr_snprintf (buf, 32, "%.*RDf", INT_MIN, x);
++  MPFR_ASSERTN(r == 316);
++  mpfr_clear (x);
 +}
 +
- #define TEST_FUNCTION test_sub
- #define TWO_ARGS
- #define RAND_FUNCTION(x) mpfr_random2(x, MPFR_LIMB_SIZE (x), randlimb () % 100, RANDS)
-@@ -647,6 +776,7 @@
-   check_rounding ();
-   check_diverse ();
-   check_inexact ();
-+  check_max_almosteven ();
-   bug_ddefour ();
-   for (p=2; p<200; p++)
-     for (i=0; i<50; i++)
+ int
+ main (int argc, char **argv)
+ {
+@@ -1271,6 +1290,7 @@
+   mixed ();
+   check_emax ();
+   check_emin ();
++  test20161214 ();
+ 
+ #if defined(HAVE_LOCALE_H) && defined(HAVE_SETLOCALE)
+ #if MPFR_LCONV_DPTS
+diff -Naurd mpfr-3.1.5-a/PATCHES mpfr-3.1.5-b/PATCHES
+--- mpfr-3.1.5-a/PATCHES	2016-12-19 22:11:17.022676737 +0000
++++ mpfr-3.1.5-b/PATCHES	2016-12-19 22:11:17.094676820 +0000
+@@ -0,0 +1 @@
++strtofr
+diff -Naurd mpfr-3.1.5-a/VERSION mpfr-3.1.5-b/VERSION
+--- mpfr-3.1.5-a/VERSION	2016-12-15 08:35:46.544430346 +0000
++++ mpfr-3.1.5-b/VERSION	2016-12-19 22:11:17.094676820 +0000
+@@ -1 +1 @@
+-3.1.5-p1
++3.1.5-p2
+diff -Naurd mpfr-3.1.5-a/src/mpfr.h mpfr-3.1.5-b/src/mpfr.h
+--- mpfr-3.1.5-a/src/mpfr.h	2016-12-15 08:35:46.540430340 +0000
++++ mpfr-3.1.5-b/src/mpfr.h	2016-12-19 22:11:17.090676815 +0000
+@@ -27,7 +27,7 @@
+ #define MPFR_VERSION_MAJOR 3
+ #define MPFR_VERSION_MINOR 1
+ #define MPFR_VERSION_PATCHLEVEL 5
+-#define MPFR_VERSION_STRING "3.1.5-p1"
++#define MPFR_VERSION_STRING "3.1.5-p2"
+ 
+ /* Macros dealing with MPFR VERSION */
+ #define MPFR_VERSION_NUM(a,b,c) (((a) << 16L) | ((b) << 8) | (c))
+diff -Naurd mpfr-3.1.5-a/src/strtofr.c mpfr-3.1.5-b/src/strtofr.c
+--- mpfr-3.1.5-a/src/strtofr.c	2016-09-27 07:58:15.000000000 +0000
++++ mpfr-3.1.5-b/src/strtofr.c	2016-12-19 22:11:17.066676788 +0000
+@@ -743,11 +743,14 @@
+          of the pstr_size most significant digits of pstr->mant, with
+          equality in case exact is non-zero. */
+ 
+-      /* test if rounding is possible, and if so exit the loop */
+-      if (exact || mpfr_can_round_raw (result, ysize,
+-                                       (pstr->negative) ? -1 : 1,
+-                                       ysize_bits - err - 1,
+-                                       MPFR_RNDN, rnd, MPFR_PREC(x)))
++      /* test if rounding is possible, and if so exit the loop.
++         Note: we also need to be able to determine the correct ternary value,
++         thus we use the MPFR_PREC(x) + (rnd == MPFR_RNDN) trick.
++         For example if result = xxx...xxx111...111 and rnd = RNDN,
++         then we know the correct rounding is xxx...xx(x+1), but we cannot know
++         the correct ternary value. */
++      if (exact || mpfr_round_p (result, ysize, ysize_bits - err - 1,
++                                 MPFR_PREC(x) + (rnd == MPFR_RNDN)))
+         break;
+ 
+     next_loop:
+diff -Naurd mpfr-3.1.5-a/src/version.c mpfr-3.1.5-b/src/version.c
+--- mpfr-3.1.5-a/src/version.c	2016-12-15 08:35:46.544430346 +0000
++++ mpfr-3.1.5-b/src/version.c	2016-12-19 22:11:17.094676820 +0000
+@@ -25,5 +25,5 @@
+ const char *
+ mpfr_get_version (void)
+ {
+-  return "3.1.5-p1";
++  return "3.1.5-p2";
+ }
+diff -Naurd mpfr-3.1.5-a/tests/tstrtofr.c mpfr-3.1.5-b/tests/tstrtofr.c
+--- mpfr-3.1.5-a/tests/tstrtofr.c	2016-09-27 07:58:14.000000000 +0000
++++ mpfr-3.1.5-b/tests/tstrtofr.c	2016-12-19 22:11:17.066676788 +0000
+@@ -1191,6 +1191,24 @@
+   mpfr_clears (e, x1, x2, (mpfr_ptr) 0);
+ }
+ 
++/* Note: the number is 5^47/2^9. */
++static void
++bug20161217 (void)
++{
++  mpfr_t fp, z;
++  static const char * num = "0.1387778780781445675529539585113525390625e31";
++  int inex;
++
++  mpfr_init2 (fp, 110);
++  mpfr_init2 (z, 110);
++  inex = mpfr_strtofr (fp, num, NULL, 10, MPFR_RNDN);
++  MPFR_ASSERTN(inex == 0);
++  mpfr_set_str_binary (z, "10001100001000010011110110011101101001010000001011011110010001010100010100100110111101000010001011001100001101E-9");
++  MPFR_ASSERTN(mpfr_equal_p (fp, z));
++  mpfr_clear (fp);
++  mpfr_clear (z);
++}
++
+ int
+ main (int argc, char *argv[])
+ {
+@@ -1205,6 +1223,7 @@
+   test20100310 ();
+   bug20120814 ();
+   bug20120829 ();
++  bug20161217 ();
+ 
+   tests_end_mpfr ();
+   return 0;

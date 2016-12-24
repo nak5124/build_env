@@ -1,7 +1,7 @@
-From 77a076ba38a9e052646fa11988b9919dd065383b Mon Sep 17 00:00:00 2001
+From fa617dadcc5f4e1e6eec97c01d1d39437a22c22f Mon Sep 17 00:00:00 2001
 From: Yuta NAKAI <nak5124@live.jp>
 Date: Sat, 4 Jul 2015 18:50:07 +0900
-Subject: [PATCH 02/24] libiberty: Modify Makefile for mingw-w64.
+Subject: [PATCH 02/26] libiberty: Modify Makefile for mingw-w64.
 
 ---
  libiberty/Makefile.in | 14 +++++++-------
@@ -70,7 +70,7 @@ index c7a4568..e919a57 100644
  # These files are installed if the library has been configured to do so.
  INSTALLED_HEADERS =                                                     \
 diff --git a/libiberty/configure b/libiberty/configure
-index 1d0b9d5..f357fb6 100755
+index 4e4f8c1..4d6ad13 100755
 --- a/libiberty/configure
 +++ b/libiberty/configure
 @@ -5718,7 +5718,6 @@ funcs="$funcs vfprintf"
@@ -123,5 +123,5 @@ index 1d0b9d5..f357fb6 100755
  esac
  
 -- 
-2.8.1
+2.10.2
 

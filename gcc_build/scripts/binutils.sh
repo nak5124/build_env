@@ -42,15 +42,13 @@ function prepare_binutils() {
     # Ray's patch
     apply_patch_bu "${PATCHES_DIR}"/binutils/0007-bfd-Increase-_bfd_coff_max_nscns-to-65279.patch            false
     # Fixes for NT weak external (https://sourceware.org/ml/binutils/2015-10/msg00234.html).
-    apply_patch_bu "${PATCHES_DIR}"/binutils/0008-coff-linker-weak-nt-externals.patch                        false
-    apply_patch_bu "${PATCHES_DIR}"/binutils/0009-gas-aux-nt-weak-externals.patch                            false
-    apply_patch_bu "${PATCHES_DIR}"/binutils/0010-objcopy-weak-nt-externals2local.patch                      false
+    apply_patch_bu "${PATCHES_DIR}"/binutils/0008-Fixes-for-NT-weak-externals.patch                          false
     # Add --enable-reloc-section (https://sourceware.org/bugzilla/show_bug.cgi?id=17321).
-    apply_patch_bu "${PATCHES_DIR}"/binutils/0011-add-enable-reloc-section.patch                             false
+    apply_patch_bu "${PATCHES_DIR}"/binutils/0009-Add-enable-reloc-section-option.patch                      false
     # Assume that target is windows 10.
-    apply_patch_bu "${PATCHES_DIR}"/binutils/0012-Update-default-versions.patch                              false
+    apply_patch_bu "${PATCHES_DIR}"/binutils/0010-Update-default-versions.patch                              false
     # Remove #define stat _stat ...
-    apply_patch_bu "${PATCHES_DIR}"/binutils/0013-Remove-useless-define.patch                                false
+    apply_patch_bu "${PATCHES_DIR}"/binutils/0011-ltmain.sh-Remove-useless-defines.patch                     false
 
     popd > /dev/null # "${BUILD_DIR}"/binutils/src/binutils-$BINUTILS_VER
     echo 'done'

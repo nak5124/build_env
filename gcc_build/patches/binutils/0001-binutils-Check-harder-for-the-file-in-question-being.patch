@@ -1,23 +1,23 @@
-From 7c2555a317c1b38d10132853853e32470fbfe314 Mon Sep 17 00:00:00 2001
+From 027dc3e8595f4c3ccc796e799a644b0b1cba0a76 Mon Sep 17 00:00:00 2001
 From: Yuta NAKAI <nak5124@live.jp>
 Date: Sun, 19 Apr 2015 21:41:59 +0900
-Subject: [PATCH 1/7] binutils: Check harder for the file in question being
+Subject: [PATCH 01/11] binutils: Check harder for the file in question being
  unusual (isatty() does see that).
 
 ---
- binutils/bucomm.c  | 19 +++++++++++++++++--
+ binutils/bucomm.c  | 20 ++++++++++++++++++--
  binutils/elfedit.c | 15 ++++++++++++++-
  binutils/readelf.c | 15 ++++++++++++++-
- 3 files changed, 45 insertions(+), 4 deletions(-)
+ 3 files changed, 46 insertions(+), 4 deletions(-)
 
 diff --git a/binutils/bucomm.c b/binutils/bucomm.c
-index 4621e60..e6a20eb 100644
+index 22bf24a..96330e2 100644
 --- a/binutils/bucomm.c
 +++ b/binutils/bucomm.c
-@@ -574,6 +574,14 @@ off_t
- get_file_size (const char * file_name)
+@@ -587,6 +587,15 @@ get_file_size (const char * file_name)
  {
    struct stat statbuf;
+ 
 +  int f, t;
 +  t = -1;
 +  f = open (file_name, O_RDONLY | O_BINARY);
@@ -26,13 +26,14 @@ index 4621e60..e6a20eb 100644
 +      t = isatty (f);
 +      close (f);
 +    }
-   
++
    if (stat (file_name, &statbuf) < 0)
      {
-@@ -583,8 +591,15 @@ get_file_size (const char * file_name)
+       if (errno == ENOENT)
+@@ -595,8 +604,15 @@ get_file_size (const char * file_name)
  	non_fatal (_("Warning: could not locate '%s'.  reason: %s"),
  		   file_name, strerror (errno));
-     }  
+     }
 -  else if (! S_ISREG (statbuf.st_mode))
 -    non_fatal (_("Warning: '%s' is not an ordinary file"), file_name);
 +  else if (! S_ISREG (statbuf.st_mode) || t > 0)
@@ -48,7 +49,7 @@ index 4621e60..e6a20eb 100644
      non_fatal (_("Warning: '%s' has negative size, probably it is too large"),
                 file_name);
 diff --git a/binutils/elfedit.c b/binutils/elfedit.c
-index 02b9c98..fb0eadf 100644
+index 20c5043..9228589 100644
 --- a/binutils/elfedit.c
 +++ b/binutils/elfedit.c
 @@ -483,6 +483,14 @@ static int
@@ -82,10 +83,10 @@ index 02b9c98..fb0eadf 100644
        return 1;
      }
 diff --git a/binutils/readelf.c b/binutils/readelf.c
-index d5dd46f..3b6768a 100644
+index e782e95..95a4edd 100644
 --- a/binutils/readelf.c
 +++ b/binutils/readelf.c
-@@ -16493,6 +16493,14 @@ process_file (char * file_name)
+@@ -17039,6 +17039,14 @@ process_file (char * file_name)
    struct stat statbuf;
    char armag[SARMAG];
    int ret;
@@ -100,7 +101,7 @@ index d5dd46f..3b6768a 100644
  
    if (stat (file_name, &statbuf) < 0)
      {
-@@ -16504,8 +16512,13 @@ process_file (char * file_name)
+@@ -17050,8 +17058,13 @@ process_file (char * file_name)
        return 1;
      }
  
@@ -116,5 +117,5 @@ index d5dd46f..3b6768a 100644
        return 1;
      }
 -- 
-2.6.3
+2.10.1
 

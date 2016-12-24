@@ -30,7 +30,8 @@ function prepare_mcfgthread() {
     printf "===> Applying patches to mcfgthread %s...\n" "${MCFGTHREAD_VER}"
 
     # Add 'lib' prefix to DLL name.
-    apply_patch_mcf "${PATCHES_DIR}"/mcfgthread/0001-Makefile.am-Add-lib-prefix-to-DLL-name.patch true
+    apply_patch_mcf "${PATCHES_DIR}"/mcfgthread/0001-Makefile.am-Add-lib-prefix-to-DLL-name.patch       true
+    apply_patch_mcf "${PATCHES_DIR}"/mcfgthread/0002-Makefile.am-Don-t-enable-precompiled-headers.patch false
 
     echo 'done'
 

@@ -1,7 +1,7 @@
-From 6f641b07009c6a475a20a82562a0128cb8968b01 Mon Sep 17 00:00:00 2001
+From 53216e44a1fc6dbc2ee4405f078f4b9b2428a19e Mon Sep 17 00:00:00 2001
 From: Ray Donnelly <mingw.android@gmail.com>
 Date: Mon, 17 Aug 2015 22:57:46 +0100
-Subject: [PATCH 08/24] clone_function_name_1: Retain any stdcall suffix
+Subject: [PATCH 08/26] clone_function_name_1: Retain any stdcall suffix
 
 Previously, clone_function_name_1 would add a suffix after
 any existing stdcall suffix, for example ipa-split.c would
@@ -105,5 +105,5 @@ index 3e18338..45d7192 100644
    } while (0)
  #endif
 -- 
-2.8.1
+2.10.2
 

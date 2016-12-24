@@ -1,7 +1,7 @@
-From 5fde97d99a822131ce55601e7fb53a3bba963f04 Mon Sep 17 00:00:00 2001
+From c5774e294aa30b31b2d707b601d6915770fbfec2 Mon Sep 17 00:00:00 2001
 From: Yuta NAKAI <nak5124@live.jp>
 Date: Sun, 12 Apr 2015 14:25:35 +0900
-Subject: [PATCH 10/24] configure: Search dirs under ${build_sysroot} instead
+Subject: [PATCH 11/26] configure: Search dirs under ${build_sysroot} instead
  of ${prefix}.
 
 ---
@@ -11,7 +11,7 @@ Subject: [PATCH 10/24] configure: Search dirs under ${build_sysroot} instead
  3 files changed, 18 insertions(+), 2 deletions(-)
 
 diff --git a/configure b/configure
-index 35f231e..dce834e 100755
+index aa66195..dcb693c 100755
 --- a/configure
 +++ b/configure
 @@ -7005,6 +7005,12 @@ esac
@@ -44,7 +44,7 @@ index 35f231e..dce834e 100755
    *-mingw*)
    # MinGW can't be handled as Cygwin above since it does not use newlib.
 diff --git a/gcc/Makefile.in b/gcc/Makefile.in
-index 9fed49d..8eb6a9f 100644
+index 62e36c1..0d0d77c 100644
 --- a/gcc/Makefile.in
 +++ b/gcc/Makefile.in
 @@ -642,7 +642,7 @@ dollar = @dollar@
@@ -57,7 +57,7 @@ index 9fed49d..8eb6a9f 100644
  gcc_gxx_include_dir = @gcc_gxx_include_dir@
  gcc_gxx_include_dir_add_sysroot = @gcc_gxx_include_dir_add_sysroot@
 diff --git a/gcc/configure b/gcc/configure
-index abf6373..050fc53 100755
+index c20e9b4..bc2e171 100755
 --- a/gcc/configure
 +++ b/gcc/configure
 @@ -671,6 +671,7 @@ all_compilers
@@ -81,5 +81,5 @@ index abf6373..050fc53 100755
  
  
 -- 
-2.8.1
+2.10.2
 

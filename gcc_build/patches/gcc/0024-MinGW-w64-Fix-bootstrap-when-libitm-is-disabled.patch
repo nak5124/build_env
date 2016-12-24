@@ -1,7 +1,7 @@
-From f99d9bfb3d76877fc483a16d109d5aa4ade633b4 Mon Sep 17 00:00:00 2001
+From cc50dc1c3e4323dfaac20b69b10210b3da114de8 Mon Sep 17 00:00:00 2001
 From: Yuta Nakai <nak5124@live.jp>
 Date: Thu, 28 Apr 2016 19:36:15 +0900
-Subject: [PATCH 23/24] MinGW-w64: Fix bootstrap when libitm is disabled.
+Subject: [PATCH 24/26] MinGW-w64: Fix bootstrap when libitm is disabled.
 
 ---
  libstdc++-v3/config/os/mingw32-w64/os_defines.h | 2 ++
@@ -19,5 +19,5 @@ index 43c400b..2be57f5 100644
 +
  #endif
 -- 
-2.8.1
+2.10.2
 

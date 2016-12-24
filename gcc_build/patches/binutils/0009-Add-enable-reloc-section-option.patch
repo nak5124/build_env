@@ -1,8 +1,22 @@
+From 429c63a301d28767835a1879d9e7bc09bdbb6101 Mon Sep 17 00:00:00 2001
+From: Yuta Nakai <nak5124@live.jp>
+Date: Sun, 13 Nov 2016 22:07:58 +0900
+Subject: [PATCH 09/11] Add --enable-reloc-section option.
+
+---
+ ld/emultempl/pe.em  |  9 ++++++--
+ ld/emultempl/pep.em | 11 +++++++---
+ ld/pe-dll.c         | 59 ++++++++++++++++++++++++++++++-----------------------
+ ld/pe-dll.h         |  1 +
+ ld/pep-dll.c        |  1 +
+ ld/pep-dll.h        |  1 +
+ 6 files changed, 51 insertions(+), 31 deletions(-)
+
 diff --git a/ld/emultempl/pe.em b/ld/emultempl/pe.em
-index bf146f6..15a7c15 100644
+index 7b8fec7..e30fe6e 100644
 --- a/ld/emultempl/pe.em
 +++ b/ld/emultempl/pe.em
-@@ -274,6 +274,7 @@ fragment <<EOF
+@@ -272,6 +272,7 @@ fragment <<EOF
  #define OPTION_INSERT_TIMESTAMP		(OPTION_TERMINAL_SERVER_AWARE + 1)
  #define OPTION_NO_INSERT_TIMESTAMP	(OPTION_INSERT_TIMESTAMP + 1)
  #define OPTION_BUILD_ID			(OPTION_NO_INSERT_TIMESTAMP + 1)
@@ -10,7 +24,7 @@ index bf146f6..15a7c15 100644
  
  static void
  gld${EMULATION_NAME}_add_options
-@@ -317,6 +318,7 @@ gld${EMULATION_NAME}_add_options
+@@ -315,6 +316,7 @@ gld${EMULATION_NAME}_add_options
      {"export-all-symbols", no_argument, NULL, OPTION_EXPORT_ALL},
      {"exclude-symbols", required_argument, NULL, OPTION_EXCLUDE_SYMBOLS},
      {"exclude-all-symbols", no_argument, NULL, OPTION_EXCLUDE_ALL_SYMBOLS},
@@ -18,7 +32,7 @@ index bf146f6..15a7c15 100644
      {"exclude-libs", required_argument, NULL, OPTION_EXCLUDE_LIBS},
      {"exclude-modules-for-implib", required_argument, NULL, OPTION_EXCLUDE_MODULES_FOR_IMPLIB},
      {"kill-at", no_argument, NULL, OPTION_KILL_ATS},
-@@ -786,6 +788,9 @@ gld${EMULATION_NAME}_handle_option (int optc)
+@@ -782,6 +784,9 @@ gld${EMULATION_NAME}_handle_option (int optc)
      case OPTION_EXCLUDE_ALL_SYMBOLS:
        pe_dll_exclude_all_symbols = 1;
        break;
@@ -28,19 +42,22 @@ index bf146f6..15a7c15 100644
      case OPTION_EXCLUDE_LIBS:
        pe_dll_add_excludes (optarg, EXCLUDELIBS);
        break;
-@@ -2066,6 +2071,7 @@ gld_${EMULATION_NAME}_finish (void)
-   if (link_info.shared
+@@ -2057,8 +2062,8 @@ gld_${EMULATION_NAME}_finish (void)
+ #ifdef DLL_SUPPORT
+   if (bfd_link_pic (&link_info)
  #if !defined(TARGET_IS_shpe)
-       || (!link_info.relocatable && pe_def_file->num_exports != 0)
-+      || (!link_info.relocatable && pe_dll_enable_reloc_section)
+-      || (!bfd_link_relocatable (&link_info)
+-	  && pe_def_file->num_exports != 0)
++      || (!bfd_link_relocatable (&link_info) && pe_def_file->num_exports != 0)
++      || (!bfd_link_relocatable (&link_info) && pe_dll_enable_reloc_section)
  #endif
      )
      {
 diff --git a/ld/emultempl/pep.em b/ld/emultempl/pep.em
-index ab7c473..ec668f7 100644
+index 60deeed..4dee6b6 100644
 --- a/ld/emultempl/pep.em
 +++ b/ld/emultempl/pep.em
-@@ -248,7 +248,8 @@ enum options
+@@ -246,7 +246,8 @@ enum options
    OPTION_INSERT_TIMESTAMP,
    OPTION_NO_INSERT_TIMESTAMP,
    OPTION_TERMINAL_SERVER_AWARE,
@@ -50,7 +67,7 @@ index ab7c473..ec668f7 100644
  };
  
  static void
-@@ -290,6 +291,7 @@ gld${EMULATION_NAME}_add_options
+@@ -288,6 +289,7 @@ gld${EMULATION_NAME}_add_options
      {"export-all-symbols", no_argument, NULL, OPTION_EXPORT_ALL},
      {"exclude-symbols", required_argument, NULL, OPTION_EXCLUDE_SYMBOLS},
      {"exclude-all-symbols", no_argument, NULL, OPTION_EXCLUDE_ALL_SYMBOLS},
@@ -58,7 +75,7 @@ index ab7c473..ec668f7 100644
      {"exclude-libs", required_argument, NULL, OPTION_EXCLUDE_LIBS},
      {"exclude-modules-for-implib", required_argument, NULL, OPTION_EXCLUDE_MODULES_FOR_IMPLIB},
      {"kill-at", no_argument, NULL, OPTION_KILL_ATS},
-@@ -743,6 +745,9 @@ gld${EMULATION_NAME}_handle_option (int optc)
+@@ -739,6 +741,9 @@ gld${EMULATION_NAME}_handle_option (int optc)
      case OPTION_EXCLUDE_ALL_SYMBOLS:
        pep_dll_exclude_all_symbols = 1;
        break;
@@ -68,18 +85,19 @@ index ab7c473..ec668f7 100644
      case OPTION_EXCLUDE_LIBS:
        pep_dll_add_excludes (optarg, EXCLUDELIBS);
        break;
-@@ -1847,7 +1852,8 @@ gld_${EMULATION_NAME}_finish (void)
+@@ -1840,8 +1845,8 @@ gld_${EMULATION_NAME}_finish (void)
  
  #ifdef DLL_SUPPORT
-   if (link_info.shared
--      || (!link_info.relocatable && pep_def_file->num_exports != 0))
-+      || (!link_info.relocatable && pep_def_file->num_exports != 0)
-+      || (!link_info.relocatable && pep_dll_enable_reloc_section))
+   if (bfd_link_pic (&link_info)
+-      || (!bfd_link_relocatable (&link_info)
+-	  && pep_def_file->num_exports != 0))
++      || (!bfd_link_relocatable (&link_info) && pep_def_file->num_exports != 0)
++      || (!bfd_link_relocatable (&link_info) && pep_dll_enable_reloc_section))
      {
        pep_dll_fill_sections (link_info.output_bfd, &link_info);
-       if (pep_implib_filename)
+       if (command_line.out_implib_filename)
 diff --git a/ld/pe-dll.c b/ld/pe-dll.c
-index ccdbed0..f8b2529 100644
+index 1f176ec..efd0ba9 100644
 --- a/ld/pe-dll.c
 +++ b/ld/pe-dll.c
 @@ -151,6 +151,7 @@ def_file * pe_def_file = 0;
@@ -90,10 +108,10 @@ index ccdbed0..f8b2529 100644
  int pe_dll_kill_ats = 0;
  int pe_dll_stdcall_aliases = 0;
  int pe_dll_warn_dup_exports = 0;
-@@ -3408,7 +3409,14 @@ pe_dll_build_sections (bfd *abfd, struct bfd_link_info *info)
+@@ -3420,7 +3421,14 @@ pe_dll_build_sections (bfd *abfd, struct bfd_link_info *info)
    process_def_file_and_drectve (abfd, info);
  
-   if (pe_def_file->num_exports == 0 && !info->shared)
+   if (pe_def_file->num_exports == 0 && !bfd_link_pic (info))
 -    return;
 +    {
 +      if (pe_dll_enable_reloc_section)
@@ -106,7 +124,7 @@ index ccdbed0..f8b2529 100644
  
    generate_edata (abfd, info);
    build_filler_bfd (1);
-@@ -3424,13 +3432,9 @@ pe_exe_build_sections (bfd *abfd, struct bfd_link_info *info ATTRIBUTE_UNUSED)
+@@ -3436,13 +3444,9 @@ pe_exe_build_sections (bfd *abfd, struct bfd_link_info *info ATTRIBUTE_UNUSED)
    pe_output_file_set_long_section_names (filler_bfd);
  }
  
@@ -122,13 +140,13 @@ index ccdbed0..f8b2529 100644
    generate_reloc (abfd, info);
    if (reloc_sz > 0)
      {
-@@ -3447,38 +3451,41 @@ pe_dll_fill_sections (bfd *abfd, struct bfd_link_info *info)
+@@ -3459,38 +3463,41 @@ pe_dll_fill_sections (bfd *abfd, struct bfd_link_info *info)
        lang_do_assignments (lang_final_phase_enum);
      }
  
 -  fill_edata (abfd, info);
 -
--  if (info->shared && !info->pie)
+-  if (bfd_link_dll (info))
 -    pe_data (abfd)->dll = 1;
 -
 -  edata_s->contents = edata_d;
@@ -160,7 +178,7 @@ index ccdbed0..f8b2529 100644
 -      /* Resize the sections.  */
 -      lang_reset_memory_regions ();
 -      lang_size_sections (NULL, TRUE);
-+  if (info->shared && !info->pie)
++  if (bfd_link_dll(info))
 +    pe_data (abfd)->dll = 1;
 +}
  
@@ -196,7 +214,7 @@ index a8d3195..6af84ae 100644
  extern int pe_dll_stdcall_aliases;
  extern int pe_dll_warn_dup_exports;
 diff --git a/ld/pep-dll.c b/ld/pep-dll.c
-index cac0441..e157673 100644
+index cac0441..b2184a5 100644
 --- a/ld/pep-dll.c
 +++ b/ld/pep-dll.c
 @@ -31,6 +31,7 @@
@@ -219,3 +237,6 @@ index 4edbdad..976babe 100644
  extern int pep_dll_kill_ats;
  extern int pep_dll_stdcall_aliases;
  extern int pep_dll_warn_dup_exports;
+-- 
+2.10.1
+

@@ -1,9 +1,9 @@
-From 67116f60849428f85d6ef61205b185fa924214dd Mon Sep 17 00:00:00 2001
+From 5a5e2f9edd17b5b88f6f0d7d9eb5b8bd79fa2fd3 Mon Sep 17 00:00:00 2001
 From: Yuta NAKAI <nak5124@live.jp>
 Date: Sun, 19 Apr 2015 22:01:33 +0900
-Subject: [PATCH 6/7] libiberty/lrealpath.c: Don't make a lowercase backslashed
- path from argv[0] that then fail to strcmp with prefix(es) .. they're also
- ugly.
+Subject: [PATCH 06/11] libiberty/lrealpath.c: Don't make a lowercase
+ backslashed path from argv[0] that then fail to strcmp with prefix(es) ..
+ they're also ugly.
 
 ---
  libiberty/lrealpath.c | 19 +++++++++++++++----
@@ -45,5 +45,5 @@ index b27c8de..423d128 100644
        }
    }
 -- 
-2.6.3
+2.10.1
 

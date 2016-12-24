@@ -51,38 +51,42 @@ function prepare_gcc() {
     apply_patch_gcc "${PATCHES_DIR}"/gcc/0007-Fix-using-large-PCH.patch                                  false
     # Fix clone_function_name stdcall suffix handling.
     apply_patch_gcc "${PATCHES_DIR}"/gcc/0008-clone_function_name_1-Retain-any-stdcall-suffix.patch      false
+    #
+    apply_patch_gcc "${PATCHES_DIR}"/gcc/0009-gcc-make-xmmintrin-header-cplusplus-compatible-depre.patch false
     # Add /mingw{32,64}/local/{include,lib} to search dirs, and make relocatable perfectly.
-    apply_patch_gcc "${PATCHES_DIR}"/gcc/0009-Add-mingw-32-64-local-include-lib-to-search-dirs-and.patch false
+    apply_patch_gcc "${PATCHES_DIR}"/gcc/0010-Add-mingw-32-64-local-include-lib-to-search-dirs-and.patch false
     # Don't search dirs under ${prefix} but ${build_sysroot}.
-    apply_patch_gcc "${PATCHES_DIR}"/gcc/0010-configure-Search-dirs-under-build_sysroot-instead-of.patch false
+    apply_patch_gcc "${PATCHES_DIR}"/gcc/0011-configure-Search-dirs-under-build_sysroot-instead-of.patch false
     # When binutils's prefix == tooldir, gcc -print-prog-name=ld returns correct result.
-    apply_patch_gcc "${PATCHES_DIR}"/gcc/0011-gcc-Add-prefix-bindir-to-exec_prefix.patch                 false
+    apply_patch_gcc "${PATCHES_DIR}"/gcc/0012-gcc-Add-prefix-bindir-to-exec_prefix.patch                 false
     # Dynamically linking to libiconv.
-    apply_patch_gcc "${PATCHES_DIR}"/gcc/0012-mingw-Dynamically-linking-to-libiconv.patch                false
+    apply_patch_gcc "${PATCHES_DIR}"/gcc/0013-mingw-Dynamically-linking-to-libiconv.patch                false
     # when building executables, not DLLs. Add --large-address-aware and --tsaware.
-    apply_patch_gcc "${PATCHES_DIR}"/gcc/0013-MinGW-w64-When-building-executables-not-DLLs-add-lar.patch false
+    apply_patch_gcc "${PATCHES_DIR}"/gcc/0014-MinGW-w64-When-building-executables-not-DLLs-add-lar.patch false
     # Enable nxcompat and (HE)ASLR by default.
-    apply_patch_gcc "${PATCHES_DIR}"/gcc/0014-MinGW-w64-Enable-nxcompat-and-HE-ASLR-by-default.patch     false
+    apply_patch_gcc "${PATCHES_DIR}"/gcc/0015-MinGW-w64-Enable-nxcompat-and-HE-ASLR-by-default.patch     false
     # Disable automatic image base calculation.
-    apply_patch_gcc "${PATCHES_DIR}"/gcc/0015-MinGW-w64-Disable-automatic-image-base-calculation.patch   false
+    apply_patch_gcc "${PATCHES_DIR}"/gcc/0016-MinGW-w64-Disable-automatic-image-base-calculation.patch   false
     # Shut up GCC -Wformat.
-    apply_patch_gcc "${PATCHES_DIR}"/gcc/0016-MinGW-w64-Use-__MINGW_PRINTF_FORMAT-for-__USE_MINGW_.patch false
+    apply_patch_gcc "${PATCHES_DIR}"/gcc/0017-MinGW-w64-Use-__MINGW_PRINTF_FORMAT-for-__USE_MINGW_.patch false
     # https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=792909
-    apply_patch_gcc "${PATCHES_DIR}"/gcc/0017-MinGW-w64-Fix-SPEC_PTHREAD2-definition.patch               false
+    apply_patch_gcc "${PATCHES_DIR}"/gcc/0018-MinGW-w64-Fix-SPEC_PTHREAD2-definition.patch               false
     # Enable colorizing diagnostics.
-    apply_patch_gcc "${PATCHES_DIR}"/gcc/0018-gcc-diagnostic-color.c-Enable-color-diagnostic-on-Wi.patch false
+    apply_patch_gcc "${PATCHES_DIR}"/gcc/0019-gcc-diagnostic-color.c-Enable-color-diagnostic-on-Wi.patch false
     # __MSVCRT_VERSION__
-    apply_patch_gcc "${PATCHES_DIR}"/gcc/0019-MinGW-w64-Define-__MSVCRT_VERSION__.patch                  false
+    apply_patch_gcc "${PATCHES_DIR}"/gcc/0020-MinGW-w64-Define-__MSVCRT_VERSION__.patch                  false
     # PR52991 (https://gcc.gnu.org/bugzilla/show_bug.cgi?id=52991).
-    apply_patch_gcc "${PATCHES_DIR}"/gcc/0020-Fix-issue-about-record-union-attribute-packed-for-ms.patch false
+    apply_patch_gcc "${PATCHES_DIR}"/gcc/0021-Fix-issue-about-record-union-attribute-packed-for-ms.patch false
     # Remove #define stat _stat ...
-    apply_patch_gcc "${PATCHES_DIR}"/gcc/0021-ltmain.sh-Remove-useless-defines.patch                     false
+    apply_patch_gcc "${PATCHES_DIR}"/gcc/0022-ltmain.sh-Remove-useless-defines.patch                     false
     # Thread model: mcf
-    apply_patch_gcc "${PATCHES_DIR}"/gcc/0022-Added-mcf-thread-model-support-from-mcfgthread.patch       false
+    apply_patch_gcc "${PATCHES_DIR}"/gcc/0023-Added-mcf-thread-model-support-from-mcfgthread.patch       false
     # Fix bootstrap
-    apply_patch_gcc "${PATCHES_DIR}"/gcc/0023-MinGW-w64-Fix-bootstrap-when-libitm-is-disabled.patch      false
+    apply_patch_gcc "${PATCHES_DIR}"/gcc/0024-MinGW-w64-Fix-bootstrap-when-libitm-is-disabled.patch      false
     # Hack for relocation
-    apply_patch_gcc "${PATCHES_DIR}"/gcc/0024-MinGW-w64-Hack-Do-not-pass-iprefix-internally.patch        false
+    apply_patch_gcc "${PATCHES_DIR}"/gcc/0025-MinGW-w64-Hack-Do-not-pass-iprefix-internally.patch        false
+    #
+    apply_patch_gcc "${PATCHES_DIR}"/gcc/0026-Add-defines-to-disable-optimize-for-size-changes.patch     false
 
     sed -i 's/msvcrt/msvcr120/g' "${BUILD_DIR}"/gcc/src/gcc-${GCC_VER}/libgcc/config/i386/t-mingw32
 
@@ -369,7 +373,7 @@ function build_gcc() {
             # Make.
             printf "===> Making GCC %s...\n" $_arch
             # Setting -j$(($(nproc)+1)) sometimes makes error.
-            make                                                \
+            make -j2                                               \
                 CPPFLAGS="${CPPFLAGS_}"                         \
                 CPPFLAGS_FOR_TARGET="${CPPFLAGS_}"              \
                 CFLAGS="${CFLAGS_} ${CPPFLAGS_}"                \

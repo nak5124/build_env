@@ -1,7 +1,7 @@
-From d5a6190ca4bdfab544a4fabdefd93ef7ce488b65 Mon Sep 17 00:00:00 2001
+From 078e2a003e8718064a7e56ae1edb90fc2491a16b Mon Sep 17 00:00:00 2001
 From: Yuta NAKAI <nak5124@live.jp>
 Date: Sun, 12 Apr 2015 15:25:08 +0900
-Subject: [PATCH 15/24] MinGW-w64: Disable automatic image base calculation.
+Subject: [PATCH 16/26] MinGW-w64: Disable automatic image base calculation.
 
 ---
  gcc/configure          | 8 ++++----
@@ -12,10 +12,10 @@ Subject: [PATCH 15/24] MinGW-w64: Disable automatic image base calculation.
  5 files changed, 14 insertions(+), 14 deletions(-)
 
 diff --git a/gcc/configure b/gcc/configure
-index b7c41a3..caf5f93 100755
+index 6731d7b..486c637 100755
 --- a/gcc/configure
 +++ b/gcc/configure
-@@ -16201,7 +16201,7 @@ _LT_EOF
+@@ -16208,7 +16208,7 @@ _LT_EOF
        export_symbols_cmds='$NM $libobjs $convenience | $global_symbol_pipe | $SED -e '\''/^[BCDGRS][ ]/s/.*[ ]\([^ ]*\)/\1 DATA/'\'' | $SED -e '\''/^[AITW][ ]/s/.*[ ]//'\'' | sort | uniq > $export_symbols'
  
        if $LD --help 2>&1 | $GREP 'auto-import' > /dev/null; then
@@ -24,7 +24,7 @@ index b7c41a3..caf5f93 100755
  	# If the export-symbols file already is a .def file (1st line
  	# is EXPORTS), use it as is; otherwise, prepend...
  	archive_expsym_cmds='if test "x`$SED 1q $export_symbols`" = xEXPORTS; then
-@@ -16210,7 +16210,7 @@ _LT_EOF
+@@ -16217,7 +16217,7 @@ _LT_EOF
  	  echo EXPORTS > $output_objdir/$soname.def;
  	  cat $export_symbols >> $output_objdir/$soname.def;
  	fi~
@@ -33,7 +33,7 @@ index b7c41a3..caf5f93 100755
        else
  	ld_shlibs=no
        fi
-@@ -19421,7 +19421,7 @@ if test -z "$aix_libpath"; then aix_libpath="/usr/lib:/lib"; fi
+@@ -19428,7 +19428,7 @@ if test -z "$aix_libpath"; then aix_libpath="/usr/lib:/lib"; fi
          enable_shared_with_static_runtimes_CXX=yes
  
          if $LD --help 2>&1 | $GREP 'auto-import' > /dev/null; then
@@ -42,7 +42,7 @@ index b7c41a3..caf5f93 100755
            # If the export-symbols file already is a .def file (1st line
            # is EXPORTS), use it as is; otherwise, prepend...
            archive_expsym_cmds_CXX='if test "x`$SED 1q $export_symbols`" = xEXPORTS; then
-@@ -19430,7 +19430,7 @@ if test -z "$aix_libpath"; then aix_libpath="/usr/lib:/lib"; fi
+@@ -19437,7 +19437,7 @@ if test -z "$aix_libpath"; then aix_libpath="/usr/lib:/lib"; fi
  	    echo EXPORTS > $output_objdir/$soname.def;
  	    cat $export_symbols >> $output_objdir/$soname.def;
            fi~
@@ -52,7 +52,7 @@ index b7c41a3..caf5f93 100755
            ld_shlibs_CXX=no
          fi
 diff --git a/libbacktrace/configure b/libbacktrace/configure
-index 4e720e1..7f126bd 100755
+index b14d1b1..efb2f4b 100755
 --- a/libbacktrace/configure
 +++ b/libbacktrace/configure
 @@ -8876,7 +8876,7 @@ _LT_EOF
@@ -74,7 +74,7 @@ index 4e720e1..7f126bd 100755
  	ld_shlibs=no
        fi
 diff --git a/libssp/configure b/libssp/configure
-index 44b00ba..5fa96d3 100755
+index fab5c77..ca5fd1e 100755
 --- a/libssp/configure
 +++ b/libssp/configure
 @@ -8385,7 +8385,7 @@ _LT_EOF
@@ -96,7 +96,7 @@ index 44b00ba..5fa96d3 100755
  	ld_shlibs=no
        fi
 diff --git a/libstdc++-v3/configure b/libstdc++-v3/configure
-index ef23c8a..a7b6e58 100755
+index 9eb90ae..b1b8587 100755
 --- a/libstdc++-v3/configure
 +++ b/libstdc++-v3/configure
 @@ -9314,7 +9314,7 @@ _LT_EOF
@@ -136,7 +136,7 @@ index ef23c8a..a7b6e58 100755
            ld_shlibs_CXX=no
          fi
 diff --git a/lto-plugin/configure b/lto-plugin/configure
-index 36201e6..5a12805 100755
+index 1229957..b8612c2 100755
 --- a/lto-plugin/configure
 +++ b/lto-plugin/configure
 @@ -9195,7 +9195,7 @@ _LT_EOF
@@ -158,5 +158,5 @@ index 36201e6..5a12805 100755
  	ld_shlibs=no
        fi
 -- 
-2.8.1
+2.10.2
 

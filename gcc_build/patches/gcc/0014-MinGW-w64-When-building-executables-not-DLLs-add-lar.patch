@@ -1,7 +1,7 @@
-From b607ae6642876ad320bb01cc22c51455fab7299d Mon Sep 17 00:00:00 2001
+From c4cf25718aff5bd5033c55b4f10b660f81ff5d40 Mon Sep 17 00:00:00 2001
 From: Yuta NAKAI <nak5124@live.jp>
 Date: Sun, 12 Apr 2015 14:38:53 +0900
-Subject: [PATCH 13/24] MinGW-w64: When building executables, not DLLs, add
+Subject: [PATCH 14/26] MinGW-w64: When building executables, not DLLs, add
  --large-address-aware and --tsaware.
 
 ---
@@ -20,5 +20,5 @@ index fe11333..4479dad 100644
 +  %(shared_libgcc_undefs) \
 +  %{!shared: %{!mdll: %{" SPEC_32 ": --large-address-aware} --tsaware}}"
 -- 
-2.8.1
+2.10.2
 

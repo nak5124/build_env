@@ -1,7 +1,7 @@
-From c98be0d7ab79cda7367f73907a412b6f96a56bf7 Mon Sep 17 00:00:00 2001
+From 53a5769267e3b9bd432946b69bf008bf25452f73 Mon Sep 17 00:00:00 2001
 From: Yuta NAKAI <nak5124@live.jp>
 Date: Sun, 12 Apr 2015 14:35:17 +0900
-Subject: [PATCH 09/24] Add /mingw{32,64}/local/{include,lib} to search dirs,
+Subject: [PATCH 10/26] Add /mingw{32,64}/local/{include,lib} to search dirs,
  and make relocatable perfectly.
 
 ---
@@ -13,7 +13,7 @@ Subject: [PATCH 09/24] Add /mingw{32,64}/local/{include,lib} to search dirs,
  5 files changed, 20 insertions(+), 12 deletions(-)
 
 diff --git a/gcc/Makefile.in b/gcc/Makefile.in
-index 6c5adc0..9fed49d 100644
+index 13d0d1b..62e36c1 100644
 --- a/gcc/Makefile.in
 +++ b/gcc/Makefile.in
 @@ -2693,6 +2693,7 @@ PREPROCESSOR_DEFINES = \
@@ -86,7 +86,7 @@ index 54aaf06..892742c 100644
    };
  #endif /* no INCLUDE_DEFAULTS */
 diff --git a/gcc/gcc.c b/gcc/gcc.c
-index 1af5920..f7434a1 100644
+index 0f042b0..3050b75 100644
 --- a/gcc/gcc.c
 +++ b/gcc/gcc.c
 @@ -4482,6 +4482,8 @@ process_command (unsigned int decoded_options_count,
@@ -98,7 +98,7 @@ index 1af5920..f7434a1 100644
      }
  
    gcc_assert (!IS_ABSOLUTE_PATH (tooldir_base_prefix));
-@@ -7345,6 +7347,7 @@ driver::set_up_specs () const
+@@ -7346,6 +7348,7 @@ driver::set_up_specs () const
    const char *spec_machine_suffix;
    char *specs_file;
    size_t i;
@@ -106,7 +106,7 @@ index 1af5920..f7434a1 100644
  
  #ifdef INIT_ENVIRONMENT
    /* Set up any other necessary machine specific environment variables.  */
-@@ -7493,6 +7496,14 @@ driver::set_up_specs () const
+@@ -7494,6 +7497,14 @@ driver::set_up_specs () const
  			      machine_suffix,
  			      standard_startfile_prefix, NULL),
  		      NULL, PREFIX_PRIORITY_LAST, 0, 1);
@@ -122,5 +122,5 @@ index 1af5920..f7434a1 100644
  
        /* Sysrooted prefixes are relocated because target_system_root is
 -- 
-2.8.1
+2.10.2
 

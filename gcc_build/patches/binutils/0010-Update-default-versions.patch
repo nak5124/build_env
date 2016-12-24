@@ -1,8 +1,18 @@
+From ebc53baf6e6a4c7d7e3d5d7ec00b2618f2abc709 Mon Sep 17 00:00:00 2001
+From: Yuta Nakai <nak5124@live.jp>
+Date: Sun, 13 Nov 2016 22:22:51 +0900
+Subject: [PATCH 10/11] Update default versions.
+
+---
+ ld/emultempl/pe.em  | 7 ++++---
+ ld/emultempl/pep.em | 4 ++--
+ 2 files changed, 6 insertions(+), 5 deletions(-)
+
 diff --git a/ld/emultempl/pe.em b/ld/emultempl/pe.em
-index bf146f6..4e37660 100644
+index e30fe6e..4ed2be4 100644
 --- a/ld/emultempl/pe.em
 +++ b/ld/emultempl/pe.em
-@@ -406,16 +406,17 @@ static definfo init[] =
+@@ -405,16 +405,17 @@ static definfo init[] =
    D(ImageBase, "___ImageBase", NT_EXE_IMAGE_BASE, TRUE),
    D(SectionAlignment,"__section_alignment__", PE_DEF_SECTION_ALIGNMENT, FALSE),
    D(FileAlignment,"__file_alignment__", PE_DEF_FILE_ALIGNMENT, FALSE),
@@ -24,10 +34,10 @@ index bf146f6..4e37660 100644
    D(SizeOfStackReserve,"__size_of_stack_reserve__", 0x200000, FALSE),
    D(SizeOfStackCommit,"__size_of_stack_commit__", 0x1000, FALSE),
 diff --git a/ld/emultempl/pep.em b/ld/emultempl/pep.em
-index ab7c473..cb82da8 100644
+index 4dee6b6..0d3aa41 100644
 --- a/ld/emultempl/pep.em
 +++ b/ld/emultempl/pep.em
-@@ -377,11 +377,11 @@ static definfo init[] =
+@@ -376,11 +376,11 @@ static definfo init[] =
    D(ImageBase, "___ImageBase", NT_EXE_IMAGE_BASE, TRUE),
    D(SectionAlignment,"__section_alignment__", PE_DEF_SECTION_ALIGNMENT, FALSE),
    D(FileAlignment,"__file_alignment__", PE_DEF_FILE_ALIGNMENT, FALSE),
@@ -41,3 +51,6 @@ index ab7c473..cb82da8 100644
    D(MinorSubsystemVersion,"__minor_subsystem_version__", 2, FALSE),
    D(Subsystem,"__subsystem__", ${SUBSYSTEM}, FALSE),
    D(SizeOfStackReserve,"__size_of_stack_reserve__", 0x200000, FALSE),
+-- 
+2.10.1
+

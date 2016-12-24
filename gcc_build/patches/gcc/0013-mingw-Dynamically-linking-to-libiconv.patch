@@ -1,7 +1,7 @@
-From 1330bf3d6c723498d11f082344eca4e3b353c463 Mon Sep 17 00:00:00 2001
+From dcafab8cbf46b2f65a6a4d61cbe987d69aa032aa Mon Sep 17 00:00:00 2001
 From: Yuta NAKAI <nak5124@live.jp>
 Date: Sun, 12 Apr 2015 14:40:59 +0900
-Subject: [PATCH 12/24] mingw: Dynamically linking to libiconv.
+Subject: [PATCH 13/26] mingw: Dynamically linking to libiconv.
 
 ---
  gcc/configure          | 8 ++++----
@@ -10,10 +10,10 @@ Subject: [PATCH 12/24] mingw: Dynamically linking to libiconv.
  3 files changed, 12 insertions(+), 12 deletions(-)
 
 diff --git a/gcc/configure b/gcc/configure
-index 050fc53..b7c41a3 100755
+index bc2e171..6731d7b 100755
 --- a/gcc/configure
 +++ b/gcc/configure
-@@ -10378,9 +10378,9 @@ fi
+@@ -10385,9 +10385,9 @@ fi
                  found_la="$additional_libdir/lib$name.la"
                fi
              else
@@ -25,7 +25,7 @@ index 050fc53..b7c41a3 100755
                  if test -f "$additional_libdir/lib$name.la"; then
                    found_la="$additional_libdir/lib$name.la"
                  fi
-@@ -10408,9 +10408,9 @@ fi
+@@ -10415,9 +10415,9 @@ fi
                        found_la="$dir/lib$name.la"
                      fi
                    else
@@ -38,7 +38,7 @@ index 050fc53..b7c41a3 100755
                          found_la="$dir/lib$name.la"
                        fi
 diff --git a/libcpp/configure b/libcpp/configure
-index 0342f16..45fd7b0 100755
+index 0ae15cb..46e0a69 100755
 --- a/libcpp/configure
 +++ b/libcpp/configure
 @@ -6734,9 +6734,9 @@ fi
@@ -66,10 +66,10 @@ index 0342f16..45fd7b0 100755
                          found_la="$dir/lib$name.la"
                        fi
 diff --git a/libstdc++-v3/configure b/libstdc++-v3/configure
-index 41797a9..ef23c8a 100755
+index 5e7bc23..9eb90ae 100755
 --- a/libstdc++-v3/configure
 +++ b/libstdc++-v3/configure
-@@ -28223,9 +28223,9 @@ fi
+@@ -28292,9 +28292,9 @@ fi
                  found_la="$additional_libdir/lib$name.la"
                fi
              else
@@ -81,7 +81,7 @@ index 41797a9..ef23c8a 100755
                  if test -f "$additional_libdir/lib$name.la"; then
                    found_la="$additional_libdir/lib$name.la"
                  fi
-@@ -28253,9 +28253,9 @@ fi
+@@ -28322,9 +28322,9 @@ fi
                        found_la="$dir/lib$name.la"
                      fi
                    else
@@ -94,5 +94,5 @@ index 41797a9..ef23c8a 100755
                          found_la="$dir/lib$name.la"
                        fi
 -- 
-2.8.1
+2.10.2
 

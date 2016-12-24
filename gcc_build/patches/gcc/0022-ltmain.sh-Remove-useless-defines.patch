@@ -1,3 +1,12 @@
+From d7ea16689dc69bc3a95f21038a5f85ff44b02150 Mon Sep 17 00:00:00 2001
+From: Yuta Nakai <nak5124@live.jp>
+Date: Sun, 20 Mar 2016 16:25:06 +0900
+Subject: [PATCH 22/26] ltmain.sh: Remove useless defines.
+
+---
+ ltmain.sh | 24 ------------------------
+ 1 file changed, 24 deletions(-)
+
 diff --git a/ltmain.sh b/ltmain.sh
 index 9503ec8..988557c 100644
 --- a/ltmain.sh
@@ -33,3 +42,6 @@ index 9503ec8..988557c 100644
  #if defined(PATH_MAX)
  # define LT_PATHMAX PATH_MAX
  #elif defined(MAXPATHLEN)
+-- 
+2.10.2
+
